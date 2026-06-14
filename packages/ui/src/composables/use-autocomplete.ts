@@ -4,7 +4,7 @@ import { type IterableItemsProps, useNormalizedItems } from './use-normalized-it
 import { type SelectableProps, useSelects } from './use-selects'
 
 export function useAutocomplete<T = any>(props: IterableItemsProps<T> & SelectableProps<T>) {
-    const normalizedItems = useNormalizedItems(props as IterableItemsProps<T>)
+    const normalizedItems = useNormalizedItems<T>(props as IterableItemsProps<T>)
 
     const {
         selectedItems,

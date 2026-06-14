@@ -4,6 +4,7 @@ import {
     type ComputedRef,
     nextTick,
     onBeforeUnmount,
+    type PropType,
     ref,
     shallowRef,
     unref,
@@ -12,10 +13,9 @@ import {
 
 import { isDef } from '../helpers'
 import type { DimensionsProps } from '../types'
-import { IN_BROWSER } from '../utils'
+import { IN_BROWSER , propsFactory } from '../utils'
 
 import { useApplication } from './use-application'
-import { type PositionProps } from './use-position-classes'
 
 export interface Dimensions {
     top: number
@@ -24,15 +24,18 @@ export interface Dimensions {
     height: number
 }
 
-export interface CoordsProps {
+type AutoPositionStrategy = 'reverse' | 'bounce'
+
+export interface AutoPositionProps {
+    strategy?: AutoPositionStrategy
     positionX?: number
     positionY?: number
     offsetX?: number | string
     offsetY?: number | string
-}
-
-export interface AutoPositionProps {
-    strategy?: 'reverse' | 'bounce'
+    left?: boolean
+    right?: boolean
+    top?: boolean
+    bottom?: boolean
 }
 
 type MaybeElement = Element | ComponentPublicInstance | undefined
@@ -40,10 +43,26 @@ type MaybeElement = Element | ComponentPublicInstance | undefined
 type ResolvedElement = HTMLElement | undefined
 
 type AutoPositionInputProps =
-    PositionProps &
-    CoordsProps &
     DimensionsProps &
     AutoPositionProps
+
+export const makeAutoPositionProps = propsFactory({
+    strategy: {
+        type: String as PropType<AutoPositionStrategy>,
+        default: 'bounce',
+    },
+    positionX: Number,
+    positionY: Number,
+    offsetX: [Number, String],
+    offsetY: [Number, String],
+    left: Boolean,
+    right: Boolean,
+    top: Boolean,
+    bottom: {
+        type: Boolean,
+        default: true
+    },
+})
 
 const SCREEN_EDGE_OFFSET = 20
 

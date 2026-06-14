@@ -1,4 +1,5 @@
 import vue from '@vitejs/plugin-vue'
+import vueJsx from '@vitejs/plugin-vue-jsx'
 import * as fs from 'node:fs'
 import path from 'path'
 import {defineConfig} from 'rollup'
@@ -87,6 +88,7 @@ export default defineConfig([
         ...base,
         plugins: [
             vuePlugin,
+            vueJsx(),
             makeCssPlugin('styles.css'),
             ...base.plugins
         ]

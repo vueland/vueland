@@ -1,17 +1,28 @@
-import type { VNode } from 'vue'
+import type { VNodeChild } from 'vue'
 
-import type { PresetProps, ValidateProps, ValidateState } from '../../composables'
+import type {
+    PresetProps,
+    ValidateProps,
+    ValidateState,
+} from '../../composables'
 
 export interface InputState {
     focused: boolean
     isDirty: boolean
 }
 
+export type CInputKind =
+    | 'checkbox'
+    | 'radio'
+    | 'input'
+    | 'area'
+    | 'listbox'
+
 export type CInputProps<T = any> =
     ValidateProps &
     PresetProps & {
     id?: string
-    modelValue: T
+    modelValue?: T
     label?: string
     details?: string
     noDetails?: boolean
@@ -19,7 +30,7 @@ export type CInputProps<T = any> =
     disabled?: boolean
     focused?: boolean
     readonly?: boolean
-    kind?: 'checkbox' | 'radio' | 'input' | 'area' | 'listbox'
+    kind?: CInputKind
 }
 
 export type CInputEmits<T = any> = {
@@ -28,29 +39,39 @@ export type CInputEmits<T = any> = {
     input: [T]
 }
 
+export type CInputLabelSlotProps = {
+    uid: string
+}
+
+export type CInputDetailsSlotProps = {
+    errorMessage: ValidateState['errorMessage']
+    hasError: ValidateState['hasError']
+    uid: string
+    details?: string
+}
+
+export type CInputFieldSlotProps<T = any> = {
+    input(val: T): void
+    focus(): void
+    blur(): void
+    reset(): void
+    label?: string
+    readonly?: boolean
+    focused: boolean
+    disabled?: boolean
+    clearable?: boolean
+    preset?: string
+    errorMessage: ValidateState['errorMessage']
+    hasError: ValidateState['hasError']
+    attrs: Record<string, any>
+    uid: string
+    validate(): boolean
+}
+
 export type CInputSlots<T = any> = {
-    label?(props: { uid: string }): string
-    details?(props: {
-        errorMessage: ValidateState['errorMessage']
-        hasError: ValidateState['hasError']
-        uid: string
-        details?: string
-    }): VNode | string
-    field?(props: {
-        input(val: T): void
-        focus(): void
-        blur(): void
-        reset(): void
-        label?: string
-        readonly?: boolean
-        focused: boolean
-        disabled?: boolean
-        clearable?: boolean
-        preset?: string
-        errorMessage: ValidateState['errorMessage']
-        hasError: ValidateState['hasError']
-        attrs: Record<string, any>
-        uid: string
-        validate(): boolean
-    }): VNode
+    label?(props: CInputLabelSlotProps): VNodeChild
+
+    details?(props: CInputDetailsSlotProps): VNodeChild
+
+    field: CInputFieldSlotProps<T>
 }

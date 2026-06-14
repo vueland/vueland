@@ -1,54 +1,63 @@
-import { defineConfig, type PluginOption } from 'vite'
-import vue from '@vitejs/plugin-vue'
 import path from 'node:path'
-import { utilsJIT, defineRule } from '@vueland/utils-jit'
 
-// Для максимально комфортной разработки компонентов:
-// алиасим на исходники ui, чтобы не ждать сборку и ловить HMR.
+import vue from '@vitejs/plugin-vue'
+import vueJsx from '@vitejs/plugin-vue-jsx'
+import { defineConfig, type PluginOption } from 'vite'
+import { defineRule, utilsJIT } from '@vueland/utils-jit'
+
+const useBuiltUi = process.env.USE_BUILT_UI === 'true'
+
 export default defineConfig({
     plugins: [
         vue(),
+        vueJsx(),
         utilsJIT({
             breakpoints: {
                 xs: 480,
                 sm: 640,
                 md: 768,
                 lg: 1024,
-                xl: 1440
+                xl: 1440,
             },
             rules: [
                 defineRule({
                     name: 'translate',
                     matcher: /^translate-\[(.+)\]$/,
-                    validate: (v) => !!v,
-                    declaration: (value) => ({
+                    validate: v => !!v,
+                    declaration: value => ({
                         transform: `translate(${value})`,
-                    })
-                })
+                    }),
+                }),
             ],
             variants: {
                 tablet: {
                     kind: 'media',
                     value: 900,
                 },
-            }
-        }) as PluginOption
+            },
+        }) as PluginOption,
     ],
+
     resolve: {
-        alias: {
-            '@vueland/ui': path.resolve(__dirname, '../ui/src/'),
-        }
+        alias: useBuiltUi
+            ? {}
+            : {
+                '@vueland/ui': path.resolve(__dirname, '../ui/src/'),
+            },
     },
+
     css: {
         preprocessorOptions: {
-            scss: {}
-        }
+            scss: {},
+        },
     },
+
     server: {
         host: '0.0.0.0',
         port: 8081,
     },
+
     optimizeDeps: {
-        exclude: ['@vueland/ui']
-    }
+        exclude: useBuiltUi ? [] : ['@vueland/ui'],
+    },
 })

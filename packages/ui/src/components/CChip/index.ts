@@ -1,1 +1,1 @@
-export { default as CChip } from './CChip.vue'
+export { CChip } from './CChip'

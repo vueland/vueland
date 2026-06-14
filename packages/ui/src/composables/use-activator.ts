@@ -1,5 +1,7 @@
 import { type ComponentPublicInstance, computed, markRaw, shallowRef, unref } from 'vue'
 
+import { propsFactory } from '../utils'
+
 export type ActivatorProps = {
     closeOnClick?: boolean
     openOnClick?: boolean
@@ -21,6 +23,18 @@ export type ActivatorListeners = {
     input?: (e: Event) => void
     change?: (e: Event) => void
 }
+
+export const makeActivatorProps = propsFactory({
+    closeOnClick: Boolean,
+    openOnClick: Boolean,
+    openOnHover: Boolean,
+    closeOnLeave: Boolean,
+    openOnFocus: Boolean,
+    activator: {
+        type: null,
+        default: undefined,
+    }
+})
 
 export function useActivator(props: Partial<ActivatorProps> & Record<string, unknown>) {
     const activatorEl = shallowRef<ComponentPublicInstance | Element | undefined>(props.activator)

@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 
-import { CBtn } from '../index'
+import { CBtn } from '../../index'
 
 describe('CBtn', () => {
     it('маунтит дефолтный компонент', () => {

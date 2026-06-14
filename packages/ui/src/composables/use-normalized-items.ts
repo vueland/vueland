@@ -1,6 +1,6 @@
 import { computed } from 'vue'
 
-type Primitive =
+export type Primitive =
     | string
     | number
     | boolean
@@ -10,7 +10,7 @@ type Primitive =
     | undefined
     | Date
 
-type Path<T> = T extends Primitive
+export type Path<T> = T extends Primitive
     ? never
     : T extends readonly unknown[]
         ? never
@@ -22,10 +22,10 @@ type Path<T> = T extends Primitive
             }[keyof T & string]
             : never
 
-type LoosePath<T> = Path<T> | (string & {})
+export type LoosePath<T> = Path<T> | (string & {})
 
 export type IterableItemsProps<T> = {
-    items: T[]
+    items: readonly T[]
     titleKey?: LoosePath<T>
     valueKey?: LoosePath<T>
 }

@@ -1,2 +1,2 @@
-export { default as CAutocomplete } from './CAutocomplete.vue'
-export * from './types'
+export * from './CAutocomplete'
+// export * from './types'

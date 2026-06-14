@@ -13,7 +13,8 @@
     defineSlots<CSelectSlots<T>>()
 
     const props = defineProps<CSelectProps<T>>()
-    const model = defineModel<T | T[]>({
+
+    const model = defineModel<T | T[] | undefined>({
         get: () => props.modelValue,
         set: val => val
     })

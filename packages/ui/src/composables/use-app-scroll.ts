@@ -30,8 +30,8 @@ export function useAppScroll() {
         savedScrollTop = getScrollTop()
         savedScrollLeft = getScrollLeft()
 
-        unref(appRef)!.style.setProperty('--c-scroll-top', convertToUnit(-savedScrollTop))
-        unref(appRef)!.style.setProperty('--c-scroll-left', convertToUnit(-savedScrollLeft))
+        unref(appRef)!.style.setProperty('--c-app-scroll-top', convertToUnit(-savedScrollTop))
+        unref(appRef)!.style.setProperty('--c-app-scroll-left', convertToUnit(-savedScrollLeft))
 
         requestAnimationFrame(() => {
             state.blockScroll = true

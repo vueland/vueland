@@ -139,6 +139,9 @@
                             size="20"
                         />
                     </template>
+                    <template #menu="{items}">
+                        <div v-for="it of items">{{ it.raw }}</div>
+                    </template>
                 </c-autocomplete>
                 <c-select
                     v-model="form.level"

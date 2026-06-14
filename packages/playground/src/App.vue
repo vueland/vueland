@@ -88,6 +88,7 @@
                     Vueland UI {{ effect }}
                 </h2>
                 <c-icon name="user" source="fa" />
+                <c-chip value="text"/>
             </c-toolbar-logo>
         </c-toolbar>
         <c-main class="pl-5 pr-5 pb-5 pt-[80px] min-h-100 color-[#fa5a5a]">
