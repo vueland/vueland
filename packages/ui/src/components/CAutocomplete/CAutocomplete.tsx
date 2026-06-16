@@ -1,4 +1,8 @@
-import type { Ref } from 'vue'
+import type {
+    ComputedRef,
+    ModelRef,
+    PropType,
+} from 'vue'
 import {
     shallowRef,
     unref,
@@ -21,75 +25,120 @@ import {
 } from '../../utils'
 import { CField } from '../CField'
 import { CIcon } from '../CIcon'
-import type { CInputFieldSlotProps, CInputProps } from '../CInput'
+import type {
+    CInputFieldSlotProps,
+    CInputProps,
+} from '../CInput'
 import { CInput } from '../CInput'
-import { CList, CListItem, CListItemTitle } from '../CList'
+import {
+    CList,
+    CListItem,
+    CListItemTitle,
+} from '../CList'
 import { CMenu } from '../CMenu'
-
-export const makeCAutocompleteProps = propsFactory({
-    items: {
-        type: Array,
-        default: (): unknown[] => [],
-    },
-    titleKey: String,
-    valueKey: String,
-    modelValue: {
-        type: [Object, Array, String, Number, Boolean],
-        default: undefined,
-    },
-    multiple: Boolean,
-    mandatory: Boolean,
-    options: Object,
-})
-
-export type CAutocompleteEvents = {
-    'update:search': [string]
-}
-
-const emits = emitsFactory<CAutocompleteEvents>({
-    'update:search': (val: string) => typeof val === 'string',
-})
 
 type CAutocompleteOptions = {
     noItemsMessage?: string
     menuPreset?: string
 }
 
-export const CAutocomplete = genericComponent<new <T>(
-    props: CInputProps<T> & {
-        items: readonly T[]
-        modelValue: T | T[]
-        titleKey?: LoosePath<T>
-        valueKey?: LoosePath<T>
-        multiple?: boolean
+type ItemType<T extends readonly unknown[]> =
+    T[number]
+
+type ModelValue<
+    Item,
+    Multiple extends boolean,
+> =
+    Multiple extends true
+        ? Item[]
+        : Item | undefined
+
+export type CAutocompleteSlots<Item = unknown> = {
+    menu: {
+        items: NormalizedItem<Item>[]
+        onSelect(value: Item): void
+    }
+
+    field: CInputFieldSlotProps
+
+    prepend: undefined
+    append: undefined
+
+    selects: {
+        selectedItems: ComputedRef<unknown[]>
+    }
+
+    details: {
+        errorMessage?: string
+        details?: string
+    }
+
+    'no-items-message': undefined
+}
+
+export type CAutocompleteEvents = {
+    'update:search': [string]
+}
+
+export const makeCAutocompleteProps = propsFactory({
+    items: {
+        type: Array,
+        default: (): unknown[] => [],
+    },
+
+    titleKey: String,
+    valueKey: String,
+
+    modelValue: {
+        type: null,
+        required: true,
+    },
+
+    multiple: Boolean,
+    mandatory: Boolean,
+
+    options: Object as PropType<CAutocompleteOptions>,
+})
+
+export const CAutocomplete = genericComponent<new <
+    T extends readonly unknown[],
+    Item = ItemType<T>,
+    Multiple extends boolean = false,
+    Value = ModelValue<Item, Multiple>,
+>(
+    props: Omit<
+        CInputProps<unknown>,
+        'modelValue' | 'onUpdate:modelValue'
+    > & {
+        items: T
+        modelValue: Value
+
+        multiple?: Multiple
         mandatory?: boolean
+
+        titleKey?: LoosePath<Item>
+        valueKey?: LoosePath<Item>
+
         options?: CAutocompleteOptions
-        'onUpdate:modelValue'?: (value: T | T[] | undefined) => void
+
+        'onUpdate:modelValue'?: (value: Value) => void
         'onUpdate:search'?: (value: string) => void
     },
-    slots: {
-        menu: {
-            items: NormalizedItem<T>[]
-            onSelect(value: T): void
-        }
-        field: CInputFieldSlotProps
-        prepend: never
-        append: never
-        selects: {
-            selectedItems: Ref<unknown[]>
-        }
-        details: {
-            errorMessage?: string
-            details?: string
-        }
-    }
+
+    slots: CAutocompleteSlots<Item>,
 ) => GenericProps<typeof props, typeof slots>>()({
     name: 'CAutocomplete',
-    props: makeCAutocompleteProps({ items: () => [] }),
-    emits,
+
+    props: makeCAutocompleteProps(),
+
+    emits: emitsFactory<CAutocompleteEvents>({
+        'update:search': (val: string) => typeof val === 'string',
+    }),
 
     setup(props, { emit, attrs, slots }) {
-        const model = useModel(props, 'modelValue')
+        const model = useModel(props, 'modelValue') as ModelRef<
+            unknown | unknown[] | undefined
+        >
 
         const {
             inputValue,
@@ -110,25 +159,32 @@ export const CAutocomplete = genericComponent<new <T>(
                     const data = unref(model)
 
                     model.value = props.multiple
-                        ? (data as unknown[] | undefined)?.slice(0, -1) ?? []
+                        ? Array.isArray(data)
+                            ? data.slice(0, -1)
+                            : []
                         : undefined
                 }
             },
+
             Tab: () => {
                 unref(inputRef)?.blur()
                 unref(menuRef)?.close()
             },
+
             Escape: () => {
                 unref(inputRef)?.blur()
                 unref(fieldRef)?.$el?.blur()
             },
+
             ArrowDown: () => {
                 menuListRef.value?.focus()
             },
         })
 
         function clear() {
-            model.value = props.multiple ? [] : undefined
+            model.value = props.multiple
+                ? []
+                : undefined
         }
 
         function focus() {
@@ -147,7 +203,7 @@ export const CAutocomplete = genericComponent<new <T>(
             <CInput
                 modelValue={model.value}
                 ref={inputRef}
-                kind={'listbox'}
+                kind="listbox"
                 {...attrs}
             >
                 {{
@@ -160,7 +216,7 @@ export const CAutocomplete = genericComponent<new <T>(
                             closeOnClickOutside
                             closeOnContentClick={!props.multiple}
                             offsetY={2}
-                            strategy={'reverse'}
+                            strategy="reverse"
                             preset={props.options?.menuPreset}
                             onClose={blur}
                         >
@@ -191,12 +247,14 @@ export const CAutocomplete = genericComponent<new <T>(
                                             >
                                                 {{
                                                     prepend: () => slots.prepend?.(),
+
                                                     append: () => slots.append?.() ?? (
                                                         <CIcon
                                                             name={IconAliases.DROPDOWN}
                                                             size={20}
                                                         />
                                                     ),
+
                                                     before: () => slots.selects?.({
                                                         selectedItems,
                                                     }) ?? (
@@ -205,11 +263,11 @@ export const CAutocomplete = genericComponent<new <T>(
                                                                 class={['c-autocomplete__item']}
                                                                 key={`${it}`}
                                                             >
-                                                                {`${it}` + (
+                                                                {`${it}${
                                                                     i + 1 !== unref(selectedItems).length
                                                                         ? ','
                                                                         : ''
-                                                                )}
+                                                                }`}
                                                             </div>
                                                         ))
                                                     ),
@@ -218,6 +276,7 @@ export const CAutocomplete = genericComponent<new <T>(
                                         )}
                                     </div>
                                 ),
+
                                 default: () => slots.menu?.({
                                     onSelect: select,
                                     items: searchItems.value,
@@ -228,7 +287,7 @@ export const CAutocomplete = genericComponent<new <T>(
                                         onUpdate:modelValue={(value) => {
                                             model.value = value
                                         }}
-                                        role={'listbox'}
+                                        role="listbox"
                                         selectable
                                         multiple={props.multiple}
                                         mandatory={props.mandatory}
@@ -248,6 +307,7 @@ export const CAutocomplete = genericComponent<new <T>(
                             }}
                         </CMenu>
                     ),
+
                     details: ({ errorMessage, details }) => {
                         return slots.details?.({ errorMessage, details }) ?? (
                             <span key={errorMessage || details}>

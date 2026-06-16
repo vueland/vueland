@@ -1,2 +1,8 @@
-export * from './CAutocomplete'
-// export * from './types'
+export type {
+    CAutocompleteEvents,
+    CAutocompleteSlots,
+} from './CAutocomplete'
+export {
+    CAutocomplete,
+    makeCAutocompleteProps,
+} from './CAutocomplete'

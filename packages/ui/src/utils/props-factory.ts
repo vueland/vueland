@@ -1,9 +1,10 @@
 import type {
     ComponentObjectPropsOptions,
+    Prop,
     PropType,
 } from 'vue'
 
-type Constructor =
+type AnyConstructor =
     | StringConstructor
     | NumberConstructor
     | BooleanConstructor
@@ -20,41 +21,37 @@ type ConstructorValue<T> =
                 T extends ArrayConstructor ? unknown[] :
                     T extends ObjectConstructor ? Record<string, unknown> :
                         T extends DateConstructor ? Date :
-                            T extends FunctionConstructor ? (...args: unknown[]) => unknown :
+                            T extends FunctionConstructor ? (...args: any[]) => any :
                                 T extends SymbolConstructor ? symbol :
-                                    never
+                                    unknown
 
-type PropConstructorValue<T> =
-    T extends readonly unknown[]
-        ? PropConstructorValue<T[number]>
-        : T extends Constructor
-            ? ConstructorValue<T>
-            : T extends PropType<infer V>
-                ? V
-                : never
+type PropTypeValue<T> =
+    T extends PropType<infer V>
+        ? V
+        : T extends readonly unknown[]
+            ? ConstructorValue<T[number]>
+            : T extends AnyConstructor
+                ? ConstructorValue<T>
+                : unknown
 
 type PropOptionValue<T> =
-    T extends { type: infer Type }
-        ? PropConstructorValue<Type>
-        : T extends PropType<infer V>
-            ? V
-            : T extends Constructor
-                ? ConstructorValue<T>
-                : T extends readonly unknown[]
-                    ? PropConstructorValue<T[number]>
-                    : unknown
+    T extends Prop<infer V>
+        ? V
+        : T extends { type: infer Type }
+            ? PropTypeValue<Type>
+            : PropTypeValue<T>
+
+type HasDefault<T> =
+    'default' extends keyof T
+        ? true
+        : false
 
 type IsRequired<T> =
     T extends { required: true }
         ? true
         : false
 
-type HasDefault<T> =
-    T extends { default: unknown }
-        ? true
-        : false
-
-type DefinedKeys<TProps> = {
+type RequiredPropKeys<TProps extends ComponentObjectPropsOptions> = {
     [K in keyof TProps]:
     IsRequired<TProps[K]> extends true
         ? K
@@ -63,40 +60,24 @@ type DefinedKeys<TProps> = {
             : never
 }[keyof TProps]
 
-type OptionalKeys<TProps> = {
-    [K in keyof TProps]:
-    K extends DefinedKeys<TProps>
-        ? never
-        : K
-}[keyof TProps]
+type OptionalPropKeys<TProps extends ComponentObjectPropsOptions> =
+    Exclude<keyof TProps, RequiredPropKeys<TProps>>
 
-export type InferFactoryProps<TProps> = {
-    [K in DefinedKeys<TProps>]: PropOptionValue<TProps[K]>
+export type InferFactoryProps<
+    TProps extends ComponentObjectPropsOptions,
+> = {
+    readonly [K in RequiredPropKeys<TProps>]: PropOptionValue<TProps[K]>
 } & {
-    [K in OptionalKeys<TProps>]?: PropOptionValue<TProps[K]>
+    readonly [K in OptionalPropKeys<TProps>]?: PropOptionValue<TProps[K]>
 }
 
-type DefaultValue<T> =
-    T extends (...args: any[]) => any
-        ? T
-        : T | (() => T)
-
-type Defaults<TProps> = Partial<{
-    [K in keyof TProps]: DefaultValue<PropOptionValue<TProps[K]>>
-}>
-
-type NormalizeProp<T> =
-    T extends object
-        ? T
-        : { type: T }
-
 type AppendDefault<
-    TProps,
-    TDefaults extends Partial<Record<keyof TProps, unknown>>,
+    TProps extends ComponentObjectPropsOptions,
+    TDefaults,
 > = {
     [K in keyof TProps]:
     K extends keyof TDefaults
-        ? NormalizeProp<TProps[K]> & { default: TDefaults[K] }
+        ? TProps[K] & { default: TDefaults[K] }
         : TProps[K]
 }
 
@@ -104,7 +85,7 @@ export function propsFactory<
     TProps extends ComponentObjectPropsOptions,
 >(props: TProps) {
     return <
-        TDefaults extends Defaults<TProps> = {},
+        TDefaults extends Partial<Record<keyof TProps, unknown>> = {},
     >(defaults?: TDefaults): AppendDefault<TProps, TDefaults> => {
         return Object.keys(props).reduce<Record<string, unknown>>((result, key) => {
             const prop = props[key]

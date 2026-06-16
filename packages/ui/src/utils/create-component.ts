@@ -6,6 +6,7 @@ import {
     defineComponent as _defineComponent,
     type ExtractDefaultPropTypes,
     type SetupContext,
+    type SlotsType,
     type VNode,
     type VNodeChild,
     type VNodeProps,
@@ -15,13 +16,13 @@ import type { InferFactoryProps } from './props-factory'
 
 export type RawSlots = Record<string, unknown>
 
-export type Slot<T> =
-    [T] extends [never]
+export type Slot<T = undefined> =
+    [T] extends [undefined]
         ? () => VNodeChild
         : (arg: T) => VNodeChild
 
-export type VueSlot<T> =
-    [T] extends [never]
+export type VueSlot<T = undefined> =
+    [T] extends [undefined]
         ? () => VNode[]
         : (arg: T) => VNode[]
 
@@ -52,19 +53,6 @@ export type SlotsToProps<
     | false
 }
 
-export type PublicVueProps =
-    VNodeProps
-    & AllowedComponentProps
-    & ComponentCustomProps
-
-export type ComponentPublicProps<
-    TProps,
-    TSlots extends RawSlots = { default: never },
-> =
-    TProps
-    & PublicVueProps
-    & SlotsToProps<TSlots>
-
 export type GenericProps<
     TProps,
     TSlots extends RawSlots,
@@ -73,16 +61,12 @@ export type GenericProps<
     $slots: MakeSlots<TSlots>
 }
 
-type SetupProps<
-    TRuntimeProps extends ComponentObjectPropsOptions,
-    TPublicProps,
-> =
-    unknown extends TPublicProps
-        ? InferFactoryProps<TRuntimeProps>
-        : TPublicProps
+export type PublicVueProps =
+    VNodeProps
+    & AllowedComponentProps
+    & ComponentCustomProps
 
 type ComponentOptions<
-    TPublicProps,
     TSlots extends RawSlots,
     TRuntimeProps extends ComponentObjectPropsOptions,
 > = {
@@ -92,22 +76,19 @@ type ComponentOptions<
     inheritAttrs?: boolean
 
     setup?: (
-        props: SetupProps<TRuntimeProps, TPublicProps>,
+        props: InferFactoryProps<TRuntimeProps>,
         ctx: Omit<SetupContext<any>, 'slots'> & {
             slots: MakeSlots<TSlots>
         },
     ) => void | (() => VNodeChild)
 }
 
-type DefineComponentWithPublicProps<
-    TPublicProps,
-    TSlots extends RawSlots,
-> = <
+type DefineComponentWithSlots<TSlots extends RawSlots> = <
     TRuntimeProps extends ComponentObjectPropsOptions,
 >(
-    options: ComponentOptions<TPublicProps, TSlots, TRuntimeProps>,
+    options: ComponentOptions<TSlots, TRuntimeProps>,
 ) => DefineComponent<
-    SetupProps<TRuntimeProps, TPublicProps>,
+    InferFactoryProps<TRuntimeProps>,
     {},
     {},
     {},
@@ -117,25 +98,28 @@ type DefineComponentWithPublicProps<
     {},
     string,
     PublicVueProps,
-    SetupProps<TRuntimeProps, TPublicProps> & SlotsToProps<TSlots>,
+    InferFactoryProps<TRuntimeProps> & SlotsToProps<TSlots>,
     ExtractDefaultPropTypes<TRuntimeProps>,
-    MakeSlots<TSlots>
+    SlotsType<Partial<MakeSlots<TSlots>>>
 >
 
-type GenericComponentConstructor = abstract new (...args: any[]) => {
-    $props?: Record<string, any>
-    $slots?: Record<string, any>
+type GenericComponentConstructor = new (
+    props: any,
+    slots: any,
+) => {
+    $props?: any
+    $slots?: any
 }
 
 type ConstructorProps<T extends GenericComponentConstructor> =
-    ConstructorParameters<T> extends [infer Props, ...any[]]
-        ? Props
+    T extends new (props: infer P, slots: any) => any
+        ? P
         : {}
 
 type ConstructorSlots<T extends GenericComponentConstructor> =
-    ConstructorParameters<T> extends [any, infer Slots, ...any[]]
-        ? Slots extends RawSlots
-            ? Slots
+    T extends new (props: any, slots: infer S) => any
+        ? S extends RawSlots
+            ? S
             : {}
         : {}
 
@@ -145,11 +129,10 @@ type DefineGenericComponent<
     TRuntimeProps extends ComponentObjectPropsOptions,
 >(
     options: ComponentOptions<
-        ConstructorProps<TGeneric>,
         ConstructorSlots<TGeneric>,
         TRuntimeProps
     >,
-) => DefineComponent<
+) => TGeneric & DefineComponent<
     InferFactoryProps<TRuntimeProps>,
     {},
     {},
@@ -163,18 +146,19 @@ type DefineGenericComponent<
     InferFactoryProps<TRuntimeProps>
     & SlotsToProps<ConstructorSlots<TGeneric>>,
     ExtractDefaultPropTypes<TRuntimeProps>,
-    MakeSlots<ConstructorSlots<TGeneric>>
-> & TGeneric
-
-export function createComponent<
-    TPublicProps = unknown,
-    TSlots extends RawSlots = { default: never },
->(): DefineComponentWithPublicProps<TPublicProps, TSlots> {
-    return _defineComponent as any
-}
+    SlotsType<Partial<MakeSlots<ConstructorSlots<TGeneric>>>>
+>
 
 export function genericComponent<
     TGeneric extends GenericComponentConstructor,
->(): DefineGenericComponent<TGeneric> {
-    return createComponent() as any
+>(): DefineGenericComponent<TGeneric>
+
+export function genericComponent<
+    TSlots extends RawSlots,
+>(): DefineComponentWithSlots<TSlots>
+
+export function genericComponent(): DefineComponentWithSlots<{ default: undefined }>
+
+export function genericComponent() {
+    return _defineComponent as any
 }

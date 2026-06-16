@@ -22,7 +22,7 @@ export type CInputProps<T = any> =
     ValidateProps &
     PresetProps & {
     id?: string
-    modelValue?: T
+    modelValue: T
     label?: string
     details?: string
     noDetails?: boolean

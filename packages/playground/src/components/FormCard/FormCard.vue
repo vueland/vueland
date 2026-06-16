@@ -5,7 +5,11 @@
 
     const core = useCore()
 
-    const professions: { title: string }[] = [
+    type Profession = {
+        title: string
+    }
+
+    const professions: Profession[] = [
         { title: 'Frontend' },
         { title: 'Backend' },
         { title: 'DevOPS' },
@@ -19,7 +23,7 @@
         { title: 'Lead' },
     ]
 
-    const form = ref({
+    const form = ref<{profession: Profession[], name: string, level: any[], radius: any}>({
         name: '',
         level: [],
         profession: [],
