@@ -2,9 +2,7 @@ import { defineComponent } from 'vue'
 
 import { propsFactory } from '../../utils'
 
-const makeCChipProps = propsFactory({
-    value: String
-})
+const makeCChipProps = propsFactory({value: String})
 
 export const CChip = defineComponent({
     props: makeCChipProps(),

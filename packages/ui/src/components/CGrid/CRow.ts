@@ -1,4 +1,6 @@
-import { computed, defineComponent, h, type PropType, type VNode } from 'vue'
+import {
+ computed, defineComponent, h, type PropType, type VNode 
+} from 'vue'
 
 import { BREAKPOINTS } from '../../constants'
 import { isDef, toCamelCase } from '../../helpers'
@@ -71,9 +73,7 @@ export const CRow = defineComponent({
 
     setup(props, { slots }): () => VNode {
         const classes = computed<Record<string, boolean>>(() => {
-            const cls: Record<string, boolean> = {
-                'c-row': true,
-            }
+            const cls: Record<string, boolean> = {'c-row': true,}
 
             if (props.noGutter) {
                 cls['no-gutter'] = true

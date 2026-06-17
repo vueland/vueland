@@ -24,9 +24,7 @@ export default {
 
 		replace({
 			preventAssignment: true,
-			values: {
-				'process.env.NODE_ENV': JSON.stringify('production')
-			}
+			values: {'process.env.NODE_ENV': JSON.stringify('production')}
 		}),
 
 		esbuild({

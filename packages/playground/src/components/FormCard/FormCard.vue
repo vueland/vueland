@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { markRaw, ref, shallowRef, unref, watchEffect } from 'vue'
+    import { markRaw, ref, shallowRef, unref } from 'vue'
     import { IconAliases } from '@vueland/ui/enums/IconName'
     import { useCore } from '@vueland/ui/composables'
 
@@ -101,6 +101,7 @@
                     :rules="nameRules"
                     validate-on="input"
                     class="form-name"
+                    disabled
                     :preset="currentPreset"
                     details="some text"
                     placeholder="введите текст"
@@ -143,9 +144,9 @@
                             size="20"
                         />
                     </template>
-                    <template #menu="{items}">
-                        <div v-for="it of items">{{ it.raw }}</div>
-                    </template>
+<!--                    <template #menu="{items}">-->
+<!--                        <div v-for="it of items">{{ it.raw }}</div>-->
+<!--                    </template>-->
                 </c-autocomplete>
                 <c-select
                     v-model="form.level"

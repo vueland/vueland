@@ -1,4 +1,6 @@
-import { computed, onBeforeMount, type Reactive, shallowReactive, toRefs, unref, watch } from 'vue'
+import {
+ computed, type Reactive, shallowReactive, toRefs, unref, watch 
+} from 'vue'
 
 import { type InputState } from '../components'
 import type { Maybe } from '../types'
@@ -26,7 +28,7 @@ export enum InputEvents {
 }
 
 export function useValidate(props: ValidateProps & { modelValue: any }, state: Reactive<InputState>) {
-    const { validateOn = InputEvents.INPUT, modelValue } = toRefs(props)
+    const { modelValue, validateOn } = toRefs(props)
 
     const errors = shallowReactive<ValidateState>({
         errorMessage: undefined,
@@ -61,23 +63,18 @@ export function useValidate(props: ValidateProps & { modelValue: any }, state: R
         return true
     }
 
-    onBeforeMount(() => {
-        if (!unref(hasRules)) {
-            return
-        }
-
-        watch(modelValue!, async (value) => {
-            if (!value || unref(validateOn) !== InputEvents.BLUR) {
+    if (unref(hasRules)) {
+        watch(modelValue, () => {
+            // всегда валидируем при появлении значения; при очистке — только если validateOn=input
+            if (unref(validateOn) !== InputEvents.BLUR) {
                 validate()
             }
         })
 
         watch(() => state.focused, (val) => {
-            if (!val) {
-                validate()
-            }
+            if (!val) validate()
         })
-    })
+    }
 
     return {
         errors,

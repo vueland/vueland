@@ -1,4 +1,5 @@
 import {
+    defineComponent,
     onBeforeUnmount,
     type ShallowRef,
     shallowRef,
@@ -9,7 +10,7 @@ import {
 } from 'vue'
 
 import { useOverlayStack } from '../../composables'
-import { createComponent, propsFactory } from '../../utils'
+import { propsFactory } from '../../utils'
 
 export type COverlayProps = {
     modelValue: boolean,
@@ -28,10 +29,11 @@ const makeOverlayProps = propsFactory({
     },
 })
 
-export const COverlay = createComponent<COverlayProps, COverlaySlots>()({
+export const COverlay = defineComponent({
     name: 'COverlay',
     inheritAttrs: false,
     props: makeOverlayProps(),
+    emits: { 'update:modelValue': () => true },
     setup(props, { slots }) {
         const model = useModel(props, 'modelValue')
         const zIndex = shallowRef<number>(0)

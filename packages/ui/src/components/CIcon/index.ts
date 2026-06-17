@@ -1,1 +1,1 @@
-export { default as CIcon } from './CIcon.vue'
+export { CIcon } from './CIcon'

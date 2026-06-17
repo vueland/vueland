@@ -1,6 +1,6 @@
 import { computed, unref } from 'vue'
 
-import type { CBtnProps } from '../components/CBtn/types'
+import type { CBtnProps } from '../components/CBtn'
 import type { InputPreset } from '../types'
 
 import { usePresets } from './use-presets'

@@ -3,6 +3,13 @@ import { defineComponent, provide, unref } from 'vue'
 import { useAppScroll } from '../../composables'
 import { $APP_API_KEY } from '../../constants'
 
+export type ApplicationApi = {
+    blockScroll(): void
+    unblockScroll(): void
+    getScrollTop(): number
+    getScrollLeft(): number
+}
+
 export const CApp = defineComponent({
     name: 'CApp',
     setup(_, { slots }) {

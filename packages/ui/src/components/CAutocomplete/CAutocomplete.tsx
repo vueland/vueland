@@ -21,15 +21,16 @@ import {
     emitsFactory,
     genericComponent,
     type GenericProps,
+    type InferFactoryProps,
     propsFactory,
 } from '../../utils'
 import { CField } from '../CField'
 import { CIcon } from '../CIcon'
-import type {
-    CInputFieldSlotProps,
-    CInputProps,
+import {
+    CInput,
+    type CInputFieldSlotProps,
+    makeCInputProps,
 } from '../CInput'
-import { CInput } from '../CInput'
 import {
     CList,
     CListItem,
@@ -42,42 +43,27 @@ type CAutocompleteOptions = {
     menuPreset?: string
 }
 
-type ItemType<T extends readonly unknown[]> =
-    T[number]
-
-type ModelValue<
-    Item,
-    Multiple extends boolean,
-> =
-    Multiple extends true
-        ? Item[]
-        : Item | undefined
-
 export type CAutocompleteSlots<Item = unknown> = {
     menu: {
         items: NormalizedItem<Item>[]
         onSelect(value: Item): void
     }
-
     field: CInputFieldSlotProps
-
-    prepend: undefined
-    append: undefined
-
+    prepend: never
+    append: never
     selects: {
         selectedItems: ComputedRef<unknown[]>
     }
-
     details: {
         errorMessage?: string
         details?: string
     }
-
-    'no-items-message': undefined
+    'no-items-message': never
 }
 
 export type CAutocompleteEvents = {
     'update:search': [string]
+    'update:modelValue': [unknown]
 }
 
 export const makeCAutocompleteProps = propsFactory({
@@ -85,56 +71,52 @@ export const makeCAutocompleteProps = propsFactory({
         type: Array,
         default: (): unknown[] => [],
     },
-
     titleKey: String,
     valueKey: String,
-
     modelValue: {
         type: null,
         required: true,
     },
-
     multiple: Boolean,
     mandatory: Boolean,
-
     options: Object as PropType<CAutocompleteOptions>,
 })
 
-export const CAutocomplete = genericComponent<new <
-    T extends readonly unknown[],
-    Item = ItemType<T>,
-    Multiple extends boolean = false,
-    Value = ModelValue<Item, Multiple>,
->(
-    props: Omit<
-        CInputProps<unknown>,
-        'modelValue' | 'onUpdate:modelValue'
-    > & {
-        items: T
-        modelValue: Value
+type ModelValue<
+    Item,
+    Multiple extends boolean | undefined,
+> =
+    Multiple extends true
+        ? Item[]
+        : Item | undefined | null
 
-        multiple?: Multiple
-        mandatory?: boolean
 
-        titleKey?: LoosePath<Item>
-        valueKey?: LoosePath<Item>
-
-        options?: CAutocompleteOptions
-
-        'onUpdate:modelValue'?: (value: Value) => void
-        'onUpdate:search'?: (value: string) => void
-    },
-
-    slots: CAutocompleteSlots<Item>,
-) => GenericProps<typeof props, typeof slots>>()({
+export const CAutocomplete = genericComponent<
+    new <
+        T extends readonly unknown[],
+        Item = T[number],
+        Multiple extends boolean | undefined = false,
+        Value = ModelValue<Item, Multiple>,
+    >(
+        props: {
+            items: T
+            modelValue: NoInfer<Value>
+            multiple?: Multiple
+            mandatory?: boolean
+            titleKey?: LoosePath<Item>
+            valueKey?: LoosePath<Item>
+            options?: CAutocompleteOptions
+        },
+        slots: CAutocompleteSlots<Item>,
+    ) => GenericProps<typeof props, typeof slots>,
+    InferFactoryProps<ReturnType<typeof makeCInputProps>>
+>()({
     name: 'CAutocomplete',
-
     props: makeCAutocompleteProps(),
-
     emits: emitsFactory<CAutocompleteEvents>({
+        'update:modelValue': () => true,
         'update:search': (val: string) => typeof val === 'string',
     }),
-
     setup(props, { emit, attrs, slots }) {
         const model = useModel(props, 'modelValue') as ModelRef<
             unknown | unknown[] | undefined
@@ -201,7 +183,7 @@ export const CAutocomplete = genericComponent<new <
 
         return () => (
             <CInput
-                modelValue={model.value}
+                modelValue={model.value as any}
                 ref={inputRef}
                 kind="listbox"
                 {...attrs}
@@ -235,29 +217,31 @@ export const CAutocomplete = genericComponent<new <
                                                 onUpdate:modelValue={(value: string) => {
                                                     inputValue.value = value
                                                 }}
-                                                {...on}
                                                 class={['c-autocomplete__field']}
                                                 filled={hasValue.value}
                                                 label={field.label}
                                                 clearable={field.clearable}
+                                                preset={field.preset}
+                                                error={field.hasError}
                                                 focused={field.focused}
                                                 onClear={clear}
-                                                onFocus={focus}
+                                                onFocus={() => {
+                                                    on.focus?.()
+                                                    focus()
+                                                }}
                                                 onKeydown={onKeydown}
                                             >
                                                 {{
-                                                    prepend: () => slots.prepend?.(),
+                                                    ...(slots.prepend && { prepend: () => slots.prepend!({}) }),
 
-                                                    append: () => slots.append?.() ?? (
+                                                    append: () => slots.append?.({}) ?? (
                                                         <CIcon
                                                             name={IconAliases.DROPDOWN}
                                                             size={20}
                                                         />
                                                     ),
 
-                                                    before: () => slots.selects?.({
-                                                        selectedItems,
-                                                    }) ?? (
+                                                    before: () => slots.selects?.({selectedItems,}) ?? (
                                                         unref(selectedItems).map((it, i) => (
                                                             <div
                                                                 class={['c-autocomplete__item']}
@@ -292,7 +276,7 @@ export const CAutocomplete = genericComponent<new <
                                         multiple={props.multiple}
                                         mandatory={props.mandatory}
                                     >
-                                        {unref(searchItems).map(it => (
+                                        {unref(searchItems).length ? unref(searchItems).map(it => (
                                             <CListItem
                                                 key={it.key}
                                                 value={it.value ?? it.raw}
@@ -301,7 +285,13 @@ export const CAutocomplete = genericComponent<new <
                                                     {it.title}
                                                 </CListItemTitle>
                                             </CListItem>
-                                        ))}
+                                        )) : (
+                                            <CListItem>
+                                                <CListItemTitle>
+                                                    {props.options?.noItemsMessage ?? 'No items'}
+                                                </CListItemTitle>
+                                            </CListItem>
+                                        )}
                                     </CList>
                                 ),
                             }}

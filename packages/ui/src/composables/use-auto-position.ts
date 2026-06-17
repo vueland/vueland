@@ -24,10 +24,8 @@ export interface Dimensions {
     height: number
 }
 
-type AutoPositionStrategy = 'reverse' | 'bounce'
-
 export interface AutoPositionProps {
-    strategy?: AutoPositionStrategy
+    strategy?: 'reverse' | 'bounce'
     positionX?: number
     positionY?: number
     offsetX?: number | string
@@ -48,7 +46,7 @@ type AutoPositionInputProps =
 
 export const makeAutoPositionProps = propsFactory({
     strategy: {
-        type: String as PropType<AutoPositionStrategy>,
+        type: String as PropType<AutoPositionProps['strategy']>,
         default: 'bounce',
     },
     positionX: Number,

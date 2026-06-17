@@ -1,3 +1,3 @@
-export { default as CDialog } from './CDialog.vue'
-export { default as CDialogsStack } from './CDialogsStack.vue'
+export { CDialog } from './CDialog'
+export { CDialogsStack } from './CDialogsStack'
 export * from './types'

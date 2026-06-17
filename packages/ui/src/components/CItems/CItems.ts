@@ -1,4 +1,6 @@
-import { defineComponent, type FunctionalComponent, h, type SlotsType } from 'vue'
+import {
+ defineComponent, type FunctionalComponent, h, type SlotsType 
+} from 'vue'
 
 import { CList, CListItem, CListItemTitle } from '../CList'
 
@@ -48,21 +50,15 @@ export const CItems = defineComponent<CItemsProps>({
     setup(props, { emit, slots }) {
         const { extKey, noItemsMessage } = props.options ?? {}
 
-        const genItemTitle = (value: string | number) => h(CListItemTitle as FunctionalComponent, {}, {
-            default: () => value
-        })
+        const genItemTitle = (value: string | number) => h(CListItemTitle as FunctionalComponent, {}, {default: () => value})
 
-        const genItem = (item: any) => h(CListItem, {
-            value: item,
-        }, {
+        const genItem = (item: any) => h(CListItem, {value: item,}, {
             default: () => [
                 genItemTitle(extKey ? item[extKey] : item)
             ]
         })
 
-        const genEmptyMessage = () => h(CListItem, null, {
-            default: () => genItemTitle(slots['no-items-message']?.() ?? noItemsMessage as any)
-        })
+        const genEmptyMessage = () => h(CListItem, null, {default: () => genItemTitle(slots['no-items-message']?.() ?? noItemsMessage as any)})
 
         return () => h(CList, {
             modelValue: props.modelValue,
@@ -74,8 +70,6 @@ export const CItems = defineComponent<CItemsProps>({
             ['onUpdate:modelValue']: <T>(val: T[] | T | null) => {
                 emit('update:modelValue', val)
             }
-        }, {
-            default: () => props.items.length ? props.items.map(genItem) : genEmptyMessage()
-        })
+        }, {default: () => props.items.length ? props.items.map(genItem) : genEmptyMessage()})
     }
 })

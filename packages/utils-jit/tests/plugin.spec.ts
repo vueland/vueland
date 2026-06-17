@@ -2,9 +2,13 @@ import * as fs from 'node:fs'
 import * as os from 'node:os'
 import * as path from 'node:path'
 import type { Plugin } from 'vite'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+ afterEach, beforeEach, describe, expect, it, vi 
+} from 'vitest'
 
-import { defineRule, isColorValue, isSizeValue,utilsJIT } from '../src'
+import {
+ defineRule, isColorValue, isSizeValue,utilsJIT 
+} from '../src'
 
 type HookPlugin = Plugin & {
     configResolved: NonNullable<Plugin['configResolved']>
@@ -109,9 +113,7 @@ function createTempProject() {
 }
 
 function createConfig(root: string) {
-    return {
-        root,
-    } as any
+    return {root,} as any
 }
 
 function createDevServer() {
@@ -218,9 +220,7 @@ describe('plugins / filesystem integration', () => {
             </template>
         `)
 
-        const plugin = asHookPlugin(utilsJIT({
-            outFile: 'src/styles/generated.css',
-        }))
+        const plugin = asHookPlugin(utilsJIT({outFile: 'src/styles/generated.css',}))
 
         callConfigResolved(plugin, project.root)
 
@@ -236,9 +236,7 @@ describe('plugins / filesystem integration', () => {
             </template>
         `)
 
-        const plugin = asHookPlugin(utilsJIT({
-            banner: '/* custom banner */',
-        }))
+        const plugin = asHookPlugin(utilsJIT({banner: '/* custom banner */',}))
 
         callConfigResolved(plugin, project.root)
 
@@ -246,9 +244,7 @@ describe('plugins / filesystem integration', () => {
     })
 
     it('не пишет пустой css при emitEmptyFile=false', () => {
-        const plugin = asHookPlugin(utilsJIT({
-            emitEmptyFile: false,
-        }))
+        const plugin = asHookPlugin(utilsJIT({emitEmptyFile: false,}))
 
         callConfigResolved(plugin, project.root)
 
@@ -262,11 +258,7 @@ describe('plugins / filesystem integration', () => {
             </template>
         `)
 
-        const plugin = asHookPlugin(utilsJIT({
-            breakpoints: {
-                tablet: 900,
-            },
-        }))
+        const plugin = asHookPlugin(utilsJIT({breakpoints: {tablet: 900,},}))
 
         callConfigResolved(plugin, project.root)
 
@@ -311,9 +303,7 @@ describe('plugins / filesystem integration', () => {
                     name: 'surface',
                     matcher: /^surface-\[(.+)\]$/,
                     validate: isColorValue,
-                    declaration: (value) => ({
-                        backgroundColor: value,
-                    }),
+                    declaration: (value) => ({backgroundColor: value,}),
                     important: false,
                 }),
                 defineRule({
@@ -351,9 +341,7 @@ describe('plugins / filesystem integration', () => {
             </template>
         `)
 
-        const plugin = asHookPlugin(utilsJIT({
-            exclude: [/src\/ignored/],
-        }))
+        const plugin = asHookPlugin(utilsJIT({exclude: [/src\/ignored/],}))
 
         callConfigResolved(plugin, project.root)
 
@@ -500,9 +488,7 @@ describe('plugins / filesystem integration', () => {
             </template>
         `)
 
-        const plugin = asHookPlugin(utilsJIT({
-            exclude: [/Hidden\.vue$/],
-        }))
+        const plugin = asHookPlugin(utilsJIT({exclude: [/Hidden\.vue$/],}))
         const server = createDevServer()
 
         callConfigResolved(plugin, project.root)
@@ -537,9 +523,7 @@ describe('plugins / filesystem integration', () => {
         callConfigResolved(plugin, project.root)
         callConfigureServer(plugin, server)
 
-        callWatchChange(plugin, file, {
-            event: 'delete',
-        })
+        callWatchChange(plugin, file, {event: 'delete',})
 
         const css = project.read('src/.generated/utils-jit.css')
 
@@ -569,9 +553,7 @@ describe('plugins / filesystem integration', () => {
             </template>
         `, 'utf8')
 
-        callWatchChange(plugin, file, {
-            event: 'update',
-        })
+        callWatchChange(plugin, file, {event: 'update',})
 
         const css = project.read('src/.generated/utils-jit.css')
 
@@ -618,9 +600,7 @@ describe('plugins / filesystem integration', () => {
         fs.rmSync(file)
 
         expect(() => {
-            callWatchChange(plugin, file, {
-                event: 'update',
-            })
+            callWatchChange(plugin, file, {event: 'update',})
         }).not.toThrow()
 
         const css = project.read('src/.generated/utils-jit.css')

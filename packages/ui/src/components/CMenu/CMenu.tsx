@@ -56,6 +56,9 @@ export type CMenuProps =
     transition?: string
     modelValue?: boolean
     to?: string
+    onClose?: () => void
+    onOpen?: () => void
+    'onUpdate:modelValue'?: (val: boolean) => void
 }
 
 export type CMenuSlots = {
@@ -218,9 +221,7 @@ export const CMenu = defineComponent<CMenuProps>({
             }
         }
 
-        const { onKeydown, } = useKeyboard({
-            Escape: () => close(),
-        })
+        const { onKeydown, } = useKeyboard({Escape: () => close(),})
 
         const listeners = genListeners({
             open,

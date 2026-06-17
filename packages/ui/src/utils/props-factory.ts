@@ -41,15 +41,16 @@ type PropOptionValue<T> =
             ? PropTypeValue<Type>
             : PropTypeValue<T>
 
+// Detects `any` type: `0 extends (1 & T)` is true only when T is `any`
+type IsAny<T> = 0 extends (1 & T) ? true : false
+
 type HasDefault<T> =
-    'default' extends keyof T
-        ? true
-        : false
+    IsAny<T> extends true ? false :
+    [T] extends [{ default: any }] ? true : false
 
 type IsRequired<T> =
-    T extends { required: true }
-        ? true
-        : false
+    IsAny<T> extends true ? false :
+    [T] extends [{ required: true }] ? true : false
 
 type RequiredPropKeys<TProps extends ComponentObjectPropsOptions> = {
     [K in keyof TProps]:
@@ -81,9 +82,28 @@ type AppendDefault<
         : TProps[K]
 }
 
+export function filterProps<
+    TProps extends ComponentObjectPropsOptions,
+    TSource extends Record<string, unknown>,
+>(
+    factory: (defaults?: any) => TProps,
+    source: TSource,
+): Partial<{ [K in keyof TProps]: TSource[K & keyof TSource] }> {
+    const keys = Object.keys(factory())
+    return keys.reduce<Record<string, unknown>>((acc, key) => {
+        if (key in source) {
+            acc[key] = source[key]
+        }
+        return acc
+    }, {}) as any
+}
+
 export function propsFactory<
     TProps extends ComponentObjectPropsOptions,
->(props: TProps) {
+>(props: TProps): {
+    <TDefaults extends Partial<Record<keyof TProps, unknown>>>(defaults: TDefaults): AppendDefault<TProps, TDefaults>
+    (): TProps
+} {
     return <
         TDefaults extends Partial<Record<keyof TProps, unknown>> = {},
     >(defaults?: TDefaults): AppendDefault<TProps, TDefaults> => {

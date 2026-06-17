@@ -1,4 +1,6 @@
-import { type ComponentPublicInstance, computed, markRaw, shallowRef, unref } from 'vue'
+import {
+ type ComponentPublicInstance, computed, markRaw, shallowRef, unref 
+} from 'vue'
 
 import { propsFactory } from '../utils'
 
@@ -60,21 +62,11 @@ export function useActivator(props: Partial<ActivatorProps> & Record<string, unk
         toggle: () => void
     }) {
         return computed(() => (markRaw({
-            ...(props.openOnHover ? {
-                mouseenter: () => open(),
-            } : {}),
-            ...(props.closeOnLeave ? {
-                mouseleave: () => close(),
-            } : {}),
-            ...(props.openOnClick ? {
-                click: () => open(),
-            } : {}),
-            ...(props.closeOnClick ? {
-                click: () => toggle(),
-            } : {}),
-            ...(props.openOnFocus ? {
-                focus: () => open(),
-            } : {}),
+            ...(props.openOnHover ? {mouseenter: () => open(),} : {}),
+            ...(props.closeOnLeave ? {mouseleave: () => close(),} : {}),
+            ...(props.openOnClick ? {click: () => open(),} : {}),
+            ...(props.closeOnClick ? {click: () => toggle(),} : {}),
+            ...(props.openOnFocus ? {focus: () => open(),} : {}),
         })))
     }
 

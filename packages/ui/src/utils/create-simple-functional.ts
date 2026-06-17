@@ -1,4 +1,6 @@
-import { defineComponent, type FunctionalComponent, h, type SetupContext } from 'vue'
+import {
+ defineComponent, type FunctionalComponent, h, type SetupContext 
+} from 'vue'
 
 export const createSimpleInstance = (
     c: string,
@@ -9,11 +11,7 @@ export const createSimpleInstance = (
     return defineComponent({
         name: _name,
         setup(_, { slots }) {
-            const propsData = {
-                class: {
-                    [c.trim()]: true,
-                },
-            }
+            const propsData = {class: {[c.trim()]: true,},}
 
             return () => h(el, propsData, slots.default && slots.default())
         },

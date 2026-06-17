@@ -1,9 +1,9 @@
-import { computed, type PropType, unref } from 'vue'
+import {
+ computed, defineComponent, type PropType, unref 
+} from 'vue'
 
 import { type PresetProps, useButtonPresets } from '../../composables'
-import { createComponent, propsFactory } from '../../utils'
-
-type CBtnVariants = 'flat' | 'outlined'
+import { propsFactory } from '../../utils'
 
 export type CBtnProps = PresetProps & {
     variant: 'flat' | 'outlined' | undefined
@@ -11,16 +11,12 @@ export type CBtnProps = PresetProps & {
 }
 
 export const makeCBtnProps = propsFactory({
-    variant: {
-        type: String as PropType<CBtnVariants>
-    },
+    variant: {type: String as PropType<CBtnProps['variant']>},
     block: Boolean,
     preset: String,
 })
 
-export const CBtn = createComponent<CBtnProps, {
-    default: never
-}>()({
+export const CBtn = defineComponent({
     name: 'CBtn',
     props: makeCBtnProps({ variant: 'flat' }),
     setup(props, { slots }) {
