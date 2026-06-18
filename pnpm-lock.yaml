@@ -77,6 +77,12 @@ importers:
 
   packages/docs:
     dependencies:
+      '@fortawesome/free-brands-svg-icons':
+        specifier: ^7.2.0
+        version: 7.2.0
+      '@fortawesome/free-solid-svg-icons':
+        specifier: ^7.2.0
+        version: 7.2.0
       '@vueland/ui':
         specifier: workspace:*
         version: link:../ui

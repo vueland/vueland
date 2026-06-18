@@ -1,17 +1,12 @@
+@use "sass:map";
+@use "../maps/colors-map" as *;
+
 $primary-transition: cubic-bezier(.25, .8, .5, 1);
 
 :root {
-  --global-border-radius: 8px;
-  --global-error-color: #ef231f;
-  --global-success-color: #43d31b;
-  --global-primary-color: #1f77c4;
-  --global-secondary-color: #39638c;
-  --global-base-color: #ffffff;
-  --global-text-color: #3d3d3d;
-
-  --c-app-primary-color: #6697c3;
-  --c-app-secondary-color: #213e59;
-  --c-app-success-color: #3eaf1e;
+  --c-app-primary-color: #{map.get($blue, "base")};
+  --c-app-secondary-color: #{map.get($blue, "darken-2")};
+  --c-app-success-color: #{map.get($green, "base")};
   --c-app-error-color: #ef231f;
   --c-app-warning-color: #f6892f;
   --c-app-info-color: #0b86cc;

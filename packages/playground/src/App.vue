@@ -114,7 +114,7 @@
                     xl="3"
                     lg="3"
                     md="6"
-                    class="d-flex pb-1 z-[10]"
+                    class="d-flex pb-1"
                 >
                     <content-card />
                 </c-col>

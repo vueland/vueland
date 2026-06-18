@@ -3,19 +3,18 @@
 @use "sass:map";
 
 $self: '.c-input';
-$input-details-height: 24px;
+$input-details-min-height: 24px;
 $input-readonly-bg-color: map.get($colors, 'grey', 'lighten-4');
 
 .c-input {
   --c-input-field-border-radius: var(--c-app-border-radius);
-  --c-input-details-height: #{$input-details-height};
   --c-input-field-text-color: var(--c-app-text-color);
   --c-input-error-color: var(--c-app-error-color);
   --c-input-primary-color: var(--c-app-primary-color);
-  --c-input-background-color: var(--c-app-surface-color);
   --c-input-disabled-color: var(--c-app-disabled-color);
   --c-input-readonly-color: var(--c-app-primary-color);
   --c-input-readonly-bg-color: #{$input-readonly-bg-color};
+  --c-input-details-min-height: #{$input-details-min-height};
 
   display: flex;
   flex-direction: column;
@@ -24,7 +23,6 @@ $input-readonly-bg-color: map.get($colors, 'grey', 'lighten-4');
   color: currentColor;
   position: relative;
   border-radius: var(--c-app-border-radius);
-  background-color: var(--c-input-background-color);
 
   &--focused {
     #{$self}__field {
@@ -32,7 +30,7 @@ $input-readonly-bg-color: map.get($colors, 'grey', 'lighten-4');
     }
   }
 
-  &--has-error {
+  &.c-input--has-error {
     color: var(--c-input-error-color);
   }
 
@@ -47,22 +45,17 @@ $input-readonly-bg-color: map.get($colors, 'grey', 'lighten-4');
 
   &--readonly {
     color: var(--c-input-readonly-color);
-
-    & > #{$self}__field > *:not(.c-checkbox) {
-      background-color: var(--c-input-readonly-bg-color);
-    }
   }
 
   &__field {
-    border-radius: var(--c-input-field-border-radius);
     display: flex;
   }
 
   &__details {
-    height: var(--c-input-details-height);
     background-color: transparent;
     display: flex;
     justify-content: start;
     align-items: center;
+    min-height: var(--c-input-details-min-height);
   }
 }

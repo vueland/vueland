@@ -43,6 +43,9 @@ export type CInputProps<T = any> = ValidateProps &
         focused?: boolean
         readonly?: boolean
         kind?: CInputKind
+        onFocus?: () => void
+        onBlur?: () => void
+        onInput?: (v: T) => void
     }
 
 export type CInputEmits<T = any> = {
@@ -51,13 +54,10 @@ export type CInputEmits<T = any> = {
     input: [T]
 }
 
-export type CInputLabelSlotProps = {
-    uid: string
-}
-
 export type CInputDetailsSlotProps = {
     errorMessage: ValidateState['errorMessage']
     hasError: ValidateState['hasError']
+    validating: ValidateState['validating']
     uid: string
     details?: string
 }
@@ -75,14 +75,13 @@ export type CInputFieldSlotProps<T = any> = {
     preset?: string
     errorMessage: ValidateState['errorMessage']
     hasError: ValidateState['hasError']
+    validating: ValidateState['validating']
     attrs: Record<string, any>
     uid: string
-    validate(): boolean
+    validate(): Promise<boolean>
 }
 
 export type CInputSlots<T = any> = {
-    label?(props: CInputLabelSlotProps): VNodeChild
-
     details?(props: CInputDetailsSlotProps): VNodeChild
 
     field(props: CInputFieldSlotProps<T>): VNodeChild
@@ -193,6 +192,7 @@ export const CInput = genericComponent<
                 'c-input--disabled': !!props.disabled,
                 'c-input--readonly': !!props.readonly,
                 'c-input--clearable': props.clearable,
+                'c-input--validating': errors.validating,
                 [attrs.class as string]: !!attrs.class,
             },
             ...unref(preset).root,
@@ -233,19 +233,20 @@ export const CInput = genericComponent<
             const fieldSlotProps: CInputFieldSlotProps = {
                 errorMessage: errors.errorMessage,
                 hasError: errors.hasError,
-                validate,
+                validating: errors.validating,
                 label: props.label,
                 focused: state.focused,
                 uid: fieldId,
                 preset: unref(preset).field,
                 disabled: props.disabled,
                 readonly: props.readonly,
+                clearable: props.clearable,
+                attrs: unref(fieldAttrs),
+                validate,
                 focus,
                 blur,
                 input,
-                clearable: props.clearable,
                 reset,
-                attrs: unref(fieldAttrs),
             }
 
             return (
@@ -260,6 +261,7 @@ export const CInput = genericComponent<
                                 {slots.details?.({
                                     errorMessage: errors.errorMessage,
                                     hasError: errors.hasError,
+                                    validating: errors.validating,
                                     details: props.details,
                                     uid: fieldId,
                                 })}

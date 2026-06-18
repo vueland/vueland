@@ -42,26 +42,28 @@ For example, a select component can expose visual seams such as:
 The component keeps the model, selection logic, validation, focus state, menu behavior, and accessibility-related wiring. The application controls the markup, layout, icons, and visual composition.
 
 ```vue
-<CSelect v-model="user" :items="users">
-  <template #selects="{ items }">
-    <UserChip
-      v-for="user in items"
-      :key="user.id"
-      :user="user"
-    />
-  </template>
-
-  <template #menu="{ items, onSelect }">
-    <UserList>
-      <UserListItem
+<template>
+  <CSelect v-model="user" :items="users">
+    <template #selects="{ items }">
+      <UserChip
         v-for="user in items"
         :key="user.id"
         :user="user"
-        @click="onSelect(user)"
       />
-    </UserList>
-  </template>
-</CSelect>
+    </template>
+
+    <template #menu="{ items, onSelect }">
+      <UserList>
+        <UserListItem
+          v-for="user in items"
+          :key="user.id"
+          :user="user"
+          @click="onSelect(user)"
+        />
+      </UserList>
+    </template>
+  </CSelect>
+</template>
 ```
 
 This approach is useful when a team wants the behavior of a ready-made component, but not the fixed DOM structure or visual design of a traditional component library.

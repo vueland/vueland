@@ -1,0 +1,309 @@
+@use "../../styles/modules/global-vars" as *;
+
+$self: '.c-date-picker';
+
+#{$self} {
+  --c-date-picker-width: 320px;
+  --c-date-picker-display-bg: var(--c-app-primary-color, #1976d2);
+  --c-date-picker-display-color: #fff;
+  --c-date-picker-cell-size: 36px;
+  --c-date-picker-selected-bg: var(--c-app-primary-color, #1976d2);
+  --c-date-picker-selected-color: #fff;
+  --c-date-picker-today-color: var(--c-app-primary-color, #1976d2);
+  --c-date-picker-hover-bg: rgba(0, 0, 0, .06);
+  --c-date-picker-disabled-color: var(--c-app-disabled-color, #bdbdbd);
+
+  width: var(--c-date-picker-width);
+  background: var(--c-app-surface-color, #fff);
+  border-radius: var(--c-app-border-radius, 4px);
+  overflow: hidden;
+  user-select: none;
+
+  &__display {
+    background: var(--c-date-picker-display-bg);
+    color: var(--c-date-picker-display-color);
+    padding: 16px 20px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__display-year {
+    font-size: 13px;
+    opacity: .75;
+    cursor: pointer;
+  }
+
+  &__display-date {
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 4px;
+    border-bottom: 1px solid var(--c-app-border-color, #e5e5e5);
+  }
+
+  &__header-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    color: inherit;
+    transition: background .15s;
+
+    &:hover {
+      background: var(--c-date-picker-hover-bg);
+    }
+  }
+
+  &__header-display {
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background .15s;
+
+    &:hover {
+      background: var(--c-date-picker-hover-bg);
+    }
+  }
+
+  &__body {
+    padding: 4px 8px 8px;
+    min-height: 240px;
+  }
+}
+
+// ---- Dates ----
+
+.c-date-picker-dates {
+  &__week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 4px;
+  }
+
+  &__day {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    font-size: 11px;
+    font-weight: 600;
+    opacity: .5;
+    text-transform: uppercase;
+  }
+
+  &__dates {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  &__cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--c-date-picker-cell-size);
+    height: var(--c-date-picker-cell-size);
+    margin: 1px auto;
+    border-radius: 50%;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .12s;
+
+    &:hover {
+      background: var(--c-date-picker-hover-bg);
+    }
+
+    &--empty {
+      cursor: default;
+      pointer-events: none;
+
+      &:hover {
+        background: none;
+      }
+    }
+
+    &--selected {
+      background: var(--c-date-picker-selected-bg) !important;
+      color: var(--c-date-picker-selected-color) !important;
+      font-weight: 600;
+    }
+
+    &--today {
+      color: var(--c-date-picker-today-color);
+      font-weight: 700;
+    }
+
+    &--disabled {
+      color: var(--c-date-picker-disabled-color);
+      pointer-events: none;
+      text-decoration: line-through;
+    }
+  }
+}
+
+// ---- Months ----
+
+.c-date-picker-months {
+  padding: 8px 0;
+
+  &__row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+
+  &__cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 52px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .12s;
+    border: 1.5px solid transparent;
+
+    &:hover {
+      background: var(--c-date-picker-hover-bg);
+    }
+
+    &--selected {
+      border-color: var(--c-date-picker-selected-bg);
+      color: var(--c-date-picker-today-color);
+      font-weight: 600;
+    }
+
+    &--current {
+      font-weight: 600;
+    }
+  }
+}
+
+// ---- Years ----
+
+.c-date-picker-years {
+  padding: 8px 0;
+
+  &__grid {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+
+  &__cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .12s;
+    border: 1.5px solid transparent;
+
+    &:hover {
+      background: var(--c-date-picker-hover-bg);
+    }
+
+    &--selected {
+      background: var(--c-date-picker-selected-bg);
+      color: var(--c-date-picker-selected-color);
+      font-weight: 600;
+    }
+
+    &--current {
+      border-color: var(--c-date-picker-selected-bg);
+      color: var(--c-date-picker-today-color);
+      font-weight: 600;
+    }
+  }
+}
+
+// ---- Transitions ----
+
+.c-date-slide-left-enter-active,
+.c-date-slide-left-leave-active,
+.c-date-slide-right-enter-active,
+.c-date-slide-right-leave-active,
+.c-date-slide-up-enter-active,
+.c-date-slide-up-leave-active,
+.c-date-slide-down-enter-active,
+.c-date-slide-down-leave-active {
+  transition: all .2s $primary-transition;
+  overflow: hidden;
+}
+
+.c-date-slide-left-enter-from {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+.c-date-slide-left-leave-to {
+  transform: translateX(-20px);
+  opacity: 0;
+}
+
+.c-date-slide-right-enter-from {
+  transform: translateX(-20px);
+  opacity: 0;
+}
+
+.c-date-slide-right-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+.c-date-slide-up-enter-from {
+  transform: translateY(12px);
+  opacity: 0;
+}
+
+.c-date-slide-up-leave-to {
+  transform: translateY(-12px);
+  opacity: 0;
+}
+
+.c-date-slide-down-enter-from {
+  transform: translateY(-12px);
+  opacity: 0;
+}
+
+.c-date-slide-down-leave-to {
+  transform: translateY(12px);
+  opacity: 0;
+}
+
+.c-date-fade-enter-active,
+.c-date-fade-leave-active {
+  transition: opacity .15s;
+}
+
+.c-date-fade-enter-from,
+.c-date-fade-leave-to {
+  opacity: 0;
+}

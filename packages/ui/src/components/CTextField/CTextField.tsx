@@ -7,13 +7,18 @@ import {
     type InferFactoryProps,
 } from '../../utils'
 import { CField } from '../CField'
-import { CInput, type CInputFieldSlotProps, makeCInputProps } from '../CInput'
+import {
+    CInput,
+    type CInputDetailsSlotProps,
+    type CInputFieldSlotProps,
+    makeCInputProps,
+} from '../CInput'
+
 
 export type CTextFieldSlots = {
     prepend(): VNode
     append(): VNode
-    details(props: { errorMessage?: string;
-        details?: string }): VNode
+    details(props: CInputDetailsSlotProps): VNode
 }
 
 export const CTextField = genericComponent<
@@ -56,6 +61,7 @@ export const CTextField = genericComponent<
                                     model.value = v
                                 }}
                                 focused={field.focused}
+                                error={field.hasError}
                                 label={field.label}
                                 preset={field.preset}
                                 clearable={field.clearable}
@@ -71,10 +77,19 @@ export const CTextField = genericComponent<
                             </CField>
                         </div>
                     ),
-                    details: ({ errorMessage, details }) =>
+                    details: ({
+                        errorMessage,
+                        hasError,
+                        details,
+                        uid,
+                        validating,
+                    }) =>
                         slots.details?.({
                             errorMessage,
-                            details, 
+                            hasError,
+                            details,
+                            uid,
+                            validating,
                         }) ?? (
                             <span key={errorMessage || details} class="c-text-field__details">
                                 {errorMessage || details}

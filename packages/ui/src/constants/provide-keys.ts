@@ -5,6 +5,8 @@ import type { FormAPI } from '../components/CForm/CForm'
 import type { ListAPI } from '../components/CList/CList'
 import type { AppBreakpoints, DialogsStackApi } from '../composables'
 
+export const $DATE_PICKER_HANDLERS_KEY: InjectionKey<{ onNext(): void;
+    onPrev(): void }> = Symbol()
 export const $FORM_API_KEY: InjectionKey<FormAPI> = Symbol()
 export const $LIST_API_KEY: InjectionKey<ListAPI> = Symbol()
 export const $MENU_API_KEY: InjectionKey<any> = Symbol()

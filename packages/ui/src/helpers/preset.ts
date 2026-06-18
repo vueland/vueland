@@ -35,7 +35,7 @@ export function getPresetOnly<State extends string>(
         return normalizePresetClasses(preset?.[zone] as string[])
     }
 
-    return normalizePresetClasses(preset?.[state]?.[zone] as string[])
+    return normalizePresetClasses((preset?.[state]?.[zone] ?? preset?.[zone]) as string[])
 }
 
 export function getPresetIf(condition: boolean, classes: string[] = []): string[] {

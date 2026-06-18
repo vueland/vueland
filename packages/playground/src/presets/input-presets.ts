@@ -1,24 +1,21 @@
-import type { InputPreset } from '@vueland/ui/types'
+import type { CInputPreset } from '@vueland/ui/types'
 
-export const A: InputPreset = {
+export const A: CInputPreset = {
     root: ['text-green-darken-2'],
-    field: 'field.base',
+    label: ['text-uppercase'],
     focused: {
         root: ['text-cyan-darken-2'],
     },
-    error: {
-        root: ['text-pink'],
-        field: 'field.error',
-    },
-    disabled: {},
-    details: ['text-grey', 'fs-xs'],
+    // error: {
+    //     root: ['text-pink'],
+    // },
+    // disabled: {},
+    // details: ['text-grey', 'fs-xs'],
 }
 
-export const B: InputPreset = {
+export const B: CInputPreset = {
     root: ['text-cyan'],
-    field: 'field.base',
     error: {
         root: ['text-pink'],
-        field: 'field.error',
     }
 }

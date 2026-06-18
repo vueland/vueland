@@ -1,3 +1,46 @@
+/* ─── Component examples ──────────────────────────────────────────── */
+
+.example-wrap {
+  padding: 24px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  background: var(--vp-c-bg-soft);
+  margin-bottom: 8px;
+}
+
+.example-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.example-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
+}
+
+.example-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.example-output {
+  margin-top: 12px;
+  font-size: 13px;
+  opacity: .7;
+}
+
+.example-success {
+  margin-top: 12px;
+  color: var(--c-app-success-color, #3eaf1e);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* ─── Landing page ────────────────────────────────────────────────── */
 /* Landing page */
 .VPDoc:has(.vueland-home) {
   padding: 0;

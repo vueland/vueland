@@ -2,7 +2,7 @@ import { defineComponent, provide, type VNode } from 'vue'
 
 import { $FORM_API_KEY } from '../../constants'
 
-export type ValidatorFn = () => boolean
+export type ValidatorFn = () => boolean | Promise<boolean>
 
 export interface FormAPI {
     add(fn: ValidatorFn): void
@@ -17,7 +17,8 @@ export type FormSlots = {
 
 export const CForm = defineComponent({
     name: 'CForm',
-    setup(_, { slots, expose }) {
+    props: { label: String },
+    setup(props, { slots, expose }) {
         let validators: ValidatorFn[] = []
 
         function add(fn: ValidatorFn) {
@@ -29,7 +30,7 @@ export const CForm = defineComponent({
         }
 
         async function validate(): Promise<boolean> {
-            return validators.map((fn) => fn()).every((v) => v)
+            return (await Promise.all(validators.map((fn) => fn()))).every(Boolean)
         }
 
         expose({ validate })
@@ -39,7 +40,7 @@ export const CForm = defineComponent({
         })
 
         return () => (
-            <form class="c-form" onSubmit={(e: Event) => e.preventDefault()}>
+            <form class="c-form" novalidate aria-label={props.label} onSubmit={(e: Event) => e.preventDefault()}>
                 {slots.default?.({ validate })}
             </form>
         )

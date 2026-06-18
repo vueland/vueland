@@ -317,7 +317,7 @@ describe('CTextField', () => {
         expect(wrapper.find('.c-text-field__details').text()).toBe('')
     })
 
-    it('применяет preset-классы к root и details и передает field preset в CField', () => {
+    it('применяет preset-классы к root и details и передает сгенерированный field ключ в CField', () => {
         const wrapper = mount(CTextField, {
             props: {
                 modelValue: '',
@@ -332,7 +332,7 @@ describe('CTextField', () => {
                         presets: {
                             textField: {
                                 root: ['preset-root'],
-                                field: 'preset-field',
+                                label: ['preset-label'],
                                 details: ['preset-details'],
                             },
                         },
@@ -344,7 +344,7 @@ describe('CTextField', () => {
         const field = wrapper.getComponent({ name: 'CField' })
 
         expect(wrapper.classes()).toContain('preset-root')
-        expect(field.props('preset')).toBe('preset-field')
+        expect(field.props('preset')).toBe('__field.textField')
         expect(wrapper.get('.c-input__details').classes()).toContain('preset-details')
     })
 
@@ -451,6 +451,35 @@ describe('CTextField', () => {
         expect(wrapper.get('.custom-details').text()).toBe('Подсказка')
     })
 
+    it('details slot получает hasError и uid при ошибке', async () => {
+        const wrapper = createVModelHost({
+            initialValue: 'x',
+            props: {
+                id: 'field',
+                validateOn: 'input',
+                rules: [(v: string) => ({ valid: !!v, message: 'Обязательное' })],
+            },
+            slots: {
+                details: ({ hasError, uid }: any) =>
+                    h('div', { class: 'slot-d', 'data-has-error': `${hasError}`, 'data-uid': uid }),
+            },
+        })
+
+        await wrapper.get('input.c-field-input').setValue('')
+        await nextTick()
+
+        const el = wrapper.get('.slot-d')
+
+        expect(el.attributes('data-has-error')).toBe('true')
+        expect(el.attributes('data-uid')).toBe('field')
+    })
+
+    it('disabled атрибут попадает на нативный input', () => {
+        const wrapper = createWrapper({ disabled: true })
+
+        expect(wrapper.get('input.c-field-input').attributes('disabled')).toBeDefined()
+    })
+
     it('применяет focused preset только при активном focused, не при readonly', async () => {
         const wrapper = mount(CTextField, {
             props: {
@@ -500,11 +529,11 @@ describe('CTextField', () => {
                         presets: {
                             textField: {
                                 root: ['preset-root'],
-                                field: 'preset-field',
+                                label: ['preset-label'],
                                 details: ['preset-details'],
                                 error: {
                                     root: ['preset-error-root'],
-                                    field: 'preset-error-field',
+                                    label: ['preset-error-label'],
                                     details: ['preset-error-details'],
                                 },
                             },
@@ -520,7 +549,7 @@ describe('CTextField', () => {
         const field = wrapper.getComponent({ name: 'CField' })
 
         expect(wrapper.getComponent(CTextField).classes()).toContain('preset-error-root')
-        expect(field.props('preset')).toBe('preset-error-field')
+        expect(field.props('preset')).toBe('__field.textField')
         expect(wrapper.get('.c-input__details').classes()).toContain('preset-error-details')
     })
 })

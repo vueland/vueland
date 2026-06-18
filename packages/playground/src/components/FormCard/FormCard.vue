@@ -106,7 +106,6 @@
                     validate-on="input"
                     class="form-name"
                     :preset="currentPreset"
-                    readonly
                     details="some text"
                     placeholder="введите текст"
                     clearable
@@ -152,6 +151,7 @@
 <!--                        <div v-for="it of items">{{ it.raw }}</div>-->
 <!--                    </template>-->
                 </c-autocomplete>
+                <c-date-input/>
                 <c-select
                     v-model="form.level"
                     :items="levels"
@@ -161,7 +161,7 @@
                     readonly
                     label="Select"
                 />
-                <c-checkbox v-model="checkbox" :rules="checkboxRules" readonly>
+                <c-checkbox v-model="checkbox" :rules="checkboxRules">
                     Check it required
                 </c-checkbox>
                 <c-radio v-model="checkbox">

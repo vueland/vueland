@@ -133,7 +133,7 @@ export const CSelect = genericComponent<
                                         {slots.field?.(field) ?? (
                                             <CField
                                                 {...field.attrs}
-                                                readonly
+                                                noInput
                                                 id={field.uid}
                                                 focused={field.focused}
                                                 modelValue=""

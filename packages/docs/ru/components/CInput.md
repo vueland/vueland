@@ -1,482 +1,424 @@
 # CInput
 
-`CInput` — базовый компонент для создания полей ввода во Vueland UI. Он отвечает за общий API поля: label, details, validation, состояния, ARIA, presets, prepend/append и интеграцию с формой.
+`CInput` — базовый примитив для построения компонентов ввода. Управляет состоянием фокуса, валидацией, aria-атрибутами и интеграцией с [`CForm`](/ru/components/CForm). Сам по себе не рендерит `<input>` — вместо этого предоставляет данные через слот `field`, из которых потребитель строит собственное поле.
 
-## Использование
+:::tip Когда использовать CInput напрямую?
+Для большинства задач используйте [`CTextField`](/ru/components/CTextField). `CInput` нужен, когда требуется нестандартное поле: textarea с кастомным оформлением, PIN-input, числовой степпер и другие виджеты, которым нужна валидация и состояние фокуса.
+:::
 
-```vue
-<script setup lang="ts">
-import { ref } from 'vue'
-
-const value = ref('')
+<script setup>
+import CustomFieldExample from '../../examples/CInput/CustomFieldExample.vue'
+import PresetStatesExample from '../../examples/CInput/PresetStatesExample.vue'
+import PresetCompoundExample from '../../examples/CInput/PresetCompoundExample.vue'
 </script>
 
+## Пример: кастомное поле
+
+<CustomFieldExample />
+
+::: details Показать код
+```vue
 <template>
-  <c-input
-    :model-value="value"
-    label="Email"
-    details="Введите email"
-    type="email"
-    name="email"
-    autocomplete="email"
+  <CInput
+    v-model="pin"
+    id="custom-pin"
+    label="PIN-код"
+    kind="input"
+    :rules="pinRules"
+    validate-on="blur"
   >
-    <template #field="{ uid, attrs, focused, onFocus, onBlur, onInput }">
-      <input
-        v-model="value"
-        :id="uid"
-        v-bind="attrs"
-        :value="value"
-        :data-focused="focused"
-        @focus="onFocus"
-        @blur="onBlur"
-        @input="onInput($event.target.value)"
-      />
-    </template>
-
-    <template #details="{ errorMessage, details }">
-      {{ errorMessage || details }}
-    </template>
-  </c-input>
-</template>
-```
-
-## Props
-
-| Prop           | Type                |     Default | Description                                                                                                                |
-|----------------|---------------------|------------:|----------------------------------------------------------------------------------------------------------------------------|
-| `modelValue`   | `T`                 |         —   | Значение поля.                                                                                                             |
-| `id`           | `string`            |        auto | Пользовательская часть id. Итоговый `uid` формируется как `input-${id}`. Если `id` не передан, генерируется автоматически. |
-| `label`        | `string`            | `undefined` | Текст label. Если есть `label` или слот `label`, создаётся label-блок.                                                     |
-| `details`      | `string`            | `undefined` | Текст подсказки/details. Передаётся в слот `details`.                                                                      |
-| `noDetails`    | `boolean`           |     `false` | Отключает details-блок, включая details при ошибке.                                                                        |
-| `rules`        | `ValidateFn[]`      | `undefined` | Правила валидации.                                                                                                         |
-| `validateOn`   | `'input' \| 'blur'` |   `'input'` | Режим запуска валидации.                                                                                                   |
-| `preset`       | `string`            | `undefined` | Путь к preset в `core.presets`, например `input.default`.                                                                  |
-| `clearable`    | `boolean`           | `undefined` | Включает возможность очистки значения.                                                                                     |
-| `disabled`     | `boolean`           | `undefined` | Disabled-состояние поля.                                                                                                   |
-| `readonly`     | `boolean`           | `undefined` | Readonly-состояние поля.                                                                                                   |
-| `focused`      | `boolean`           | `undefined` | Начальное focused-состояние.                                                                                               |
-
-### ValidateFn
-
-```ts
-export type ValidateFn = (value: any) => {
-  valid: boolean
-  message: string
-}
-```
-
-## Events
-| Event   | Payload     | Description                                                          |
-|---------|-------------|----------------------------------------------------------------------|
-| `focus` | `boolean`   | Вызывается после `onFocus`. Payload — текущее значение `focused`.    |
-| `blur`  | `boolean`   | Вызывается после `onBlur`. Payload — текущее значение `focused`.     |
-| `input` | `T`         | Вызывается при `onInput(value)` из `field` slot.                     |
-| `clear` | `undefined` | Вызывается при клике по кнопке очистки, если `clearable` установлен. |
-
-```vue
-<c-input
-  v-model="value"
-  @focus="focused => console.log(focused)"
-  @blur="focused => console.log(focused)"
-  @input="value => console.log(value)"
-  @clear="() => model = null"
->
-  <!-- field slot -->
-</c-input>
-```
-
-## Slots
-
-### `field`
-
-Основной слот для рендера поля.
-
-```ts
-field?(props: {
-  onInput(val: T): void
-  onFocus(): void
-  onBlur(): void
-  label?: string
-  readonly?: boolean
-  focused?: boolean
-  disabled?: boolean
-  presets?: string[] | string[][]
-  errorMessage?: string
-  hasError: boolean
-  attrs: Record<string, any>
-  uid: string
-  validate(): boolean
-}): VNode
-```
-
-| Slot prop      | Type                     | Description                                                   |
-|----------------|--------------------------|---------------------------------------------------------------|
-| `uid`          | `string`                 | Id поля. Его нужно передавать в `id` нативного input/control. |
-| `attrs`        | `Record<string, any>`    | Разрешённые атрибуты для нативного поля.                      |
-| `focused`      | `boolean`                | Текущее focused-состояние.                                    |
-| `disabled`     | `boolean \| undefined`   | Disabled-состояние.                                           |
-| `readonly`     | `boolean \| undefined`   | Readonly-состояние.                                           |
-| `label`        | `string \| undefined`    | Значение `props.label`.                                       |
-| `hasError`     | `boolean`                | Есть ли ошибка валидации.                                     |
-| `errorMessage` | `string \| undefined`    | Текст ошибки.                                                 |
-| `presets`      | `string[] \| string[][]` | Классы `preset.field`.                                        |
-| `validate`     | `() => boolean`          | Ручной запуск валидации.                                      |
-| `onFocus`      | `() => void`             | Обработчик focus.                                             |
-| `onBlur`       | `() => void`             | Обработчик blur.                                              |
-| `onInput`      | `(val: T) => void`       | Обработчик input.                                             |
-| `onClear`      | `() => void`             | Обработчик clear.                                             |
-
-```vue
-<template #field="{ uid, attrs, disabled, readonly, onFocus, onBlur, onInput }">
-  <input
-    :id="uid"
-    v-bind="attrs"
-    :disabled="disabled"
-    :readonly="readonly"
-    @focus="onFocus"
-    @blur="onBlur"
-    @input="onInput($event.target.value)"
-  />
-</template>
-```
-
-### `label`
-
-Кастомный label.
-
-```ts
-label?(props: { uid: string }): VNode | string
-```
-
-```vue
-<template #label="{ uid }">
-  <label :for="uid">Custom label</label>
-</template>
-```
-
-### `details`
-
-Контент details/error.
-
-```ts
-details?(props: {
-  errorMessage?: string
-  hasError: boolean
-  uid: string
-  details?: string
-}): VNode | string
-```
-
-```vue
-<template #details="{ errorMessage, details }">
-  {{ errorMessage || details }}
-</template>
-```
-
-### `prepend`
-
-Контент слева от field-зоны.
-
-```vue
-<template #prepend>
-  🔍
-</template>
-```
-
-### `append`
-
-Контент справа от field-зоны.
-
-```vue
-<template #append>
-  ⌘K
-</template>
-```
-
-## Exposed API
-| Method     | Type               | Description                                                         |
-|------------|--------------------|---------------------------------------------------------------------|
-| `validate` | `() => boolean`    | Запускает валидацию и возвращает результат.                         |
-| `onFocus`  | `() => void`       | Переводит поле в focused-состояние, если поле не disabled/readonly. |
-| `onBlur`   | `() => void`       | Сбрасывает focused-состояние.                                       |
-| `onInput`  | `(val: T) => void` | Эмитит событие `input`.                                             |
-| `onClear`  | `() => void`       | Эмитит событие `clear`.                                             |
-
-```vue
-<script setup lang="ts">
-import { ref } from 'vue'
-
-const inputRef = ref<{ validate(): boolean }>()
-</script>
-
-<template>
-  <c-input ref="inputRef" v-model="value">
-    <!-- field slot -->
-  </c-input>
-
-  <button @click="inputRef?.validate()">
-    Validate
-  </button>
-</template>
-```
-
-## Attrs
-
-`CInput` принимает HTML-атрибуты через `$attrs`, фильтрует их и передаёт в `field` slot как `attrs`.
-
-Разрешённые field attrs:
-
-| Attribute | Description |
-|---|---|
-| `type` | Тип input. |
-| `name` | Имя поля. |
-| `placeholder` | Placeholder. |
-| `autocomplete` | Autocomplete. |
-| `autofocus` | Autofocus. |
-| `inputmode` | Input mode. |
-| `pattern` | Pattern. |
-| `min` | Min value. |
-| `max` | Max value. |
-| `step` | Step. |
-| `minlength` | Minimum length. |
-| `maxlength` | Maximum length. |
-| `readonly` | Native readonly. |
-| `disabled` | Native disabled. |
-| `required` | Required. |
-| `tabindex` | Tab index. |
-| `enterkeyhint` | Enter key hint. |
-| `aria-*` | Любые ARIA-атрибуты. |
-| `data-*` | Любые data-атрибуты. |
-
-`id` не передаётся через `attrs`, потому что `CInput` управляет id самостоятельно.
-
-`class` добавляется на root `.c-input`, но не попадает в `field attrs`.
-
-## Validation
-
-```vue
-<script setup lang="ts">
-const required = (value: string) => ({
-  valid: !!value,
-  message: 'Поле обязательно',
-})
-</script>
-
-<template>
-  <c-input
-    v-model="value"
-    label="Name"
-    :rules="[required]"
-  >
-    <template #field="{ uid, attrs, onInput, onFocus, onBlur }">
-      <input
-        :id="uid"
-        v-bind="attrs"
-        :value="value"
-        @focus="onFocus"
-        @blur="onBlur"
-        @input="onInput($event.target.value)"
-      />
-    </template>
-
-    <template #details="{ errorMessage, details }">
-      {{ errorMessage || details }}
-    </template>
-  </c-input>
-</template>
-```
-
-При ошибке:
-
-| Result | Description |
-|---|---|
-| `hasError` | Передаётся в `field` и `details` slots. |
-| `errorMessage` | Передаётся в `field` и `details` slots. |
-| `c-input--has-error` | Добавляется на root. |
-| `aria-invalid="true"` | Добавляется в `attrs`. |
-| `aria-errormessage` | Добавляется, если есть `errorMessage` и details-блок. |
-
-## Accessibility
-
-| Attribute | When | Value |
-|---|---|---|
-| `aria-labelledby` | Есть label | `${uid}-label` |
-| `aria-describedby` | Есть details-блок | `${uid}-details` |
-| `aria-invalid` | Есть ошибка | `true` |
-| `aria-errormessage` | Есть ошибка, `errorMessage` и details-блок | `${uid}-details` |
-| `aria-readonly` | `readonly=true` | `true` |
-| `aria-disabled` | `disabled=true` | `true` |
-
-Если `noDetails=true`, `aria-describedby` и `aria-errormessage` не добавляются.
-
-Если ошибка есть, но `errorMessage` пустой, добавляется только `aria-invalid="true"`.
-
-## State classes
-
-| Class | When |
-|---|---|
-| `c-input` | Root class. |
-| `c-input--default` | Нет ошибки. |
-| `c-input--has-error` | Есть ошибка. |
-| `c-input--focused` | Поле сфокусировано. |
-| `c-input--disabled` | `disabled=true`. |
-| `c-input--readonly` | `readonly=true`. |
-| `c-input--has-value` | Значение не пустое. |
-| `c-input--has-prepend` | Есть слот `prepend`. |
-| `c-input--has-append` | Есть слот `append`. |
-
-## CSS variables
-
-| Variable | Default | Description |
-|---|---|---|
-| `--c-input-field-height` | `40px` | Высота field-зоны. |
-| `--c-input-field-border-radius` | `var(--c-app-border-radius)` | Радиус border field-зоны. |
-| `--c-input-field-border-color` | `#e5e5e5` | Цвет border field-зоны. |
-| `--c-input-field-text-color` | `var(--c-app-text-color)` | Цвет текста поля. |
-| `--c-input-details-height` | `24px` | Высота details-зоны. |
-| `--c-input-error-color` | `var(--c-app-error-color)` | Цвет ошибки. |
-| `--c-input-primary-color` | `var(--c-app-primary-color)` | Основной цвет. |
-| `--c-input-prepend-width` | `40px` | Ширина prepend-зоны. |
-| `--c-input-append-width` | `40px` | Ширина append-зоны. |
-| `--c-input-background-color` | `var(--c-app-base-color)` | Цвет фона. |
-| `--c-input-label-padding-x` | `4px` | Горизонтальный padding label. |
-| `--c-input-label-left` | `5px` | Смещение label слева. |
-| `--c-input-label-font-size` | `16px` | Размер шрифта label. |
-
-```scss
-.my-input {
-  --c-input-field-height: 48px;
-  --c-input-field-border-radius: 12px;
-  --c-input-prepend-width: 48px;
-  --c-input-append-width: 48px;
-}
-```
-
-## Presets
-
-`preset` — строковый путь к preset-объекту в `core.presets`.
-
-```vue
-<c-input
-  v-model="value"
-  preset="input.default"
-/>
-```
-
-Пример preset:
-
-```ts
-const inputPreset = {
-  root: ['input-root'],
-  field: ['input-field'],
-  input: ['input-native'],
-  label: ['input-label'],
-  details: ['input-details'],
-  prepend: ['input-prepend'],
-  append: ['input-append'],
-
-  focused: {
-    root: ['input-root--focused'],
-    field: ['input-field--focused'],
-    label: ['input-label--focused'],
-    append: ['input-append--focused'],
-  },
-
-  error: {
-    root: ['input-root--error'],
-    field: ['input-field--error'],
-    input: ['input-native--error'],
-    label: ['input-label--error'],
-    details: ['input-details--error'],
-  },
-
-  disabled: {
-    root: ['input-root--disabled'],
-    field: ['input-field--disabled'],
-    input: ['input-native--disabled'],
-    label: ['input-label--disabled'],
-  },
-
-  readonly: {
-    root: ['input-root--readonly'],
-    field: ['input-field--readonly'],
-    input: ['input-native--readonly'],
-  },
-
-  hasValue: {
-    root: ['input-root--has-value'],
-    label: ['input-label--has-value'],
-  },
-
-  hasPrepend: {
-    root: ['input-root--has-prepend'],
-    field: ['input-field--has-prepend'],
-    input: ['input-native--has-prepend'],
-    label: ['input-label--has-prepend'],
-    prepend: ['input-prepend--active'],
-  },
-
-  hasAppend: {
-    root: ['input-root--has-append'],
-    field: ['input-field--has-append'],
-    input: ['input-native--has-append'],
-    append: ['input-append--active'],
-  },
-}
-```
-
-### Preset zones
-
-| Zone | Applied to |
-|---|---|
-| `root` | `.c-input` |
-| `field` | `.c-input__field` and `field` slot prop `presets` |
-| `input` | Calculated for field implementations. Not applied by `CInput` directly. |
-| `label` | `.c-input__label` |
-| `details` | `.c-input__details` |
-| `prepend` | `.c-input__prepend` |
-| `append` | `.c-input__append` |
-
-## Component wrappers
-
-### CTextField
-
-```vue
-<template>
-  <c-input
-    v-model="model"
-    v-bind="$attrs"
-  >
-    <template #field="{ onFocus, onInput, onBlur, focused, presets, attrs, uid }">
-      <div
-        class="c-text-field"
-        :class="presets"
-      >
-        <c-field
-          :id="uid"
-          v-model="model"
-          class="c-text-field__input"
-          :focused="focused"
-          v-bind="attrs"
-          @focus="onFocus"
-          @input="onInput"
-          @blur="onBlur"
+    <template #field="field">
+      <div class="pin-wrap" :class="{ 'has-error': field.hasError }">
+        <label :for="field.uid">PIN-код</label>
+        <input
+          v-bind="field.attrs"
+          :id="field.uid"
+          type="password"
+          maxlength="4"
+          inputmode="numeric"
+          :value="pin"
+          @input="(e: any) => { pin = e.target.value; field.input(e.target.value) }"
+          @focus="field.focus"
+          @blur="field.blur"
         />
       </div>
     </template>
-
-    <template #details="{ errorMessage, details }">
-    <span class="c-text-field__details">
-      {{ errorMessage || details }}
-    </span>
+    <template #details="{ errorMessage, hasError }">
+      <span :style="{ color: hasError ? 'var(--c-app-error-color)' : 'inherit' }">
+        {{ errorMessage || '4-значный PIN' }}
+      </span>
     </template>
-  </c-input>
+  </CInput>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const pin = ref('')
+const pinRules = [
+  (v: string) => ({ valid: /^\d{4}$/.test(v), message: 'Введите 4-значный PIN' }),
+]
+</script>
+```
+:::
+
+---
+
+## Система пресетов
+
+Пресеты — основной способ стилизации компонентов на основе `CInput`. Вместо того чтобы писать условные CSS-классы в каждом шаблоне, вы один раз описываете **объект пресета** и ссылаетесь на него по имени. Компонент сам вычисляет нужные классы в зависимости от активного состояния.
+
+Пресеты работают в связке с утилитарными классами — каждое значение в пресете это массив имён утилитарных классов. Это делает пресеты независимыми от конкретного CSS-движка: они работают с любым utility-first инструментом, который вы используете.
+
+### Тип CInputPreset
+
+```ts
+type CInputZone = {
+  root?: string[]     // классы на корневом элементе CInput
+  label?: string[]    // классы на плавающем лейбле
+  input?: string[]    // классы на нативном <input>
+  details?: string[]  // классы на строке подсказки/ошибки
+}
+
+type CInputCompoundState = CInputZone & {
+  focused?: CInputZone  // составное: основное состояние + фокус одновременно
+  filled?: CInputZone   // составное: основное состояние + заполненность одновременно
+}
+
+type CInputPreset = CInputZone & {
+  // состояния взаимодействия
+  focused?: CInputZone
+  filled?: CInputZone
+  error?: CInputCompoundState
+  disabled?: CInputCompoundState
+  readonly?: CInputCompoundState
+
+  // структурные модификаторы (всегда аддитивны)
+  prepended?: CInputZone
+  appended?: CInputZone
+}
+```
+
+### Приоритет состояний
+
+В каждый момент времени активно только **одно состояние взаимодействия**. Если одновременно истинны несколько условий, побеждает состояние с наибольшим приоритетом:
+
+```
+disabled  >  readonly  >  error  >  focused  >  filled
+```
+
+Например, если у поля есть ошибка и оно при этом в фокусе, побеждает `error` — если только не определено составное состояние `error.focused`, которое в этом случае применяется вместо него.
+
+### Составные состояния (compound states)
+
+Составные состояния позволяют задать уникальную стилизацию для комбинации двух условий. Они определяются **внутри** основного состояния и замещают его, когда дополнительное условие тоже истинно:
+
+| Ключ | Когда активен |
+|------|--------------|
+| `error.focused` | есть ошибка **и** поле в фокусе |
+| `error.filled` | есть ошибка **и** поле заполнено |
+| `disabled.focused` | поле disabled **и** в фокусе |
+| `disabled.filled` | поле disabled **и** заполнено |
+| `readonly.focused` | поле readonly **и** в фокусе |
+| `readonly.filled` | поле readonly **и** заполнено |
+
+:::warning Нет фолбэка на базовый пресет
+Когда активно любое состояние взаимодействия, базовые зоны (`root`, `label` и т.д. на верхнем уровне) **не применяются**. Если в зоне состояния отсутствует конкретный ключ (например, не задан `error.label`), этот ключ вернёт `[]`, а не базовое значение.
+
+Это намеренное поведение — оно предотвращает «просачивание» цветов базового состояния при активном состоянии ошибки или другом.
+:::
+
+### Структурные модификаторы
+
+`prepended` и `appended` — единственные **всегда аддитивные** модификаторы: они добавляются поверх любого активного состояния. Используйте их для сдвига лейбла или отступов при наличии иконки в слоте:
+
+```ts
+prepended: {
+  label: ['pl-10'],  // сдвинуть лейбл вправо, чтобы не перекрывать иконку
+  input: ['pl-10'],
+}
+```
+
+### Регистрация пресетов
+
+Пресеты регистрируются глобально в `createVuelandUI`:
+
+```ts
+import { createVuelandUI } from '@vueland/ui'
+import type { CInputPreset } from '@vueland/ui/types'
+
+function makePreset(color: string): CInputPreset {
+  return {
+    root: [color],
+    focused: {
+      root: [color],
+      label: [color],
+    },
+    filled: {
+      label: [color],
+    },
+    error: {
+      root: ['text-red'],
+      label: ['text-red'],
+      focused: {
+        // исправляем ошибку — лейбл переключается на основной цвет
+        root: [color],
+        label: [color],
+      },
+      filled: {
+        label: ['text-red'],
+      },
+    },
+    disabled: {
+      root: ['opacity-50'],
+    },
+    readonly: {
+      root: ['text-grey'],
+      label: ['text-grey'],
+    },
+  }
+}
+
+const vueland = createVuelandUI({
+  presets: {
+    input: {
+      blue: makePreset('text-blue'),
+      teal: makePreset('text-teal'),
+    },
+  },
+})
+```
+
+Затем указывайте пресет по имени на любом компоненте на основе `CInput`:
+
+```vue
+<CTextField preset="input.blue" ... />
+<CTextField preset="input.teal" ... />
+```
+
+### Автогенерация CFieldPreset
+
+При регистрации `CInputPreset` компонент `CInput` автоматически выводит из него `CFieldPreset` и регистрирует его внутренне под именем `__field.<имя-пресета>`. Компонент `CField` (который отрисовывает рамку, лейбл и слоты) подхватывает его прозрачно — вам не нужно писать `CFieldPreset` вручную.
+
+Производный `CFieldPreset` содержит только зоны `label` и `input` (зоны `root` и `details` принадлежат `CInput`, а не `CField`) и сохраняет все составные подсостояния.
+
+### Все состояния наглядно
+
+<PresetStatesExample />
+
+Пример выше использует `preset="input.blue"` в шести состояниях. Обратите внимание:
+- **Default** — применяются базовые классы
+- **Focused** — `focused.label` и `focused.root` заменяют базовые
+- **Filled** — `filled.label` заменяет базовые (лейбл поднимается, цвет сохраняется)
+- **Error** — `error.root` и `error.label` заменяют всё
+- **Disabled** — применяется зона `disabled`; взаимодействие заблокировано
+- **Readonly** — применяется зона `readonly`; значение видно, но редактировать нельзя
+
+### Составные состояния в действии
+
+<PresetCompoundExample />
+
+В левой колонке `error.focused` не определён — при фокусе на поле с ошибкой лейбл остаётся красным. В правой колонке `error.focused.label` задан с основным цветом, сигнализируя пользователю, что он активно исправляет ошибку.
+
+::: details Показать определение пресета
+```ts
+// Без составных состояний
+const noCompound: CInputPreset = {
+  root: ['text-blue'],
+  focused: { label: ['text-blue'], root: ['text-blue'] },
+  filled:  { label: ['text-blue'] },
+  error: {
+    root:  ['text-red'],
+    label: ['text-red'],
+    // error.focused не задан — при error+focused остаётся красным
+  },
+}
+
+// С составными состояниями
+const withCompound: CInputPreset = {
+  root: ['text-blue'],
+  focused: { label: ['text-blue'], root: ['text-blue'] },
+  filled:  { label: ['text-blue'] },
+  error: {
+    root:  ['text-red'],
+    label: ['text-red'],
+    focused: {
+      // error + focused → лейбл переключается на основной цвет
+      label: ['text-blue'],
+      root:  ['text-blue'],
+    },
+    filled: {
+      label: ['text-red'],  // error + filled → остаётся красным
+    },
+  },
+}
+```
+:::
+
+---
+
+## API
+
+### Props
+
+| Prop | Тип | По умолчанию | Описание |
+|------|-----|-------------|----------|
+| `modelValue` | `any` | `undefined` | Значение (v-model) |
+| `id` | `string` | auto | Базовый ID для генерации `uid`, `uid-label`, `uid-details` |
+| `label` | `string` | — | Текст лейбла (передаётся в слот `field`) |
+| `details` | `string` | — | Подсказка под полем |
+| `noDetails` | `boolean` | `false` | Скрыть блок details |
+| `clearable` | `boolean` | `false` | Передать `clearable` в слот `field` |
+| `disabled` | `boolean` | `false` | Блокирует фокус, добавляет `aria-disabled` |
+| `readonly` | `boolean` | `false` | Добавляет `aria-readonly`, блокирует ввод |
+| `focused` | `boolean` | `false` | Начальное состояние фокуса |
+| `kind` | `CInputKind` | — | Тип поля. Влияет на aria-атрибуты и генерацию uid |
+| `rules` | `ValidateFn[]` | `[]` | Функции валидации |
+| `validateOn` | `'input' \| 'blur'` | `'input'` | Момент запуска валидации |
+| `preset` | `string` | — | Имя пресета (dot-путь в объекте `presets`, переданном в `createVuelandUI`) |
+
+#### Тип CInputKind
+
+```ts
+type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
+```
+
+| Значение | Поведение |
+|----------|-----------|
+| `'input'` | Стандартный текстовый ввод |
+| `'area'` | Многострочный ввод |
+| `'checkbox'` | Добавляет `aria-labelledby` автоматически |
+| `'radio'` | Добавляет `aria-labelledby` автоматически |
+| `'listbox'` | Добавляет `aria-haspopup`, `aria-controls`, `aria-expanded` |
+
+### Слоты
+
+| Слот | Пропсы | Описание |
+|------|--------|----------|
+| `field` | `CInputFieldSlotProps` | **Обязательный.** Рендерит само поле ввода |
+| `details` | `CInputDetailsSlotProps` | Замена блока подсказки/ошибки |
+
+#### Пропсы слота `field`
+
+| Проп | Тип | Описание |
+|------|-----|----------|
+| `uid` | `string` | Сгенерированный ID для нативного `<input>` |
+| `attrs` | `Record<string, any>` | Готовые aria-атрибуты и нативные attrs — передавать через `v-bind` |
+| `focused` | `boolean` | Текущее состояние фокуса |
+| `label` | `string \| undefined` | Значение prop `label` |
+| `clearable` | `boolean \| undefined` | Значение prop `clearable` |
+| `disabled` | `boolean \| undefined` | Значение prop `disabled` |
+| `readonly` | `boolean \| undefined` | Значение prop `readonly` |
+| `preset` | `string \| undefined` | Вычисленный пресет для поля |
+| `hasError` | `boolean` | Есть ли активная ошибка |
+| `errorMessage` | `string \| undefined` | Текущее сообщение об ошибке |
+| `validating` | `boolean` | Идёт ли async-валидация |
+| `focus` | `() => void` | Вызвать при фокусе нативного элемента |
+| `blur` | `() => void` | Вызвать при потере фокуса нативного элемента |
+| `input` | `(val: any) => void` | Вызвать при изменении значения |
+| `reset` | `() => void` | Сбросить ошибку валидации |
+| `validate` | `() => Promise<boolean>` | Запустить валидацию |
+
+#### Пропсы слота `details`
+
+| Проп | Тип | Описание |
+|------|-----|----------|
+| `uid` | `string` | ID поля |
+| `errorMessage` | `string \| undefined` | Сообщение об ошибке |
+| `hasError` | `boolean` | Есть ли ошибка |
+| `validating` | `boolean` | Идёт ли async-валидация |
+| `details` | `string \| undefined` | Значение prop `details` |
+
+### События
+
+| Событие | Аргументы | Описание |
+|---------|-----------|----------|
+| `focus` | `boolean` | Поле получило фокус |
+| `blur` | `boolean` | Поле потеряло фокус |
+| `input` | `any` | Значение изменилось |
+
+### Expose
+
+| Метод | Сигнатура | Описание |
+|-------|-----------|----------|
+| `validate` | `() => Promise<boolean>` | Запустить валидацию вручную |
+| `reset` | `() => void` | Сбросить ошибку |
+| `focus` | `() => void` | Программно сфокусировать |
+| `blur` | `() => void` | Программно убрать фокус |
+| `input` | `(val: any) => void` | Программно передать значение |
+
+---
+
+## Интеграция с CForm
+
+`CInput` автоматически регистрирует свой метод `validate` в ближайшем родительском `CForm`. При вызове `form.validate()` все зарегистрированные поля проверяются параллельно через `Promise.all`.
+
+```vue
+<template>
+  <CForm>
+    <template #default="{ validate }">
+      <CInput v-model="pin" :rules="rules" kind="input">
+        <template #field="field">
+          <input
+            :id="field.uid"
+            v-bind="field.attrs"
+            :value="pin"
+            @input="(e: any) => field.input(e.target.value)"
+            @focus="field.focus"
+            @blur="field.blur"
+          />
+        </template>
+      </CInput>
+      <button @click="validate">Проверить</button>
+    </template>
+  </CForm>
 </template>
 ```
 
-### CSelect / CAutocomplete
+---
 
-`CSelect` и `CAutocomplete` используют `CInput` как оболочку для label/details/validation/ARIA, а field-зона строится через `CField`, `CMenu` и `CItems`.
+## Автоматические aria-атрибуты
 
-Они прокидывают `$attrs` в `CInput`, поэтому нативные атрибуты вроде `placeholder`, `name`, `required`, `data-*`, `aria-*` не дублируются в props этих компонентов.
+`CInput` формирует aria-атрибуты и передаёт их в `field.attrs`. Используйте `v-bind="field.attrs"` на нативном элементе.
+
+| Атрибут | Условие |
+|---------|---------|
+| `aria-labelledby="{uid}-label"` | `label` задан, или `kind` = checkbox/radio |
+| `aria-label` | Если `label` задан как единственная метка |
+| `aria-describedby="{uid}-details"` | Есть details или ошибка |
+| `aria-invalid="true"` | Есть ошибка валидации |
+| `aria-errormessage="{uid}-details"` | Есть сообщение об ошибке |
+| `aria-disabled="true"` | `disabled = true` |
+| `aria-readonly="true"` | `readonly = true` |
+| `aria-haspopup="listbox"` | `kind = 'listbox'` |
+| `aria-controls="{uid}-menu"` | `kind = 'listbox'` |
+| `aria-expanded` | `kind = 'listbox'` (обновляется при фокусе) |
+
+---
+
+## CSS-переменные
+
+| Переменная | По умолчанию | Описание |
+|-----------|-------------|----------|
+| `--c-input-background-color` | `var(--c-app-surface-color)` | Фон компонента |
+| `--c-input-primary-color` | `var(--c-app-primary-color)` | Цвет текста в состоянии default |
+| `--c-input-error-color` | `var(--c-app-error-color)` | Цвет текста при ошибке |
+| `--c-input-disabled-color` | `var(--c-app-disabled-color)` | Цвет текста при disabled |
+| `--c-input-readonly-color` | `var(--c-app-primary-color)` | Цвет текста при readonly |
+| `--c-input-readonly-bg-color` | `grey lighten-4` | Фон поля при readonly |
+| `--c-input-field-border-radius` | `var(--c-app-border-radius)` | Скругление поля |
+| `--c-input-details-height` | `24px` | Высота блока details |
+
+---
+
+## CSS-классы состояний
+
+| Класс | Условие |
+|-------|---------|
+| `c-input--default` | Нет ошибки, не disabled, не readonly |
+| `c-input--focused` | В фокусе |
+| `c-input--has-error` | Ошибка валидации |
+| `c-input--disabled` | `disabled = true` |
+| `c-input--readonly` | `readonly = true` |
+| `c-input--clearable` | `clearable = true` |
+| `c-input--validating` | Идёт async-валидация |
