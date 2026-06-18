@@ -16,7 +16,7 @@ export type SelectableEventProps<T> = {
 
 export type SelectablePublicProps<T> = SelectableProps<T> & SelectableEventProps<T>
 
-export function useSelects<T>(props: IterableItemsProps<T> & SelectableProps<T>) {
+export function useSelectedChips<T>(props: IterableItemsProps<T> & SelectableProps<T>) {
     const instance = getCurrentInstance()!
     const { titleKey = '' } = props ?? {}
 
@@ -26,7 +26,7 @@ export function useSelects<T>(props: IterableItemsProps<T> & SelectableProps<T>)
             : isNotEmpty(props.modelValue),
     )
 
-    const selectedItems = computed(() => {
+    const chips = computed(() => {
         if (props.multiple) {
             return ((props.modelValue as T[] | undefined) ?? []).map(
                 (it: T) => (it as any)?.[titleKey] ?? it,
@@ -47,7 +47,7 @@ export function useSelects<T>(props: IterableItemsProps<T> & SelectableProps<T>)
 
     return {
         hasValue,
-        selectedItems,
+        chips,
         select,
     }
 }

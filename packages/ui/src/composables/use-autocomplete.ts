@@ -1,22 +1,22 @@
 import { computed, shallowRef, unref } from 'vue'
 
 import { type IterableItemsProps, useNormalizedItems } from './use-normalized-items'
-import { type SelectableProps, useSelects } from './use-selects'
+import { type SelectableProps, useSelectedChips } from './use-selected-chips'
 
 export function useAutocomplete<T = any>(props: IterableItemsProps<T> & SelectableProps<T>) {
     const normalizedItems = useNormalizedItems<T>(props as IterableItemsProps<T>)
 
     const {
-        selectedItems,
+        chips,
         hasValue,
         select,
-    } = useSelects(props)
+    } = useSelectedChips(props)
 
 
     const inputValue = shallowRef()
 
     const normalizedInput = computed(() => unref(inputValue)?.trim().toLowerCase() ?? '')
-    const isEqual = computed(() => unref(selectedItems).includes(unref(normalizedInput)))
+    const isEqual = computed(() => unref(chips).includes(unref(normalizedInput)))
 
     const searchItems = computed(() => {
         if (unref(isEqual) || !unref(normalizedInput)) {
@@ -30,7 +30,7 @@ export function useAutocomplete<T = any>(props: IterableItemsProps<T> & Selectab
 
     return {
         normalizedItems,
-        selectedItems,
+        chips,
         searchItems,
         hasValue,
         inputValue,

@@ -11,7 +11,7 @@ import {
     type SelectableProps,
     useKeyboard,
     useNormalizedItems,
-    useSelects,
+    useSelectedChips,
 } from '../../composables'
 import { IconAliases } from '../../enums'
 import {
@@ -45,7 +45,7 @@ export type CSelectSlots<T> = {
     field: CInputSlots['field']
     prepend(): VNode
     append(): VNode
-    selects(props: { items: T[] }): VNode[]
+    chips(props: { items: T[] }): VNode[]
     details(props: { errorMessage?: string;
         details?: string }): VNode
     ['no-items-message'](): string
@@ -80,10 +80,10 @@ export const CSelect = genericComponent<
 
         const normalizedItems = useNormalizedItems(props)
         const {
-            selectedItems,
+            chips,
             hasValue,
             select,
-        } = useSelects(props)
+        } = useSelectedChips(props)
 
         const { onKeydown } = useKeyboard({
             Tab: () => {
@@ -149,14 +149,14 @@ export const CSelect = genericComponent<
                                             >
                                                 {{
                                                     before: () =>
-                                                        slots.selects?.({ items: unref(selectedItems) }) ??
-                                                        unref(selectedItems).map(
+                                                        slots.chips?.({ items: unref(chips) }) ??
+                                                        unref(chips).map(
                                                             (it: any, i: number) => (
                                                                 <div
                                                                     key={`${it}`}
                                                                     class="c-selected__item"
                                                                 >
-                                                                    {`${it}${i + 1 !== unref(selectedItems).length ? ',' : ''}`}
+                                                                    {`${it}${i + 1 !== unref(chips).length ? ',' : ''}`}
                                                                 </div>
                                                             ),
                                                         ),

@@ -41,8 +41,8 @@ export type CAutocompleteSlots<Item = unknown> = {
     field: CInputFieldSlotProps
     prepend: never
     append: never
-    selects: {
-        selectedItems: ComputedRef<unknown[]>
+    chips: {
+        items: ComputedRef<unknown[]>
     }
     details: {
         errorMessage?: string
@@ -112,7 +112,7 @@ export const CAutocomplete = genericComponent<
         const {
             inputValue,
             searchItems,
-            selectedItems,
+            chips,
             hasValue,
             select,
         } = useAutocomplete(props)
@@ -220,15 +220,15 @@ export const CAutocomplete = genericComponent<
                                                         ),
 
                                                     before: () =>
-                                                        slots.selects?.({ selectedItems }) ??
-                                                        unref(selectedItems).map((it, i) => (
+                                                        slots.chips?.({ items: searchItems }) ??
+                                                        unref(chips).map((it, i) => (
                                                             <div
                                                                 class={['c-autocomplete__item']}
                                                                 key={`${it}`}
                                                             >
                                                                 {`${it}${
                                                                     i + 1 !==
-                                                                    unref(selectedItems).length
+                                                                    unref(chips).length
                                                                         ? ','
                                                                         : ''
                                                                 }`}
