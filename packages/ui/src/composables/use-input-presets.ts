@@ -1,11 +1,7 @@
 import { computed, unref } from 'vue'
 
-import type { CInputProps, InputState } from '../components'
-import {
-    getPresetOnly,
-    getPresetValueWithFallback,
-    type PresetCondition,
-} from '../helpers'
+import type { CInputProps, InputState } from '../components/CInput/CInput'
+import { getPresetOnly, getPresetValueWithFallback, type PresetCondition } from '../helpers'
 import type { InputPreset } from '../types'
 
 import { usePresets } from './use-presets'
@@ -17,16 +13,9 @@ const EMPTY_INPUT_PRESETS = {
     details: [],
 }
 
-type InputPresetZone =
-    | 'root'
-    | 'field'
-    | 'details'
+type InputPresetZone = 'root' | 'field' | 'details'
 
-type InputPresetState =
-    | 'focused'
-    | 'error'
-    | 'disabled'
-    | 'readonly'
+type InputPresetState = 'focused' | 'error' | 'disabled' | 'readonly'
 
 export function useInputPresets({
     props,
@@ -60,22 +49,17 @@ export function useInputPresets({
             ['focused', focused && isActive],
         ]
 
-        const only = (zone: InputPresetZone) => (
-            getPresetOnly(preset, zone, interactionState)
-        )
+        const only = (zone: InputPresetZone) => getPresetOnly(preset, zone, interactionState)
 
-        const onlyValue = <T>(zone: InputPresetZone) => (
+        const onlyValue = <T>(zone: InputPresetZone) =>
             getPresetValueWithFallback<T, InputPresetState>(preset, zone, interactionState)
-        )
 
         return {
             root: only('root'),
 
             field: onlyValue<string>('field'),
 
-            details: getPresetOnly(preset, 'details', [
-                ['error', hasErrorMessage],
-            ]),
+            details: getPresetOnly(preset, 'details', [['error', hasErrorMessage]]),
         }
     })
 }

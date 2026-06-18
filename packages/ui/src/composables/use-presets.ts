@@ -1,12 +1,15 @@
 import { computed, type ComputedRef } from 'vue'
 
 import type { Maybe } from '../types'
+import { propsFactory } from '../utils'
 
 import { useCore } from './use-core'
 
 export type PresetProps = {
     preset?: string
 }
+
+export const makePresetProps = propsFactory({ preset: String })
 
 export function usePresets<T>(props: PresetProps): ComputedRef<Maybe<T>> {
     const core = useCore()

@@ -11,9 +11,7 @@ import type {
     VariantMap,
 } from './types'
 
-export const DEFAULT_INCLUDE: Pattern[] = [
-    /\.(vue|js|ts|jsx|tsx|html)$/,
-]
+export const DEFAULT_INCLUDE: Pattern[] = [/\.(vue|js|ts|jsx|tsx|html)$/]
 
 export const DEFAULT_EXCLUDE: Pattern[] = [
     /(^|[/\\])node_modules([/\\]|$)/,
@@ -38,18 +36,54 @@ export const DEFAULT_BREAKPOINTS: Record<string, number> = {
 }
 
 export const DEFAULT_VARIANTS: VariantMap = {
-    hover: { kind: 'pseudo', value: 'hover' },
-    focus: { kind: 'pseudo', value: 'focus' },
-    'focus-visible': { kind: 'pseudo', value: 'focus-visible' },
-    'focus-within': { kind: 'pseudo', value: 'focus-within' },
-    active: { kind: 'pseudo', value: 'active' },
-    disabled: { kind: 'pseudo', value: 'disabled' },
-    checked: { kind: 'pseudo', value: 'checked' },
-    visited: { kind: 'pseudo', value: 'visited' },
-    first: { kind: 'pseudo', value: 'first-child' },
-    last: { kind: 'pseudo', value: 'last-child' },
-    odd: { kind: 'pseudo', value: 'nth-child(odd)' },
-    even: { kind: 'pseudo', value: 'nth-child(even)' }
+    hover: {
+        kind: 'pseudo',
+        value: 'hover', 
+    },
+    focus: {
+        kind: 'pseudo',
+        value: 'focus', 
+    },
+    'focus-visible': {
+        kind: 'pseudo',
+        value: 'focus-visible', 
+    },
+    'focus-within': {
+        kind: 'pseudo',
+        value: 'focus-within', 
+    },
+    active: {
+        kind: 'pseudo',
+        value: 'active', 
+    },
+    disabled: {
+        kind: 'pseudo',
+        value: 'disabled', 
+    },
+    checked: {
+        kind: 'pseudo',
+        value: 'checked', 
+    },
+    visited: {
+        kind: 'pseudo',
+        value: 'visited', 
+    },
+    first: {
+        kind: 'pseudo',
+        value: 'first-child', 
+    },
+    last: {
+        kind: 'pseudo',
+        value: 'last-child', 
+    },
+    odd: {
+        kind: 'pseudo',
+        value: 'nth-child(odd)', 
+    },
+    even: {
+        kind: 'pseudo',
+        value: 'nth-child(even)', 
+    },
 }
 
 const MIN_TOKEN_LENGTH = 5
@@ -75,7 +109,7 @@ function matchesPattern(value: string, pattern: Pattern): boolean {
 export function shouldProcess(
     id: string,
     include: Pattern[] = DEFAULT_INCLUDE,
-    exclude: Pattern[] = []
+    exclude: Pattern[] = [],
 ): boolean {
     const cleanId = id.split('?')[0]
 
@@ -183,8 +217,7 @@ export function extractClassCandidates(code: string): string[] {
 function tokenizeChunk(code: string): Set<string> {
     const result = new Set<string>()
 
-    const pattern =
-        /(?:[a-zA-Z0-9_-]+:)*[a-zA-Z][a-zA-Z0-9_-]*-\[[^\]\s]+(?:\s+[^\]\s]+)*\]/g
+    const pattern = /(?:[a-zA-Z0-9_-]+:)*[a-zA-Z][a-zA-Z0-9_-]*-\[[^\]\s]+(?:\s+[^\]\s]+)*\]/g
 
     for (const match of code.matchAll(pattern)) {
         const raw = match[0]
@@ -262,10 +295,7 @@ function withImportant(value: DeclarationValue, important: boolean): string {
     return `${normalized} !important`
 }
 
-function objectToDeclarations(
-    declaration: DeclarationMap,
-    important: boolean
-): string[] {
+function objectToDeclarations(declaration: DeclarationMap, important: boolean): string[] {
     return Object.entries(declaration).map(([prop, value]) => {
         return `${camelToKebab(prop)}: ${withImportant(value, important)};`
     })
@@ -273,7 +303,7 @@ function objectToDeclarations(
 
 function normalizeDeclarations(
     declaration: DeclarationMap | string[],
-    important: boolean
+    important: boolean,
 ): string[] {
     if (Array.isArray(declaration)) {
         return declaration
@@ -313,29 +343,19 @@ export function defineRule(options: RuleOptions): UtilityRule {
                 return null
             }
 
-            return {
-                declarations: normalizeDeclarations(
-                    options.declaration(value),
-                    important
-                ),
-            }
+            return { declarations: normalizeDeclarations(options.declaration(value), important) }
         },
     }
 }
 
 export const createArbitraryRule = defineRule
 
-export function resolveRule(
-    utility: string,
-    rules: UtilityRule[]
-): CssBody | null {
+export function resolveRule(utility: string, rules: UtilityRule[]): CssBody | null {
     for (const rule of rules) {
         const match = rule.match(utility)
 
         if (match) {
-            return {
-                declarations: match.declarations,
-            }
+            return { declarations: match.declarations }
         }
     }
 
@@ -352,14 +372,11 @@ function formatMathFunctions(value: string): string {
                 .trim()
 
             return `${fn}(${formatted})`
-        }
+        },
     )
 }
 
-function applySelectorVariant(
-    selector: string,
-    variant: VariantDefinition
-): string | null {
+function applySelectorVariant(selector: string, variant: VariantDefinition): string | null {
     if (variant.kind === 'pseudo') {
         return `${selector}:${variant.value}`
     }
@@ -367,9 +384,7 @@ function applySelectorVariant(
     if (variant.kind === 'selector') {
         const template = String(variant.value)
 
-        return template.includes('&')
-            ? template.replace(/&/g, selector)
-            : `${template} ${selector}`
+        return template.includes('&') ? template.replace(/&/g, selector) : `${template} ${selector}`
     }
 
     if (variant.kind === 'attribute') {
@@ -383,7 +398,7 @@ export function buildCssRule(
     parsed: ParsedToken,
     cssBody: CssBody,
     breakpoints: Record<string, number> = DEFAULT_BREAKPOINTS,
-    variants: VariantMap = DEFAULT_VARIANTS
+    variants: VariantMap = DEFAULT_VARIANTS,
 ): string | null {
     let selector = `.${escapeCssSelector(parsed.raw)}`
     const mediaVariants: string[] = []
@@ -416,12 +431,9 @@ export function buildCssRule(
 
     const body = cssBody.declarations
         .map((decl) => {
-            return decl.replace(
-                /:\s*([^;]+)(;?)$/,
-                (_match, value: string, semicolon: string) => {
-                    return `: ${formatMathFunctions(value.trim())}${semicolon}`
-                }
-            )
+            return decl.replace(/:\s*([^;]+)(;?)$/, (_match, value: string, semicolon: string) => {
+                return `: ${formatMathFunctions(value.trim())}${semicolon}`
+            })
         })
         .join('')
 

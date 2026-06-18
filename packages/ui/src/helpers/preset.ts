@@ -1,9 +1,6 @@
 export type PresetRecord = Record<string, any>
 
-export type PresetCondition<State extends string> = [
-    state: State,
-    active: boolean
-]
+export type PresetCondition<State extends string> = [state: State, active: boolean]
 
 export function normalizePresetClasses(value?: string[] | null | false): string[] {
     if (!value) {
@@ -41,10 +38,7 @@ export function getPresetOnly<State extends string>(
     return normalizePresetClasses(preset?.[state]?.[zone] as string[])
 }
 
-export function getPresetIf(
-    condition: boolean,
-    classes: string[] = [],
-): string[] {
+export function getPresetIf(condition: boolean, classes: string[] = []): string[] {
     return condition ? normalizePresetClasses(classes) : []
 }
 

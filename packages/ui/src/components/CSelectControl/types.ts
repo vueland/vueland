@@ -10,7 +10,7 @@ export interface CSelectControlProps<T = any> {
     name?: string
 }
 
-export interface CSelectControlSlots {
+export type CSelectControlSlots = {
     default(props: {
         checked: boolean
         disabled: boolean

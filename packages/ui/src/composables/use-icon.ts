@@ -42,10 +42,7 @@ export type IconResolverResult =
     | null
     | undefined
 
-export type IconResolver = (
-    name: string | number,
-    options: UseIconOptions,
-) => IconResolverResult
+export type IconResolver = (name: string | number, options: UseIconOptions) => IconResolverResult
 
 export interface ResolvedIcon {
     kind: 'svg' | 'component' | 'sprite' | 'font'
@@ -72,10 +69,7 @@ const emptyIcon = (viewBox = DEFAULT_VIEW_BOX): ResolvedIcon => ({
     found: false,
 })
 
-function normalizeIcon(
-    icon: IconResolverResult,
-    fallbackViewBox = DEFAULT_VIEW_BOX,
-): ResolvedIcon {
+function normalizeIcon(icon: IconResolverResult, fallbackViewBox = DEFAULT_VIEW_BOX): ResolvedIcon {
     if (!icon) {
         return emptyIcon(fallbackViewBox)
     }
@@ -139,32 +133,39 @@ export function useIcon(props: UseIconOptions): ComputedRef<ResolvedIcon> {
         const fallbackViewBox = props.viewBox || DEFAULT_VIEW_BOX
 
         if (props.component) {
-            return normalizeIcon({
-                kind: 'component',
-                component: props.component,
-            }, fallbackViewBox)
+            return normalizeIcon(
+                {
+                    kind: 'component',
+                    component: props.component,
+                },
+                fallbackViewBox,
+            )
         }
 
         if (props.body) {
-            return normalizeIcon({
-                kind: 'svg',
-                body: props.body,
-                viewBox: props.viewBox,
-            }, fallbackViewBox)
+            return normalizeIcon(
+                {
+                    kind: 'svg',
+                    body: props.body,
+                    viewBox: props.viewBox,
+                },
+                fallbackViewBox,
+            )
         }
 
         if (props.source === 'sprite') {
             const symbolId = `${props.spritePrefix ?? ''}${props.name ?? ''}`
 
-            const href = props.spritePath
-                ? `${props.spritePath}#${symbolId}`
-                : `#${symbolId}`
+            const href = props.spritePath ? `${props.spritePath}#${symbolId}` : `#${symbolId}`
 
-            return normalizeIcon({
-                kind: 'sprite',
-                href,
-                viewBox: props.viewBox,
-            }, fallbackViewBox)
+            return normalizeIcon(
+                {
+                    kind: 'sprite',
+                    href,
+                    viewBox: props.viewBox,
+                },
+                fallbackViewBox,
+            )
         }
 
         if (!props.name) {
@@ -175,10 +176,7 @@ export function useIcon(props: UseIconOptions): ComputedRef<ResolvedIcon> {
             const resolver = icons.sets[props.source]
 
             if (resolver) {
-                return normalizeIcon(
-                    resolver(props.name, props),
-                    fallbackViewBox,
-                )
+                return normalizeIcon(resolver(props.name, props), fallbackViewBox)
             }
         }
 

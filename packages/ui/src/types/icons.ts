@@ -17,28 +17,25 @@ export interface UseIconOptions {
 
 export type IconResolverResult =
     | {
-    kind: 'svg'
-    body: string
-    viewBox?: string
-}
+        kind: 'svg'
+        body: string
+        viewBox?: string
+    }
     | {
-    kind: 'font'
-    className: string
-    text?: string
-}
+        kind: 'font'
+        className: string
+        text?: string
+    }
     | {
-    kind: 'component'
-    component: Component
-}
+        kind: 'component'
+        component: Component
+    }
     | {
-    kind: 'sprite'
-    href: string
-    viewBox?: string
-}
+        kind: 'sprite'
+        href: string
+        viewBox?: string
+    }
     | null
     | undefined
 
-export type IconResolver = (
-    name: string | number,
-    options: UseIconOptions,
-) => IconResolverResult
+export type IconResolver = (name: string | number, options: UseIconOptions) => IconResolverResult

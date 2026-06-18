@@ -1,20 +1,21 @@
-import { computed, shallowReactive, shallowRef, unref } from 'vue'
+import {
+    computed,
+    shallowReactive,
+    shallowRef,
+    unref,
+} from 'vue'
 
 import { convertToUnit, IN_BROWSER } from '../utils'
 
 export function useAppScroll() {
-    const state = shallowReactive({
-        blockScroll: false,
-    })
+    const state = shallowReactive({ blockScroll: false })
 
     const appRef = shallowRef<HTMLElement>()
 
     let savedScrollTop = 0
     let savedScrollLeft = 0
 
-    const classes = computed(() => ({
-        'c-app--block-scroll': state.blockScroll,
-    }))
+    const classes = computed(() => ({ 'c-app--block-scroll': state.blockScroll }))
 
     function getScrollTop() {
         if (!IN_BROWSER) return 0

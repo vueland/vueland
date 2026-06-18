@@ -1,14 +1,11 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
-import {$VUELAND_UI_KEY} from '../../../constants'
+import { $VUELAND_UI_KEY } from '../../../constants'
 
 import { CTextField } from '../index'
 
-function createWrapper(
-    props: any = {},
-    slots: any = {},
-) {
+function createWrapper(props: any = {}, slots: any = {}) {
     return mount(CTextField, {
         props: {
             modelValue: '',
@@ -29,25 +26,31 @@ function createVModelHost({
     slots?: Record<string, any>
     global?: Record<string, any>
 } = {}) {
-    return mount(defineComponent({
-        setup() {
-            const value = ref(initialValue)
+    return mount(
+        defineComponent({
+            setup() {
+                const value = ref(initialValue)
 
-            return () => h(
-                CTextField,
-                {
-                    modelValue: value.value,
-                    'onUpdate:modelValue': (nextValue: string | number | null | undefined) => {
-                        value.value = nextValue as string
-                    },
-                    ...props,
-                },
-                slots,
-            )
+                return () =>
+                    h(
+                        CTextField as any,
+                        {
+                            modelValue: value.value,
+                            'onUpdate:modelValue': (
+                                nextValue: string | number | null | undefined,
+                            ) => {
+                                value.value = nextValue as string
+                            },
+                            ...props,
+                        },
+                        slots,
+                    )
+            },
+        }),
+        {
+            global,
         },
-    }), {
-        global,
-    })
+    )
 }
 
 describe('CTextField', () => {
@@ -146,7 +149,9 @@ describe('CTextField', () => {
 
         expect(wrapper.get('.c-field-label').attributes('id')).toBe('username-label')
         expect(wrapper.get('.c-field-label').text()).toBe('Username')
-        expect(wrapper.get('input.c-field-input').attributes('aria-labelledby')).toBe('username-label')
+        expect(wrapper.get('input.c-field-input').attributes('aria-labelledby')).toBe(
+            'username-label',
+        )
     })
 
     it('рендерит details по умолчанию', () => {
@@ -157,7 +162,9 @@ describe('CTextField', () => {
 
         expect(wrapper.get('.c-input__details').attributes('id')).toBe('password-details')
         expect(wrapper.get('.c-text-field__details').text()).toBe('Минимум 8 символов')
-        expect(wrapper.get('input.c-field-input').attributes('aria-describedby')).toBe('password-details')
+        expect(wrapper.get('input.c-field-input').attributes('aria-describedby')).toBe(
+            'password-details',
+        )
     })
 
     it('не рендерит details, если noDetails=true', () => {
@@ -176,13 +183,14 @@ describe('CTextField', () => {
                 details: 'Описание',
             },
             {
-                details: ({ details }: { details?: string }) => h(
-                    'div',
-                    {
-                        class: 'test-details',
-                    },
-                    `custom: ${details}`,
-                ),
+                details: ({ details }: { details?: string }) =>
+                    h(
+                        'div',
+                        {
+                            class: 'test-details',
+                        },
+                        `custom: ${details}`,
+                    ),
             },
         )
 
@@ -191,17 +199,23 @@ describe('CTextField', () => {
     })
 
     it('рендерит prepend slot', () => {
-        const wrapper = createWrapper({}, {
-            prepend: () => h('span', { class: 'test-prepend' }, 'prepend'),
-        })
+        const wrapper = createWrapper(
+            {},
+            {
+                prepend: () => h('span', { class: 'test-prepend' }, 'prepend'),
+            },
+        )
 
         expect(wrapper.get('.c-field__prepend .test-prepend').text()).toBe('prepend')
     })
 
     it('рендерит append slot', () => {
-        const wrapper = createWrapper({}, {
-            append: () => h('span', { class: 'test-append' }, 'append'),
-        })
+        const wrapper = createWrapper(
+            {},
+            {
+                append: () => h('span', { class: 'test-append' }, 'append'),
+            },
+        )
 
         expect(wrapper.get('.c-field__append .test-append').text()).toBe('append')
     })

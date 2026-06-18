@@ -95,6 +95,26 @@ Vueland is currently in active early development.
 
 The API, component contracts, package structure, and design system may evolve as the platform grows. The project is being shaped around real-world frontend needs, with a focus on flexibility, maintainability, and developer experience.
 
+## Inspiration
+
+Vueland's internal architecture draws heavily from [Vuetify](https://vuetifyjs.com).
+Many of its internal patterns were studied from Vuetify's source
+and adapted to fit Vueland's design goals.
+
+## Contributing
+
+Contributions are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md) for setup instructions, branch strategy, commit conventions, and PR guidelines.
+
+## Branch strategy
+
+The project follows **GitHub Flow**:
+
+- `master` — stable branch, always production-ready. Releases are cut from here.
+- All work happens in short-lived branches cut from `master`.
+- A branch merges back into `master` via PR after CI passes and code is reviewed.
+
+Branch naming: `feat/`, `fix/`, `refactor/`, `chore/`, `docs/` prefix followed by a short description.
+
 ## Vision
 
 The long-term vision of Vueland is to become a frontend foundation for Vue 3 projects that need more control than a traditional UI kit, but more structure than fully headless components.
@@ -205,6 +225,26 @@ Vite JIT plugin для генерации arbitrary utility-классов по 
 Vueland находится на активной ранней стадии разработки.
 
 API, контракты компонентов, структура пакетов и дизайн-система могут меняться по мере развития платформы. Проект формируется вокруг реальных потребностей frontend-разработки с акцентом на гибкость, поддерживаемость и developer experience.
+
+## Вдохновение
+
+Внутренняя архитектура Vueland во многом основана на изучении [Vuetify](https://vuetifyjs.com).
+Ряд внутренних паттернов был заимствован из исходников Vuetify
+и адаптирован под цели Vueland.
+
+## Участие в разработке
+
+Вклад приветствуется. См. [CONTRIBUTING.md](./CONTRIBUTING.md) — там описаны настройка окружения, стратегия веток, конвенции коммитов и правила PR.
+
+## Стратегия веток
+
+Проект использует **GitHub Flow**:
+
+- `master` — стабильная ветка, всегда рабочая. Релизы выходят отсюда.
+- Все изменения делаются в коротких ветках, бранчующихся от `master`.
+- Ветка вливается обратно в `master` через PR после прохождения CI и ревью.
+
+Именование веток: префикс `feat/`, `fix/`, `refactor/`, `chore/`, `docs/` + короткое описание.
 
 ## Видение
 

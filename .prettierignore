@@ -1,0 +1,12 @@
+dist
+node_modules
+packages/playground
+packages/docs
+**/.vitepress/cache
+**/.vitepress/dist
+pnpm-lock.yaml
+
+# TS/TSX/Vue форматируется через ESLint + @stylistic
+**/*.ts
+**/*.tsx
+**/*.vue

@@ -41,25 +41,28 @@ function mountUseInputPresets({
         ...initialErrors,
     }) as Reactive<ValidateState>
 
-    const wrapper = mount(defineComponent({
-        setup() {
-            result = useInputPresets({
-                props,
-                state,
-                errors,
-            })
+    const wrapper = mount(
+        defineComponent({
+            setup() {
+                result = useInputPresets({
+                    props,
+                    state,
+                    errors,
+                })
 
-            return () => h('div')
-        },
-    }), {
-        global: {
-            provide: {
-                [$VUELAND_UI_KEY as symbol]: {
-                    presets,
+                return () => h('div')
+            },
+        }),
+        {
+            global: {
+                provide: {
+                    [$VUELAND_UI_KEY as symbol]: {
+                        presets,
+                    },
                 },
             },
         },
-    })
+    )
 
     return {
         wrapper,

@@ -7,9 +7,7 @@ export function useOverlayStack() {
     const register = () => {
         const last = stack[stack.length - 1]
 
-        zIndex = last !== undefined
-            ? last + 1
-            : BASE_Z_INDEX
+        zIndex = last !== undefined ? last + 1 : BASE_Z_INDEX
 
         stack.push(zIndex)
 
@@ -26,6 +24,6 @@ export function useOverlayStack() {
 
     return {
         register,
-        unregister
+        unregister,
     }
 }

@@ -57,10 +57,7 @@ function shouldApply(value: boolean | KeyboardKey[] | undefined, key: KeyboardKe
     return false
 }
 
-export function useKeyboard(
-    handlers: KeyboardHandlers,
-    options: UseKeyboardOptions = {},
-) {
+export function useKeyboard(handlers: KeyboardHandlers, options: UseKeyboardOptions = {}) {
     const onKeydown = (event: KeyboardEvent) => {
         const key = normalizeKey(event)
 
@@ -81,7 +78,5 @@ export function useKeyboard(
         handler(event)
     }
 
-    return {
-        onKeydown,
-    }
+    return { onKeydown }
 }

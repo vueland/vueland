@@ -42,17 +42,20 @@ class ResizeObserverMock {
 function setRect(el: Element, rect: Rect) {
     Object.defineProperty(el, 'getBoundingClientRect', {
         configurable: true,
-        value: vi.fn(() => ({
-            x: rect.left ?? 0,
-            y: rect.top ?? 0,
-            top: rect.top ?? 0,
-            left: rect.left ?? 0,
-            right: (rect.left ?? 0) + (rect.width ?? 0),
-            bottom: (rect.top ?? 0) + (rect.height ?? 0),
-            width: rect.width ?? 0,
-            height: rect.height ?? 0,
-            toJSON: () => ({}),
-        } as DOMRect)),
+        value: vi.fn(
+            () =>
+                ({
+                    x: rect.left ?? 0,
+                    y: rect.top ?? 0,
+                    top: rect.top ?? 0,
+                    left: rect.left ?? 0,
+                    right: (rect.left ?? 0) + (rect.width ?? 0),
+                    bottom: (rect.top ?? 0) + (rect.height ?? 0),
+                    width: rect.width ?? 0,
+                    height: rect.height ?? 0,
+                    toJSON: () => ({}),
+                }) as DOMRect,
+        ),
     })
 }
 
@@ -96,16 +99,17 @@ async function createHarness(initialProps: HarnessProps = {}) {
                 computed(() => activatorRef.value),
             )
 
-            return () => h('div', [
-                h('button', {
-                    ref: activatorRef,
-                    'data-test': 'activator',
-                }),
-                h('div', {
-                    ref: api.contentRef,
-                    'data-test': 'content',
-                }),
-            ])
+            return () =>
+                h('div', [
+                    h('button', {
+                        ref: activatorRef,
+                        'data-test': 'activator',
+                    }),
+                    h('div', {
+                        ref: api.contentRef,
+                        'data-test': 'content',
+                    }),
+                ])
         },
     })
 
@@ -169,11 +173,15 @@ describe('useAutoPosition', () => {
             clearTimeout(id)
         })
 
-        vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
+        vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
+            this: HTMLElement,
+        ) {
             return sizes.get(this)?.width ?? 0
         })
 
-        vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function (this: HTMLElement) {
+        vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function (
+            this: HTMLElement,
+        ) {
             return sizes.get(this)?.height ?? 0
         })
 
@@ -683,10 +691,12 @@ describe('useAutoPosition', () => {
                 width: 120,
                 height: 120,
             }),
-            borderBoxSize: [{
-                inlineSize: 120,
-                blockSize: 120,
-            }] as ResizeObserverSize[],
+            borderBoxSize: [
+                {
+                    inlineSize: 120,
+                    blockSize: 120,
+                },
+            ] as ResizeObserverSize[],
         })
 
         await flushRaf()
@@ -730,10 +740,11 @@ describe('useAutoPosition', () => {
             setup() {
                 api = useAutoPosition(props)
 
-                return () => h('div', {
-                    ref: api.contentRef,
-                    'data-test': 'content',
-                })
+                return () =>
+                    h('div', {
+                        ref: api.contentRef,
+                        'data-test': 'content',
+                    })
             },
         })
 

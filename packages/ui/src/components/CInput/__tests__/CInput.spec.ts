@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 
 import { $FORM_API_KEY, $VUELAND_UI_KEY } from '../../../constants'
-import CInput from '../CInput.vue'
+import { CInput } from '../CInput'
 
 const basePresets = {
     input: {
@@ -63,37 +63,37 @@ function createWrapper({
             focus,
             blur,
             input,
-        }: any) => h('input', {
-            ...attrs,
-            id: uid,
-            class: 'test-field',
-            'data-focused': `${focused}`,
-            'data-disabled': `${!!disabled}`,
-            'data-readonly': `${!!readonly}`,
-            'data-clearable': `${!!clearable}`,
-            'data-preset': preset,
-            'data-has-error': `${hasError}`,
-            'data-error-message': errorMessage ?? '',
-            onFocus: focus,
-            onBlur: blur,
-            onInput: (e: InputEvent) => {
-                input((e.target as HTMLInputElement).value)
-            },
-        }),
+        }: any) =>
+            h('input', {
+                ...attrs,
+                id: uid,
+                class: 'test-field',
+                'data-focused': `${focused}`,
+                'data-disabled': `${!!disabled}`,
+                'data-readonly': `${!!readonly}`,
+                'data-clearable': `${!!clearable}`,
+                'data-preset': preset,
+                'data-has-error': `${hasError}`,
+                'data-error-message': errorMessage ?? '',
+                onFocus: focus,
+                onBlur: blur,
+                onInput: (e: InputEvent) => {
+                    input((e.target as HTMLInputElement).value)
+                },
+            }),
         ...slots,
     }
 
-    if (
-        !slots.details &&
-        (
-            props.details !== undefined ||
-            props.rules !== undefined
-        )
-    ) {
-        normalizedSlots.details = ({ errorMessage, details }: any) => h('span', {
-            class: 'test-details',
-            key: errorMessage || details,
-        }, errorMessage || details)
+    if (!slots.details && (props.details !== undefined || props.rules !== undefined)) {
+        normalizedSlots.details = ({ errorMessage, details }: any) =>
+            h(
+                'span',
+                {
+                    class: 'test-details',
+                    key: errorMessage || details,
+                },
+                errorMessage || details,
+            )
     }
 
     return mount(CInput as any, {
@@ -108,13 +108,11 @@ function createWrapper({
                 [$VUELAND_UI_KEY as symbol]: {
                     presets,
                 },
-                ...(
-                    formApi
-                        ? {
-                            [$FORM_API_KEY as symbol]: formApi,
-                        }
-                        : {}
-                ),
+                ...(formApi
+                    ? {
+                          [$FORM_API_KEY as symbol]: formApi,
+                      }
+                    : {}),
             },
         },
     })
@@ -158,9 +156,14 @@ describe('CInput', () => {
         it('рендерит details slot', () => {
             const wrapper = createWrapper({
                 slots: {
-                    details: ({ details }: any) => h('div', {
-                        class: 'custom-details',
-                    }, details),
+                    details: ({ details }: any) =>
+                        h(
+                            'div',
+                            {
+                                class: 'custom-details',
+                            },
+                            details,
+                        ),
                 },
                 props: {
                     details: 'Текст',
@@ -187,7 +190,7 @@ describe('CInput', () => {
             const wrapper = createWrapper({
                 props: {
                     id: 'email',
-                    kind: 'input'
+                    kind: 'input',
                 },
             })
 
@@ -196,7 +199,7 @@ describe('CInput', () => {
 
         it('генерирует uid с префиксом input-, если id не передан', () => {
             const wrapper = createWrapper({
-                props: { kind: 'input' }
+                props: { kind: 'input' },
             })
 
             expect(field(wrapper).attributes('id')).toMatch(/^input-/)
@@ -323,18 +326,18 @@ describe('CInput', () => {
 
         it('не добавляет aria-errormessage при noDetails=true', async () => {
             const wrapper = createWrapper({
-                    props: {
-                        id: 'email',
-                        noDetails: true,
-                        modelValue: '',
-                        rules: [
-                            () => ({
-                                valid: false,
-                                message: 'Ошибка',
-                            }),
-                        ],
-                    },
-                })
+                props: {
+                    id: 'email',
+                    noDetails: true,
+                    modelValue: '',
+                    rules: [
+                        () => ({
+                            valid: false,
+                            message: 'Ошибка',
+                        }),
+                    ],
+                },
+            })
 
             ;(wrapper.vm as any).validate()
             await nextTick()
@@ -464,17 +467,17 @@ describe('CInput', () => {
 
         it('переопределяет field preset активным error-состоянием', async () => {
             const wrapper = createWrapper({
-                    props: {
-                        preset: 'input.base',
-                        modelValue: '',
-                        rules: [
-                            () => ({
-                                valid: false,
-                                message: 'Ошибка',
-                            }),
-                        ],
-                    },
-                })
+                props: {
+                    preset: 'input.base',
+                    modelValue: '',
+                    rules: [
+                        () => ({
+                            valid: false,
+                            message: 'Ошибка',
+                        }),
+                    ],
+                },
+            })
 
             ;(wrapper.vm as any).validate()
             await nextTick()
@@ -522,16 +525,16 @@ describe('CInput', () => {
 
         it('добавляет error class при ошибке', async () => {
             const wrapper = createWrapper({
-                    props: {
-                        modelValue: '',
-                        rules: [
-                            () => ({
-                                valid: false,
-                                message: 'Ошибка',
-                            }),
-                        ],
-                    },
-                })
+                props: {
+                    modelValue: '',
+                    rules: [
+                        () => ({
+                            valid: false,
+                            message: 'Ошибка',
+                        }),
+                    ],
+                },
+            })
 
             ;(wrapper.vm as any).validate()
             await nextTick()
@@ -645,22 +648,21 @@ describe('CInput', () => {
 
         it('expose.reset сбрасывает ошибку валидации', async () => {
             const wrapper = createWrapper({
-                    props: {
-                        modelValue: '',
-                        rules: [
-                            () => ({
-                                valid: false,
-                                message: 'Ошибка',
-                            }),
-                        ],
-                    },
-                })
+                props: {
+                    modelValue: '',
+                    rules: [
+                        () => ({
+                            valid: false,
+                            message: 'Ошибка',
+                        }),
+                    ],
+                },
+            })
 
             ;(wrapper.vm as any).validate()
             await nextTick()
 
             expect(field(wrapper).attributes('aria-invalid')).toBe('true')
-
             ;(wrapper.vm as any).reset()
             await nextTick()
 
@@ -672,17 +674,17 @@ describe('CInput', () => {
     describe('validation', () => {
         it('показывает ошибку после ручной validate', async () => {
             const wrapper = createWrapper({
-                    props: {
-                        id: 'name',
-                        modelValue: '',
-                        rules: [
-                            () => ({
-                                valid: false,
-                                message: 'Обязательное поле',
-                            }),
-                        ],
-                    },
-                })
+                props: {
+                    id: 'name',
+                    modelValue: '',
+                    rules: [
+                        () => ({
+                            valid: false,
+                            message: 'Обязательное поле',
+                        }),
+                    ],
+                },
+            })
 
             ;(wrapper.vm as any).validate()
             await nextTick()

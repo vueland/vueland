@@ -1,21 +1,26 @@
-import { type App, type ComponentInstance, type Directive, type FunctionalComponent } from 'vue'
+import {
+    type App,
+    type ComponentInstance,
+    type Directive,
+    type FunctionalComponent,
+} from 'vue'
 
 import { createDialogsStack, useDisplay } from './composables'
-import { $BREAKPOINTS_KEY, $DIALOGS_STACK_API_KEY,$VUELAND_UI_KEY } from './constants'
+import { $BREAKPOINTS_KEY, $DIALOGS_STACK_API_KEY, $VUELAND_UI_KEY } from './constants'
 import type { IconAliases } from './enums'
 import { IN_BROWSER } from './utils'
 
 export type IconsOptions = {
-    dir?: string,
-    aliases?: Partial<Record<IconAliases, any>>,
+    dir?: string
+    aliases?: Partial<Record<IconAliases, any>>
     sets?: Record<string, any>
 }
 
 export interface LibOptions {
-    components: Record<string, ComponentInstance<any> | FunctionalComponent>,
-    directives?: Record<string, Directive>,
-    themes?: Record<string, any>,
-    icons?: IconsOptions,
+    components: Record<string, ComponentInstance<any> | FunctionalComponent>
+    directives?: Record<string, Directive>
+    themes?: Record<string, any>
+    icons?: IconsOptions
     presets?: Record<string, Record<string, any>>
     ssr?: boolean
 }
@@ -69,7 +74,7 @@ export class VuelandUI {
         }
 
         if (options.ssr && (app as any).$nuxt) {
-            (app as any).$nuxt.hook('app:suspense:resolve', () => {
+            ;(app as any).$nuxt.hook('app:suspense:resolve', () => {
                 if (IN_BROWSER) {
                     display.update()
                 }

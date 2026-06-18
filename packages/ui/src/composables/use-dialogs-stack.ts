@@ -1,4 +1,11 @@
-import { computed, type ComputedRef, defineAsyncComponent, inject, type ShallowRef, shallowRef } from 'vue'
+import {
+    computed,
+    type ComputedRef,
+    defineAsyncComponent,
+    inject,
+    type ShallowRef,
+    shallowRef,
+} from 'vue'
 
 import { $DIALOGS_STACK_API_KEY } from '../constants'
 import { isDef } from '../helpers'
@@ -12,7 +19,10 @@ export type DialogStackItem = {
 export interface DialogsStackApi {
     stack: ShallowRef<DialogStackItem[]>
     current: ComputedRef<DialogStackItem | undefined>
-    openDialog: (options: { component: () => Promise<any>, props?: Record<string, any> }) => Promise<number>
+    openDialog: (options: {
+        component: () => Promise<any>
+        props?: Record<string, any>
+    }) => Promise<number>
     closeDialog: (id?: number) => void
     closeAll: () => void
 }
@@ -24,7 +34,10 @@ export function createDialogsStack(): DialogsStackApi {
 
     const current = computed(() => stack.value[stack.value.length - 1])
 
-    const openDialog = async (options: { component: () => Promise<any>, props?: Record<string, any> }) => {
+    const openDialog = async (options: {
+        component: () => Promise<any>
+        props?: Record<string, any>
+    }) => {
         const id = ++counter
 
         stack.value = [
@@ -45,7 +58,7 @@ export function createDialogsStack(): DialogsStackApi {
             return
         }
 
-        stack.value = stack.value.filter(item => item.id !== id)
+        stack.value = stack.value.filter((item) => item.id !== id)
     }
 
     const closeAll = () => {

@@ -1,25 +1,29 @@
 <script setup lang="ts">
-    import { markRaw, ref, shallowRef, unref, watchEffect } from 'vue'
+    import { markRaw, ref, shallowRef, unref } from 'vue'
     import { IconAliases } from '@vueland/ui/enums/IconName'
     import { useCore } from '@vueland/ui/composables'
 
     const core = useCore()
 
-    const professions = shallowRef([
+    type Profession = {
+        title: string
+    }
+
+    const professions: Profession[] = [
         { title: 'Frontend' },
         { title: 'Backend' },
         { title: 'DevOPS' },
         { title: 'Security' },
-    ])
+    ]
 
-    const levels = [
+    const levels: { title: string }[] = [
         { title: 'Junior' },
         { title: 'Middle' },
         { title: 'Senior' },
         { title: 'Lead' },
     ]
 
-    const form = ref({
+    const form = ref<{profession: Profession[], name: string, level: any[], radius: any}>({
         name: '',
         level: [],
         profession: [],
@@ -56,15 +60,15 @@
 
 
     const radiusItems = [
-        {name: '2px', value: 'radius-[2px]'},
-        {name: '4px', value: 'radius-[4px]'},
-        {name: '6px', value: 'radius-[6px]'},
-        {name: '8px', value: 'radius-[8px]'},
-        {name: '10px', value: 'radius-[10px]'},
-        {name: '12px', value: 'radius-[12px]'},
-        {name: '14px', value: 'radius-[14px]'},
-        {name: '16px', value: 'radius-[16px]'},
-        {name: '18px', value: 'radius-[18px]'},
+        { name: '2px', value: 'radius-[2px]' },
+        { name: '4px', value: 'radius-[4px]' },
+        { name: '6px', value: 'radius-[6px]' },
+        { name: '8px', value: 'radius-[8px]' },
+        { name: '10px', value: 'radius-[10px]' },
+        { name: '12px', value: 'radius-[12px]' },
+        { name: '14px', value: 'radius-[14px]' },
+        { name: '16px', value: 'radius-[16px]' },
+        { name: '18px', value: 'radius-[18px]' },
     ]
 
     const currentPreset = shallowRef('input.A')
@@ -97,7 +101,7 @@
                     :rules="nameRules"
                     validate-on="input"
                     class="form-name"
-                    focused
+                    disabled
                     :preset="currentPreset"
                     details="some text"
                     placeholder="введите текст"
@@ -113,9 +117,7 @@
                     preset="input.A"
                     :items="radiusItems"
                     placeholder="выберите радиус"
-                    :options="{
-                        extKey: 'name'
-                    }"
+                    title-key="name"
                     min="3"
                     max="5"
                 />
@@ -130,8 +132,8 @@
                     :rules="professionRules"
                     multiple
                     @update:modelValue="onSelect"
+                    title-key="title"
                     :options="{
-                        extKey: 'title',
                         noItemsMessage: 'Нет совпадений',
                         menuPreset: 'menu.A',
                     }"
@@ -142,15 +144,16 @@
                             size="20"
                         />
                     </template>
+<!--                    <template #menu="{items}">-->
+<!--                        <div v-for="it of items">{{ it.raw }}</div>-->
+<!--                    </template>-->
                 </c-autocomplete>
                 <c-select
                     v-model="form.level"
                     :items="levels"
                     placeholder="выберите пункт"
                     class="mt-4"
-                    :options="{
-                        extKey: 'title',
-                    }"
+                    title-key="title"
                     label="Select"
                 />
                 <c-checkbox v-model="checkbox" :rules="checkboxRules">

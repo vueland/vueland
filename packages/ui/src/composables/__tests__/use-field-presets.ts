@@ -2,7 +2,8 @@ import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { defineComponent, h, reactive, type Reactive } from 'vue'
 
-import type { CFieldProps, CFieldSlots } from '../../components/CField/types'
+import type { CFieldProps } from '../../components/CField/CField'
+import type { CFieldSlots } from '../../components/CField/CField'
 import { $VUELAND_UI_KEY } from '../../constants'
 import { useFieldPresets } from '../use-field-presets'
 
@@ -37,25 +38,28 @@ function mountUseFieldPresets({
         ...initialSlots,
     } as CFieldSlots
 
-    const wrapper = mount(defineComponent({
-        setup() {
-            result = useFieldPresets({
-                props,
-                slots,
-                attrs,
-            })
+    const wrapper = mount(
+        defineComponent({
+            setup() {
+                result = useFieldPresets({
+                    props,
+                    slots,
+                    attrs,
+                })
 
-            return () => h('div')
-        },
-    }), {
-        global: {
-            provide: {
-                [$VUELAND_UI_KEY as symbol]: {
-                    presets,
+                return () => h('div')
+            },
+        }),
+        {
+            global: {
+                provide: {
+                    [$VUELAND_UI_KEY as symbol]: {
+                        presets,
+                    },
                 },
             },
         },
-    })
+    )
 
     return {
         wrapper,
@@ -316,8 +320,20 @@ describe('useFieldPresets', () => {
             root: ['root', 'filled-root', 'prepended-root', 'appended-root', 'focused-root'],
             input: ['input', 'filled-input', 'prepended-input', 'appended-input', 'focused-input'],
             label: ['label', 'filled-label', 'prepended-label', 'appended-label', 'focused-label'],
-            prepend: ['prepend', 'filled-prepend', 'prepended-prepend', 'appended-prepend', 'focused-prepend'],
-            append: ['append', 'filled-append', 'prepended-append', 'appended-append', 'focused-append'],
+            prepend: [
+                'prepend',
+                'filled-prepend',
+                'prepended-prepend',
+                'appended-prepend',
+                'focused-prepend',
+            ],
+            append: [
+                'append',
+                'filled-append',
+                'prepended-append',
+                'appended-append',
+                'focused-append',
+            ],
         })
     })
 
@@ -610,7 +626,12 @@ describe('useFieldPresets', () => {
         attrs.disabled = true
 
         expect(result.value.root).toEqual(['root', 'filled-root', 'focused-root', 'disabled-root'])
-        expect(result.value.label).toEqual(['label', 'filled-label', 'focused-label', 'disabled-label'])
+        expect(result.value.label).toEqual([
+            'label',
+            'filled-label',
+            'focused-label',
+            'disabled-label',
+        ])
 
         props.error = true
 

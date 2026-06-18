@@ -4,7 +4,10 @@ import { ReactiveEffect, shallowRef } from 'vue'
  * @description - кастомный эффект, для кейсов где понадобится
  * стопать и перезапускать один и тот же эффект.
  */
-export const useEffect = <T = any>(fn: () => any, scheduler?: (newVal?: any, oldVal?: any) => any) => {
+export const useEffect = <T = any>(
+    fn: () => any,
+    scheduler?: (newVal?: any, oldVal?: any) => any,
+) => {
     let oldVal: any
     const state = shallowRef()
 
@@ -31,6 +34,6 @@ export const useEffect = <T = any>(fn: () => any, scheduler?: (newVal?: any, old
         },
         get __v_isRef() {
             return true
-        }
+        },
     }
 }

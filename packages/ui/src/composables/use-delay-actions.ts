@@ -1,11 +1,17 @@
 import { isDef } from '../helpers'
+import { propsFactory } from '../utils'
 
 export type DelayProps = {
     openDelay?: number | string
     closeDelay?: number | string
 }
 
-export function useDelayedActions (props: Partial<DelayProps> & Record<string, any>) {
+export const makeDelayProps = propsFactory({
+    openDelay: [Number, String],
+    closeDelay: [Number, String],
+})
+
+export function useDelayedActions(props: Partial<DelayProps> & Record<string, any>) {
     const openDelay = (fn: (...args: any) => any) => {
         setTimeout(fn, isDef(props.openDelay) ? +props.openDelay! : 0)
     }
@@ -16,6 +22,6 @@ export function useDelayedActions (props: Partial<DelayProps> & Record<string, a
 
     return {
         openDelay,
-        closeDelay
+        closeDelay,
     }
 }

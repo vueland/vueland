@@ -32,6 +32,12 @@ $self: '.c-list-item';
     }
   }
 
+  &--focused {
+    &::before {
+      opacity: 1;
+    }
+  }
+
   &--active {
     &::before {
       opacity: 1;

@@ -3,9 +3,7 @@ const CSS_NUMBER_RE = /^-?(?:\d+|\d*\.\d+)$/
 const CSS_LENGTH_UNIT_RE =
     /(?:px|r?em|%|vw|vh|svw|svh|lvw|lvh|dvw|dvh|vmin|vmax|ch|ex|cm|mm|in|pt|pc)/
 
-const CSS_LENGTH_RE = new RegExp(
-    `^-?(?:\\d+|\\d*\\.\\d+)${CSS_LENGTH_UNIT_RE.source}$`
-)
+const CSS_LENGTH_RE = new RegExp(`^-?(?:\\d+|\\d*\\.\\d+)${CSS_LENGTH_UNIT_RE.source}$`)
 
 const CSS_COLOR_KEYWORDS = new Set([
     'transparent',
@@ -16,13 +14,7 @@ const CSS_COLOR_KEYWORDS = new Set([
     'revert',
 ])
 
-const CSS_GLOBAL_VALUES = new Set([
-    'inherit',
-    'initial',
-    'unset',
-    'revert',
-    'revert-layer',
-])
+const CSS_GLOBAL_VALUES = new Set(['inherit', 'initial', 'unset', 'revert', 'revert-layer'])
 
 export function isNumberValue(value: string): boolean {
     return CSS_NUMBER_RE.test(value)

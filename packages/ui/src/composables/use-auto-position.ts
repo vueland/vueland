@@ -4,6 +4,7 @@ import {
     type ComputedRef,
     nextTick,
     onBeforeUnmount,
+    type PropType,
     ref,
     shallowRef,
     unref,
@@ -12,10 +13,9 @@ import {
 
 import { isDef } from '../helpers'
 import type { DimensionsProps } from '../types'
-import { IN_BROWSER } from '../utils'
+import { IN_BROWSER, propsFactory } from '../utils'
 
 import { useApplication } from './use-application'
-import { type PositionProps } from './use-position-classes'
 
 export interface Dimensions {
     top: number
@@ -24,26 +24,38 @@ export interface Dimensions {
     height: number
 }
 
-export interface CoordsProps {
+export interface AutoPositionProps {
+    strategy?: 'reverse' | 'bounce'
     positionX?: number
     positionY?: number
     offsetX?: number | string
     offsetY?: number | string
-}
-
-export interface AutoPositionProps {
-    strategy?: 'reverse' | 'bounce'
+    left?: boolean
+    right?: boolean
+    top?: boolean
+    bottom?: boolean
 }
 
 type MaybeElement = Element | ComponentPublicInstance | undefined
 
 type ResolvedElement = HTMLElement | undefined
 
-type AutoPositionInputProps =
-    PositionProps &
-    CoordsProps &
-    DimensionsProps &
-    AutoPositionProps
+type AutoPositionInputProps = DimensionsProps & AutoPositionProps
+
+export const makeAutoPositionProps = propsFactory({
+    strategy: {
+        type: String as PropType<AutoPositionProps['strategy']>,
+        default: 'bounce',
+    },
+    positionX: Number,
+    positionY: Number,
+    offsetX: [Number, String],
+    offsetY: [Number, String],
+    left: Boolean,
+    right: Boolean,
+    top: Boolean,
+    bottom: Boolean,
+})
 
 const SCREEN_EDGE_OFFSET = 20
 
@@ -60,7 +72,7 @@ function getElementRect(element: HTMLElement): Dimensions {
         top,
         left,
         width,
-        height,
+        height, 
     } = element.getBoundingClientRect()
 
     return {
@@ -261,16 +273,14 @@ export function useAutoPosition(
             topEdge,
             bottomEdge,
             isBeyondTop,
-            isBeyondBottom,
+            isBeyondBottom, 
         } = getViewportYBounds(top)
 
         if (!isBeyondTop && !isBeyondBottom) {
             return top
         }
 
-        return isBeyondBottom
-            ? bottomEdge - height
-            : topEdge
+        return isBeyondBottom ? bottomEdge - height : topEdge
     }
 
     const clampLeftToViewport = (left: number) => {
@@ -280,25 +290,20 @@ export function useAutoPosition(
             leftEdge,
             rightEdge,
             isBeyondLeft,
-            isBeyondRight,
+            isBeyondRight, 
         } = getViewportXBounds(left)
 
         if (!isBeyondLeft && !isBeyondRight) {
             return left
         }
 
-        return isBeyondRight
-            ? rightEdge - width
-            : leftEdge
+        return isBeyondRight ? rightEdge - width : leftEdge
     }
 
     const resolveTop = () => {
         const top = getBaseTop()
 
-        const {
-            isBeyondTop,
-            isBeyondBottom,
-        } = getViewportYBounds(top)
+        const { isBeyondTop, isBeyondBottom } = getViewportYBounds(top)
 
         if (!isBeyondTop && !isBeyondBottom) {
             return top
@@ -314,10 +319,7 @@ export function useAutoPosition(
     const resolveLeft = () => {
         const left = getBaseLeft()
 
-        const {
-            isBeyondLeft,
-            isBeyondRight,
-        } = getViewportXBounds(left)
+        const { isBeyondLeft, isBeyondRight } = getViewportXBounds(left)
 
         if (!isBeyondLeft && !isBeyondRight) {
             return left
@@ -429,17 +431,20 @@ export function useAutoPosition(
             }
         })
 
-        watch(() => [
-            props.positionX,
-            props.positionY,
-            props.top,
-            props.bottom,
-            props.left,
-            props.right,
-            props.offsetX,
-            props.offsetY,
-            props.strategy,
-        ], scheduleUpdate)
+        watch(
+            () => [
+                props.positionX,
+                props.positionY,
+                props.top,
+                props.bottom,
+                props.left,
+                props.right,
+                props.offsetX,
+                props.offsetY,
+                props.strategy,
+            ],
+            scheduleUpdate,
+        )
 
         onBeforeUnmount(() => {
             cancelScheduledUpdate()

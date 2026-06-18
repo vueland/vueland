@@ -8,21 +8,25 @@ import { useForm } from '../use-form'
 function mountUseForm(formApi?: unknown) {
     let result: ReturnType<typeof useForm>
 
-    const wrapper = mount(defineComponent({
-        setup() {
-            result = useForm()
+    const wrapper = mount(
+        defineComponent({
+            setup() {
+                result = useForm()
 
-            return () => h('div')
+                return () => h('div')
+            },
+        }),
+        {
+            global: {
+                provide:
+                    formApi === undefined
+                        ? {}
+                        : {
+                              [$FORM_API_KEY as symbol]: formApi,
+                          },
+            },
         },
-    }), {
-        global: {
-            provide: formApi === undefined
-                ? {}
-                : {
-                    [$FORM_API_KEY as symbol]: formApi,
-                },
-        },
-    })
+    )
 
     return {
         wrapper,

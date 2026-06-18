@@ -5,13 +5,20 @@ $self: '.c-checkbox';
   display: flex;
   cursor: pointer;
   user-select: none;
+  position: relative;
   justify-content: flex-start;
   align-items: center;
   outline: none;
 
-  &--default {
+  &--default, &--readonly, &--focused {
     & > #{$self}__label {
       color: var(--c-app-text-color)
+    }
+  }
+
+  &--disabled {
+    & > #{$self}__label {
+      color: currentColor;
     }
   }
 
@@ -47,7 +54,10 @@ $self: '.c-checkbox';
   }
 
   &--error {
-    color: var(--c-app-error-color)
+    color: var(--c-app-error-color);
+    & > #{$self}__label {
+      color: currentColor;
+    }
   }
 
   & > input {
@@ -55,5 +65,8 @@ $self: '.c-checkbox';
     position: absolute;
     top: 0;
     bottom: 0;
+    left: 0;
+    right: 0;
+    cursor: pointer;
   }
 }

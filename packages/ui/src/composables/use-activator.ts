@@ -1,4 +1,12 @@
-import { type ComponentPublicInstance, computed, markRaw, shallowRef, unref } from 'vue'
+import {
+    type ComponentPublicInstance,
+    computed,
+    markRaw,
+    shallowRef,
+    unref,
+} from 'vue'
+
+import { propsFactory } from '../utils'
 
 export type ActivatorProps = {
     closeOnClick?: boolean
@@ -22,6 +30,18 @@ export type ActivatorListeners = {
     change?: (e: Event) => void
 }
 
+export const makeActivatorProps = propsFactory({
+    closeOnClick: Boolean,
+    openOnClick: Boolean,
+    openOnHover: Boolean,
+    closeOnLeave: Boolean,
+    openOnFocus: Boolean,
+    activator: {
+        type: null,
+        default: undefined,
+    },
+})
+
 export function useActivator(props: Partial<ActivatorProps> & Record<string, unknown>) {
     const activatorEl = shallowRef<ComponentPublicInstance | Element | undefined>(props.activator)
 
@@ -33,7 +53,11 @@ export function useActivator(props: Partial<ActivatorProps> & Record<string, unk
     }
 
     function getActivator(): Element {
-        return props.activator ?? (unref(activatorEl) as ComponentPublicInstance)?.$el ?? unref(activatorEl)
+        return (
+            props.activator ??
+            (unref(activatorEl) as ComponentPublicInstance)?.$el ??
+            unref(activatorEl)
+        )
     }
 
     function genListeners({
@@ -45,23 +69,15 @@ export function useActivator(props: Partial<ActivatorProps> & Record<string, unk
         close: () => void
         toggle: () => void
     }) {
-        return computed(() => (markRaw({
-            ...(props.openOnHover ? {
-                mouseenter: () => open(),
-            } : {}),
-            ...(props.closeOnLeave ? {
-                mouseleave: () => close(),
-            } : {}),
-            ...(props.openOnClick ? {
-                click: () => open(),
-            } : {}),
-            ...(props.closeOnClick ? {
-                click: () => toggle(),
-            } : {}),
-            ...(props.openOnFocus ? {
-                focus: () => open(),
-            } : {}),
-        })))
+        return computed(() =>
+            markRaw({
+                ...(props.openOnHover ? { mouseenter: () => open() } : {}),
+                ...(props.closeOnLeave ? { mouseleave: () => close() } : {}),
+                ...(props.openOnClick ? { click: () => open() } : {}),
+                ...(props.closeOnClick ? { click: () => toggle() } : {}),
+                ...(props.openOnFocus ? { focus: () => open() } : {}),
+            }),
+        )
     }
 
     return {

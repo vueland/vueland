@@ -9,5 +9,5 @@ export default defineConfig({
     treeshake: true,
     target: 'es2020',
     outDir: 'dist',
-    external: ['vite', 'node:fs', 'node:path']
+    external: ['vite', 'node:fs', 'node:path'],
 })

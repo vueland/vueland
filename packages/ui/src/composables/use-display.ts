@@ -1,4 +1,11 @@
-import { type MaybeRef, reactive, shallowRef, toRefs, unref, watchEffect } from 'vue'
+import {
+    type MaybeRef,
+    reactive,
+    shallowRef,
+    toRefs,
+    unref,
+    watchEffect,
+} from 'vue'
 
 import { IN_BROWSER } from '../utils'
 
@@ -43,7 +50,7 @@ export function useDisplay() {
         xlAndUp: false,
         lgAndUp: false,
         mdAndUp: false,
-        smAndUp: false
+        smAndUp: false,
     })
 
     const width = shallowRef(0)
@@ -68,8 +75,13 @@ export function useDisplay() {
 
         watchEffect(() => {
             const {
- xxl, xl, lg, md, sm, xs 
-} = breakpoints
+                xxl,
+                xl,
+                lg,
+                md,
+                sm,
+                xs, 
+            } = breakpoints
             const screen = unref(width)
 
             state.xs = screen < sm
@@ -96,6 +108,6 @@ export function useDisplay() {
 
     return {
         state,
-        createDisplay
+        createDisplay,
     }
 }

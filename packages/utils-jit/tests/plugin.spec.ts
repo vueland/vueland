@@ -2,9 +2,21 @@ import * as fs from 'node:fs'
 import * as os from 'node:os'
 import * as path from 'node:path'
 import type { Plugin } from 'vite'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+    afterEach,
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+} from 'vitest'
 
-import { defineRule, isColorValue, isSizeValue,utilsJIT } from '../src'
+import {
+    defineRule,
+    isColorValue,
+    isSizeValue,
+    utilsJIT,
+} from '../src'
 
 type HookPlugin = Plugin & {
     configResolved: NonNullable<Plugin['configResolved']>
@@ -38,10 +50,7 @@ function callConfigResolved(plugin: HookPlugin, root: string): void {
     callHook(plugin.configResolved as any, createConfig(root))
 }
 
-function callConfigureServer(
-    plugin: HookPlugin,
-    server: ReturnType<typeof createDevServer>
-): void {
+function callConfigureServer(plugin: HookPlugin, server: ReturnType<typeof createDevServer>): void {
     callHook(plugin.configureServer as any, server)
 }
 
@@ -55,16 +64,12 @@ function callTransform(plugin: HookPlugin, code: string, id: string): void {
 
 async function callHandleHotUpdate(
     plugin: HookPlugin,
-    ctx: ReturnType<typeof createHotContext>
+    ctx: ReturnType<typeof createHotContext>,
 ): Promise<void> {
     await callHook(plugin.handleHotUpdate as any, ctx)
 }
 
-function callWatchChange(
-    plugin: HookPlugin,
-    id: string,
-    change: WatchChangeEvent
-): void {
+function callWatchChange(plugin: HookPlugin, id: string, change: WatchChangeEvent): void {
     callHook(plugin.watchChange as any, id, change)
 }
 
@@ -109,9 +114,7 @@ function createTempProject() {
 }
 
 function createConfig(root: string) {
-    return {
-        root,
-    } as any
+    return { root } as any
 }
 
 function createDevServer() {
@@ -163,16 +166,19 @@ describe('plugins / filesystem integration', () => {
         callConfigResolved(plugin, project.root)
 
         expect(project.read('src/.generated/utils-jit.css')).toBe(
-            '/* @vueland/utils-jit: no utilities found */\n'
+            '/* @vueland/utils-jit: no utilities found */\n',
         )
     })
 
     it('сканирует проект и создаёт css для найденных utilities', () => {
-        project.write('src/App.vue', `
+        project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="w-[100px] h-[40px] hover:bg-[#fff]"></div>
             </template>
-        `)
+        `,
+        )
 
         const plugin = asHookPlugin(utilsJIT())
 
@@ -183,17 +189,18 @@ describe('plugins / filesystem integration', () => {
         expect(css).toContain('/* @vueland/utils-jit: generated utilities */')
         expect(css).toContain('.w-\\[100px\\]{width: 100px !important;}')
         expect(css).toContain('.h-\\[40px\\]{height: 40px !important;}')
-        expect(css).toContain(
-            '.hover\\:bg-\\[\\#fff\\]:hover{background-color: #fff !important;}'
-        )
+        expect(css).toContain('.hover\\:bg-\\[\\#fff\\]:hover{background-color: #fff !important;}')
     })
 
     it('сортирует css rules стабильно по token', () => {
-        project.write('src/App.vue', `
+        project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="w-[100px] h-[40px] ma-[8px]"></div>
             </template>
-        `)
+        `,
+        )
 
         const plugin = asHookPlugin(utilsJIT())
 
@@ -212,43 +219,45 @@ describe('plugins / filesystem integration', () => {
     })
 
     it('использует кастомный outFile', () => {
-        project.write('src/App.vue', `
+        project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="w-[100px]"></div>
             </template>
-        `)
+        `,
+        )
 
-        const plugin = asHookPlugin(utilsJIT({
-            outFile: 'src/styles/generated.css',
-        }))
+        const plugin = asHookPlugin(utilsJIT({ outFile: 'src/styles/generated.css' }))
 
         callConfigResolved(plugin, project.root)
 
         expect(project.read('src/styles/generated.css')).toContain(
-            '.w-\\[100px\\]{width: 100px !important;}'
+            '.w-\\[100px\\]{width: 100px !important;}',
         )
     })
 
     it('использует кастомный banner', () => {
-        project.write('src/App.vue', `
+        project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="w-[100px]"></div>
             </template>
-        `)
+        `,
+        )
 
-        const plugin = asHookPlugin(utilsJIT({
-            banner: '/* custom banner */',
-        }))
+        const plugin = asHookPlugin(utilsJIT({ banner: '/* custom banner */' }))
 
         callConfigResolved(plugin, project.root)
 
-        expect(project.read('src/.generated/utils-jit.css').startsWith('/* custom banner */')).toBe(true)
+        expect(project.read('src/.generated/utils-jit.css').startsWith('/* custom banner */')).toBe(
+            true,
+        )
     })
 
     it('не пишет пустой css при emitEmptyFile=false', () => {
-        const plugin = asHookPlugin(utilsJIT({
-            emitEmptyFile: false,
-        }))
+        const plugin = asHookPlugin(utilsJIT({ emitEmptyFile: false }))
 
         callConfigResolved(plugin, project.root)
 
@@ -256,104 +265,113 @@ describe('plugins / filesystem integration', () => {
     })
 
     it('учитывает custom breakpoints', () => {
-        project.write('src/App.vue', `
+        project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="tablet:w-[100px]"></div>
             </template>
-        `)
+        `,
+        )
 
-        const plugin = asHookPlugin(utilsJIT({
-            breakpoints: {
-                tablet: 900,
-            },
-        }))
+        const plugin = asHookPlugin(utilsJIT({ breakpoints: { tablet: 900 } }))
 
         callConfigResolved(plugin, project.root)
 
         expect(project.read('src/.generated/utils-jit.css')).toContain(
-            '@media (min-width: 900px) { .tablet\\:w-\\[100px\\]{width: 100px !important;} }'
+            '@media (min-width: 900px) { .tablet\\:w-\\[100px\\]{width: 100px !important;} }',
         )
     })
 
     it('учитывает custom selector variants', () => {
-        project.write('src/App.vue', `
+        project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="hocus:w-[100px]"></div>
             </template>
-        `)
+        `,
+        )
 
-        const plugin = asHookPlugin(utilsJIT({
-            variants: {
-                hocus: {
-                    kind: 'selector',
-                    value: '&:hover,&:focus',
+        const plugin = asHookPlugin(
+            utilsJIT({
+                variants: {
+                    hocus: {
+                        kind: 'selector',
+                        value: '&:hover,&:focus',
+                    },
                 },
-            },
-        }))
+            }),
+        )
 
         callConfigResolved(plugin, project.root)
 
         expect(project.read('src/.generated/utils-jit.css')).toContain(
-            '.hocus\\:w-\\[100px\\]:hover,.hocus\\:w-\\[100px\\]:focus{width: 100px !important;}'
+            '.hocus\\:w-\\[100px\\]:hover,.hocus\\:w-\\[100px\\]:focus{width: 100px !important;}',
         )
     })
 
     it('подключает custom rules', () => {
-        project.write('src/App.vue', `
+        project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="surface-[#fff] size-[40px]"></div>
             </template>
-        `)
+        `,
+        )
 
-        const plugin = asHookPlugin(utilsJIT({
-            rules: [
-                defineRule({
-                    name: 'surface',
-                    matcher: /^surface-\[(.+)\]$/,
-                    validate: isColorValue,
-                    declaration: (value) => ({
-                        backgroundColor: value,
+        const plugin = asHookPlugin(
+            utilsJIT({
+                rules: [
+                    defineRule({
+                        name: 'surface',
+                        matcher: /^surface-\[(.+)\]$/,
+                        validate: isColorValue,
+                        declaration: (value) => ({ backgroundColor: value }),
+                        important: false,
                     }),
-                    important: false,
-                }),
-                defineRule({
-                    name: 'size',
-                    matcher: /^size-\[(.+)\]$/,
-                    validate: isSizeValue,
-                    declaration: (value) => ({
-                        width: value,
-                        height: value,
+                    defineRule({
+                        name: 'size',
+                        matcher: /^size-\[(.+)\]$/,
+                        validate: isSizeValue,
+                        declaration: (value) => ({
+                            width: value,
+                            height: value,
+                        }),
                     }),
-                }),
-            ],
-        }))
+                ],
+            }),
+        )
 
         callConfigResolved(plugin, project.root)
 
         const css = project.read('src/.generated/utils-jit.css')
 
         expect(css).toContain('.surface-\\[\\#fff\\]{background-color: #fff;}')
-        expect(css).toContain(
-            '.size-\\[40px\\]{width: 40px !important;height: 40px !important;}'
-        )
+        expect(css).toContain('.size-\\[40px\\]{width: 40px !important;height: 40px !important;}')
     })
 
     it('игнорирует excluded files при полном сканировании', () => {
-        project.write('src/App.vue', `
+        project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="w-[100px]"></div>
             </template>
-        `)
+        `,
+        )
 
-        project.write('src/ignored/Hidden.vue', `
+        project.write(
+            'src/ignored/Hidden.vue',
+            `
             <template>
                 <div class="h-[999px]"></div>
             </template>
-        `)
+        `,
+        )
 
-        const plugin = asHookPlugin(utilsJIT({
-            exclude: [/src\/ignored/],
-        }))
+        const plugin = asHookPlugin(utilsJIT({ exclude: [/src\/ignored/] }))
 
         callConfigResolved(plugin, project.root)
 
@@ -364,15 +382,21 @@ describe('plugins / filesystem integration', () => {
     })
 
     it('игнорирует generated css file при полном сканировании', () => {
-        project.write('src/.generated/utils-jit.css', `
+        project.write(
+            'src/.generated/utils-jit.css',
+            `
             .fake { content: "w-[999px]"; }
-        `)
+        `,
+        )
 
-        project.write('src/App.vue', `
+        project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="w-[100px]"></div>
             </template>
-        `)
+        `,
+        )
 
         const plugin = asHookPlugin(utilsJIT())
 
@@ -385,22 +409,29 @@ describe('plugins / filesystem integration', () => {
     })
 
     it('transform добавляет новые utilities инкрементально', () => {
-        project.write('src/App.vue', `
+        project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="w-[100px]"></div>
             </template>
-        `)
+        `,
+        )
 
         const plugin = asHookPlugin(utilsJIT())
         const file = project.file('src/App.vue')
 
         callConfigResolved(plugin, project.root)
 
-        callTransform(plugin, `
+        callTransform(
+            plugin,
+            `
             <template>
                 <div class="w-[100px] h-[40px]"></div>
             </template>
-        `, file)
+        `,
+            file,
+        )
 
         const css = project.read('src/.generated/utils-jit.css')
 
@@ -409,22 +440,29 @@ describe('plugins / filesystem integration', () => {
     })
 
     it('transform удаляет utility, если он исчез из файла', () => {
-        project.write('src/App.vue', `
+        project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="w-[100px] h-[40px]"></div>
             </template>
-        `)
+        `,
+        )
 
         const plugin = asHookPlugin(utilsJIT())
         const file = project.file('src/App.vue')
 
         callConfigResolved(plugin, project.root)
 
-        callTransform(plugin, `
+        callTransform(
+            plugin,
+            `
             <template>
                 <div class="w-[100px]"></div>
             </template>
-        `, file)
+        `,
+            file,
+        )
 
         const css = project.read('src/.generated/utils-jit.css')
 
@@ -433,27 +471,37 @@ describe('plugins / filesystem integration', () => {
     })
 
     it('не удаляет utility, если он ещё используется в другом файле', () => {
-        project.write('src/App.vue', `
+        project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="w-[100px]"></div>
             </template>
-        `)
+        `,
+        )
 
-        project.write('src/Card.vue', `
+        project.write(
+            'src/Card.vue',
+            `
             <template>
                 <div class="w-[100px] h-[40px]"></div>
             </template>
-        `)
+        `,
+        )
 
         const plugin = asHookPlugin(utilsJIT())
 
         callConfigResolved(plugin, project.root)
 
-        callTransform(plugin, `
+        callTransform(
+            plugin,
+            `
             <template>
                 <div></div>
             </template>
-        `, project.file('src/App.vue'))
+        `,
+            project.file('src/App.vue'),
+        )
 
         const css = project.read('src/.generated/utils-jit.css')
 
@@ -462,11 +510,14 @@ describe('plugins / filesystem integration', () => {
     })
 
     it('handleHotUpdate читает файл, обновляет css и эмитит change generated css', async () => {
-        project.write('src/App.vue', `
+        project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="w-[100px]"></div>
             </template>
-        `)
+        `,
+        )
 
         const plugin = asHookPlugin(utilsJIT())
         const server = createDevServer()
@@ -474,14 +525,17 @@ describe('plugins / filesystem integration', () => {
         callConfigResolved(plugin, project.root)
         callConfigureServer(plugin, server)
 
-        await callHandleHotUpdate(plugin, createHotContext(
-            project.file('src/App.vue'),
-            `
+        await callHandleHotUpdate(
+            plugin,
+            createHotContext(
+                project.file('src/App.vue'),
+                `
                 <template>
                     <div class="h-[40px]"></div>
                 </template>
-            `
-        ))
+            `,
+            ),
+        )
 
         const css = project.read('src/.generated/utils-jit.css')
 
@@ -489,33 +543,37 @@ describe('plugins / filesystem integration', () => {
         expect(css).toContain('.h-\\[40px\\]{height: 40px !important;}')
         expect(server.watcher.emit).toHaveBeenCalledWith(
             'change',
-            project.file('src/.generated/utils-jit.css')
+            project.file('src/.generated/utils-jit.css'),
         )
     })
 
     it('handleHotUpdate игнорирует excluded file', async () => {
-        project.write('src/App.vue', `
+        project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="w-[100px]"></div>
             </template>
-        `)
+        `,
+        )
 
-        const plugin = asHookPlugin(utilsJIT({
-            exclude: [/Hidden\.vue$/],
-        }))
+        const plugin = asHookPlugin(utilsJIT({ exclude: [/Hidden\.vue$/] }))
         const server = createDevServer()
 
         callConfigResolved(plugin, project.root)
         callConfigureServer(plugin, server)
 
-        await callHandleHotUpdate(plugin, createHotContext(
-            project.file('src/Hidden.vue'),
-            `
+        await callHandleHotUpdate(
+            plugin,
+            createHotContext(
+                project.file('src/Hidden.vue'),
+                `
                 <template>
                     <div class="h-[40px]"></div>
                 </template>
-            `
-        ))
+            `,
+            ),
+        )
 
         const css = project.read('src/.generated/utils-jit.css')
 
@@ -525,11 +583,14 @@ describe('plugins / filesystem integration', () => {
     })
 
     it('watchChange delete удаляет tokens файла', () => {
-        const file = project.write('src/App.vue', `
+        const file = project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="w-[100px] h-[40px]"></div>
             </template>
-        `)
+        `,
+        )
 
         const plugin = asHookPlugin(utilsJIT())
         const server = createDevServer()
@@ -537,25 +598,26 @@ describe('plugins / filesystem integration', () => {
         callConfigResolved(plugin, project.root)
         callConfigureServer(plugin, server)
 
-        callWatchChange(plugin, file, {
-            event: 'delete',
-        })
+        callWatchChange(plugin, file, { event: 'delete' })
 
         const css = project.read('src/.generated/utils-jit.css')
 
         expect(css).toBe('/* @vueland/utils-jit: no utilities found */\n')
         expect(server.watcher.emit).toHaveBeenCalledWith(
             'change',
-            project.file('src/.generated/utils-jit.css')
+            project.file('src/.generated/utils-jit.css'),
         )
     })
 
     it('watchChange update перечитывает файл с диска', () => {
-        const file = project.write('src/App.vue', `
+        const file = project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="w-[100px]"></div>
             </template>
-        `)
+        `,
+        )
 
         const plugin = asHookPlugin(utilsJIT())
         const server = createDevServer()
@@ -563,15 +625,17 @@ describe('plugins / filesystem integration', () => {
         callConfigResolved(plugin, project.root)
         callConfigureServer(plugin, server)
 
-        fs.writeFileSync(file, `
+        fs.writeFileSync(
+            file,
+            `
             <template>
                 <div class="h-[40px]"></div>
             </template>
-        `, 'utf8')
+        `,
+            'utf8',
+        )
 
-        callWatchChange(plugin, file, {
-            event: 'update',
-        })
+        callWatchChange(plugin, file, { event: 'update' })
 
         const css = project.read('src/.generated/utils-jit.css')
 
@@ -580,21 +644,27 @@ describe('plugins / filesystem integration', () => {
     })
 
     it('buildStart пересканирует проект полностью', () => {
-        project.write('src/App.vue', `
+        project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="w-[100px]"></div>
             </template>
-        `)
+        `,
+        )
 
         const plugin = asHookPlugin(utilsJIT())
 
         callConfigResolved(plugin, project.root)
 
-        project.write('src/App.vue', `
+        project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="h-[40px]"></div>
             </template>
-        `)
+        `,
+        )
 
         callBuildStart(plugin)
 
@@ -605,11 +675,14 @@ describe('plugins / filesystem integration', () => {
     })
 
     it('не падает, если файл удалить до watchChange update', () => {
-        const file = project.write('src/App.vue', `
+        const file = project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="w-[100px]"></div>
             </template>
-        `)
+        `,
+        )
 
         const plugin = asHookPlugin(utilsJIT())
 
@@ -618,9 +691,7 @@ describe('plugins / filesystem integration', () => {
         fs.rmSync(file)
 
         expect(() => {
-            callWatchChange(plugin, file, {
-                event: 'update',
-            })
+            callWatchChange(plugin, file, { event: 'update' })
         }).not.toThrow()
 
         const css = project.read('src/.generated/utils-jit.css')
@@ -629,11 +700,14 @@ describe('plugins / filesystem integration', () => {
     })
 
     it('не эмитит watcher change, если css не изменился', () => {
-        project.write('src/App.vue', `
+        project.write(
+            'src/App.vue',
+            `
             <template>
                 <div class="w-[100px]"></div>
             </template>
-        `)
+        `,
+        )
 
         const plugin = asHookPlugin(utilsJIT())
         const server = createDevServer()
@@ -641,11 +715,15 @@ describe('plugins / filesystem integration', () => {
         callConfigResolved(plugin, project.root)
         callConfigureServer(plugin, server)
 
-        callTransform(plugin, `
+        callTransform(
+            plugin,
+            `
             <template>
                 <div class="w-[100px]"></div>
             </template>
-        `, project.file('src/App.vue'))
+        `,
+            project.file('src/App.vue'),
+        )
 
         expect(server.watcher.emit).not.toHaveBeenCalled()
     })
