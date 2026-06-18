@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { markRaw, ref, shallowRef, unref } from 'vue'
+    import { markRaw, ref, shallowRef, unref, watchEffect } from 'vue'
     import { IconAliases } from '@vueland/ui/enums/IconName'
     import { useCore } from '@vueland/ui/composables'
 
@@ -82,6 +82,10 @@
         currentPreset.value = 'input.E'
     }
 
+    watchEffect(() => {
+        console.log(unref(form).radius)
+    })
+
     const onSelect = () => {
         // professions.value = professions.value.slice(0, -1)
     }
@@ -101,8 +105,8 @@
                     :rules="nameRules"
                     validate-on="input"
                     class="form-name"
-                    disabled
                     :preset="currentPreset"
+                    readonly
                     details="some text"
                     placeholder="введите текст"
                     clearable
@@ -154,9 +158,10 @@
                     placeholder="выберите пункт"
                     class="mt-4"
                     title-key="title"
+                    readonly
                     label="Select"
                 />
-                <c-checkbox v-model="checkbox" :rules="checkboxRules">
+                <c-checkbox v-model="checkbox" :rules="checkboxRules" readonly>
                     Check it required
                 </c-checkbox>
                 <c-radio v-model="checkbox">

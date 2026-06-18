@@ -206,6 +206,34 @@ describe('CField', () => {
         expect(focusSpy).toHaveBeenCalledTimes(1)
     })
 
+    it('не эмитит focus при disabled', async () => {
+        const wrapper = mount(CField, {
+            props: { disabled: true },
+        })
+
+        await wrapper.find('input').trigger('focus')
+
+        expect(wrapper.emitted('focus')).toBeUndefined()
+    })
+
+    it('эмитит focus при readonly', async () => {
+        const wrapper = mount(CField, {
+            props: { readonly: true },
+        })
+
+        await wrapper.find('input').trigger('focus')
+
+        expect(wrapper.emitted('focus')).toBeTruthy()
+    })
+
+    it('эмитит focus когда нет disabled/readonly', async () => {
+        const wrapper = mount(CField)
+
+        await wrapper.find('input').trigger('focus')
+
+        expect(wrapper.emitted('focus')).toBeTruthy()
+    })
+
     it('обновляет классы при изменении props', async () => {
         const wrapper = mount(CField, {
             props: {

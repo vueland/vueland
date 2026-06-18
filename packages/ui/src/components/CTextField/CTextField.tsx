@@ -24,9 +24,20 @@ export const CTextField = genericComponent<
     InferFactoryProps<ReturnType<typeof makeCInputProps>>
 >()({
     name: 'CTextField',
-    emits: emitsFactory<{ 'update:modelValue': [unknown] }>({ 'update:modelValue': () => true }),
-    props: { modelValue: [String, Number] },
-    setup(props, { slots, attrs }) {
+    inheritAttrs: false,
+    emits: emitsFactory<{ 'update:modelValue': [unknown];
+        focus: [];
+        blur: [] }>({
+        'update:modelValue': () => true,
+        focus: () => true,
+        blur: () => true,
+    }),
+    props: { modelValue: [String, Number, null] as any },
+    setup(props, {
+        slots,
+        attrs,
+        emit,
+    }) {
         const model = useModel(props, 'modelValue')
 
         function onClear() {
@@ -34,7 +45,7 @@ export const CTextField = genericComponent<
         }
 
         return () => (
-            <CInput modelValue={model.value} {...attrs} kind="input">
+            <CInput modelValue={model.value} {...attrs} kind="input" onFocus={() => emit('focus')} onBlur={() => emit('blur')}>
                 {{
                     field: (field: CInputFieldSlotProps) => (
                         <div class="c-text-field">

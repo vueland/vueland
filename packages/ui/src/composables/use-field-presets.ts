@@ -18,14 +18,9 @@ function mergePresetClasses(base?: string[], ...states: (string[] | undefined)[]
     return [...(base ?? []), ...states.flatMap((it) => it ?? [])]
 }
 
-export function useFieldPresets({
-    props,
-    slots,
-    attrs,
-}: {
+export function useFieldPresets({ props,slots }: {
     props: CFieldProps
     slots: CFieldSlots
-    attrs: Record<string, any>
 }) {
     const presets = usePresets<FieldPreset>(props)
 
@@ -41,8 +36,8 @@ export function useFieldPresets({
         const isAppended = !!slots.append
 
         const isFocused = !!props.focused
-        const isReadonly = !!attrs.readonly
-        const isDisabled = !!attrs.disabled
+        const isReadonly = !!props.readonly
+        const isDisabled = !!props.disabled
         const hasError = !!props.error
 
         return {

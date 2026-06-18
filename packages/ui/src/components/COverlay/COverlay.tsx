@@ -1,11 +1,11 @@
 import {
     defineComponent,
     onBeforeUnmount,
-    type ShallowRef,
     shallowRef,
     Teleport,
     unref,
     useModel,
+    type VNode,
     watchEffect,
 } from 'vue'
 
@@ -13,7 +13,7 @@ import { useOverlayStack } from '../../composables'
 import { propsFactory } from '../../utils'
 
 export type COverlaySlots = {
-    default: { zIndex: ShallowRef<number> }
+    default(props: { zIndex: number }): VNode
 }
 
 const makeOverlayProps = propsFactory({

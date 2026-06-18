@@ -10,9 +10,27 @@ $self: '.c-checkbox';
   align-items: center;
   outline: none;
 
-  &--default, &--readonly, &--focused {
+  &--default, &--focused {
     & > #{$self}__label {
       color: var(--c-app-text-color)
+    }
+  }
+
+  &--readonly {
+    cursor: default;
+
+    & > input {
+      cursor: default;
+      pointer-events: none;
+    }
+
+    & > #{$self}__icon {
+      opacity: 0.8;
+    }
+
+    & > #{$self}__label {
+      color: var(--c-app-text-color);
+      opacity: 0.8;
     }
   }
 

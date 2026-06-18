@@ -70,6 +70,8 @@ export type CInputFieldSlotProps<T = any> = {
     label?: string
     focused: boolean
     clearable?: boolean
+    readonly?: boolean
+    disabled?: boolean
     preset?: string
     errorMessage: ValidateState['errorMessage']
     hasError: ValidateState['hasError']
@@ -122,7 +124,7 @@ export const CInput = genericComponent<
         slots,
     }) {
         const state = shallowReactive<InputState>({
-            focused: (props as any).focused ?? false,
+            focused: props.focused ?? false,
             isDirty: false,
         })
 
@@ -136,15 +138,15 @@ export const CInput = genericComponent<
         const attrs = useAttrs()
 
         const preset = useInputPresets({
-            props: props as any,
+            props,
             state,
             errors,
         })
 
-        const fieldId = useId((props as any).id, { prefix: (props as any).kind })
-        const isListBox = (props as any).kind === 'listbox'
-        const isCheckBox = (props as any).kind === 'checkbox'
-        const isRadio = (props as any).kind === 'radio'
+        const fieldId = useId(props.id, { prefix: props.kind })
+        const isListBox = props.kind === 'listbox'
+        const isCheckBox = props.kind === 'checkbox'
+        const isRadio = props.kind === 'radio'
 
         const hasDetails = computed(
             () => !props.noDetails && (!!props.details || !!slots?.details || errors.hasError),
@@ -236,6 +238,8 @@ export const CInput = genericComponent<
                 focused: state.focused,
                 uid: fieldId,
                 preset: unref(preset).field,
+                disabled: props.disabled,
+                readonly: props.readonly,
                 focus,
                 blur,
                 input,

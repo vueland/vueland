@@ -59,6 +59,7 @@ export const CSelect = genericComponent<
     InferFactoryProps<ReturnType<typeof makeCInputProps>>
 >()({
     name: 'CSelect',
+    inheritAttrs: false,
     emits: emitsFactory<{ 'update:modelValue': [unknown] }>({ 'update:modelValue': () => true }),
     props: {
         modelValue: null,
@@ -79,6 +80,7 @@ export const CSelect = genericComponent<
         const menuListRef = shallowRef()
 
         const normalizedItems = useNormalizedItems(props)
+
         const {
             chips,
             hasValue,
@@ -126,12 +128,12 @@ export const CSelect = genericComponent<
                             onClose={onBlur}
                         >
                             {{
-                                activator: ({ on, activator }: any) => (
+                                activator: ({ on, activator }) => (
                                     <div class="c-select" {...activator}>
                                         {slots.field?.(field) ?? (
                                             <CField
                                                 {...field.attrs}
-                                                {...{ readonly: true }}
+                                                readonly
                                                 id={field.uid}
                                                 focused={field.focused}
                                                 modelValue=""
@@ -141,6 +143,7 @@ export const CSelect = genericComponent<
                                                 preset={field.preset}
                                                 filled={hasValue.value}
                                                 onFocus={() => {
+                                                    if(field.readonly) return
                                                     on.focus?.()
                                                     onFocus()
                                                 }}
@@ -179,7 +182,7 @@ export const CSelect = genericComponent<
                                         <CList
                                             ref={menuListRef}
                                             modelValue={model.value}
-                                            onUpdate:modelValue={(v: NormalizedItem<unknown>) => {
+                                            onUpdate:modelValue={(v: unknown) => {
                                                 model.value = v
                                             }}
                                             role="listbox"
@@ -190,7 +193,7 @@ export const CSelect = genericComponent<
                                             {unref(normalizedItems).map((item: NormalizedItem<unknown>) => (
                                                 <CListItem
                                                     key={item.key}
-                                                    value={item.value ?? item.raw}
+                                                    value={props.valueKey ? item.value : item.raw}
                                                 >
                                                     <CListItemTitle>{item.title}</CListItemTitle>
                                                 </CListItem>
@@ -200,7 +203,7 @@ export const CSelect = genericComponent<
                             }}
                         </CMenu>
                     ),
-                    details: ({ errorMessage, details }: any) =>
+                    details: ({ errorMessage, details }) =>
                         slots.details?.({
                             errorMessage,
                             details,

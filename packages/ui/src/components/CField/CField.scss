@@ -2,10 +2,10 @@
 
 $field-padding: 4px 0;
 $self: '.c-field';
-$field-border-color: #e5e5e5;
 
 #{$self} {
-  --c-field-default-border-color: #{$field-border-color};
+  --c-field-border-color: var(--c-app-border-color, #e5e5e5);
+  --c-field-disabled-opacity: 0.5;
 
   min-height: 40px;
   position: relative;
@@ -16,10 +16,22 @@ $field-border-color: #e5e5e5;
   border-radius: var(--c-app-border-radius);
   border: thin solid;
   transition: .2s $primary-transition;
-  transition-property: color, border-color;
+  transition-property: color, border-color, opacity;
 
   &--default {
-    border-color: var(--c-field-default-border-color);
+    border-color: var(--c-field-border-color);
+  }
+
+  &--disabled {
+    opacity: var(--c-field-disabled-opacity);
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  &--readonly {
+    cursor: default;
+    border-style: dashed;
+    border-color: var(--c-field-border-color);
   }
 
   &__core {
@@ -38,9 +50,9 @@ $field-border-color: #e5e5e5;
     opacity: 0;
   }
 
-  &-input{
+  &-input {
     flex: 1 1;
-    cursor: text;
+    cursor: inherit;
     outline: none;
     min-width: 20%;
     width: 100%;

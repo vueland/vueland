@@ -22,6 +22,7 @@ export type CFieldSlots = {
     append?(): VNode
     before?(): VNode | VNode[]
     after?(): VNode | VNode[]
+    clear?(): VNode
 }
 
 const makeCFieldProps = propsFactory({
@@ -33,6 +34,8 @@ const makeCFieldProps = propsFactory({
     focused: Boolean,
     clearable: Boolean,
     error: Boolean,
+    disabled: Boolean,
+    readonly: Boolean,
     modelValue: [String, Number] as PropType<string | number | undefined | null>,
     onKeydown: Function as PropType<(e: KeyboardEvent) => void>,
 })
@@ -50,8 +53,8 @@ export const CField = defineComponent({
         const presets = useFieldPresets({
             slots,
             props,
-            attrs,
         })
+
         const hasValue = computed(() => props.filled || !!unref(value))
         const showClearBtn = computed(() => props.clearable && props.focused && unref(hasValue))
 
@@ -60,13 +63,15 @@ export const CField = defineComponent({
                 'c-field--focused': props.focused,
                 'c-field--filled': unref(hasValue),
                 'c-field--has-prepend': !!slots.prepend,
-                'c-field--default': !props.focused && !props.error,
+                'c-field--disabled': props.disabled,
+                'c-field--readonly': props.readonly,
+                'c-field--default': !props.focused && !props.error && !props.disabled,
             },
             ...unref(presets).root,
         ])
 
         function focus() {
-            if (attrs.disabled) return
+            if (props.disabled) return
             emit('focus')
         }
 
@@ -76,7 +81,6 @@ export const CField = defineComponent({
 
         function clear() {
             emit('clear')
-            value.value = ''
         }
 
         function onClick() {
@@ -116,6 +120,8 @@ export const CField = defineComponent({
                             id={props.id}
                             ref={inputRef}
                             value={unref(value)}
+                            disabled={props.disabled}
+                            readonly={props.readonly}
                             class={['c-field-input', unref(presets).input]}
                             onInput={(e: InputEvent) => {
                                 value.value = (e.target as HTMLInputElement).value

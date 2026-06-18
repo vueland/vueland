@@ -726,6 +726,138 @@ describe('CInput', () => {
         })
     })
 
+    describe('aria — kind=checkbox/radio', () => {
+        it('добавляет aria-labelledby для kind=checkbox без label', () => {
+            const wrapper = createWrapper({
+                props: { id: 'agree', kind: 'checkbox' },
+            })
+
+            expect(field(wrapper).attributes('aria-labelledby')).toBe('agree-label')
+        })
+
+        it('добавляет aria-labelledby для kind=radio без label', () => {
+            const wrapper = createWrapper({
+                props: { id: 'opt', kind: 'radio' },
+            })
+
+            expect(field(wrapper).attributes('aria-labelledby')).toBe('opt-label')
+        })
+
+        it('не добавляет aria-labelledby для kind=input без label', () => {
+            const wrapper = createWrapper({
+                props: { id: 'name', kind: 'input' },
+            })
+
+            expect(field(wrapper).attributes('aria-labelledby')).toBeUndefined()
+        })
+    })
+
+    describe('slots', () => {
+        it('details slot получает uid, errorMessage и hasError', async () => {
+            const wrapper = createWrapper({
+                props: {
+                    id: 'pass',
+                    modelValue: '',
+                    rules: [() => ({ valid: false, message: 'Ошибка' })],
+                },
+                slots: {
+                    details: ({ uid, errorMessage, hasError }: any) =>
+                        h('div', { class: 'slot-details', 'data-uid': uid, 'data-error': `${hasError}` }, errorMessage),
+                },
+            })
+
+            ;(wrapper.vm as any).validate()
+            await nextTick()
+
+            const el = wrapper.get('.slot-details')
+
+            expect(el.attributes('data-uid')).toBe('pass')
+            expect(el.attributes('data-error')).toBe('true')
+            expect(el.text()).toBe('Ошибка')
+        })
+    })
+
+    describe('presets — приоритеты состояний', () => {
+        it('focused-preset не применяется при disabled', async () => {
+            const wrapper = createWrapper({
+                props: { preset: 'input.base', disabled: true },
+            })
+
+            await field(wrapper).trigger('focus')
+            await nextTick()
+
+            expect(wrapper.classes()).toContain('disabled-root')
+            expect(wrapper.classes()).not.toContain('focused-root')
+        })
+
+        it('focused-preset не применяется при readonly', async () => {
+            const wrapper = createWrapper({
+                props: { preset: 'input.base', readonly: true },
+            })
+
+            await field(wrapper).trigger('focus')
+            await nextTick()
+
+            expect(wrapper.classes()).toContain('readonly-root')
+            expect(wrapper.classes()).not.toContain('focused-root')
+        })
+    })
+
+    describe('state classes — edge cases', () => {
+        it('нет c-input--default при disabled', () => {
+            const wrapper = createWrapper({
+                props: { disabled: true },
+            })
+
+            expect(wrapper.classes()).not.toContain('c-input--default')
+        })
+
+        it('нет c-input--default при readonly', () => {
+            const wrapper = createWrapper({
+                props: { readonly: true },
+            })
+
+            expect(wrapper.classes()).not.toContain('c-input--default')
+        })
+
+        it('нет c-input--default при ошибке', async () => {
+            const wrapper = createWrapper({
+                props: {
+                    rules: [() => ({ valid: false, message: 'err' })],
+                },
+            })
+
+            ;(wrapper.vm as any).validate()
+            await nextTick()
+
+            expect(wrapper.classes()).not.toContain('c-input--default')
+        })
+    })
+
+    describe('validation — validateOn=input', () => {
+        it('валидирует автоматически при смене modelValue', async () => {
+            const wrapper = createWrapper({
+                props: {
+                    modelValue: 'ok',
+                    validateOn: 'input',
+                    rules: [
+                        (v: string) => ({ valid: v.length >= 3, message: 'Мин. 3 символа' }),
+                    ],
+                },
+            })
+
+            await wrapper.setProps({ modelValue: 'ab' })
+            await nextTick()
+
+            expect(field(wrapper).attributes('aria-invalid')).toBe('true')
+
+            await wrapper.setProps({ modelValue: 'abc' })
+            await nextTick()
+
+            expect(field(wrapper).attributes('aria-invalid')).toBeUndefined()
+        })
+    })
+
     describe('form integration', () => {
         it('регистрирует validate в форме при mount и удаляет при unmount', () => {
             const formApi = {

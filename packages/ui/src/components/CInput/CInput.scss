@@ -1,17 +1,21 @@
 @use "../../styles/modules/global-vars" as *;
+@use "../../styles/maps/colors-map" as *;
+@use "sass:map";
 
 $self: '.c-input';
 $input-details-height: 24px;
+$input-readonly-bg-color: map.get($colors, 'grey', 'lighten-4');
 
 .c-input {
   --c-input-field-border-radius: var(--c-app-border-radius);
   --c-input-details-height: #{$input-details-height};
-  --c-input-clear-action-min-width: 24px;
   --c-input-field-text-color: var(--c-app-text-color);
   --c-input-error-color: var(--c-app-error-color);
   --c-input-primary-color: var(--c-app-primary-color);
   --c-input-background-color: var(--c-app-surface-color);
   --c-input-disabled-color: var(--c-app-disabled-color);
+  --c-input-readonly-color: var(--c-app-primary-color);
+  --c-input-readonly-bg-color: #{$input-readonly-bg-color};
 
   display: flex;
   flex-direction: column;
@@ -42,9 +46,15 @@ $input-details-height: 24px;
   }
 
   &--readonly {
+    color: var(--c-input-readonly-color);
+
+    & > #{$self}__field > *:not(.c-checkbox) {
+      background-color: var(--c-input-readonly-bg-color);
+    }
   }
 
   &__field {
+    border-radius: var(--c-input-field-border-radius);
     display: flex;
   }
 

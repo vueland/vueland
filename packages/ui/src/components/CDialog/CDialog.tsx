@@ -37,14 +37,14 @@ export const CDialog = defineComponent({
         return () => (
             <COverlay v-model={model.value}>
                 {{
-                    default: ({ zIndex }: COverlaySlots['default']) => (
+                    default: ({ zIndex }: Parameters<COverlaySlots['default']>[0]) => (
                         <>
                             <Transition name="fade">
-                                {unref(model) && <CScrim blur style={{ zIndex: zIndex.value }} />}
+                                {unref(model) && <CScrim blur style={{ zIndex }} />}
                             </Transition>
                             <Transition name="scale-in">
                                 {unref(model) && (
-                                    <div class="c-dialog" style={{ zIndex: zIndex.value }}>
+                                    <div class="c-dialog" style={{ zIndex }}>
                                         {withDirectives(
                                             <div class="c-dialog__content">
                                                 {slots.default?.()}
