@@ -1,10 +1,12 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src", "env.d.ts", "tests", "vitest.config.ts"],
+  "include": ["src", "env.d.ts", "jsx.d.ts", "tests", "vitest.config.ts"],
   "compilerOptions": {
     "lib": ["ES2022", "DOM"],
     "composite": true,
     "skipLibCheck": true,
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
     "module": "ESNext",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,

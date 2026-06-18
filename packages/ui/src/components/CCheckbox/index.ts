@@ -1,2 +1,2 @@
-export { default as CCheckbox } from './CCheckbox.vue'
+export { CCheckbox } from './CCheckbox'
 export * from './types'

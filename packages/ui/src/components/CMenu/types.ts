@@ -4,9 +4,7 @@ import type {
     ActivatorListeners,
     ActivatorProps,
     AutoPositionProps,
-    CoordsProps,
     DelayProps,
-    PositionProps,
     PresetProps
 } from '../../composables'
 import type { DimensionsProps } from '../../types'
@@ -14,9 +12,7 @@ import type { COverlayProps } from '../COverlay'
 
 export type CMenuProps =
     ActivatorProps &
-    CoordsProps &
     DimensionsProps &
-    PositionProps &
     AutoPositionProps &
     DelayProps &
     PresetProps &

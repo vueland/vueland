@@ -1,1 +1,1 @@
-export { default as CTooltip } from './CTooltip.vue'
+export { CTooltip } from './CTooltip'

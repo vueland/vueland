@@ -1,4 +1,6 @@
-import { computed, type ComputedRef, defineAsyncComponent, inject, type ShallowRef, shallowRef } from 'vue'
+import {
+ computed, type ComputedRef, defineAsyncComponent, inject, type ShallowRef, shallowRef 
+} from 'vue'
 
 import { $DIALOGS_STACK_API_KEY } from '../constants'
 import { isDef } from '../helpers'

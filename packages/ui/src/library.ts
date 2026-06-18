@@ -1,4 +1,6 @@
-import { type App, type ComponentInstance, type Directive, type FunctionalComponent } from 'vue'
+import {
+ type App, type ComponentInstance, type Directive, type FunctionalComponent 
+} from 'vue'
 
 import { createDialogsStack, useDisplay } from './composables'
 import { $BREAKPOINTS_KEY, $DIALOGS_STACK_API_KEY,$VUELAND_UI_KEY } from './constants'

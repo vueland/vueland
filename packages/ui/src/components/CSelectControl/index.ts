@@ -1,2 +1,2 @@
-export { default as CSelectControl } from './CSelectControl.vue'
+export { CSelectControl } from './CSelectControl'
 export * from './types'

@@ -1,2 +1,12 @@
-export { default as CInput } from './CInput.vue'
-export * from './types'
+export {
+    CInput,
+    type CInputDetailsSlotProps,
+    type CInputEmits,
+    type CInputFieldSlotProps,
+    type CInputKind,
+    type CInputLabelSlotProps,
+    type CInputProps,
+    type CInputSlots,
+    type InputState,
+    makeCInputProps,
+} from './CInput'

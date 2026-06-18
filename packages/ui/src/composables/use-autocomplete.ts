@@ -1,11 +1,13 @@
 import { computed, shallowRef, unref } from 'vue'
 
-import { useSelects } from './use-selects'
+import { type IterableItemsProps, useNormalizedItems } from './use-normalized-items'
+import { type SelectableProps, useSelects } from './use-selects'
 
-export function useAutocomplete<T = any>(props: Record<string, any>) {
+export function useAutocomplete<T = any>(props: IterableItemsProps<T> & SelectableProps<T>) {
+    const normalizedItems = useNormalizedItems<T>(props as IterableItemsProps<T>)
+
     const {
-        items,
-        extKey,
+        selectedItems,
         hasValue,
         select
     } = useSelects(props)
@@ -13,25 +15,24 @@ export function useAutocomplete<T = any>(props: Record<string, any>) {
     const inputValue = shallowRef()
 
     const normalizedInput = computed(() => unref(inputValue)?.trim().toLowerCase() ?? '')
-
-    const isEqual = computed(() => unref(items).includes(unref(normalizedInput)))
+    const isEqual = computed(() => unref(selectedItems).includes(unref(normalizedInput)))
 
     const searchItems = computed(() => {
         if (unref(isEqual) || !unref(normalizedInput)) {
-            return props.items
+            return unref(normalizedItems)
         }
 
-        return props.items.filter((it: T) => {
-            const val = extKey ? it[extKey] : it
-            return `${val}`.toLowerCase().startsWith(unref(normalizedInput))
+        return unref(normalizedItems).filter((it) => {
+            return `${it.title}`.toLowerCase().startsWith(unref(normalizedInput))
         })
     })
 
     return {
-        items,
+        normalizedItems,
+        selectedItems,
+        searchItems,
         hasValue,
         inputValue,
-        searchItems,
         select
     }
 }

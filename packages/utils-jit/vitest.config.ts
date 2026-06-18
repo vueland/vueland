@@ -7,9 +7,7 @@ export default defineConfig({
         include: [
             'tests/**/*.spec.ts',
         ],
-        typecheck: {
-            tsconfig: './tsconfig.test.json',
-        },
+        typecheck: {tsconfig: './tsconfig.test.json',},
         coverage: {
             provider: 'v8',
             reporter: [

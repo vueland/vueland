@@ -1,4 +1,6 @@
-import { computed, defineComponent, h, type PropType, type VNode } from 'vue'
+import {
+ computed, defineComponent, h, type PropType, type VNode 
+} from 'vue'
 
 import { BREAKPOINTS } from '../../constants'
 import { isDef, toCamelCase } from '../../helpers'
@@ -44,9 +46,7 @@ export const CCol = defineComponent({
 
     setup(props, { slots }): () => VNode {
         const classes = computed<Record<string, boolean>>(() => {
-            const cls: Record<string, boolean> = {
-                'c-col': true,
-            }
+            const cls: Record<string, boolean> = {'c-col': true,}
 
             if (isDef(props.cols)) {
                 cls[`c-col-${props.cols}`] = true

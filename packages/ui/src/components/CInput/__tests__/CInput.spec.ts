@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 
 import { $FORM_API_KEY, $VUELAND_UI_KEY } from '../../../constants'
-import CInput from '../CInput.vue'
+import { CInput } from '../CInput'
 
 const basePresets = {
     input: {

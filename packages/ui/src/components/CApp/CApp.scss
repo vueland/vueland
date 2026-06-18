@@ -17,8 +17,8 @@
   &--block-scroll {
     width: 100%;
     position: fixed;
-    top: var(--scroll-top);
-    left: var(--scroll-left);
+    top: var(--c-app-scroll-top);
+    left: var(--c-app-scroll-left);
     bottom: 0;
     pointer-events: none;
   }

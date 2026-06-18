@@ -1,2 +1,1 @@
-export { default as CApp } from './CApp.vue'
-export * from './types'
+export * from './CApp'

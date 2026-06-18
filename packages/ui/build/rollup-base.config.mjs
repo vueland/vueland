@@ -16,7 +16,7 @@ export default {
 	plugins: [
 		peerDepsExternal({includeDependencies: true}),
 		nodeResolve({
-			extensions: ['.mjs', '.js', '.json', '.ts', '.vue'],
+			extensions: ['.mjs', '.js', '.json', '.ts', 'tsx', '.vue'],
 			browser: false,
 		}),
 		commonjs(),
@@ -24,9 +24,7 @@ export default {
 
 		replace({
 			preventAssignment: true,
-			values: {
-				'process.env.NODE_ENV': JSON.stringify('production')
-			}
+			values: {'process.env.NODE_ENV': JSON.stringify('production')}
 		}),
 
 		esbuild({
@@ -34,7 +32,9 @@ export default {
 			sourceMap: false,
 			tsconfig: path.resolve(process.cwd(), 'tsconfig.base.json'),
 			loaders: {
-				'.vue': 'ts'
+				'.vue': 'ts',
+                '.tsx': 'tsx',
+                '.jsx': 'jsx',
 			}
 		})
 	]

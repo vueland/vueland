@@ -2,31 +2,60 @@ import { computed, getCurrentInstance } from 'vue'
 
 import { isNotEmpty } from '../helpers'
 
-export function useSelects<T>(props: Record<string, any>) {
+import type { IterableItemsProps } from './use-normalized-items'
+
+export type SelectableProps<T> = {
+    modelValue: T | T[]
+    multiple?: boolean
+    mandatory?: boolean
+}
+
+export type SelectableEventProps<T> = {
+    'onUpdate:modelValue'?: (value: T | T[] | undefined) => void
+}
+
+export type SelectablePublicProps<T> =
+    SelectableProps<T>
+    & SelectableEventProps<T>
+
+export function useSelects<T>(
+    props: IterableItemsProps<T> & SelectableProps<T>,
+) {
     const instance = getCurrentInstance()!
-    const { extKey } = props.options ?? {}
+    const { titleKey = '' } = props ?? {}
 
     const hasValue = computed(() => props.multiple
-        ? (props.modelValue as T[])?.length > 0
+        ? ((props.modelValue as T[] | undefined) ?? []).length > 0
         : isNotEmpty(props.modelValue)
     )
 
-    const items = computed(() => {
+    const selectedItems = computed(() => {
         if (props.multiple) {
-            return props.modelValue.map((it: T) => it[extKey] ?? it)
+            return ((props.modelValue as T[] | undefined) ?? [])
+                .map((it: T) => (it as any)?.[titleKey] ?? it)
         }
 
-        return [props.modelValue ? `${props.modelValue[extKey] ?? props.modelValue}` : '']
+        const value = props.modelValue as T | undefined
+
+        return [
+            value
+                ? `${(value as any)?.[titleKey] ?? value}`
+                : '',
+        ]
     })
 
     function select(value: T) {
-        instance?.emit('update:modelValue', props.multiple ? [...props.modelValue as T[], value] : value)
+        instance?.emit(
+            'update:modelValue',
+            props.multiple
+                ? [...((props.modelValue as T[] | undefined) ?? []), value]
+                : value,
+        )
     }
 
     return {
         hasValue,
-        extKey,
-        items,
-        select
+        selectedItems,
+        select,
     }
 }

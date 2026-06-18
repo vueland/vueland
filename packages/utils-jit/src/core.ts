@@ -333,9 +333,7 @@ export function resolveRule(
         const match = rule.match(utility)
 
         if (match) {
-            return {
-                declarations: match.declarations,
-            }
+            return {declarations: match.declarations,}
         }
     }
 

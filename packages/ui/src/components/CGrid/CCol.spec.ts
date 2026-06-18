@@ -18,42 +18,26 @@ describe('CCol', () => {
     })
 
     it('рендерит slot content', () => {
-        const wrapper = mount(CCol, {
-            slots: {
-                default: 'Hello CCol',
-            },
-        })
+        const wrapper = mount(CCol, {slots: {default: 'Hello CCol',},})
 
         expect(wrapper.text()).toContain('Hello CCol')
     })
 
     it('добавляет класс для props.cols', () => {
-        const wrapper = mount(CCol, {
-            props: {
-                cols: 6,
-            },
-        })
+        const wrapper = mount(CCol, {props: {cols: 6,},})
 
         expect(wrapper.classes()).toContain('c-col')
         expect(wrapper.classes()).toContain('c-col-6')
     })
 
     it('добавляет класс для props.order', () => {
-        const wrapper = mount(CCol, {
-            props: {
-                order: 3,
-            },
-        })
+        const wrapper = mount(CCol, {props: {order: 3,},})
 
         expect(wrapper.classes()).toContain('order-3')
     })
 
     it('добавляет класс для props.offset', () => {
-        const wrapper = mount(CCol, {
-            props: {
-                offset: 2,
-            },
-        })
+        const wrapper = mount(CCol, {props: {offset: 2,},})
 
         expect(wrapper.classes()).toContain('offset-2')
     })
@@ -96,31 +80,19 @@ describe('CCol', () => {
     describe('breakpoint props', () => {
         for (const bp of BREAKPOINTS) {
             it(`добавляет класс "${bp}-<value>" для props["${bp}"]`, () => {
-                const wrapper = mount(CCol, {
-                    props: {
-                        [bp]: 6,
-                    },
-                })
+                const wrapper = mount(CCol, {props: {[bp]: 6,},})
 
                 expect(wrapper.classes()).toContain(`${bp}-6`)
             })
 
             it(`добавляет класс "${bp}:order-<value>" для props["order-${bp}"]`, () => {
-                const wrapper = mount(CCol, {
-                    props: {
-                        [`order-${bp}`]: 2,
-                    },
-                })
+                const wrapper = mount(CCol, {props: {[`order-${bp}`]: 2,},})
 
                 expect(wrapper.classes()).toContain(`${bp}:order-2`)
             })
 
             it(`добавляет класс "${bp}:offset-<value>" для props["offset-${bp}"]`, () => {
-                const wrapper = mount(CCol, {
-                    props: {
-                        [`offset-${bp}`]: 3,
-                    },
-                })
+                const wrapper = mount(CCol, {props: {[`offset-${bp}`]: 3,},})
 
                 expect(wrapper.classes()).toContain(`${bp}:offset-3`)
             })

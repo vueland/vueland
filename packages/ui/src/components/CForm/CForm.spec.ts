@@ -1,11 +1,15 @@
 import { mount } from '@vue/test-utils'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { defineComponent, h, inject, nextTick, ref } from 'vue'
+import {
+ beforeEach, describe, expect, it, vi 
+} from 'vitest'
+import {
+ defineComponent, h, inject, nextTick, ref 
+} from 'vue'
 
 import { $FORM_API_KEY } from '../../constants'
 import { CForm } from '../index'
 
-type FormApi = {
+type FormAPI = {
     add: (fn: () => boolean) => void
     remove: (fn: () => boolean) => void
 }
@@ -19,7 +23,7 @@ const RegisteringField = defineComponent({
         },
     },
     setup(props) {
-        const formApi = inject<FormApi | undefined>($FORM_API_KEY)
+        const formApi = inject<FormAPI | undefined>($FORM_API_KEY)
         const validate = props.validateFn as () => boolean
 
         formApi?.add(validate)
@@ -27,7 +31,7 @@ const RegisteringField = defineComponent({
         return () => h('div', { class: 'registering-field' })
     },
     beforeUnmount() {
-        const formApi = inject<FormApi | undefined>($FORM_API_KEY)
+        const formApi = inject<FormAPI | undefined>($FORM_API_KEY)
         formApi?.remove(this.validateFn as () => boolean)
     },
 })
@@ -45,11 +49,7 @@ describe('CForm', () => {
     })
 
     it('рендерит содержимое default slot', () => {
-        const wrapper = mount(CForm, {
-            slots: {
-                default: '<div class="inside">content</div>',
-            },
-        })
+        const wrapper = mount(CForm, {slots: {default: '<div class="inside">content</div>',},})
 
         expect(wrapper.find('.inside').exists()).toBe(true)
         expect(wrapper.text()).toContain('content')
@@ -94,11 +94,7 @@ describe('CForm', () => {
     it('регистрирует валидатор дочернего компонента и вызывает его при validate', async () => {
         const validateMock = vi.fn(() => true)
 
-        const wrapper = mount(CForm, {
-            slots: {
-                default: () => h(RegisteringField, { validateFn: validateMock }),
-            },
-        })
+        const wrapper = mount(CForm, {slots: {default: () => h(RegisteringField, { validateFn: validateMock }),},})
 
         await expect((wrapper.vm as any).validate()).resolves.toBe(true)
         expect(validateMock).toHaveBeenCalledTimes(1)
@@ -259,9 +255,7 @@ describe('CForm', () => {
     it('предотвращает нативный submit формы', async () => {
         const wrapper = mount(CForm, {
             attachTo: document.body,
-            slots: {
-                default: '<buttonPresets type="submit" class="submit-btn">Submit</buttonPresets>',
-            },
+            slots: {default: '<buttonPresets type="submit" class="submit-btn">Submit</buttonPresets>',},
         })
 
         const form = wrapper.find('form')
@@ -285,11 +279,7 @@ describe('CForm', () => {
             },
         })
 
-        const wrapper = mount(CForm, {
-            slots: {
-                default: () => h(PlainChild),
-            },
-        })
+        const wrapper = mount(CForm, {slots: {default: () => h(PlainChild),},})
 
         expect(wrapper.find('.plain-child').exists()).toBe(true)
         await expect((wrapper.vm as any).validate()).resolves.toBe(true)
@@ -298,11 +288,7 @@ describe('CForm', () => {
     it('поддерживает несколько последовательных вызовов validate', async () => {
         const validateMock = vi.fn(() => true)
 
-        const wrapper = mount(CForm, {
-            slots: {
-                default: () => h(RegisteringField, { validateFn: validateMock }),
-            },
-        })
+        const wrapper = mount(CForm, {slots: {default: () => h(RegisteringField, { validateFn: validateMock }),},})
 
         await expect((wrapper.vm as any).validate()).resolves.toBe(true)
         await expect((wrapper.vm as any).validate()).resolves.toBe(true)
@@ -353,7 +339,9 @@ describe('CForm', () => {
         const Host = defineComponent({
             components: { CForm, RegisteringField },
             setup() {
-                return { first, second, third, showSecond }
+                return {
+ first, second, third, showSecond 
+}
             },
             template: `
                 <CForm ref="formRef">

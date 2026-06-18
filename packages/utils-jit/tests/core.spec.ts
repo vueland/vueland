@@ -246,43 +246,31 @@ describe('core / defineRule', () => {
         const rule = defineRule({
             name: 'background-color',
             matcher: /^bg-\[(.+)\]$/,
-            declaration: (value) => ({
-                backgroundColor: value,
-            }),
+            declaration: (value) => ({backgroundColor: value,}),
         })
 
-        expect(rule.match('bg-[#fff]')).toEqual({
-            declarations: ['background-color: #fff !important;'],
-        })
+        expect(rule.match('bg-[#fff]')).toEqual({declarations: ['background-color: #fff !important;'],})
     })
 
     it('умеет отключать important', () => {
         const rule = defineRule({
             name: 'background-color',
             matcher: /^bg-\[(.+)\]$/,
-            declaration: (value) => ({
-                backgroundColor: value,
-            }),
+            declaration: (value) => ({backgroundColor: value,}),
             important: false,
         })
 
-        expect(rule.match('bg-[#fff]')).toEqual({
-            declarations: ['background-color: #fff;'],
-        })
+        expect(rule.match('bg-[#fff]')).toEqual({declarations: ['background-color: #fff;'],})
     })
 
     it('не дублирует important, если он уже есть в значении', () => {
         const rule = defineRule({
             name: 'background-color',
             matcher: /^bg-\[(.+)\]$/,
-            declaration: () => ({
-                backgroundColor: 'red !important',
-            }),
+            declaration: () => ({backgroundColor: 'red !important',}),
         })
 
-        expect(rule.match('bg-[#fff]')).toEqual({
-            declarations: ['background-color: red !important;'],
-        })
+        expect(rule.match('bg-[#fff]')).toEqual({declarations: ['background-color: red !important;'],})
     })
 
     it('конвертирует несколько camelCase properties', () => {
@@ -310,15 +298,11 @@ describe('core / defineRule', () => {
         const rule = defineRule({
             name: 'surface',
             matcher: /^surface-\[(.+)\]$/,
-            declaration: (value) => ({
-                '--vl-surface': value,
-            }),
+            declaration: (value) => ({'--vl-surface': value,}),
             important: false,
         })
 
-        expect(rule.match('surface-[#fff]')).toEqual({
-            declarations: ['--vl-surface: #fff;'],
-        })
+        expect(rule.match('surface-[#fff]')).toEqual({declarations: ['--vl-surface: #fff;'],})
     })
 
     it('поддерживает готовые string declarations без автоматического important', () => {
@@ -330,18 +314,14 @@ describe('core / defineRule', () => {
             ],
         })
 
-        expect(rule.match('raw-[10px]')).toEqual({
-            declarations: ['--raw-value: 10px;'],
-        })
+        expect(rule.match('raw-[10px]')).toEqual({declarations: ['--raw-value: 10px;'],})
     })
 
     it('возвращает null, если matcher не подошёл', () => {
         const rule = defineRule({
             name: 'background-color',
             matcher: /^bg-\[(.+)\]$/,
-            declaration: (value) => ({
-                backgroundColor: value,
-            }),
+            declaration: (value) => ({backgroundColor: value,}),
         })
 
         expect(rule.match('color-[#fff]')).toBeNull()
@@ -352,9 +332,7 @@ describe('core / defineRule', () => {
             name: 'background-color',
             matcher: /^bg-\[(.+)\]$/,
             validate: () => false,
-            declaration: (value) => ({
-                backgroundColor: value,
-            }),
+            declaration: (value) => ({backgroundColor: value,}),
         })
 
         expect(rule.match('bg-[#fff]')).toBeNull()
@@ -364,9 +342,7 @@ describe('core / defineRule', () => {
         const rule = defineRule({
             name: 'background-color',
             matcher: /^bg-\[(.+)\]$/,
-            declaration: (value) => ({
-                backgroundColor: value,
-            }),
+            declaration: (value) => ({backgroundColor: value,}),
         })
 
         expect(rule.match('bg-[red;color:blue]')).toBeNull()
@@ -375,9 +351,7 @@ describe('core / defineRule', () => {
 
 describe('core / resolveRule', () => {
     it('находит встроенное правило', () => {
-        expect(resolveRule('w-[100px]', defaultRules)).toEqual({
-            declarations: ['width: 100px !important;'],
-        })
+        expect(resolveRule('w-[100px]', defaultRules)).toEqual({declarations: ['width: 100px !important;'],})
     })
 
     it('возвращает null для неизвестного utility', () => {
@@ -389,15 +363,11 @@ describe('core / resolveRule', () => {
             name: 'surface',
             matcher: /^surface-\[(.+)\]$/,
             validate: isColorValue,
-            declaration: (value) => ({
-                backgroundColor: value,
-            }),
+            declaration: (value) => ({backgroundColor: value,}),
             important: false,
         })
 
-        expect(resolveRule('surface-[#fff]', [customRule])).toEqual({
-            declarations: ['background-color: #fff;'],
-        })
+        expect(resolveRule('surface-[#fff]', [customRule])).toEqual({declarations: ['background-color: #fff;'],})
     })
 })
 
@@ -407,9 +377,7 @@ describe('core / buildCssRule', () => {
 
         expect(parsed).not.toBeNull()
 
-        expect(buildCssRule(parsed!, {
-            declarations: ['width: 100px !important;'],
-        })).toBe('.w-\\[100px\\]{width: 100px !important;}')
+        expect(buildCssRule(parsed!, {declarations: ['width: 100px !important;'],})).toBe('.w-\\[100px\\]{width: 100px !important;}')
     })
 
     it('строит css rule с pseudo variant', () => {
@@ -417,9 +385,7 @@ describe('core / buildCssRule', () => {
 
         expect(parsed).not.toBeNull()
 
-        expect(buildCssRule(parsed!, {
-            declarations: ['width: 100px !important;'],
-        })).toBe('.hover\\:w-\\[100px\\]:hover{width: 100px !important;}')
+        expect(buildCssRule(parsed!, {declarations: ['width: 100px !important;'],})).toBe('.hover\\:w-\\[100px\\]:hover{width: 100px !important;}')
     })
 
     it('строит css rule с breakpoint variant', () => {
@@ -427,9 +393,7 @@ describe('core / buildCssRule', () => {
 
         expect(parsed).not.toBeNull()
 
-        expect(buildCssRule(parsed!, {
-            declarations: ['width: 100px !important;'],
-        })).toBe('@media (min-width: 768px) { .md\\:w-\\[100px\\]{width: 100px !important;} }')
+        expect(buildCssRule(parsed!, {declarations: ['width: 100px !important;'],})).toBe('@media (min-width: 768px) { .md\\:w-\\[100px\\]{width: 100px !important;} }')
     })
 
     it('строит css rule с несколькими variants', () => {
@@ -437,9 +401,7 @@ describe('core / buildCssRule', () => {
 
         expect(parsed).not.toBeNull()
 
-        expect(buildCssRule(parsed!, {
-            declarations: ['width: 100px !important;'],
-        })).toBe('@media (min-width: 768px) { .hover\\:md\\:w-\\[100px\\]:hover{width: 100px !important;} }')
+        expect(buildCssRule(parsed!, {declarations: ['width: 100px !important;'],})).toBe('@media (min-width: 768px) { .hover\\:md\\:w-\\[100px\\]:hover{width: 100px !important;} }')
     })
 
     it('строит css rule с custom dark selector variant', () => {
@@ -448,9 +410,7 @@ describe('core / buildCssRule', () => {
         expect(parsed).not.toBeNull()
         expect(buildCssRule(
             parsed!,
-            {
-                declarations: ['width: 100px !important;'],
-            },
+            {declarations: ['width: 100px !important;'],},
             undefined,
             {
                 dark: {
@@ -468,9 +428,7 @@ describe('core / buildCssRule', () => {
 
         expect(buildCssRule(
             parsed!,
-            {
-                declarations: ['width: 100px !important;'],
-            },
+            {declarations: ['width: 100px !important;'],},
             undefined,
             {
                 hocus: {
@@ -488,9 +446,7 @@ describe('core / buildCssRule', () => {
 
         expect(buildCssRule(
             parsed!,
-            {
-                declarations: ['width: 100px !important;'],
-            },
+            {declarations: ['width: 100px !important;'],},
             undefined,
             {
                 selected: {
@@ -508,9 +464,7 @@ describe('core / buildCssRule', () => {
 
         expect(buildCssRule(
             parsed!,
-            {
-                declarations: ['width: 100px !important;'],
-            },
+            {declarations: ['width: 100px !important;'],},
             {},
             {
                 tablet: {
@@ -526,9 +480,7 @@ describe('core / buildCssRule', () => {
 
         expect(parsed).not.toBeNull()
 
-        expect(buildCssRule(parsed!, {
-            declarations: ['width: 100px !important;'],
-        })).toBeNull()
+        expect(buildCssRule(parsed!, {declarations: ['width: 100px !important;'],})).toBeNull()
     })
 
     it('форматирует calc внутри declaration', () => {
@@ -536,8 +488,6 @@ describe('core / buildCssRule', () => {
 
         expect(parsed).not.toBeNull()
 
-        expect(buildCssRule(parsed!, {
-            declarations: ['width: calc(100%-16px) !important;'],
-        })).toBe('.w-\\[calc\\(100\\%-16px\\)\\]{width: calc(100% - 16px) !important;}')
+        expect(buildCssRule(parsed!, {declarations: ['width: calc(100%-16px) !important;'],})).toBe('.w-\\[calc\\(100\\%-16px\\)\\]{width: calc(100% - 16px) !important;}')
     })
 })

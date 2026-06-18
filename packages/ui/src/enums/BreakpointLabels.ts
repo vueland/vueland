@@ -6,3 +6,4 @@ export enum BreakpointLabels {
     XL = 'xl',
     XXL = 'xxl',
 }
+

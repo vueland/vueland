@@ -14,4 +14,5 @@ export type CIconProps = {
     tag?: string
     spritePrefix?: string
     spritePath?: string
+    [key: string]: unknown
 }

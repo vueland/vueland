@@ -81,7 +81,5 @@ export function useKeyboard(
         handler(event)
     }
 
-    return {
-        onKeydown,
-    }
+    return {onKeydown,}
 }

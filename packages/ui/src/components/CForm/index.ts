@@ -1,2 +1,2 @@
-export { default as CForm } from './CForm.vue'
+export { CForm } from './CForm'
 export * from './types'

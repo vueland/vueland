@@ -1,6 +1,6 @@
 import { type ShallowRef, shallowRef } from 'vue'
 
-export function useToggle(value: boolean = false): [ShallowRef<boolean>, (val?: boolean) => void] {
+export function useToggle(value: boolean = false): [ShallowRef<boolean>, () => void] {
     const state = shallowRef(value)
 
     const toggle = () => {

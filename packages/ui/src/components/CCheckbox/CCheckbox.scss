@@ -10,7 +10,7 @@ $self: '.c-checkbox';
   align-items: center;
   outline: none;
 
-  &--default, &--readonly {
+  &--default, &--readonly, &--focused {
     & > #{$self}__label {
       color: var(--c-app-text-color)
     }
@@ -54,7 +54,10 @@ $self: '.c-checkbox';
   }
 
   &--error {
-    color: var(--c-app-error-color)
+    color: var(--c-app-error-color);
+    & > #{$self}__label {
+      color: currentColor;
+    }
   }
 
   & > input {

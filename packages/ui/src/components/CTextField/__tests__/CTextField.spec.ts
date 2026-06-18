@@ -34,7 +34,7 @@ function createVModelHost({
             const value = ref(initialValue)
 
             return () => h(
-                CTextField,
+                CTextField as any,
                 {
                     modelValue: value.value,
                     'onUpdate:modelValue': (nextValue: string | number | null | undefined) => {

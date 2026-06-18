@@ -14,7 +14,9 @@ import {
     tokenize,
 } from './core'
 import { defaultRules } from './rules'
-import type { JitOptions, ParsedToken, Pattern, ResolvedJitOptions, UtilityRule } from './types'
+import type {
+ JitOptions, ParsedToken, Pattern, ResolvedJitOptions, UtilityRule
+} from './types'
 
 function resolveOptions(options: JitOptions = {}): ResolvedJitOptions {
     return {
@@ -378,13 +380,13 @@ export function utilsJIT(options?: JitOptions): Plugin {
         name: 'utils-jit',
         enforce: 'pre',
 
-        configResolved(config) {
+        configResolved(config: any) {
             root = config.root
             outFile = path.resolve(root, resolvedOptions.outFile)
             rebuildAll(false)
         },
 
-        configureServer(server) {
+        configureServer(server: ViteDevServer) {
             devServer = server
 
             if (outFile) {
@@ -396,7 +398,7 @@ export function utilsJIT(options?: JitOptions): Plugin {
             rebuildAll(false)
         },
 
-        transform(code, id) {
+        transform(code: string, id: string) {
             const file = id.split('?')[0]
 
             if (!file || isSameFile(file, outFile)) {
@@ -424,7 +426,7 @@ export function utilsJIT(options?: JitOptions): Plugin {
             rebuildOne(file, code, true)
         },
 
-        watchChange(id, change) {
+        watchChange(id: string, change) {
             const file = id.split('?')[0]
 
             if (!file || isSameFile(file, outFile)) {

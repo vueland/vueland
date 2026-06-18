@@ -6,6 +6,18 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 import vueParser from 'vue-eslint-parser'
 
+const multilineThreshold = {
+    "multiline": true,
+    "minProperties": 4,
+}
+
+const objectCurlyNewline = ["error", {
+    "ImportDeclaration": multilineThreshold,
+    "ExportDeclaration": multilineThreshold,
+    "ObjectExpression": multilineThreshold,
+    "ObjectPattern": multilineThreshold,
+}]
+
 export default [
     {
         ignores: [
@@ -30,7 +42,7 @@ export default [
     },
     {
         rules: {
-            "no-console": ["warn", {allow: ["warn", "error"]}],
+            "no-console": ["warn", {allow: ["warn", "error", "info"]}],
             "simple-import-sort/imports": [
                 "error",
                 {
@@ -69,14 +81,10 @@ export default [
         rules: {
             semi: "off",
             "@/semi": ["error", "never"],
-            "object-curly-newline": ["error", {
-                "ObjectPattern": {
-                    "multiline": true,
-                    "minProperties": 4
-                }
-            }],
+            "object-curly-newline": objectCurlyNewline,
             '@typescript-eslint/no-explicit-any': 'off',
             "@typescript-eslint/ban-ts-ignore": "off",
+            "vue/require-default-prop": "off",
         },
     },
     {
@@ -87,12 +95,16 @@ export default [
         },
         rules: {
             semi: "off",
-            "object-curly-newline": ["error", {
-                "ObjectPattern": {
-                    "multiline": true,
-                    "minProperties": 4
-                }
-            }],
+            "object-curly-newline": objectCurlyNewline,
+        },
+    },
+
+    // {} как тип-параметр — намеренно в Vue-internal утилитах и тест-файлах
+    {
+        files: ["**/src/utils/**/*.ts", "**/*.spec.ts", "**/*.spec.tsx"],
+        rules: {
+            "@typescript-eslint/no-empty-object-type": "off",
+            "vue/one-component-per-file": "off",
         },
     },
 
@@ -115,20 +127,13 @@ export default [
         rules: {
             semi: "off",
             "@/semi": ["error", "never"],
-            "object-curly-newline": ["error", {
-                "ObjectPattern": {
-                    "multiline": true,
-                    "minProperties": 4
-                }
-            }],
+            "object-curly-newline": objectCurlyNewline,
             "no-undef": "off",
             "vue/multi-word-component-names": "error",
             "vue/html-indent": ["error", 4],
             "vue/require-default-prop": "off",
             "vue/one-component-per-file": "off",
-            "vue/script-indent": ["error", 4, {
-                baseIndent: 1
-            }],
+            "vue/script-indent": ["error", 4, {baseIndent: 1}],
             '@typescript-eslint/no-explicit-any': 'off',
             "@typescript-eslint/ban-ts-ignore": "off",
             "@typescript-eslint/no-unused-expressions": "off"
