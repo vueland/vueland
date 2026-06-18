@@ -6,16 +6,11 @@ import {
     Teleport,
     unref,
     useModel,
-    watchEffect
+    watchEffect,
 } from 'vue'
 
 import { useOverlayStack } from '../../composables'
 import { propsFactory } from '../../utils'
-
-export type COverlayProps = {
-    modelValue: boolean,
-    to?: string
-}
 
 export type COverlaySlots = {
     default: { zIndex: ShallowRef<number> }
@@ -54,10 +49,8 @@ export const COverlay = defineComponent({
             }
         })
 
-        return () => (
-            <Teleport to={props.to}>
-                {slots.default?.({ zIndex })}
-            </Teleport>
-        )
-    }
+        return () => <Teleport to={props.to}>{slots.default?.({ zIndex: zIndex.value })}</Teleport>
+    },
 })
+
+export type COverlayProps = InstanceType<typeof COverlay>['$props']

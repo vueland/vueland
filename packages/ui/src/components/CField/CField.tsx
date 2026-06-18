@@ -7,7 +7,8 @@ import {
     Transition,
     unref,
     useAttrs,
-    useModel, type VNode,
+    useModel,
+    type VNode,
 } from 'vue'
 
 import { useFieldPresets } from '../../composables/use-field-presets'
@@ -46,7 +47,11 @@ export const CField = defineComponent({
         const value = useModel(props, 'modelValue')
         const inputRef = shallowRef<HTMLElement>()
 
-        const presets = useFieldPresets({ slots: slots as any, props, attrs })
+        const presets = useFieldPresets({
+            slots,
+            props,
+            attrs,
+        })
         const hasValue = computed(() => props.filled || !!unref(value))
         const showClearBtn = computed(() => props.clearable && props.focused && unref(hasValue))
 
@@ -95,8 +100,8 @@ export const CField = defineComponent({
 
                     <div class="c-field__core">
                         <CLabel
-                            id={`${attrs.id}-label`}
-                            for={attrs.id as string}
+                            id={`${props.id}-label`}
+                            for={props.id}
                             tag="label"
                             class="c-field-label"
                             style={unref(presets).label}
@@ -108,6 +113,7 @@ export const CField = defineComponent({
 
                         <Tag
                             {...attrs}
+                            id={props.id}
                             ref={inputRef}
                             value={unref(value)}
                             class={['c-field-input', unref(presets).input]}
@@ -126,12 +132,7 @@ export const CField = defineComponent({
                     <Transition name="fade">
                         {unref(showClearBtn) && (
                             <div class="c-field__clear" onClick={clear}>
-                                {slots.clear?.() ?? (
-                                    <CIcon
-                                        name={IconAliases.CLOSE}
-                                        size={24}
-                                    />
-                                )}
+                                {slots.clear?.() ?? <CIcon name={IconAliases.CLOSE} size={24} />}
                             </div>
                         )}
                     </Transition>

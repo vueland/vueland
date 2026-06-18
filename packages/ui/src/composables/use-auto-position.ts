@@ -13,7 +13,7 @@ import {
 
 import { isDef } from '../helpers'
 import type { DimensionsProps } from '../types'
-import { IN_BROWSER , propsFactory } from '../utils'
+import { IN_BROWSER, propsFactory } from '../utils'
 
 import { useApplication } from './use-application'
 
@@ -40,9 +40,7 @@ type MaybeElement = Element | ComponentPublicInstance | undefined
 
 type ResolvedElement = HTMLElement | undefined
 
-type AutoPositionInputProps =
-    DimensionsProps &
-    AutoPositionProps
+type AutoPositionInputProps = DimensionsProps & AutoPositionProps
 
 export const makeAutoPositionProps = propsFactory({
     strategy: {
@@ -56,10 +54,7 @@ export const makeAutoPositionProps = propsFactory({
     left: Boolean,
     right: Boolean,
     top: Boolean,
-    bottom: {
-        type: Boolean,
-        default: true
-    },
+    bottom: Boolean,
 })
 
 const SCREEN_EDGE_OFFSET = 20
@@ -77,7 +72,7 @@ function getElementRect(element: HTMLElement): Dimensions {
         top,
         left,
         width,
-        height,
+        height, 
     } = element.getBoundingClientRect()
 
     return {
@@ -278,16 +273,14 @@ export function useAutoPosition(
             topEdge,
             bottomEdge,
             isBeyondTop,
-            isBeyondBottom,
+            isBeyondBottom, 
         } = getViewportYBounds(top)
 
         if (!isBeyondTop && !isBeyondBottom) {
             return top
         }
 
-        return isBeyondBottom
-            ? bottomEdge - height
-            : topEdge
+        return isBeyondBottom ? bottomEdge - height : topEdge
     }
 
     const clampLeftToViewport = (left: number) => {
@@ -297,25 +290,20 @@ export function useAutoPosition(
             leftEdge,
             rightEdge,
             isBeyondLeft,
-            isBeyondRight,
+            isBeyondRight, 
         } = getViewportXBounds(left)
 
         if (!isBeyondLeft && !isBeyondRight) {
             return left
         }
 
-        return isBeyondRight
-            ? rightEdge - width
-            : leftEdge
+        return isBeyondRight ? rightEdge - width : leftEdge
     }
 
     const resolveTop = () => {
         const top = getBaseTop()
 
-        const {
-            isBeyondTop,
-            isBeyondBottom,
-        } = getViewportYBounds(top)
+        const { isBeyondTop, isBeyondBottom } = getViewportYBounds(top)
 
         if (!isBeyondTop && !isBeyondBottom) {
             return top
@@ -331,10 +319,7 @@ export function useAutoPosition(
     const resolveLeft = () => {
         const left = getBaseLeft()
 
-        const {
-            isBeyondLeft,
-            isBeyondRight,
-        } = getViewportXBounds(left)
+        const { isBeyondLeft, isBeyondRight } = getViewportXBounds(left)
 
         if (!isBeyondLeft && !isBeyondRight) {
             return left
@@ -446,17 +431,20 @@ export function useAutoPosition(
             }
         })
 
-        watch(() => [
-            props.positionX,
-            props.positionY,
-            props.top,
-            props.bottom,
-            props.left,
-            props.right,
-            props.offsetX,
-            props.offsetY,
-            props.strategy,
-        ], scheduleUpdate)
+        watch(
+            () => [
+                props.positionX,
+                props.positionY,
+                props.top,
+                props.bottom,
+                props.left,
+                props.right,
+                props.offsetX,
+                props.offsetY,
+                props.strategy,
+            ],
+            scheduleUpdate,
+        )
 
         onBeforeUnmount(() => {
             cancelScheduledUpdate()

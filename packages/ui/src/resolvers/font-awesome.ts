@@ -17,10 +17,7 @@ export interface FontAwesomeResolverOptions {
     defaultPrefix?: string
 }
 
-function normalizeName(
-    name: string | number,
-    defaultPrefix: string,
-): string {
+function normalizeName(name: string | number, defaultPrefix: string): string {
     if (`${name}`.includes(':')) {
         return `${name}`.trim()
     }
@@ -32,9 +29,7 @@ function iconToSvg(data: IconDefinition) {
     const [width, height, , , pathData] = data.icon
 
     const body = Array.isArray(pathData)
-        ? pathData
-            .map((d) => `<path fill="currentColor" d="${d}" />`)
-            .join('')
+        ? pathData.map((d) => `<path fill="currentColor" d="${d}" />`).join('')
         : `<path fill="currentColor" d="${pathData}" />`
 
     return {
@@ -44,9 +39,7 @@ function iconToSvg(data: IconDefinition) {
     }
 }
 
-export function createFontAwesomeResolver(
-    options: FontAwesomeResolverOptions,
-): IconResolver {
+export function createFontAwesomeResolver(options: FontAwesomeResolverOptions): IconResolver {
     const defaultPrefix = options.defaultPrefix ?? 'solid'
 
     return (name) => {

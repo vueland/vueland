@@ -1,2 +1,1 @@
-export { CForm } from './CForm'
-export * from './types'
+export * from './CForm'

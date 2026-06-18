@@ -1,5 +1,9 @@
-import type {
- Component , computed, defineComponent, type PropType, unref 
+import {
+    type Component,
+    computed,
+    defineComponent,
+    type PropType,
+    unref,
 } from 'vue'
 
 import { type IconMode, useIcon } from '../../composables'
@@ -34,30 +38,21 @@ export const CIcon = defineComponent({
             const Tag = (props.tag ?? 'span') as any
 
             return (
-                <Tag
-                    class={['c-icon', { 'c-icon--empty': !icon.found }]}
-                    style={unref(rootStyle)}
-                >
-                    {icon.found && icon.kind === 'component' && icon.component
-                        ? <component is={icon.component} class="c-icon__component" {...attrs} />
-                        : icon.found
-                            ? (
-                                <svg
-                                    class="c-icon__svg"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox={icon.viewBox}
-                                    fill="currentColor"
-                                    focusable="false"
-                                    {...attrs}
-                                >
-                                    {icon.href
-                                        ? <use href={icon.href} />
-                                        : <g innerHTML={icon.body} />
-                                    }
-                                </svg>
-                            )
-                            : null
-                    }
+                <Tag class={['c-icon', { 'c-icon--empty': !icon.found }]} style={unref(rootStyle)}>
+                    {icon.found && icon.kind === 'component' && icon.component ? (
+                        <component is={icon.component} class="c-icon__component" {...attrs} />
+                    ) : icon.found ? (
+                        <svg
+                            class="c-icon__svg"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox={icon.viewBox}
+                            fill="currentColor"
+                            focusable="false"
+                            {...attrs}
+                        >
+                            {icon.href ? <use href={icon.href} /> : <g innerHTML={icon.body} />}
+                        </svg>
+                    ) : null}
                 </Tag>
             )
         }

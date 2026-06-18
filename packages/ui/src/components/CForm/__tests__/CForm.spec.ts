@@ -1,13 +1,21 @@
 import { mount } from '@vue/test-utils'
 import {
- beforeEach, describe, expect, it, vi 
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
 } from 'vitest'
 import {
- defineComponent, h, inject, nextTick, ref 
+    defineComponent,
+    h,
+    inject,
+    nextTick,
+    ref,
 } from 'vue'
 
-import { $FORM_API_KEY } from '../../constants'
-import { CForm } from '../index'
+import { $FORM_API_KEY } from '../../../constants'
+import { CForm } from '../../index'
 
 type FormAPI = {
     add: (fn: () => boolean) => void
@@ -49,7 +57,7 @@ describe('CForm', () => {
     })
 
     it('рендерит содержимое default slot', () => {
-        const wrapper = mount(CForm, {slots: {default: '<div class="inside">content</div>',},})
+        const wrapper = mount(CForm, { slots: { default: '<div class="inside">content</div>' } })
 
         expect(wrapper.find('.inside').exists()).toBe(true)
         expect(wrapper.text()).toContain('content')
@@ -63,10 +71,14 @@ describe('CForm', () => {
                 default: ({ validate }: { validate: () => Promise<boolean> }) => {
                     slotValidateSpy(validate)
 
-                    return h('button', {
-                        class: 'from-slot',
-                        onClick: () => validate(),
-                    }, 'run')
+                    return h(
+                        'button',
+                        {
+                            class: 'from-slot',
+                            onClick: () => validate(),
+                        },
+                        'run',
+                    )
                 },
             },
         })
@@ -94,7 +106,7 @@ describe('CForm', () => {
     it('регистрирует валидатор дочернего компонента и вызывает его при validate', async () => {
         const validateMock = vi.fn(() => true)
 
-        const wrapper = mount(CForm, {slots: {default: () => h(RegisteringField, { validateFn: validateMock }),},})
+        const wrapper = mount(CForm, { slots: { default: () => h(RegisteringField, { validateFn: validateMock }) } })
 
         await expect((wrapper.vm as any).validate()).resolves.toBe(true)
         expect(validateMock).toHaveBeenCalledTimes(1)
@@ -167,9 +179,15 @@ describe('CForm', () => {
         const show = ref(true)
 
         const Host = defineComponent({
-            components: { CForm, RegisteringField },
+            components: {
+                CForm,
+                RegisteringField,
+            },
             setup() {
-                return { show, validateMock }
+                return {
+                    show,
+                    validateMock,
+                }
             },
             template: `
                 <CForm ref="formRef">
@@ -182,9 +200,9 @@ describe('CForm', () => {
         })
 
         const wrapper = mount(Host)
-        const form = wrapper.findComponent(CForm)
+        const formRef = () => (wrapper.vm.$refs.formRef as any)
 
-        await expect((form.vm as any).validate()).resolves.toBe(true)
+        await expect(formRef().validate()).resolves.toBe(true)
         expect(validateMock).toHaveBeenCalledTimes(1)
 
         show.value = false
@@ -192,7 +210,7 @@ describe('CForm', () => {
 
         validateMock.mockClear()
 
-        await expect((form.vm as any).validate()).resolves.toBe(true)
+        await expect(formRef().validate()).resolves.toBe(true)
         expect(validateMock).not.toHaveBeenCalled()
     })
 
@@ -201,9 +219,15 @@ describe('CForm', () => {
         const show = ref(false)
 
         const Host = defineComponent({
-            components: { CForm, RegisteringField },
+            components: {
+                CForm,
+                RegisteringField,
+            },
             setup() {
-                return { show, validateMock }
+                return {
+                    show,
+                    validateMock,
+                }
             },
             template: `
                 <CForm ref="formRef">
@@ -216,15 +240,15 @@ describe('CForm', () => {
         })
 
         const wrapper = mount(Host)
-        const form = wrapper.findComponent(CForm)
+        const formRef = () => (wrapper.vm.$refs.formRef as any)
 
-        await expect((form.vm as any).validate()).resolves.toBe(true)
+        await expect(formRef().validate()).resolves.toBe(true)
         expect(validateMock).not.toHaveBeenCalled()
 
         show.value = true
         await nextTick()
 
-        await expect((form.vm as any).validate()).resolves.toBe(true)
+        await expect(formRef().validate()).resolves.toBe(true)
         expect(validateMock).toHaveBeenCalledTimes(1)
     })
 
@@ -236,12 +260,16 @@ describe('CForm', () => {
             slots: {
                 default: ({ validate }: { validate: () => Promise<boolean> }) => [
                     h(RegisteringField, { validateFn: validateMock }),
-                    h('button', {
-                        class: 'slot-btn',
-                        onClick: async () => {
-                            slotButtonClick(await validate())
+                    h(
+                        'button',
+                        {
+                            class: 'slot-btn',
+                            onClick: async () => {
+                                slotButtonClick(await validate())
+                            },
                         },
-                    }, 'validate'),
+                        'validate',
+                    ),
                 ],
             },
         })
@@ -255,11 +283,14 @@ describe('CForm', () => {
     it('предотвращает нативный submit формы', async () => {
         const wrapper = mount(CForm, {
             attachTo: document.body,
-            slots: {default: '<buttonPresets type="submit" class="submit-btn">Submit</buttonPresets>',},
+            slots: { default: '<buttonPresets type="submit" class="submit-btn">Submit</buttonPresets>' },
         })
 
         const form = wrapper.find('form')
-        const event = new Event('submit', { bubbles: true, cancelable: true })
+        const event = new Event('submit', {
+            bubbles: true,
+            cancelable: true,
+        })
         const preventDefaultSpy = vi.spyOn(event, 'preventDefault')
 
         form.element.dispatchEvent(event)
@@ -279,7 +310,7 @@ describe('CForm', () => {
             },
         })
 
-        const wrapper = mount(CForm, {slots: {default: () => h(PlainChild),},})
+        const wrapper = mount(CForm, { slots: { default: () => h(PlainChild) } })
 
         expect(wrapper.find('.plain-child').exists()).toBe(true)
         await expect((wrapper.vm as any).validate()).resolves.toBe(true)
@@ -288,7 +319,7 @@ describe('CForm', () => {
     it('поддерживает несколько последовательных вызовов validate', async () => {
         const validateMock = vi.fn(() => true)
 
-        const wrapper = mount(CForm, {slots: {default: () => h(RegisteringField, { validateFn: validateMock }),},})
+        const wrapper = mount(CForm, { slots: { default: () => h(RegisteringField, { validateFn: validateMock }) } })
 
         await expect((wrapper.vm as any).validate()).resolves.toBe(true)
         await expect((wrapper.vm as any).validate()).resolves.toBe(true)
@@ -337,11 +368,17 @@ describe('CForm', () => {
         const showSecond = ref(true)
 
         const Host = defineComponent({
-            components: { CForm, RegisteringField },
+            components: {
+                CForm,
+                RegisteringField,
+            },
             setup() {
                 return {
- first, second, third, showSecond 
-}
+                    first,
+                    second,
+                    third,
+                    showSecond,
+                }
             },
             template: `
                 <CForm ref="formRef">
@@ -356,9 +393,9 @@ describe('CForm', () => {
         })
 
         const wrapper = mount(Host)
-        const form = wrapper.findComponent(CForm)
+        const formRef = () => (wrapper.vm.$refs.formRef as any)
 
-        await expect((form.vm as any).validate()).resolves.toBe(true)
+        await expect(formRef().validate()).resolves.toBe(true)
         expect(first).toHaveBeenCalledTimes(1)
         expect(second).toHaveBeenCalledTimes(1)
         expect(third).toHaveBeenCalledTimes(1)
@@ -370,7 +407,7 @@ describe('CForm', () => {
         showSecond.value = false
         await nextTick()
 
-        await expect((form.vm as any).validate()).resolves.toBe(true)
+        await expect(formRef().validate()).resolves.toBe(true)
 
         expect(first).toHaveBeenCalledTimes(1)
         expect(second).not.toHaveBeenCalled()

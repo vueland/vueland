@@ -15,22 +15,13 @@ import {
     type VNodeProps,
 } from 'vue'
 
-type ComponentVueProps =
-    VNodeProps
-    & AllowedComponentProps
-    & ComponentCustomProps
+type ComponentVueProps = VNodeProps & AllowedComponentProps & ComponentCustomProps
 
 export type RawSlots = Record<string, unknown>
 
-export type Slot<T> =
-    [T] extends [never]
-        ? () => VNodeChild
-        : (arg: T) => VNodeChild
+export type Slot<T> = [T] extends [never] ? () => VNodeChild : (arg: T) => VNodeChild
 
-export type VueSlot<T> =
-    [T] extends [never]
-        ? () => VNode[]
-        : (arg: T) => VNode[]
+export type VueSlot<T> = [T] extends [never] ? () => VNode[] : (arg: T) => VNode[]
 
 export type MakeInternalSlots<TSlots extends RawSlots> = {
     [K in keyof TSlots]: Slot<TSlots[K]>
@@ -51,14 +42,11 @@ export type SlotsToProps<TSlots extends RawSlots> = {
     }
 } & {
     [K in keyof MakeInternalSlots<TSlots> as `v-slot:${K & string}`]?:
-    | MakeInternalSlots<TSlots>[K]
-    | false
+        | MakeInternalSlots<TSlots>[K]
+        | false
 }
 
-export type GenericProps<
-    TProps,
-    TSlots extends RawSlots,
-> = {
+export type GenericProps<TProps, TSlots extends RawSlots> = {
     $props: TProps & SlotsToProps<TSlots>
     $slots: MakeSlots<TSlots>
 }
@@ -74,16 +62,11 @@ type AnyGenericComponent = new (...args: any[]) => {
     $slots?: any
 }
 
-type ConstructorSlots<T> =
-    T extends new (
-            props: any,
-            slots: infer TSlots,
-            ...args: any[]
-        ) => any
-        ? TSlots extends RawSlots
-            ? TSlots
-            : {}
+type ConstructorSlots<T> = T extends new (props: any, slots: infer TSlots, ...args: any[]) => any
+    ? TSlots extends RawSlots
+        ? TSlots
         : {}
+    : {}
 
 type DefineComponentWithSlots<TSlots extends RawSlots> = <
     PropsOptions extends Readonly<ComponentObjectPropsOptions>,
@@ -163,7 +146,8 @@ type DefineComponentWithGenericProps<
     ExtractPropTypes<PropsOptions> & TExtraProps,
     ExtractDefaultPropTypes<PropsOptions>,
     SlotsType<Partial<MakeSlots<Slots>>>
-> & TGeneric
+> &
+    TGeneric
 
 export function genericComponent(): DefineComponentWithSlots<{ default: never }>
 
@@ -172,9 +156,7 @@ export function genericComponent<
     TExtraProps extends Record<string, unknown> = {},
 >(): DefineComponentWithGenericProps<T, TExtraProps>
 
-export function genericComponent<
-    T extends RawSlots,
->(): DefineComponentWithSlots<T>
+export function genericComponent<T extends RawSlots>(): DefineComponentWithSlots<T>
 
 export function genericComponent() {
     return _defineComponent as any

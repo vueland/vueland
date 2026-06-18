@@ -28,17 +28,15 @@ export const CCheckbox = genericComponent<
         return () => (
             <CSelectControl
                 modelValue={model.value}
-                onUpdate:modelValue={(v: any) => { model.value = v }}
+                onUpdate:modelValue={(v: any) => {
+                    model.value = v
+                }}
                 value={(props as any).value}
                 {...attrs}
             >
                 {{
                     default: ({ checked, toggle }: any) => (
-                        <CInput
-                            modelValue={model.value}
-                            {...attrs}
-                            kind="checkbox"
-                        >
+                        <CInput modelValue={model.value} {...attrs} kind="checkbox">
                             {{
                                 field: (field: any) => (
                                     <CheckboxElement

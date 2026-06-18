@@ -69,9 +69,7 @@ function parseThemeLines(lines: string[]): Record<string, string> {
         const raw = line.trim()
         if (!raw) continue
 
-        const normalized = raw.endsWith(';')
-            ? raw.slice(0, -1)
-            : raw
+        const normalized = raw.endsWith(';') ? raw.slice(0, -1) : raw
 
         const separatorIndex = normalized.indexOf(':')
         if (separatorIndex === -1) continue
@@ -127,11 +125,7 @@ function wrapColor(value: string): string {
     return `hsl(${normalized})`
 }
 
-function resolveCssValue(
-    rawValue: string,
-    kind: string,
-    colorKinds: string[],
-): string {
+function resolveCssValue(rawValue: string, kind: string, colorKinds: string[]): string {
     const normalized = normalizeValue(rawValue)
 
     if (colorKinds.includes(kind)) {
@@ -166,7 +160,7 @@ function parseTokenMeta(token: string, propertyMap: PropertyMap): TokenMeta | nu
     const cleanName = token.startsWith('--') ? token.slice(2) : token
     const parts = cleanName.split('-').filter(Boolean)
 
-    const kindIndex = parts.findIndex(part => part in propertyMap)
+    const kindIndex = parts.findIndex((part) => part in propertyMap)
     if (kindIndex === -1) return null
 
     const kind = parts[kindIndex]
@@ -180,16 +174,12 @@ function parseTokenMeta(token: string, propertyMap: PropertyMap): TokenMeta | nu
     }
 }
 
-function formatRule(
-    selector: string,
-    declarations: string[],
-    minify: boolean,
-): string {
+function formatRule(selector: string, declarations: string[], minify: boolean): string {
     if (minify) {
         return `${selector}{${declarations.join('')}}`
     }
 
-    const body = declarations.map(d => `  ${d}`).join('\n')
+    const body = declarations.map((d) => `  ${d}`).join('\n')
     return `${selector} {\n${body}\n}`
 }
 
@@ -255,15 +245,11 @@ const varsProcessor: CssProcessor = {
         const body = ctx.entries
             .map(({ token, value }) => {
                 const normalized = normalizeValue(value)
-                return ctx.options.minify
-                    ? `${token}:${normalized};`
-                    : `  ${token}: ${normalized};`
+                return ctx.options.minify ? `${token}:${normalized};` : `  ${token}: ${normalized};`
             })
             .join(ctx.options.minify ? '' : '\n')
 
-        return ctx.options.minify
-            ? `:root{${body}}`
-            : `:root {\n${body}\n}`
+        return ctx.options.minify ? `:root{${body}}` : `:root {\n${body}\n}`
     },
 }
 
@@ -282,49 +268,31 @@ const plainColorUtilsProcessor: CssProcessor = {
             const value = resolveCssValue(entry.value, meta.kind, ctx.options.colorKinds)
 
             chunks.push(
-                formatRule(
-                    `.${className}`,
-                    [createDecl(meta.property, value)],
-                    ctx.options.minify,
-                ),
+                formatRule(`.${className}`, [createDecl(meta.property, value)], ctx.options.minify),
             )
 
-            if (
-                ctx.options.generateStates.hover &&
-                (meta.kind === 'bg' || meta.kind === 'clr')
-            ) {
+            if (ctx.options.generateStates.hover && (meta.kind === 'bg' || meta.kind === 'clr')) {
                 chunks.push(
                     formatRule(
                         `.hover\\:${className}:hover`,
-                        [
-                            createDecl(meta.property, value),
-                            createTransitionDecl(meta.property),
-                        ],
+                        [createDecl(meta.property, value), createTransitionDecl(meta.property)],
                         ctx.options.minify,
                     ),
                 )
             }
 
-            if (
-                ctx.options.generateStates.active &&
-                (meta.kind === 'bg' || meta.kind === 'clr')
-            ) {
+            if (ctx.options.generateStates.active && (meta.kind === 'bg' || meta.kind === 'clr')) {
                 chunks.push(
                     formatRule(
                         `.active\\:${className}:active`,
-                        [
-                            createDecl(meta.property, value),
-                            createTransitionDecl(meta.property),
-                        ],
+                        [createDecl(meta.property, value), createTransitionDecl(meta.property)],
                         ctx.options.minify,
                     ),
                 )
             }
         }
 
-        return ctx.options.minify
-            ? chunks.join('')
-            : chunks.join('\n\n')
+        return ctx.options.minify ? chunks.join('') : chunks.join('\n\n')
     },
 }
 
@@ -399,9 +367,7 @@ const gradientUtilsProcessor: CssProcessor = {
             )
         }
 
-        return ctx.options.minify
-            ? chunks.join('')
-            : chunks.join('\n\n')
+        return ctx.options.minify ? chunks.join('') : chunks.join('\n\n')
     },
 }
 
@@ -417,12 +383,9 @@ export function compileCssClasses(
 ): string {
     const ctx = buildContext(input, options)
 
-    const chunks = DEFAULT_PROCESSORS
-        .filter(processor => processor.enabled(ctx))
-        .map(processor => processor.compile(ctx))
+    const chunks = DEFAULT_PROCESSORS.filter((processor) => processor.enabled(ctx))
+        .map((processor) => processor.compile(ctx))
         .filter(Boolean)
 
-    return ctx.options.minify
-        ? chunks.join('')
-        : chunks.join('\n\n')
+    return ctx.options.minify ? chunks.join('') : chunks.join('\n\n')
 }

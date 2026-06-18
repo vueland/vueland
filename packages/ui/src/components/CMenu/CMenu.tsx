@@ -7,7 +7,8 @@ import {
     type ShallowRef,
     shallowRef,
     Transition,
-    unref, useModel,
+    unref,
+    useModel,
     type VNodeChild,
     vShow,
     watch,
@@ -43,29 +44,26 @@ import {
 } from '../../utils'
 import { COverlay } from '../COverlay'
 
-export type CMenuProps =
-    ActivatorProps &
+export type CMenuProps = ActivatorProps &
     DimensionsProps &
     AutoPositionProps &
     DelayProps &
     PresetProps & {
-    id?: string | number
-    closeOnClickOutside?: boolean
-    closeOnContentClick?: boolean
-    ssr?: boolean
-    transition?: string
-    modelValue?: boolean
-    to?: string
-    onClose?: () => void
-    onOpen?: () => void
-    'onUpdate:modelValue'?: (val: boolean) => void
-}
+        id?: string | number
+        closeOnClickOutside?: boolean
+        closeOnContentClick?: boolean
+        ssr?: boolean
+        transition?: string
+        modelValue?: boolean
+        to?: string
+        onClose?: () => void
+        onOpen?: () => void
+        'onUpdate:modelValue'?: (val: boolean) => void
+    }
 
 export type CMenuSlots = {
-    activator?(props: {
-        on: ActivatorListeners
-        activator: Record<string, any>
-    }): VNodeChild
+    activator?(props: { on: ActivatorListeners;
+        activator: Record<string, any> }): VNodeChild
     default?(): VNodeChild
 }
 
@@ -116,44 +114,43 @@ export const CMenu = defineComponent<CMenuProps>({
         attrs,
         emit,
         slots,
-        expose,
+        expose, 
     }) {
         const THROTTLE_DELAY = 50
 
         const {
             element,
             activatorProps,
-            genListeners,
+            genListeners, 
         } = useActivator(props)
 
         const {
             activator,
             content,
             contentRef,
-            update,
+            update, 
         } = useAutoPosition(props, element)
 
         const presets = useMenuPresets({ props })
 
-        const {
-            openDelay,
-            closeDelay,
-        } = useDelayedActions(props)
+        const { openDelay, closeDelay } = useDelayedActions(props)
 
         const model = useModel(props, 'modelValue')
 
         const mounted = shallowRef(Boolean(props.ssr || props.modelValue))
 
-        const detached = computed(() => (
-            isDef(props.positionX) || isDef(props.positionY)
-        ))
+        const detached = computed(() => isDef(props.positionX) || isDef(props.positionY))
 
         const sizesStyles = computed(() => ({
             ...(props.width || unref(activator).width
-                    ? { width: convertToUnit(props.width ?? unref(activator).width) } : {}
-            ),
-            ...(props.height ? { height: convertToUnit(props.height ?? unref(activator).height) } : {}),
-            ...(props.maxWidth || props.width ? { maxWidth: convertToUnit(props.maxWidth || props.width!) } : {}),
+                ? { width: convertToUnit(props.width ?? unref(activator).width) }
+                : {}),
+            ...(props.height
+                ? { height: convertToUnit(props.height ?? unref(activator).height) }
+                : {}),
+            ...(props.maxWidth || props.width
+                ? { maxWidth: convertToUnit(props.maxWidth || props.width!) }
+                : {}),
             ...(props.minWidth ? { minWidth: convertToUnit(props.minWidth) } : {}),
             ...(props.minHeight ? { minHeight: convertToUnit(props.minHeight) } : {}),
             ...(props.maxHeight ? { maxHeight: convertToUnit(props.maxHeight) } : {}),
@@ -165,10 +162,10 @@ export const CMenu = defineComponent<CMenuProps>({
             ...unref(sizesStyles),
         }))
 
-        const classes = computed(() => ([
+        const classes = computed(() => [
             { 'c-menu--visible': unref(model) },
             ...unref(presets).root,
-        ]))
+        ])
 
         const open = () => {
             mounted.value = true
@@ -204,10 +201,9 @@ export const CMenu = defineComponent<CMenuProps>({
             const { target } = e
             const activatorElement = unref(element) as Element | undefined
 
-            if (closeOnClickOutside && (
-                !activatorElement ||
-                !activatorElement.contains(target as Node)
-            )
+            if (
+                closeOnClickOutside &&
+                (!activatorElement || !activatorElement.contains(target as Node))
             ) {
                 close()
                 emit('outside-click')
@@ -221,7 +217,7 @@ export const CMenu = defineComponent<CMenuProps>({
             }
         }
 
-        const { onKeydown, } = useKeyboard({Escape: () => close(),})
+        const { onKeydown } = useKeyboard({ Escape: () => close() })
 
         const listeners = genListeners({
             open,
@@ -245,34 +241,45 @@ export const CMenu = defineComponent<CMenuProps>({
             toggle,
         })
 
-        watch(() => props.modelValue, (value) => {
-            model.value = Boolean(value)
+        watch(
+            () => props.modelValue,
+            (value) => {
+                model.value = Boolean(value)
 
-            if (value) {
-                mounted.value = true
-            }
-        }, { immediate: true, })
+                if (value) {
+                    mounted.value = true
+                }
+            },
+            { immediate: true },
+        )
 
         if (IN_BROWSER) {
-            watch(model, (value) => {
-                if (value) {
-                    window.addEventListener('resize', handler, { passive: true })
-                    window.addEventListener('scroll', handler, { passive: true })
-                    window.addEventListener('keydown', onKeydown)
-                } else {
-                    window.removeEventListener('resize', handler)
-                    window.removeEventListener('scroll', handler)
-                    window.removeEventListener('keydown', onKeydown)
-                }
-            }, { immediate: true })
+            watch(
+                model,
+                (value) => {
+                    if (value) {
+                        window.addEventListener('resize', handler, { passive: true })
+                        window.addEventListener('scroll', handler, { passive: true })
+                        window.addEventListener('keydown', onKeydown)
+                    } else {
+                        window.removeEventListener('resize', handler)
+                        window.removeEventListener('scroll', handler)
+                        window.removeEventListener('keydown', onKeydown)
+                    }
+                },
+                { immediate: true },
+            )
 
             if (unref(detached)) {
-                watch(model, (value) => {
-                    if (value) {
-                        open()
-                    }
-                }, { immediate: true })
-
+                watch(
+                    model,
+                    (value) => {
+                        if (value) {
+                            open()
+                        }
+                    },
+                    { immediate: true },
+                )
             } else {
                 onMounted(() => {
                     if (unref(model)) {
@@ -297,11 +304,7 @@ export const CMenu = defineComponent<CMenuProps>({
                 <div
                     {...attrs}
                     ref={contentRef}
-                    class={[
-                        'c-menu',
-                        attrs.class as Record<string, string>,
-                        unref(classes),
-                    ]}
+                    class={['c-menu', attrs.class as Record<string, string>, unref(classes)]}
                     style={[
                         attrs.style as Record<string, string>,
                         {
@@ -311,9 +314,7 @@ export const CMenu = defineComponent<CMenuProps>({
                     ]}
                     onClick={onContentClick}
                 >
-                    <div class="c-menu__content">
-                        {slots.default?.()}
-                    </div>
+                    <div class="c-menu__content">{slots.default?.()}</div>
                 </div>,
                 [
                     [vShow, unref(model)],
@@ -332,9 +333,7 @@ export const CMenu = defineComponent<CMenuProps>({
                 <COverlay v-model={model.value}>
                     {{
                         default: ({ zIndex }: { zIndex: ShallowRef<number> }) => (
-                            <Transition name={props.transition}>
-                                {renderContent(zIndex)}
-                            </Transition>
+                            <Transition name={props.transition}>{renderContent(zIndex)}</Transition>
                         ),
                     }}
                 </COverlay>

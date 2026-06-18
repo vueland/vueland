@@ -22,38 +22,28 @@ import {
     type ValidateState,
 } from '../../composables'
 import { FIELD_ATTRS } from '../../constants'
-import {
-    genericComponent,
-    type GenericProps,
-    propsFactory,
-} from '../../utils'
+import { genericComponent, type GenericProps, propsFactory } from '../../utils'
 
 export interface InputState {
     focused: boolean
     isDirty: boolean
 }
 
-export type CInputKind =
-    | 'checkbox'
-    | 'radio'
-    | 'input'
-    | 'area'
-    | 'listbox'
+export type CInputKind = 'checkbox' | 'radio' | 'input' | 'area' | 'listbox'
 
-export type CInputProps<T = any> =
-    ValidateProps &
+export type CInputProps<T = any> = ValidateProps &
     PresetProps & {
-    id?: string
-    modelValue: T | T[] | undefined | null
-    label?: string
-    details?: string
-    noDetails?: boolean
-    clearable?: boolean
-    disabled?: boolean
-    focused?: boolean
-    readonly?: boolean
-    kind?: CInputKind
-}
+        id?: string
+        modelValue: T | T[] | undefined | null
+        label?: string
+        details?: string
+        noDetails?: boolean
+        clearable?: boolean
+        disabled?: boolean
+        focused?: boolean
+        readonly?: boolean
+        kind?: CInputKind
+    }
 
 export type CInputEmits<T = any> = {
     focus: [boolean]
@@ -101,28 +91,36 @@ export const makeCInputProps = propsFactory({
     label: String,
     details: String,
     noDetails: Boolean,
-    modelValue: {type: null,},
+    modelValue: { type: null },
     clearable: Boolean,
     focused: Boolean,
+    disabled: Boolean,
+    readonly: Boolean,
     kind: String as PropType<CInputKind>,
     rules: Array as PropType<ValidateFn[]>,
     validateOn: String as PropType<ValidateOn>,
     preset: String,
 })
 
-export const CInput = genericComponent<new <T>(
-    props: CInputProps<T>,
-    slots: CInputSlots<T>,
-) => GenericProps<typeof props, typeof slots>>()({
+export const CInput = genericComponent<
+    new <T>(
+        props: CInputProps<T>,
+        slots: CInputSlots<T>,
+    ) => GenericProps<typeof props, typeof slots>
+>()({
     name: 'CInput',
     inheritAttrs: false,
-    props: makeCInputProps({validateOn: 'input' as ValidateOn,}),
+    props: makeCInputProps({ validateOn: 'input' as ValidateOn }),
     emits: {
         focus: () => true,
         blur: () => true,
         input: () => true,
     },
-    setup(props, { emit, expose, slots }) {
+    setup(props, {
+        emit,
+        expose,
+        slots,
+    }) {
         const state = shallowReactive<InputState>({
             focused: (props as any).focused ?? false,
             isDirty: false,
@@ -148,27 +146,37 @@ export const CInput = genericComponent<new <T>(
         const isCheckBox = (props as any).kind === 'checkbox'
         const isRadio = (props as any).kind === 'radio'
 
-        const hasDetails = computed(() => !props.noDetails && (
-            !!props.details ||
-            !!slots?.details ||
-            errors.hasError
-        ))
+        const hasDetails = computed(
+            () => !props.noDetails && (!!props.details || !!slots?.details || errors.hasError),
+        )
 
-        const normalizedAttrsMap = computed(() => Object.entries(attrs).reduce<Record<string, unknown>>((acc, [k, v]) => {
-            if (FIELD_ATTRS.has(k) || k.startsWith('aria-') || k.startsWith('data-')) {
-                acc[k] = v
-            }
-            return acc
-        }, {}))
+        const normalizedAttrsMap = computed(() =>
+            Object.entries(attrs).reduce<Record<string, unknown>>((acc, [k, v]) => {
+                if (FIELD_ATTRS.has(k) || k.startsWith('aria-') || k.startsWith('data-')) {
+                    acc[k] = v
+                }
+                return acc
+            }, {}),
+        )
 
         const fieldAttrs = computed(() => ({
-            ...(attrs.disabled ? { disabled: true, 'aria-disabled': 'true' } : {}),
-            ...(attrs.readonly ? { readonly: true, 'aria-readonly': 'true' } : {}),
-            ...(props.label || isCheckBox || isRadio ? { 'aria-labelledby': `${fieldId}-label` } : {}),
+            ...(props.disabled ? {
+                disabled: true,
+                'aria-disabled': 'true',
+            } : {}),
+            ...(props.readonly ? {
+                readonly: true,
+                'aria-readonly': 'true',
+            } : {}),
+            ...(props.label || isCheckBox || isRadio
+                ? { 'aria-labelledby': `${fieldId}-label` }
+                : {}),
             ...(props.label ? { 'aria-label': props.label } : {}),
             ...(unref(hasDetails) ? { 'aria-describedby': `${fieldId}-details` } : {}),
             ...(errors.hasError ? { 'aria-invalid': 'true' } : {}),
-            ...(errors.errorMessage && unref(hasDetails) ? { 'aria-errormessage': `${fieldId}-details` } : {}),
+            ...(errors.errorMessage && unref(hasDetails)
+                ? { 'aria-errormessage': `${fieldId}-details` }
+                : {}),
             ...(isListBox ? { 'aria-haspopup': 'listbox' } : {}),
             ...(isListBox ? { 'aria-controls': `${fieldId}-menu` } : {}),
             ...(isListBox ? { 'aria-expanded': `${state.focused}` } : {}),
@@ -178,10 +186,10 @@ export const CInput = genericComponent<new <T>(
         const classes = computed(() => [
             {
                 'c-input--has-error': errors.hasError,
-                'c-input--default': !errors.hasError && !attrs.disabled && !attrs.readonly,
+                'c-input--default': !errors.hasError && !props.disabled && !props.readonly,
                 'c-input--focused': state.focused,
-                'c-input--disabled': !!attrs.disabled,
-                'c-input--readonly': !!attrs.readonly,
+                'c-input--disabled': !!props.disabled,
+                'c-input--readonly': !!props.readonly,
                 'c-input--clearable': props.clearable,
                 [attrs.class as string]: !!attrs.class,
             },
@@ -189,7 +197,7 @@ export const CInput = genericComponent<new <T>(
         ])
 
         function focus() {
-            if (attrs.disabled || attrs.readonly) return
+            if (props.disabled || props.readonly) return
             state.focused = true
             emit('focus', state.focused)
         }
@@ -212,8 +220,12 @@ export const CInput = genericComponent<new <T>(
         onBeforeUnmount(() => formApi?.remove(validate))
 
         expose({
- validate, focus, blur, input, reset 
-})
+            validate,
+            focus,
+            blur,
+            input,
+            reset,
+        })
 
         return () => {
             const fieldSlotProps: CInputFieldSlotProps = {
@@ -234,9 +246,7 @@ export const CInput = genericComponent<new <T>(
 
             return (
                 <div class={['c-input', unref(classes)]}>
-                    <div class="c-input__field">
-                        {slots.field?.(fieldSlotProps)}
-                    </div>
+                    <div class="c-input__field">{slots.field?.(fieldSlotProps)}</div>
                     {unref(hasDetails) && (
                         <div
                             id={`${fieldId}-details`}

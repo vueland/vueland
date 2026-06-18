@@ -1,7 +1,10 @@
 import { useModel, type VNode } from 'vue'
 
 import {
- emitsFactory, genericComponent, type GenericProps, type InferFactoryProps 
+    emitsFactory,
+    genericComponent,
+    type GenericProps,
+    type InferFactoryProps,
 } from '../../utils'
 import { CField } from '../CField'
 import { CInput, type CInputFieldSlotProps, makeCInputProps } from '../CInput'
@@ -9,10 +12,8 @@ import { CInput, type CInputFieldSlotProps, makeCInputProps } from '../CInput'
 export type CTextFieldSlots = {
     prepend(): VNode
     append(): VNode
-    details(props: {
-        errorMessage?: string
-        details?: string
-    }): VNode
+    details(props: { errorMessage?: string;
+        details?: string }): VNode
 }
 
 export const CTextField = genericComponent<
@@ -23,8 +24,8 @@ export const CTextField = genericComponent<
     InferFactoryProps<ReturnType<typeof makeCInputProps>>
 >()({
     name: 'CTextField',
-    emits: emitsFactory<{'update:modelValue': [unknown]}>({'update:modelValue': () => true}),
-    props: {modelValue: [String, Number],},
+    emits: emitsFactory<{ 'update:modelValue': [unknown] }>({ 'update:modelValue': () => true }),
+    props: { modelValue: [String, Number] },
     setup(props, { slots, attrs }) {
         const model = useModel(props, 'modelValue')
 
@@ -33,11 +34,7 @@ export const CTextField = genericComponent<
         }
 
         return () => (
-            <CInput
-                modelValue={model.value}
-                {...attrs}
-                kind="input"
-            >
+            <CInput modelValue={model.value} {...attrs} kind="input">
                 {{
                     field: (field: CInputFieldSlotProps) => (
                         <div class="c-text-field">
@@ -64,7 +61,10 @@ export const CTextField = genericComponent<
                         </div>
                     ),
                     details: ({ errorMessage, details }) =>
-                        slots.details?.({ errorMessage, details }) ?? (
+                        slots.details?.({
+                            errorMessage,
+                            details, 
+                        }) ?? (
                             <span key={errorMessage || details} class="c-text-field__details">
                                 {errorMessage || details}
                             </span>

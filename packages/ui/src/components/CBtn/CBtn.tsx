@@ -1,19 +1,17 @@
 import {
- computed, defineComponent, type PropType, unref 
+    computed,
+    defineComponent,
+    type PropType,
+    unref,
 } from 'vue'
 
-import { type PresetProps, useButtonPresets } from '../../composables'
+import { makePresetProps, useButtonPresets } from '../../composables'
 import { propsFactory } from '../../utils'
 
-export type CBtnProps = PresetProps & {
-    variant: 'flat' | 'outlined' | undefined
-    block?: boolean
-}
-
 export const makeCBtnProps = propsFactory({
-    variant: {type: String as PropType<CBtnProps['variant']>},
+    variant: { type: String as PropType<'flat' | 'outlined'> },
     block: Boolean,
-    preset: String,
+    ...makePresetProps(),
 })
 
 export const CBtn = defineComponent({
@@ -28,12 +26,10 @@ export const CBtn = defineComponent({
                 'c-btn--outlined': props.variant === 'outlined',
                 'c-btn--block': props.block,
             },
-            ...unref(preset).root
+            ...unref(preset).root,
         ])
-        return () => (
-            <button class={['c-btn', ...unref(classes)]}>
-                {slots.default?.()}
-            </button>
-        )
-    }
+        return () => <button class={['c-btn', ...unref(classes)]}>{slots.default?.()}</button>
+    },
 })
+
+export type CBtnProps = InstanceType<typeof CBtn>['$props']

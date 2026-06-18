@@ -9,8 +9,9 @@ export function useAutocomplete<T = any>(props: IterableItemsProps<T> & Selectab
     const {
         selectedItems,
         hasValue,
-        select
+        select,
     } = useSelects(props)
+
 
     const inputValue = shallowRef()
 
@@ -33,6 +34,6 @@ export function useAutocomplete<T = any>(props: IterableItemsProps<T> & Selectab
         searchItems,
         hasValue,
         inputValue,
-        select
+        select,
     }
 }

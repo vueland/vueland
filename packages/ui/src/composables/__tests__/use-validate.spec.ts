@@ -33,13 +33,15 @@ function mountUseValidate(
         ...initialState,
     }) as Reactive<InputState>
 
-    const wrapper = mount(defineComponent({
-        setup() {
-            api = useValidate(props, state)
+    const wrapper = mount(
+        defineComponent({
+            setup() {
+                api = useValidate(props, state)
 
-            return () => h('div')
-        },
-    }))
+                return () => h('div')
+            },
+        }),
+    )
 
     return {
         wrapper,
@@ -64,10 +66,7 @@ describe('useValidate', () => {
     it('возвращает true, если все rules валидны', () => {
         const { api } = mountUseValidate({
             modelValue: 'John',
-            rules: [
-                createRule(true),
-                createRule(true),
-            ],
+            rules: [createRule(true), createRule(true)],
         })
 
         expect(api.hasRules.value).toBe(true)
@@ -79,9 +78,7 @@ describe('useValidate', () => {
     it('возвращает false и сохраняет сообщение, если rule невалиден', () => {
         const { api } = mountUseValidate({
             modelValue: '',
-            rules: [
-                createRule(false, 'Required field'),
-            ],
+            rules: [createRule(false, 'Required field')],
         })
 
         expect(api.validate()).toBe(false)
@@ -102,10 +99,7 @@ describe('useValidate', () => {
 
         const { api } = mountUseValidate({
             modelValue: '',
-            rules: [
-                firstRule,
-                secondRule,
-            ],
+            rules: [firstRule, secondRule],
         })
 
         expect(api.validate()).toBe(false)
@@ -122,9 +116,7 @@ describe('useValidate', () => {
 
         const { api, props } = mountUseValidate({
             modelValue: 'invalid',
-            rules: [
-                rule,
-            ],
+            rules: [rule],
         })
 
         expect(api.validate()).toBe(false)
@@ -141,9 +133,7 @@ describe('useValidate', () => {
     it('сбрасывает ошибку через resetValidate', () => {
         const { api } = mountUseValidate({
             modelValue: '',
-            rules: [
-                createRule(false, 'Required field'),
-            ],
+            rules: [createRule(false, 'Required field')],
         })
 
         api.validate()
@@ -207,9 +197,7 @@ describe('useValidate', () => {
             {
                 modelValue: '',
                 validateOn: 'blur',
-                rules: [
-                    createRule(false, 'Required field'),
-                ],
+                rules: [createRule(false, 'Required field')],
             },
             {
                 focused: true,
@@ -235,9 +223,7 @@ describe('useValidate', () => {
         const { api, props } = mountUseValidate({
             modelValue: 'abc',
             validateOn: 'blur',
-            rules: [
-                rule,
-            ],
+            rules: [rule],
         })
 
         props.modelValue = 'ab'
@@ -257,9 +243,7 @@ describe('useValidate', () => {
         const { api, props } = mountUseValidate({
             modelValue: 'abc',
             validateOn: 'blur',
-            rules: [
-                rule,
-            ],
+            rules: [rule],
         })
 
         props.modelValue = ''

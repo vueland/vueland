@@ -1,23 +1,26 @@
 import {
- defineComponent, Transition, unref, useModel, watch, withDirectives 
+    defineComponent,
+    Transition,
+    unref,
+    useModel,
+    watch,
+    withDirectives,
 } from 'vue'
 
 import { useApplication } from '../../composables'
 import { vClickOutside } from '../../directives'
-import { COverlay } from '../COverlay'
+import { COverlay, type COverlaySlots } from '../COverlay'
 import { CScrim } from '../CScrim'
 
-import type { CDialogProps } from './types'
-
-export const CDialog = defineComponent<CDialogProps>({
+export const CDialog = defineComponent({
     name: 'CDialog',
     props: {
         modelValue: Boolean,
         closeOnClickOutside: Boolean,
-    } as any,
+    },
     emits: { 'update:modelValue': () => true },
     setup(props, { slots }) {
-        const model = useModel(props as any, 'modelValue')
+        const model = useModel(props, 'modelValue')
         const { blockScroll, unblockScroll } = useApplication()
 
         watch(model, (value) => {
@@ -34,15 +37,10 @@ export const CDialog = defineComponent<CDialogProps>({
         return () => (
             <COverlay v-model={model.value}>
                 {{
-                    default: ({ zIndex }: any) => (
+                    default: ({ zIndex }: COverlaySlots['default']) => (
                         <>
                             <Transition name="fade">
-                                {unref(model) && (
-                                    <CScrim
-                                        blur
-                                        style={{ zIndex: zIndex.value }}
-                                    />
-                                )}
+                                {unref(model) && <CScrim blur style={{ zIndex: zIndex.value }} />}
                             </Transition>
                             <Transition name="scale-in">
                                 {unref(model) && (
@@ -51,7 +49,7 @@ export const CDialog = defineComponent<CDialogProps>({
                                             <div class="c-dialog__content">
                                                 {slots.default?.()}
                                             </div>,
-                                            [[vClickOutside, onOutsideClick]]
+                                            [[vClickOutside, onOutsideClick]],
                                         )}
                                     </div>
                                 )}
@@ -63,3 +61,5 @@ export const CDialog = defineComponent<CDialogProps>({
         )
     },
 })
+
+export type CDialogProps = InstanceType<typeof CDialog>['$props']

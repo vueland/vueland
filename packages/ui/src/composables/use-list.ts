@@ -1,6 +1,6 @@
 import { inject } from 'vue'
 
-import type { ListAPI } from '../components'
+import type { ListAPI } from '../components/CList/CList'
 import { $LIST_API_KEY } from '../constants'
 
 export function useList<T>() {

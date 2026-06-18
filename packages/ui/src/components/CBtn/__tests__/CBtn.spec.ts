@@ -14,7 +14,7 @@ describe('CBtn', () => {
     it('устанавливает props.variant = "outlined"', () => {
         const wrapper = mount(CBtn, {
             props: { variant: 'outlined' },
-            slots: { default: 'Hello' }
+            slots: { default: 'Hello' },
         })
 
         expect(wrapper.text()).toContain('Hello')

@@ -1,9 +1,7 @@
-import type {
-    ComputedRef,
-    ModelRef,
-    PropType,
-} from 'vue'
 import {
+    type ComputedRef,
+    type ModelRef,
+    type PropType,
     shallowRef,
     unref,
     useModel,
@@ -26,16 +24,8 @@ import {
 } from '../../utils'
 import { CField } from '../CField'
 import { CIcon } from '../CIcon'
-import {
-    CInput,
-    type CInputFieldSlotProps,
-    makeCInputProps,
-} from '../CInput'
-import {
-    CList,
-    CListItem,
-    CListItemTitle,
-} from '../CList'
+import { CInput, type CInputFieldSlotProps, makeCInputProps } from '../CInput'
+import { CList, CListItem, CListItemTitle } from '../CList'
 import { CMenu } from '../CMenu'
 
 type CAutocompleteOptions = {
@@ -82,14 +72,9 @@ export const makeCAutocompleteProps = propsFactory({
     options: Object as PropType<CAutocompleteOptions>,
 })
 
-type ModelValue<
-    Item,
-    Multiple extends boolean | undefined,
-> =
-    Multiple extends true
-        ? Item[]
-        : Item | undefined | null
-
+type ModelValue<Item, Multiple extends boolean | undefined> = Multiple extends true
+    ? Item[]
+    : Item | undefined | null
 
 export const CAutocomplete = genericComponent<
     new <
@@ -117,10 +102,12 @@ export const CAutocomplete = genericComponent<
         'update:modelValue': () => true,
         'update:search': (val: string) => typeof val === 'string',
     }),
-    setup(props, { emit, attrs, slots }) {
-        const model = useModel(props, 'modelValue') as ModelRef<
-            unknown | unknown[] | undefined
-        >
+    setup(props, {
+        emit,
+        attrs,
+        slots,
+    }) {
+        const model = useModel(props, 'modelValue') as ModelRef<unknown | unknown[] | undefined>
 
         const {
             inputValue,
@@ -164,9 +151,7 @@ export const CAutocomplete = genericComponent<
         })
 
         function clear() {
-            model.value = props.multiple
-                ? []
-                : undefined
+            model.value = props.multiple ? [] : undefined
         }
 
         function focus() {
@@ -182,12 +167,7 @@ export const CAutocomplete = genericComponent<
         })
 
         return () => (
-            <CInput
-                modelValue={model.value as any}
-                ref={inputRef}
-                kind="listbox"
-                {...attrs}
-            >
+            <CInput modelValue={model.value as any} ref={inputRef} kind="listbox" {...attrs}>
                 {{
                     field: (field: CInputFieldSlotProps) => (
                         <CMenu
@@ -204,10 +184,7 @@ export const CAutocomplete = genericComponent<
                         >
                             {{
                                 activator: ({ on, activator }) => (
-                                    <div
-                                        class={['c-autocomplete']}
-                                        {...activator}
-                                    >
+                                    <div class={['c-autocomplete']} {...activator}>
                                         {slots.field?.(field) ?? (
                                             <CField
                                                 {...field.attrs}
@@ -234,75 +211,82 @@ export const CAutocomplete = genericComponent<
                                                 {{
                                                     ...(slots.prepend && { prepend: () => slots.prepend!({}) }),
 
-                                                    append: () => slots.append?.({}) ?? (
-                                                        <CIcon
-                                                            name={IconAliases.DROPDOWN}
-                                                            size={20}
-                                                        />
-                                                    ),
+                                                    append: () =>
+                                                        slots.append?.({}) ?? (
+                                                            <CIcon
+                                                                name={IconAliases.DROPDOWN}
+                                                                size={20}
+                                                            />
+                                                        ),
 
-                                                    before: () => slots.selects?.({selectedItems,}) ?? (
+                                                    before: () =>
+                                                        slots.selects?.({ selectedItems }) ??
                                                         unref(selectedItems).map((it, i) => (
                                                             <div
                                                                 class={['c-autocomplete__item']}
                                                                 key={`${it}`}
                                                             >
                                                                 {`${it}${
-                                                                    i + 1 !== unref(selectedItems).length
+                                                                    i + 1 !==
+                                                                    unref(selectedItems).length
                                                                         ? ','
                                                                         : ''
                                                                 }`}
                                                             </div>
-                                                        ))
-                                                    ),
+                                                        )),
                                                 }}
                                             </CField>
                                         )}
                                     </div>
                                 ),
 
-                                default: () => slots.menu?.({
-                                    onSelect: select,
-                                    items: searchItems.value,
-                                }) ?? (
-                                    <CList
-                                        ref={menuListRef}
-                                        modelValue={model.value}
-                                        onUpdate:modelValue={(value) => {
-                                            model.value = value
-                                        }}
-                                        role="listbox"
-                                        selectable
-                                        multiple={props.multiple}
-                                        mandatory={props.mandatory}
-                                    >
-                                        {unref(searchItems).length ? unref(searchItems).map(it => (
-                                            <CListItem
-                                                key={it.key}
-                                                value={it.value ?? it.raw}
-                                            >
-                                                <CListItemTitle>
-                                                    {it.title}
-                                                </CListItemTitle>
-                                            </CListItem>
-                                        )) : (
-                                            <CListItem>
-                                                <CListItemTitle>
-                                                    {props.options?.noItemsMessage ?? 'No items'}
-                                                </CListItemTitle>
-                                            </CListItem>
-                                        )}
-                                    </CList>
-                                ),
+                                default: () =>
+                                    slots.menu?.({
+                                        onSelect: select,
+                                        items: searchItems.value,
+                                    }) ?? (
+                                        <CList
+                                            ref={menuListRef}
+                                            modelValue={model.value}
+                                            onUpdate:modelValue={(value) => {
+                                                model.value = value
+                                            }}
+                                            role="listbox"
+                                            selectable
+                                            multiple={props.multiple}
+                                            mandatory={props.mandatory}
+                                        >
+                                            {unref(searchItems).length ? (
+                                                unref(searchItems).map((it) => (
+                                                    <CListItem
+                                                        key={it.key}
+                                                        value={it.value ?? it.raw}
+                                                    >
+                                                        <CListItemTitle>{it.title}</CListItemTitle>
+                                                    </CListItem>
+                                                ))
+                                            ) : (
+                                                <CListItem>
+                                                    <CListItemTitle>
+                                                        {props.options?.noItemsMessage ??
+                                                            'No items'}
+                                                    </CListItemTitle>
+                                                </CListItem>
+                                            )}
+                                        </CList>
+                                    ),
                             }}
                         </CMenu>
                     ),
 
                     details: ({ errorMessage, details }) => {
-                        return slots.details?.({ errorMessage, details }) ?? (
-                            <span key={errorMessage || details}>
-                                {errorMessage || details}
-                            </span>
+                        return (
+                            slots.details?.({
+                                errorMessage,
+                                details,
+                            }) ?? (
+                                <span key={errorMessage || details}>{errorMessage || details}</span>
+                            )
                         )
                     },
                 }}

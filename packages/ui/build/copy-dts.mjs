@@ -6,6 +6,6 @@ const filesToCopy = [
 ]
 
 for (const [from, to] of filesToCopy) {
-    await fs.mkdir(path.dirname(to), {recursive: true})
+    await fs.mkdir(path.dirname(to), { recursive: true })
     await fs.copyFile(from, to)
 }

@@ -1,45 +1,53 @@
 import {
- shallowRef, unref, useModel, type VNode 
+    shallowRef,
+    unref,
+    useModel,
+    type VNode,
 } from 'vue'
 
 import {
-    type IterableItemsProps, type NormalizedItem,
+    type IterableItemsProps,
+    type NormalizedItem,
     type SelectableProps,
     useKeyboard,
     useNormalizedItems,
-    useSelects
+    useSelects,
 } from '../../composables'
 import { IconAliases } from '../../enums'
 import {
- emitsFactory, genericComponent, type GenericProps, type InferFactoryProps 
+    emitsFactory,
+    genericComponent,
+    type GenericProps,
+    type InferFactoryProps,
 } from '../../utils'
 import { CField } from '../CField'
 import { CIcon } from '../CIcon'
 import {
- CInput, type CInputFieldSlotProps, type CInputSlots, makeCInputProps 
+    CInput,
+    type CInputFieldSlotProps,
+    type CInputSlots,
+    makeCInputProps,
 } from '../CInput'
 import { CList, CListItem, CListItemTitle } from '../CList'
 import { CMenu } from '../CMenu'
 
-export type CSelectProps<T> = SelectableProps<T>
-    & IterableItemsProps<T>
-    & {
-    options?: {
-        extKey?: string
-        noItemsMessage?: string
-    },
-}
+export type CSelectProps<T> = SelectableProps<T> &
+    IterableItemsProps<T> & {
+        options?: {
+            extKey?: string
+            noItemsMessage?: string
+        }
+    }
 
 export type CSelectSlots<T> = {
-    menu(props: { items: NormalizedItem<T>[], onSelect(val: T): void }): void
+    menu(props: { items: NormalizedItem<T>[];
+        onSelect(val: T): void }): void
     field: CInputSlots['field']
     prepend(): VNode
     append(): VNode
     selects(props: { items: T[] }): VNode[]
-    details(props: {
-        errorMessage?: string
-        details?: string
-    }): VNode
+    details(props: { errorMessage?: string;
+        details?: string }): VNode
     ['no-items-message'](): string
 }
 
@@ -51,10 +59,13 @@ export const CSelect = genericComponent<
     InferFactoryProps<ReturnType<typeof makeCInputProps>>
 >()({
     name: 'CSelect',
-    emits: emitsFactory<{ 'update:modelValue': [unknown] }>({'update:modelValue': () => true}),
+    emits: emitsFactory<{ 'update:modelValue': [unknown] }>({ 'update:modelValue': () => true }),
     props: {
         modelValue: null,
-        items: { type: Array, default: () => [] },
+        items: {
+            type: Array,
+            default: () => [],
+        },
         titleKey: String,
         valueKey: String,
         multiple: Boolean,
@@ -62,13 +73,17 @@ export const CSelect = genericComponent<
         options: Object,
     },
     setup(props, { slots, attrs }) {
-        const model = useModel(props as any, 'modelValue')
+        const model = useModel(props, 'modelValue')
         const inputRef = shallowRef()
         const menuRef = shallowRef()
         const menuListRef = shallowRef()
 
-        const normalizedItems = useNormalizedItems(props as any)
-        const { selectedItems, hasValue, select } = useSelects(props as any)
+        const normalizedItems = useNormalizedItems(props)
+        const {
+            selectedItems,
+            hasValue,
+            select,
+        } = useSelects(props)
 
         const { onKeydown } = useKeyboard({
             Tab: () => {
@@ -82,7 +97,7 @@ export const CSelect = genericComponent<
         }
 
         function onClear() {
-            model.value = (props as any).multiple ? [] : undefined
+            model.value = props.multiple ? [] : undefined
         }
 
         function onFocus() {
@@ -105,7 +120,7 @@ export const CSelect = genericComponent<
                             bottom
                             openOnFocus
                             closeOnClickOutside
-                            closeOnContentClick={!(props as any).multiple}
+                            closeOnContentClick={!props.multiple}
                             offsetY={2}
                             strategy="reverse"
                             onClose={onBlur}
@@ -133,51 +148,64 @@ export const CSelect = genericComponent<
                                                 onKeydown={onKeydown}
                                             >
                                                 {{
-                                                    before: () => slots.selects?.({ items: unref(selectedItems) as any }) ?? (
-                                                        unref(selectedItems).map((it: any, i: number) => (
-                                                            <div key={`${it}`} class="c-selected__item">
-                                                                {`${it}${i + 1 !== unref(selectedItems).length ? ',' : ''}`}
-                                                            </div>
-                                                        ))
-                                                    ),
+                                                    before: () =>
+                                                        slots.selects?.({ items: unref(selectedItems) }) ??
+                                                        unref(selectedItems).map(
+                                                            (it: any, i: number) => (
+                                                                <div
+                                                                    key={`${it}`}
+                                                                    class="c-selected__item"
+                                                                >
+                                                                    {`${it}${i + 1 !== unref(selectedItems).length ? ',' : ''}`}
+                                                                </div>
+                                                            ),
+                                                        ),
                                                     append: () => (
-                                                        <CIcon name={IconAliases.DROPDOWN} size={20}/>
+                                                        <CIcon
+                                                            name={IconAliases.DROPDOWN}
+                                                            size={20}
+                                                        />
                                                     ),
                                                 }}
                                             </CField>
                                         )}
                                     </div>
                                 ),
-                                default: () => slots.menu?.({
-                                    onSelect: select,
-                                    items: unref(normalizedItems) as any,
-                                }) ?? (
-                                    <CList
-                                        ref={menuListRef}
-                                        modelValue={model.value}
-                                        onUpdate:modelValue={(v: any) => {
-                                            model.value = v
-                                        }}
-                                        role="listbox"
-                                        selectable
-                                        multiple={(props as any).multiple}
-                                        mandatory={(props as any).mandatory}
-                                    >
-                                        {unref(normalizedItems).map((item: any) => (
-                                            <CListItem key={item.key} value={item.value ?? item.raw}>
-                                                <CListItemTitle>{item.title}</CListItemTitle>
-                                            </CListItem>
-                                        ))}
-                                    </CList>
-                                ),
+                                default: () =>
+                                    slots.menu?.({
+                                        onSelect: select,
+                                        items: unref(normalizedItems),
+                                    }) ?? (
+                                        <CList
+                                            ref={menuListRef}
+                                            modelValue={model.value}
+                                            onUpdate:modelValue={(v: NormalizedItem<unknown>) => {
+                                                model.value = v
+                                            }}
+                                            role="listbox"
+                                            selectable
+                                            multiple={props.multiple}
+                                            mandatory={props.mandatory}
+                                        >
+                                            {unref(normalizedItems).map((item: NormalizedItem<unknown>) => (
+                                                <CListItem
+                                                    key={item.key}
+                                                    value={item.value ?? item.raw}
+                                                >
+                                                    <CListItemTitle>{item.title}</CListItemTitle>
+                                                </CListItem>
+                                            ))}
+                                        </CList>
+                                    ),
                             }}
                         </CMenu>
                     ),
                     details: ({ errorMessage, details }: any) =>
-                        slots.details?.({ errorMessage, details }) ?? (
-                            <span key={errorMessage || details}>
-                                {errorMessage || details}
-                            </span>
+                        slots.details?.({
+                            errorMessage,
+                            details,
+                        }) ?? (
+                            <span key={errorMessage || details}>{errorMessage || details}</span>
                         ),
                 }}
             </CInput>

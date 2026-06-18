@@ -13,12 +13,12 @@ export const CTooltip = defineComponent({
         return () => (
             <CMenu {...props} {...attrs} width={width.value}>
                 {{
-                    activator: ({ on, activator }: any) => (slots as unknown as CMenuSlots).activator?.({ on, activator }),
-                    default: () => (
-                        <div class="c-tooltip">
-                            {slots.default?.()}
-                        </div>
-                    ),
+                    activator: ({ on, activator }: any) =>
+                        (slots as unknown as CMenuSlots).activator?.({
+                            on,
+                            activator, 
+                        }),
+                    default: () => <div class="c-tooltip">{slots.default?.()}</div>,
                 }}
             </CMenu>
         )

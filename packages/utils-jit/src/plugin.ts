@@ -15,16 +15,17 @@ import {
 } from './core'
 import { defaultRules } from './rules'
 import type {
- JitOptions, ParsedToken, Pattern, ResolvedJitOptions, UtilityRule
+    JitOptions,
+    ParsedToken,
+    Pattern,
+    ResolvedJitOptions,
+    UtilityRule,
 } from './types'
 
 function resolveOptions(options: JitOptions = {}): ResolvedJitOptions {
     return {
         include: options.include ?? DEFAULT_INCLUDE,
-        exclude: [
-            ...DEFAULT_EXCLUDE,
-            ...(options.exclude ?? []),
-        ],
+        exclude: [...DEFAULT_EXCLUDE, ...(options.exclude ?? [])],
         outFile: options.outFile ?? 'src/.generated/utils-jit.css',
         breakpoints: {
             ...DEFAULT_BREAKPOINTS,
@@ -65,11 +66,7 @@ function isExcluded(file: string, exclude: Pattern[]): boolean {
     return exclude.some((pattern) => matchesPattern(file, pattern))
 }
 
-function collectProjectFiles(
-    root: string,
-    options: ResolvedJitOptions,
-    outFile: string
-): string[] {
+function collectProjectFiles(root: string, options: ResolvedJitOptions, outFile: string): string[] {
     const files: string[] = []
 
     function walk(dir: string): void {
@@ -128,10 +125,7 @@ export function utilsJIT(options?: JitOptions): Plugin {
     let devServer: ViteDevServer | null = null
     let currentCss = ''
 
-    const allRules: UtilityRule[] = [
-        ...defaultRules,
-        ...resolvedOptions.rules,
-    ]
+    const allRules: UtilityRule[] = [...defaultRules, ...resolvedOptions.rules]
 
     const fileToTokens = new Map<string, Set<string>>()
     const tokenRefCount = new Map<string, number>()
@@ -188,7 +182,7 @@ export function utilsJIT(options?: JitOptions): Plugin {
             parsed,
             cssBody,
             resolvedOptions.breakpoints,
-            resolvedOptions.variants
+            resolvedOptions.variants,
         )
 
         tokenCssCache.set(token, cssRule)
@@ -207,11 +201,7 @@ export function utilsJIT(options?: JitOptions): Plugin {
             .sort(([a], [b]) => a.localeCompare(b))
             .map(([, cssRule]) => cssRule)
 
-        return [
-            resolvedOptions.banner,
-            ...sortedRules,
-            '',
-        ].join('\n')
+        return [resolvedOptions.banner, ...sortedRules, ''].join('\n')
     }
 
     function writeCssFile(notify = false): void {

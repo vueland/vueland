@@ -1,14 +1,19 @@
 import {
- computed, type Reactive, shallowReactive, toRefs, unref, watch 
+    computed,
+    type Reactive,
+    shallowReactive,
+    toRefs,
+    unref,
+    watch,
 } from 'vue'
 
-import { type InputState } from '../components'
+import type { InputState } from '../components/CInput/CInput'
 import type { Maybe } from '../types'
 
-export type ValidateFn = (value: any) => ({
-    valid: boolean,
+export type ValidateFn = (value: any) => {
+    valid: boolean
     message: string
-})
+}
 
 export type ValidateOn = 'input' | 'blur'
 
@@ -24,10 +29,13 @@ export type ValidateState = {
 
 export enum InputEvents {
     INPUT = 'input',
-    BLUR = 'blur'
+    BLUR = 'blur',
 }
 
-export function useValidate(props: ValidateProps & { modelValue: any }, state: Reactive<InputState>) {
+export function useValidate(
+    props: ValidateProps & { modelValue: any },
+    state: Reactive<InputState>,
+) {
     const { modelValue, validateOn } = toRefs(props)
 
     const errors = shallowReactive<ValidateState>({
@@ -64,16 +72,18 @@ export function useValidate(props: ValidateProps & { modelValue: any }, state: R
     }
 
     if (unref(hasRules)) {
-        watch(modelValue, () => {
-            // всегда валидируем при появлении значения; при очистке — только если validateOn=input
-            if (unref(validateOn) !== InputEvents.BLUR) {
-                validate()
-            }
+        watch(modelValue, (val) => {
+            // при validateOn=blur пропускаем только если значение непустое
+            if (unref(validateOn) === InputEvents.BLUR && !!val) return
+            validate()
         })
 
-        watch(() => state.focused, (val) => {
-            if (!val) validate()
-        })
+        watch(
+            () => state.focused,
+            (val) => {
+                if (!val) validate()
+            },
+        )
     }
 
     return {

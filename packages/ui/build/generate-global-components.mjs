@@ -1,7 +1,7 @@
-import {writeFileSync} from 'node:fs'
-import {resolve} from 'node:path'
+import { writeFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 
-import {components} from './components.mjs'
+import { components } from './components.mjs'
 
 const content = [
     'export {}',

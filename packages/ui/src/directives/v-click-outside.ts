@@ -1,10 +1,6 @@
 // changes for tests
 const clickHandler = (e, el) => {
-    if (
-        el.contains(e.target) &&
-        el._binds?.value &&
-        !el._binds?.value.closeConditional
-    ) {
+    if (el.contains(e.target) && el._binds?.value && !el._binds?.value.closeConditional) {
         return
     }
 

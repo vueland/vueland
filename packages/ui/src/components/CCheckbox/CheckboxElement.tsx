@@ -1,5 +1,8 @@
 import {
- computed, defineComponent, unref,useModel 
+    computed,
+    defineComponent,
+    unref,
+    useModel,
 } from 'vue'
 
 import { IconAliases } from '../../enums'
@@ -13,13 +16,17 @@ export const CheckboxElement = defineComponent({
         error: Boolean,
         checked: Boolean,
         label: String,
-        id: { type: String, required: true },
+        id: String,
         disabled: Boolean,
         readonly: Boolean,
         focused: Boolean,
     },
     emits: ['toggle', 'update:focused'],
-    setup(props, { emit, slots, attrs }) {
+    setup(props, {
+        emit,
+        slots,
+        attrs, 
+    }) {
         const focused = useModel(props as any, 'focused')
         const isCheckable = computed(() => !props.readonly && !props.disabled)
 
@@ -36,10 +43,11 @@ export const CheckboxElement = defineComponent({
         return () => (
             <div class={['c-checkbox', classes.value]}>
                 <div class="c-checkbox__icon" aria-hidden="true">
-                    {slots.icon
-                        ? slots.icon({ checked: props.checked })
-                        : <CIcon name={props.checked ? CHECKBOX_ON : CHECKBOX_OFF} />
-                    }
+                    {slots.icon ? (
+                        slots.icon({ checked: props.checked })
+                    ) : (
+                        <CIcon name={props.checked ? CHECKBOX_ON : CHECKBOX_OFF} />
+                    )}
                 </div>
 
                 <input
@@ -49,8 +57,12 @@ export const CheckboxElement = defineComponent({
                     {...attrs}
                     disabled={props.disabled}
                     readonly={props.readonly}
-                    onFocus={() => { focused.value = true }}
-                    onBlur={() => { focused.value = false }}
+                    onFocus={() => {
+                        focused.value = true
+                    }}
+                    onBlur={() => {
+                        focused.value = false
+                    }}
                     onChange={() => emit('toggle')}
                 />
 

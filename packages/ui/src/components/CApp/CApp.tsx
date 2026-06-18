@@ -19,8 +19,9 @@ export const CApp = defineComponent({
             getScrollTop,
             getScrollLeft,
             blockScroll,
-            unblockScroll
-        } = useAppScroll()
+            unblockScroll,
+        } =
+            useAppScroll()
 
         provide($APP_API_KEY, {
             getScrollTop,
@@ -31,10 +32,8 @@ export const CApp = defineComponent({
 
         return () => (
             <div ref={appRef} class={['c-app', unref(classes)]}>
-                <div class="c-app__wrapper">
-                    {slots.default?.()}
-                </div>
+                <div class="c-app__wrapper">{slots.default?.()}</div>
             </div>
         )
-    }
+    },
 })

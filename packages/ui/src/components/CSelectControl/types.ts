@@ -17,5 +17,4 @@ export type CSelectControlSlots = {
         readonly: boolean
         toggle: () => void
     }): VNode
-    [key: string]: unknown
 }

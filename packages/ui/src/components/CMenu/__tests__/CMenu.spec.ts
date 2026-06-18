@@ -22,10 +22,12 @@ const wrappers: ReturnType<typeof mount>[] = []
 const containers: HTMLElement[] = []
 
 function getObservedSize(el: Element): Size {
-    return elementSizes.get(el) ?? {
-        width: 0,
-        height: 0,
-    }
+    return (
+        elementSizes.get(el) ?? {
+            width: 0,
+            height: 0,
+        }
+    )
 }
 
 function createResizeEntry(el: Element): ResizeObserverEntry {
@@ -44,18 +46,24 @@ function createResizeEntry(el: Element): ResizeObserverEntry {
             height: size.height,
             toJSON: () => ({}),
         } as DOMRectReadOnly,
-        borderBoxSize: [{
-            inlineSize: size.width,
-            blockSize: size.height,
-        }] as ResizeObserverSize[],
-        contentBoxSize: [{
-            inlineSize: size.width,
-            blockSize: size.height,
-        }] as ResizeObserverSize[],
-        devicePixelContentBoxSize: [{
-            inlineSize: size.width,
-            blockSize: size.height,
-        }] as ResizeObserverSize[],
+        borderBoxSize: [
+            {
+                inlineSize: size.width,
+                blockSize: size.height,
+            },
+        ] as ResizeObserverSize[],
+        contentBoxSize: [
+            {
+                inlineSize: size.width,
+                blockSize: size.height,
+            },
+        ] as ResizeObserverSize[],
+        devicePixelContentBoxSize: [
+            {
+                inlineSize: size.width,
+                blockSize: size.height,
+            },
+        ] as ResizeObserverSize[],
     }
 }
 
@@ -117,25 +125,32 @@ function toVueListeners(listeners: Record<string, any> = {}) {
 }
 
 function setRect(el: Element, rect: Rect) {
-    vi.spyOn(el, 'getBoundingClientRect').mockImplementation(() => ({
-        x: rect.left ?? 0,
-        y: rect.top ?? 0,
-        top: rect.top ?? 0,
-        left: rect.left ?? 0,
-        right: (rect.left ?? 0) + (rect.width ?? 0),
-        bottom: (rect.top ?? 0) + (rect.height ?? 0),
-        width: rect.width ?? 0,
-        height: rect.height ?? 0,
-        toJSON: () => ({}),
-    } as DOMRect))
+    vi.spyOn(el, 'getBoundingClientRect').mockImplementation(
+        () =>
+            ({
+                x: rect.left ?? 0,
+                y: rect.top ?? 0,
+                top: rect.top ?? 0,
+                left: rect.left ?? 0,
+                right: (rect.left ?? 0) + (rect.width ?? 0),
+                bottom: (rect.top ?? 0) + (rect.height ?? 0),
+                width: rect.width ?? 0,
+                height: rect.height ?? 0,
+                toJSON: () => ({}),
+            }) as DOMRect,
+    )
 }
 
 function mockMenuSize(width = 120, height = 60) {
-    vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
+    vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
+        this: HTMLElement,
+    ) {
         return this.classList.contains('c-menu') ? width : 0
     })
 
-    vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function (this: HTMLElement) {
+    vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function (
+        this: HTMLElement,
+    ) {
         return this.classList.contains('c-menu') ? height : 0
     })
 
@@ -174,10 +189,12 @@ function getMenuOrFail() {
 function isMenuVisible() {
     const menu = getMenu()
 
-    return !!menu
-        && menu.style.display !== 'none'
-        && menu.classList.contains('c-menu--visible')
-        && !menu.className.includes('leave')
+    return (
+        !!menu &&
+        menu.style.display !== 'none' &&
+        menu.classList.contains('c-menu--visible') &&
+        !menu.className.includes('leave')
+    )
 }
 
 function expectMenuOpened() {
@@ -195,36 +212,39 @@ async function createWrapper(props: Record<string, any> = {}) {
 
     const Host = defineComponent({
         setup() {
-            return () => h(
-                CMenu as any,
-                {
-                    ...props,
-                    ref: menuRef,
-                    modelValue: model.value,
-                    'onUpdate:modelValue': (value: boolean) => {
-                        model.value = value
+            return () =>
+                h(
+                    CMenu as any,
+                    {
+                        ...props,
+                        ref: menuRef,
+                        modelValue: model.value,
+                        'onUpdate:modelValue': (value: boolean) => {
+                            model.value = value
+                        },
                     },
-                },
-                {
-                    activator: ({ on, activator }: any) => h(
-                        'button',
-                        {
-                            ...activator,
-                            ...toVueListeners(on),
-                            type: 'button',
-                            'data-test': 'activator',
-                        },
-                        'Open',
-                    ),
-                    default: () => h(
-                        'div',
-                        {
-                            'data-test': 'content',
-                        },
-                        'Menu content',
-                    ),
-                },
-            )
+                    {
+                        activator: ({ on, activator }: any) =>
+                            h(
+                                'button',
+                                {
+                                    ...activator,
+                                    ...toVueListeners(on),
+                                    type: 'button',
+                                    'data-test': 'activator',
+                                },
+                                'Open',
+                            ),
+                        default: () =>
+                            h(
+                                'div',
+                                {
+                                    'data-test': 'content',
+                                },
+                                'Menu content',
+                            ),
+                    },
+                )
         },
     })
 
@@ -540,9 +560,11 @@ describe('CMenu', () => {
 
         await open()
 
-        window.dispatchEvent(new KeyboardEvent('keydown', {
-            key: 'Escape',
-        }))
+        window.dispatchEvent(
+            new KeyboardEvent('keydown', {
+                key: 'Escape',
+            }),
+        )
 
         await nextTick()
         await vi.runOnlyPendingTimersAsync()

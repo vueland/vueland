@@ -1,23 +1,56 @@
 import {
     computed,
+    type ComputedRef,
     nextTick,
     provide,
     shallowRef,
     toRaw,
     unref,
     useModel,
+    type VNode,
 } from 'vue'
 
 import { useKeyboard } from '../../composables'
 import { $LIST_API_KEY } from '../../constants'
 import { genericComponent, type GenericProps } from '../../utils'
 
-import type { CListProps, CListSlots, ListItemControls } from './types'
+export type CListRole = 'listbox' | 'menu' | undefined
 
-export const CList = genericComponent<new <T>(
-    props: CListProps<T>,
-    slots: CListSlots<T>,
-) => GenericProps<typeof props, typeof slots>>()({
+export type CListProps<T> = {
+    modelValue?: T | T[] | null
+    multiple?: boolean
+    mandatory?: boolean
+    readonly?: boolean
+    selectable?: boolean
+    role?: CListRole
+}
+
+export type CListSlots<T> = {
+    default?(props: {
+        select(item: T): void
+        unselect(item: T): void
+        isActive(item: T): boolean
+    }): VNode | VNode[]
+}
+
+export type ListItemControls = {
+    focus(): void
+    blur(): void
+}
+
+export type ListAPI<T = any> = {
+    role: ComputedRef<CListRole>
+    model: ComputedRef<T | T[] | null>
+    register(controls: ListItemControls): void
+    unregister(controls: ListItemControls): void
+    select(value: T): void
+    unselect(value: T): void
+    isActive(value: T): boolean
+}
+
+export const CList = genericComponent<
+    new <T>(props: CListProps<T>, slots: CListSlots<T>) => GenericProps<typeof props, typeof slots>
+>()({
     name: 'CList',
     inheritAttrs: false,
     emits: { 'update:modelValue': () => true },
@@ -29,7 +62,11 @@ export const CList = genericComponent<new <T>(
         selectable: Boolean,
         role: String,
     } as any,
-    setup<T>(props: CListProps<T>, { slots, expose, attrs }) {
+    setup<T>(props: CListProps<T>, {
+        slots,
+        expose,
+        attrs,
+    }) {
         const model = useModel(props, 'modelValue')
         const focused = shallowRef(false)
         const listEl = shallowRef<HTMLElement>()
@@ -69,7 +106,9 @@ export const CList = genericComponent<new <T>(
         function unselect(listItem: unknown) {
             if ((props.mandatory && !props.multiple) || props.readonly) return
             if (props.multiple) {
-                model.value = (unref(model) as any[])?.filter(item => toRaw(item) !== toRaw(listItem))
+                model.value = (unref(model) as any[])?.filter(
+                    (item) => toRaw(item) !== toRaw(listItem),
+                )
             } else {
                 model.value = null
             }
@@ -77,7 +116,7 @@ export const CList = genericComponent<new <T>(
 
         function isActive(listItem: T) {
             if (props.multiple) {
-                return (unref(model) as T[])?.some(item => toRaw(item) === toRaw(listItem))
+                return (unref(model) as T[])?.some((item) => toRaw(item) === toRaw(listItem))
             }
             return toRaw(model.value) === toRaw(listItem)
         }
@@ -87,7 +126,7 @@ export const CList = genericComponent<new <T>(
         }
 
         function unregister(itemControls: ListItemControls) {
-            handlers = handlers.filter(it => it !== itemControls)
+            handlers = handlers.filter((it) => it !== itemControls)
         }
 
         async function focus() {
@@ -112,8 +151,14 @@ export const CList = genericComponent<new <T>(
         expose({ focus })
 
         provide($LIST_API_KEY, {
- role, register, unregister, select, unselect, isActive 
-})
+            role,
+            model: computed(() => model.value ?? null),
+            register,
+            unregister,
+            select,
+            unselect,
+            isActive,
+        })
 
         return () => (
             <ul
@@ -124,7 +169,11 @@ export const CList = genericComponent<new <T>(
                 aria-multiselectable={props.multiple}
                 onKeydown={onKeydown}
             >
-                {slots.default?.({ select, unselect, isActive })}
+                {slots.default?.({
+                    select,
+                    unselect,
+                    isActive,
+                })}
             </ul>
         )
     },

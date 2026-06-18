@@ -34,6 +34,8 @@
     "typecheck": "pnpm --filter @vueland/ui --filter @vueland/utils-jit run typecheck",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx,.vue .",
     "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx,.vue .",
+    "format": "prettier --write \"packages/**/*.{ts,tsx,vue,js}\"",
+    "format:check": "prettier --check \"packages/**/*.{ts,tsx,vue,js}\"",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "pnpm run build:jit && pnpm run build:lib && changeset publish",
@@ -49,8 +51,12 @@
     "@commitlint/cli": "^21.0.2",
     "@commitlint/config-conventional": "^21.0.2",
     "@eslint/js": "^9.39.2",
+    "@stylistic/eslint-plugin": "^5.10.0",
     "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-import-newlines": "^2.0.0",
+    "eslint-plugin-newline-destructuring": "^1.2.2",
     "eslint-plugin-simple-import-sort": "^13.0.0",
     "eslint-plugin-vue": "^10.7.0",
     "globals": "^17.3.0",
@@ -58,6 +64,7 @@
     "json": "^11.0.0",
     "lerna": "^9.0.7",
     "lint-staged": "^17.0.7",
+    "prettier": "^3.8.4",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0",
     "vue-eslint-parser": "^10.2.0"
@@ -66,13 +73,8 @@
     "node": ">=20.19.0"
   },
   "lint-staged": {
-    "packages/ui/src/**/*.{ts,tsx}": [
-      "eslint --fix"
-    ],
-    "packages/utils-jit/src/**/*.{ts,tsx}": [
-      "eslint --fix"
-    ],
-    "packages/**/*.vue": [
+    "packages/**/*.{ts,tsx,vue,js}": [
+      "prettier --write",
       "eslint --fix"
     ]
   }

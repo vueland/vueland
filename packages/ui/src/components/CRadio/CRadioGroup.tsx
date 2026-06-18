@@ -5,3 +5,5 @@ export const CRadioGroup = defineComponent({
         return () => slots.default?.()
     },
 })
+
+export type CRadioGroupProps = InstanceType<typeof CRadioGroup>['$props']

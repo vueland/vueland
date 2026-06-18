@@ -9,7 +9,7 @@ export type PresetProps = {
     preset?: string
 }
 
-export const makePresetProps = propsFactory({preset: String})
+export const makePresetProps = propsFactory({ preset: String })
 
 export function usePresets<T>(props: PresetProps): ComputedRef<Maybe<T>> {
     const core = useCore()

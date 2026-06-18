@@ -20,7 +20,6 @@ export type CCheckboxEvents<T> = {
     (e: 'update:modelValue', value: T): void
 }
 
-export type CCheckboxPublicProps<T> =
-    CCheckboxProps<T>
-    & CSelectControlProps<T>
-    & CInputProps<CCheckboxModel<T>>
+export type CCheckboxPublicProps<T> = CCheckboxProps<T> &
+    CSelectControlProps<T> &
+    CInputProps<CCheckboxModel<T>>

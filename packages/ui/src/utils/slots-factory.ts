@@ -6,8 +6,6 @@ export type SlotFn<T> = {
 
 export type SlotsOptions<T = unknown> = Record<string, SlotFn<T>>
 
-export function slotsFactory<T extends Record<string, any>>(
-    slots: SlotsOptions<T>,
-) {
+export function slotsFactory<T extends Record<string, any>>(slots: SlotsOptions<T>) {
     return slots
 }

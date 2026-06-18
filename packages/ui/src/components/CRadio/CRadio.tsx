@@ -1,5 +1,8 @@
 import {
- computed, defineComponent, unref, useModel 
+    computed,
+    defineComponent,
+    unref,
+    useModel,
 } from 'vue'
 
 import { IconAliases } from '../../enums'
@@ -15,20 +18,25 @@ export const CRadio = defineComponent({
     },
     emits: { 'update:modelValue': () => true },
     setup(props, { slots, attrs }) {
-        const model = useModel(props as any, 'modelValue')
+        const model = useModel(props, 'modelValue')
         const { RADIO_ON, RADIO_OFF } = IconAliases
-        const icon = computed(() => unref(model) ? RADIO_ON : RADIO_OFF)
+        const icon = computed(() => (unref(model) ? RADIO_ON : RADIO_OFF))
 
         return () => (
             <CSelectControl
                 modelValue={model.value}
-                onUpdate:modelValue={(v: any) => { model.value = v }}
+                onUpdate:modelValue={(v: any) => {
+                    model.value = v
+                }}
                 {...attrs}
             >
                 {{
                     default: ({
- disabled, checked, toggle, readonly 
-}: any) => (
+                        disabled,
+                        checked,
+                        toggle,
+                        readonly,
+                    }: any) => (
                         <div
                             class={[
                                 'c-radio',
@@ -44,9 +52,7 @@ export const CRadio = defineComponent({
                                 <CIcon name={unref(icon)} />
                             </div>
                             <div class="c-radio__label">
-                                {slots.default?.() ?? (
-                                    <CLabel>{props.label}</CLabel>
-                                )}
+                                {slots.default?.() ?? <CLabel>{props.label}</CLabel>}
                             </div>
                         </div>
                     ),
@@ -55,3 +61,5 @@ export const CRadio = defineComponent({
         )
     },
 })
+
+export type CRadioProps = InstanceType<typeof CRadio>['$props']

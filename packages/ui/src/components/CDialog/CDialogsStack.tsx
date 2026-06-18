@@ -10,11 +10,12 @@ export const CDialogsStack = defineComponent({
         return () => (
             <COverlay modelValue={true}>
                 {{
-                    default: () => current.value
-                        ? <current.value.component {...current.value.props} />
-                        : null,
+                    default: () =>
+                        current.value ? <current.value.component {...current.value.props} /> : null,
                 }}
             </COverlay>
         )
     },
 })
+
+export type CDialogsStackProps = InstanceType<typeof CDialogsStack>['$props']

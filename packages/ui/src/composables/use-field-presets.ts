@@ -1,6 +1,6 @@
 import { computed, unref } from 'vue'
 
-import type { CFieldProps , CFieldSlots } from '../components/CField/CField'
+import type { CFieldProps, CFieldSlots } from '../components/CField/CField'
 import { getPresetIf } from '../helpers'
 import type { FieldPreset } from '../types'
 
@@ -14,17 +14,15 @@ const EMPTY_FIELD_PRESETS = {
     append: [],
 }
 
-function mergePresetClasses(
-    base?: string[],
-    ...states: (string[] | undefined)[]
-): string[] {
-    return [
-        ...(base ?? []),
-        ...states.flatMap(it => it ?? []),
-    ]
+function mergePresetClasses(base?: string[], ...states: (string[] | undefined)[]): string[] {
+    return [...(base ?? []), ...states.flatMap((it) => it ?? [])]
 }
 
-export function useFieldPresets({ props, slots, attrs }: {
+export function useFieldPresets({
+    props,
+    slots,
+    attrs,
+}: {
     props: CFieldProps
     slots: CFieldSlots
     attrs: Record<string, any>
