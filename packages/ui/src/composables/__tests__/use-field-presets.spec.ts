@@ -1,9 +1,18 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
-import { computed, defineComponent, h, reactive, type Reactive } from 'vue'
+import {
+    describe,
+    expect,
+    it,
+} from 'vitest'
+import {
+    computed,
+    defineComponent,
+    h,
+    type Reactive,
+    reactive,
+} from 'vue'
 
-import type { CFieldProps } from '../../components/CField/CField'
-import type { CFieldSlots } from '../../components/CField/CField'
+import { type CFieldProps, type CFieldSlots } from '../../components/CField'
 import { $VUELAND_UI_KEY } from '../../constants'
 import { useFieldPresets } from '../use-field-presets'
 
@@ -50,9 +59,7 @@ function mountUseFieldPresets({
         configurable: true,
     })
 
-    const slots = {
-        ...initialSlots,
-    } as CFieldSlots
+    const slots = { ...initialSlots } as CFieldSlots
 
     const wrapper = mount(
         defineComponent({
@@ -66,15 +73,7 @@ function mountUseFieldPresets({
                 return () => h('div')
             },
         }),
-        {
-            global: {
-                provide: {
-                    [$VUELAND_UI_KEY as symbol]: {
-                        presets,
-                    },
-                },
-            },
-        },
+        { global: { provide: { [$VUELAND_UI_KEY as symbol]: { presets } } } },
     )
 
     return {
@@ -109,9 +108,7 @@ describe('useFieldPresets', () => {
 
     it('возвращает базовые классы CFieldPreset', () => {
         const { result } = mountUseFieldPresets({
-            props: {
-                preset: 'field.base',
-            },
+            props: { preset: 'field.base' },
             presets: {
                 field: {
                     base: {
@@ -132,9 +129,7 @@ describe('useFieldPresets', () => {
 
     it('поддерживает вложенный путь preset через точку', () => {
         const { result } = mountUseFieldPresets({
-            props: {
-                preset: 'fields.text.primary',
-            },
+            props: { preset: 'fields.text.primary' },
             presets: {
                 fields: {
                     text: {
@@ -187,12 +182,8 @@ describe('useFieldPresets', () => {
 
     it('сохраняет base-зоны и добавляет prepended-зоны, если есть prepend slot', () => {
         const { result } = mountUseFieldPresets({
-            props: {
-                preset: 'field.base',
-            },
-            slots: {
-                prepend: () => h('div'),
-            },
+            props: { preset: 'field.base' },
+            slots: { prepend: () => h('div') },
             presets: {
                 field: {
                     base: {
@@ -218,12 +209,8 @@ describe('useFieldPresets', () => {
 
     it('сохраняет base-зоны и добавляет appended-зоны, если есть append slot', () => {
         const { result } = mountUseFieldPresets({
-            props: {
-                preset: 'field.base',
-            },
-            slots: {
-                append: () => h('div'),
-            },
+            props: { preset: 'field.base' },
+            slots: { append: () => h('div') },
             presets: {
                 field: {
                     base: {
@@ -304,12 +291,8 @@ describe('useFieldPresets', () => {
 
     it('добавляет readonly-зоны, если attrs.readonly передан', () => {
         const { result } = mountUseFieldPresets({
-            props: {
-                preset: 'field.base',
-            },
-            attrs: {
-                readonly: true,
-            },
+            props: { preset: 'field.base' },
+            attrs: { readonly: true },
             presets: {
                 field: {
                     base: {
@@ -334,12 +317,8 @@ describe('useFieldPresets', () => {
 
     it('добавляет disabled-зоны, если attrs.disabled передан', () => {
         const { result } = mountUseFieldPresets({
-            props: {
-                preset: 'field.base',
-            },
-            attrs: {
-                disabled: true,
-            },
+            props: { preset: 'field.base' },
+            attrs: { disabled: true },
             presets: {
                 field: {
                     base: {
@@ -433,9 +412,7 @@ describe('useFieldPresets', () => {
 
     it('не добавляет состояние, если оно не активно', () => {
         const { result } = mountUseFieldPresets({
-            props: {
-                preset: 'field.base',
-            },
+            props: { preset: 'field.base' },
             presets: {
                 field: {
                     base: {
@@ -473,10 +450,12 @@ describe('useFieldPresets', () => {
     })
 
     it('реактивно обновляет результат при изменении props и attrs', () => {
-        const { result, props, attrs } = mountUseFieldPresets({
-            props: {
-                preset: 'field.base',
-            },
+        const {
+            result,
+            props,
+            attrs,
+        } = mountUseFieldPresets({
+            props: { preset: 'field.base' },
             attrs: {},
             presets: {
                 field: {
@@ -543,12 +522,8 @@ describe('useFieldPresets', () => {
             presets: {
                 field: {
                     base: {
-                        filled: {
-                            label: ['filled-label'],
-                        },
-                        focused: {
-                            root: ['focused-root'],
-                        },
+                        filled: { label: ['filled-label'] },
+                        focused: { root: ['focused-root'] },
                     },
                 },
             },
@@ -576,13 +551,9 @@ describe('useFieldPresets', () => {
                         label: ['base-label'],
                         error: {
                             label: ['error-label'],
-                            focused: {
-                                label: ['error-focused-label'],
-                            },
+                            focused: { label: ['error-focused-label'] },
                         },
-                        focused: {
-                            label: ['focused-label'],
-                        },
+                        focused: { label: ['focused-label'] },
                     },
                 },
             },
@@ -605,13 +576,9 @@ describe('useFieldPresets', () => {
                         label: ['base-label'],
                         error: {
                             label: ['error-label'],
-                            filled: {
-                                label: ['error-filled-label'],
-                            },
+                            filled: { label: ['error-filled-label'] },
                         },
-                        filled: {
-                            label: ['filled-label'],
-                        },
+                        filled: { label: ['filled-label'] },
                     },
                 },
             },
@@ -634,13 +601,9 @@ describe('useFieldPresets', () => {
                         root: ['base-root'],
                         disabled: {
                             root: ['disabled-root'],
-                            focused: {
-                                root: ['disabled-focused-root'],
-                            },
+                            focused: { root: ['disabled-focused-root'] },
                         },
-                        focused: {
-                            root: ['focused-root'],
-                        },
+                        focused: { root: ['focused-root'] },
                     },
                 },
             },
@@ -660,11 +623,7 @@ describe('useFieldPresets', () => {
                 field: {
                     base: {
                         label: ['base-label'],
-                        error: {
-                            focused: {
-                                label: ['error-focused-label'],
-                            },
-                        },
+                        error: { focused: { label: ['error-focused-label'] } },
                     },
                 },
             },

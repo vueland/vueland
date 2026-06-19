@@ -1,7 +1,12 @@
-import { computed, shallowRef, unref } from 'vue'
+import {
+    computed,
+    shallowRef,
+    unref,
+} from 'vue'
 
 import { type IterableItemsProps, useNormalizedItems } from './use-normalized-items'
 import { type SelectableProps, useSelectedChips } from './use-selected-chips'
+
 
 export function useAutocomplete<T = any>(props: IterableItemsProps<T> & SelectableProps<T>) {
     const normalizedItems = useNormalizedItems<T>(props as IterableItemsProps<T>)

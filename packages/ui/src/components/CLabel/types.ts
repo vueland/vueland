@@ -1,7 +1,3 @@
-import type { AllowedComponentProps, VNodeProps } from 'vue'
-
-export type CLabelProps = AllowedComponentProps & VNodeProps & {
+export type CLabelProps = {
     tag?: string
-    id?: string
-    for?: string
 }

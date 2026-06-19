@@ -1,6 +1,10 @@
-import { computed, type ComputedRef, unref } from 'vue'
+import {
+    computed,
+    type ComputedRef,
+    unref,
+} from 'vue'
 
-import type { CFieldProps, CFieldSlots } from '../components/CField/CField'
+import type { CFieldProps, CFieldSlots } from '../components'
 import { getPresetIf } from '../helpers'
 import type { CFieldPreset, CFieldZone } from '../types'
 

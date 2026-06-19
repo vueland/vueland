@@ -37,7 +37,7 @@ import PresetCompoundExample from '../../examples/CInput/PresetCompoundExample.v
           maxlength="4"
           inputmode="numeric"
           :value="pin"
-          @input="(e: any) => { pin = e.target.value; field.input(e.target.value) }"
+          @input="(e: any) => pin = (e.target as HTMLInputElement).value"
           @focus="field.focus"
           @blur="field.blur"
         />
@@ -303,7 +303,7 @@ type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
 | Проп | Тип | Описание |
 |------|-----|----------|
 | `uid` | `string` | Сгенерированный ID для нативного `<input>` |
-| `attrs` | `Record<string, any>` | Готовые aria-атрибуты и нативные attrs — передавать через `v-bind` |
+| `attrs` | `Record<string, unknown>` | Готовые aria-атрибуты и нативные attrs — передавать через `v-bind` |
 | `focused` | `boolean` | Текущее состояние фокуса |
 | `label` | `string \| undefined` | Значение prop `label` |
 | `clearable` | `boolean \| undefined` | Значение prop `clearable` |
@@ -315,7 +315,6 @@ type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
 | `validating` | `boolean` | Идёт ли async-валидация |
 | `focus` | `() => void` | Вызвать при фокусе нативного элемента |
 | `blur` | `() => void` | Вызвать при потере фокуса нативного элемента |
-| `input` | `(val: any) => void` | Вызвать при изменении значения |
 | `reset` | `() => void` | Сбросить ошибку валидации |
 | `validate` | `() => Promise<boolean>` | Запустить валидацию |
 
@@ -334,8 +333,7 @@ type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
 | Событие | Аргументы | Описание |
 |---------|-----------|----------|
 | `focus` | `boolean` | Поле получило фокус |
-| `blur` | `boolean` | Поле потеряло фокус |
-| `input` | `any` | Значение изменилось |
+| `blur` | — | Поле потеряло фокус |
 
 ### Expose
 
@@ -345,7 +343,6 @@ type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
 | `reset` | `() => void` | Сбросить ошибку |
 | `focus` | `() => void` | Программно сфокусировать |
 | `blur` | `() => void` | Программно убрать фокус |
-| `input` | `(val: any) => void` | Программно передать значение |
 
 ---
 
@@ -363,7 +360,6 @@ type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
             :id="field.uid"
             v-bind="field.attrs"
             :value="pin"
-            @input="(e: any) => field.input(e.target.value)"
             @focus="field.focus"
             @blur="field.blur"
           />

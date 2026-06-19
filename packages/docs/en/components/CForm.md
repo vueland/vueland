@@ -19,7 +19,7 @@ A login form with email and password validation triggered on blur.
 ```vue
 <template>
   <CForm ref="formRef">
-    <template #default="{ validate }">
+    <template #default="{ validate, reset }">
       <CTextField
         v-model="form.email"
         label="Email"
@@ -94,7 +94,7 @@ A multi-field profile editor with a two-column layout, a readonly field, and an 
 ```vue
 <template>
   <CForm ref="formRef">
-    <template #default="{ validate }">
+    <template #default="{ validate, reset }">
       <div class="form-grid">
         <CTextField v-model="form.firstName" label="First name" :rules="requiredRule" validate-on="blur" preset="input.indigo" />
         <CTextField v-model="form.lastName" label="Last name" :rules="requiredRule" validate-on="blur" preset="input.indigo" />
@@ -163,7 +163,7 @@ A multi-step airline booking form with per-step validation, async submission, an
 ```vue
 <template>
   <CForm ref="formRef">
-    <template #default="{ validate }">
+    <template #default="{ validate, reset }">
 
       <!-- Step 1: Flight details -->
       <div v-if="currentStep === 0">
@@ -240,7 +240,7 @@ Rules can return a `Promise`. `CForm.validate()` runs all fields in parallel via
 ```vue
 <template>
   <CForm>
-    <template #default="{ validate }">
+    <template #default="{ validate, reset }">
       <CTextField
         v-model="form.username"
         label="Username"
@@ -300,23 +300,27 @@ async function handleSubmit(validate: () => Promise<boolean>) {
 
 | Slot | Props | Description |
 |------|-------|-------------|
-| `default` | `{ validate }` | Form content with the validate function |
+| `default` | `{ validate, reset }` | Form content with validate and reset functions |
 
 #### `default` slot props
 
 | Prop | Type | Description |
 |------|------|-------------|
 | `validate` | `() => Promise<boolean>` | Run validation on all registered fields. Returns `true` if every field is valid |
+| `reset` | `() => void` | Reset validation state on all registered fields |
 
 ### Events
 
-`CForm` emits no events. The native `submit` event is blocked via `onSubmit={(e) => e.preventDefault()}`.
+| Event | Arguments | Description |
+|-------|-----------|-------------|
+| `submit` | `Event` | Emitted when the form is submitted. The native submit is prevented automatically |
 
 ### Expose
 
 | Method | Signature | Description |
 |--------|-----------|-------------|
 | `validate` | `() => Promise<boolean>` | Run validation on all registered fields |
+| `reset` | `() => void` | Reset validation state on all registered fields |
 
 ```vue
 <template>

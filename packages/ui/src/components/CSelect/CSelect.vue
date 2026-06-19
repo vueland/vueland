@@ -1,0 +1,167 @@
+<script setup lang="ts" generic="T">
+    import { shallowRef, unref } from 'vue'
+
+    import {
+        useKeyboard,
+        useNormalizedItems,
+        useSelectedChips
+    } from '../../composables'
+    import { IconAliases } from '../../enums'
+    import { CField } from '../CField'
+    import { CInput } from '../CInput'
+    import { CMenu } from '../CMenu'
+
+    import type { CSelectProps, CSelectSlots } from './types'
+
+    defineOptions({ name: 'CSelect' })
+    const props = defineProps<CSelectProps<T>>()
+
+    defineSlots<CSelectSlots<T>>()
+
+    const model = defineModel<T | T[]>({
+        get: () => props.modelValue,
+        set: val => val
+    })
+
+    const inputRef = shallowRef()
+    const menuRef = shallowRef()
+
+    const normalizedItems = useNormalizedItems(props)
+    const {
+        chips: selectedItems,
+        hasValue,
+        select
+    } = useSelectedChips(props)
+
+    const { onKeydown } = useKeyboard({
+        Tab: () => {
+            unref(inputRef).blur()
+            unref(menuRef).close()
+        }
+    })
+
+    function onBlur() {
+        unref(inputRef).blur()
+    }
+
+    function onClear() {
+        model.value = props.multiple ? [] : undefined
+    }
+
+    function onFocus() {
+        unref(inputRef).focus()
+    }
+</script>
+
+<template>
+    <c-input
+        v-bind="$attrs"
+        ref="inputRef"
+        :model-value="model"
+        validate-on="blur"
+        kind="listbox"
+    >
+        <template #field="field">
+            <c-menu
+                :id="`${field.uid}-menu`"
+                ref="menuRef"
+                bottom
+                open-on-focus
+                close-on-click-outside
+                :close-on-content-click="!multiple"
+                :offset-y="2"
+                strategy="reverse"
+                @close="onBlur"
+            >
+                <template #activator="{on, activator}">
+                    <div
+                        class="c-select"
+                        v-bind="activator"
+                    >
+                        <slot
+                            name="field"
+                            v-bind="field"
+                        >
+                            <c-field
+                                :id="field.uid"
+                                v-bind="field.attrs"
+                                :focused="field.focused"
+                                model-value=""
+                                class="c-select__field"
+                                :label="field.label"
+                                :clearable="field.clearable"
+                                :filled="hasValue"
+                                :preset="field.preset"
+                                :error="field.hasError"
+                                no-input
+                                v-on="on"
+                                @focus="onFocus"
+                                @clear="onClear"
+                                @keydown="onKeydown"
+                            >
+                                <template #before>
+                                    <slot
+                                        name="selects"
+                                        :items="selectedItems"
+                                    >
+                                        <div
+                                            v-for="(it, i) in selectedItems"
+                                            :key="it"
+                                            class="c-selected__item"
+                                        >
+                                            {{ `${it}` + (i + 1 !== selectedItems.length ? ',' : '') }}
+                                        </div>
+                                    </slot>
+                                </template>
+                                <template #append>
+                                    <c-icon
+                                        :name="IconAliases.DROPDOWN"
+                                        size="20"
+                                    />
+                                </template>
+                            </c-field>
+                        </slot>
+                    </div>
+                </template>
+                <template #default>
+                    <slot
+                        name="menu"
+                        :on-select="select"
+                        :items="normalizedItems"
+                    >
+                        <c-list
+                            ref="menuListRef"
+                            v-model="model"
+                            role="listbox"
+                            selectable
+                            :multiple
+                            :mandatory
+                        >
+                            <c-list-item
+                                v-for="item of normalizedItems"
+                                :key="item.key"
+                                :value="item.value ?? item.raw"
+                            >
+                                <c-list-item-title>
+                                    {{ item.title }}
+                                </c-list-item-title>
+                            </c-list-item>
+                        </c-list>
+                    </slot>
+                </template>
+            </c-menu>
+        </template>
+        <template #details="{errorMessage, details}">
+            <slot
+                name="details"
+                :error-message
+                :details
+            >
+                <span :key="errorMessage || details">
+                    {{ errorMessage || details }}
+                </span>
+            </slot>
+        </template>
+    </c-input>
+</template>
+

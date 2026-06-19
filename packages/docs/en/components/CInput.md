@@ -37,7 +37,7 @@ import PresetCompoundExample from '../../examples/CInput/PresetCompoundExample.v
           maxlength="4"
           inputmode="numeric"
           :value="pin"
-          @input="(e: any) => { pin = e.target.value; field.input(e.target.value) }"
+          @input="(e: any) => pin = (e.target as HTMLInputElement).value"
           @focus="field.focus"
           @blur="field.blur"
         />
@@ -303,7 +303,7 @@ type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
 | Prop | Type | Description |
 |------|------|-------------|
 | `uid` | `string` | Generated ID for the native `<input>` |
-| `attrs` | `Record<string, any>` | Ready-to-use aria + native attrs — spread with `v-bind` |
+| `attrs` | `Record<string, unknown>` | Ready-to-use aria + native attrs — spread with `v-bind` |
 | `focused` | `boolean` | Current focus state |
 | `label` | `string \| undefined` | Value of the `label` prop |
 | `clearable` | `boolean \| undefined` | Value of the `clearable` prop |
@@ -315,7 +315,6 @@ type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
 | `validating` | `boolean` | Whether async validation is running |
 | `focus` | `() => void` | Call when the native element receives focus |
 | `blur` | `() => void` | Call when the native element loses focus |
-| `input` | `(val: any) => void` | Call when the value changes |
 | `reset` | `() => void` | Clear the validation error |
 | `validate` | `() => Promise<boolean>` | Trigger validation |
 
@@ -334,8 +333,7 @@ type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
 | Event | Arguments | Description |
 |-------|-----------|-------------|
 | `focus` | `boolean` | Field received focus |
-| `blur` | `boolean` | Field lost focus |
-| `input` | `any` | Value changed |
+| `blur` | — | Field lost focus |
 
 ### Expose
 
@@ -345,7 +343,6 @@ type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
 | `reset` | `() => void` | Clear the error state |
 | `focus` | `() => void` | Programmatically focus the field |
 | `blur` | `() => void` | Programmatically remove focus |
-| `input` | `(val: any) => void` | Programmatically set a value |
 
 ---
 
@@ -363,7 +360,7 @@ type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
             :id="field.uid"
             v-bind="field.attrs"
             :value="pin"
-            @input="(e: any) => field.input(e.target.value)"
+            @input="(e: any) => {}"
             @focus="field.focus"
             @blur="field.blur"
           />

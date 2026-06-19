@@ -42,7 +42,7 @@
     </CTextField>
 
     <div class="ex-actions">
-      <CBtn @click="submit">Submit</CBtn>
+      <CBtn class="bg-blue elevation-1" style="color:#fff" @click="submit">Submit</CBtn>
       <CBtn variant="text" @click="reset">Reset</CBtn>
     </div>
     <p v-if="submitted" class="ex-success">✓ Submitted successfully!</p>

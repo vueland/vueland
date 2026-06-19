@@ -1,6 +1,6 @@
 import { computed, unref } from 'vue'
 
-import type { CInputProps, InputState } from '../components/CInput/CInput'
+import type { CInputProps, InputState } from '../components/CInput'
 import type { CFieldPreset, CInputPreset } from '../types'
 
 import { useCore } from './use-core'

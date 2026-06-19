@@ -1,6 +1,8 @@
 import { type DateLocale } from './locales'
 
-export { type DateLocale, LOCALE } from './locales'
+export {
+    type DateLocale, LOCALE, 
+} from './locales'
 
 export function getMonth(date: Date) { return date.getMonth() }
 export function getFullYear(date: Date) { return date.getFullYear() }

@@ -1,1 +1,2 @@
-export * from './CBtn'
+export { default as CBtn } from './CBtn.vue'
+export * from './types'

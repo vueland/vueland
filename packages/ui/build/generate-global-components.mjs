@@ -17,6 +17,10 @@ const content = [
 ].join('\n')
 
 writeFileSync(
+    resolve(process.cwd(), 'dist/components/global-components.d.ts'),
+    content,
+)
+writeFileSync(
     resolve(process.cwd(), 'src/components/global-components.d.ts'),
     content,
 )

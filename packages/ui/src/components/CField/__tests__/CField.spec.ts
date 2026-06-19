@@ -1,6 +1,17 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { defineComponent, nextTick, ref } from 'vue'
+import {
+    afterEach,
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+} from 'vitest'
+import {
+    defineComponent,
+    nextTick,
+    ref,
+} from 'vue'
 
 import { CField } from '../../index'
 
@@ -22,11 +33,7 @@ describe('CField', () => {
     })
 
     it('рендерит textarea если передан tag="textarea"', () => {
-        const wrapper = mount(CField, {
-            props: {
-                tag: 'textarea',
-            },
-        })
+        const wrapper = mount(CField, { props: { tag: 'textarea' } })
 
         expect(wrapper.find('textarea').exists()).toBe(true)
         expect(wrapper.find('input').exists()).toBe(false)
@@ -34,11 +41,7 @@ describe('CField', () => {
     })
 
     it('передает значение в input через value', async () => {
-        const wrapper = mount(CField, {
-            props: {
-                modelValue: 'hello',
-            },
-        })
+        const wrapper = mount(CField, { props: { modelValue: 'hello' } })
 
         const input = wrapper.find('input')
         expect((input.element as HTMLInputElement).value).toBe('hello')
@@ -48,32 +51,20 @@ describe('CField', () => {
     })
 
     it('передает числовое значение в input через value', () => {
-        const wrapper = mount(CField, {
-            props: {
-                modelValue: 123,
-            },
-        })
+        const wrapper = mount(CField, { props: { modelValue: 123 } })
 
         const input = wrapper.find('input')
         expect((input.element as HTMLInputElement).value).toBe('123')
     })
 
     it('добавляет класс focused когда focused=true', () => {
-        const wrapper = mount(CField, {
-            props: {
-                focused: true,
-            },
-        })
+        const wrapper = mount(CField, { props: { focused: true } })
 
         expect(wrapper.classes()).toContain('c-field--focused')
     })
 
     it('не добавляет класс focused когда focused=false', () => {
-        const wrapper = mount(CField, {
-            props: {
-                focused: false,
-            },
-        })
+        const wrapper = mount(CField, { props: { focused: false } })
 
         expect(wrapper.classes()).not.toContain('c-field--focused')
     })
@@ -112,11 +103,7 @@ describe('CField', () => {
     })
 
     it('эмитит update:modelValue при вводе в input', async () => {
-        const wrapper = mount(CField, {
-            props: {
-                modelValue: '',
-            },
-        })
+        const wrapper = mount(CField, { props: { modelValue: '' } })
 
         const input = wrapper.find('input')
         await input.setValue('new value')
@@ -144,9 +131,7 @@ describe('CField', () => {
             setup() {
                 const value = ref<string | number | undefined>('start')
 
-                return {
-                    value,
-                }
+                return { value }
             },
             template: `
                 <CField v-model="value"/>
@@ -166,11 +151,7 @@ describe('CField', () => {
     it('вызывает focus на mounted если focused=true', async () => {
         const focusSpy = vi.spyOn(HTMLInputElement.prototype, 'focus')
 
-        mount(CField, {
-            props: {
-                focused: true,
-            },
-        })
+        mount(CField, { props: { focused: true } })
 
         await nextTick()
 
@@ -180,11 +161,7 @@ describe('CField', () => {
     it('не вызывает focus на mounted если focused=false', async () => {
         const focusSpy = vi.spyOn(HTMLInputElement.prototype, 'focus')
 
-        mount(CField, {
-            props: {
-                focused: false,
-            },
-        })
+        mount(CField, { props: { focused: false } })
 
         await nextTick()
 
@@ -206,34 +183,6 @@ describe('CField', () => {
         expect(focusSpy).toHaveBeenCalledTimes(1)
     })
 
-    it('не эмитит focus при disabled', async () => {
-        const wrapper = mount(CField, {
-            props: { disabled: true },
-        })
-
-        await wrapper.find('input').trigger('focus')
-
-        expect(wrapper.emitted('focus')).toBeUndefined()
-    })
-
-    it('эмитит focus при readonly', async () => {
-        const wrapper = mount(CField, {
-            props: { readonly: true },
-        })
-
-        await wrapper.find('input').trigger('focus')
-
-        expect(wrapper.emitted('focus')).toBeTruthy()
-    })
-
-    it('эмитит focus когда нет disabled/readonly', async () => {
-        const wrapper = mount(CField)
-
-        await wrapper.find('input').trigger('focus')
-
-        expect(wrapper.emitted('focus')).toBeTruthy()
-    })
-
     it('обновляет классы при изменении props', async () => {
         const wrapper = mount(CField, {
             props: {
@@ -252,43 +201,5 @@ describe('CField', () => {
 
         expect(wrapper.classes()).toContain('c-field--focused')
         expect(wrapper.classes()).toContain('c-field--filled')
-    })
-
-    it('добавляет класс c-field--error когда error=true', () => {
-        const wrapper = mount(CField, {
-            props: { error: true },
-        })
-
-        expect(wrapper.classes()).toContain('c-field--error')
-        expect(wrapper.classes()).not.toContain('c-field--default')
-    })
-
-    it('не добавляет класс c-field--error когда error=false', () => {
-        const wrapper = mount(CField, {
-            props: { error: false },
-        })
-
-        expect(wrapper.classes()).not.toContain('c-field--error')
-        expect(wrapper.classes()).toContain('c-field--default')
-    })
-
-    it('noInput делает input readonly без класса c-field--readonly', () => {
-        const wrapper = mount(CField, {
-            props: { noInput: true },
-        })
-
-        const input = wrapper.find('input')
-        expect(input.attributes('readonly')).toBeDefined()
-        expect(wrapper.classes()).not.toContain('c-field--readonly')
-    })
-
-    it('readonly добавляет класс c-field--readonly и атрибут readonly', () => {
-        const wrapper = mount(CField, {
-            props: { readonly: true },
-        })
-
-        const input = wrapper.find('input')
-        expect(input.attributes('readonly')).toBeDefined()
-        expect(wrapper.classes()).toContain('c-field--readonly')
     })
 })

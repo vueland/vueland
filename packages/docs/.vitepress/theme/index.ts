@@ -1,5 +1,7 @@
 import DefaultTheme from 'vitepress/theme'
 import type { Theme } from 'vitepress'
+import { inBrowser, useData } from 'vitepress'
+import { watch } from 'vue'
 import { createVuelandUI } from '@vueland/ui'
 import * as components from '@vueland/ui/components'
 import '@vueland/ui/styles.css'
@@ -85,6 +87,14 @@ function makeInputPreset(color: string): CInputPreset {
 
 export default {
     extends: DefaultTheme,
+    setup() {
+        if (inBrowser) {
+            const { isDark } = useData()
+            watch(isDark, (dark) => {
+                document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light')
+            }, { immediate: true })
+        }
+    },
     enhanceApp({ app }) {
         const vueland = createVuelandUI({
             components,

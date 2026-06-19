@@ -97,12 +97,6 @@ Vueland is currently in active early development.
 
 The API, component contracts, package structure, and design system may evolve as the platform grows. The project is being shaped around real-world frontend needs, with a focus on flexibility, maintainability, and developer experience.
 
-## Inspiration
-
-Vueland's internal architecture draws heavily from [Vuetify](https://vuetifyjs.com).
-Many of its internal patterns were studied from Vuetify's source
-and adapted to fit Vueland's design goals.
-
 ## Contributing
 
 Contributions are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md) for setup instructions, branch strategy, commit conventions, and PR guidelines.
@@ -175,26 +169,28 @@ Vueland строится вокруг этого разделения:
 Компонент сохраняет model, логику выбора, validation, focus state, поведение меню и accessibility-связи. Приложение контролирует разметку, layout, иконки и визуальную композицию.
 
 ```vue
-<CSelect v-model="user" :items="users">
-  <template #selects="{ items }">
-    <UserChip
-      v-for="user in items"
-      :key="user.id"
-      :user="user"
-    />
-  </template>
-
-  <template #menu="{ items, onSelect }">
-    <UserList>
-      <UserListItem
+<template>
+  <CSelect v-model="user" :items="users">
+    <template #selects="{ items }">
+      <UserChip
         v-for="user in items"
         :key="user.id"
         :user="user"
-        @click="onSelect(user)"
       />
-    </UserList>
-  </template>
-</CSelect>
+    </template>
+
+    <template #menu="{ items, onSelect }">
+      <UserList>
+        <UserListItem
+          v-for="user in items"
+          :key="user.id"
+          :user="user"
+          @click="onSelect(user)"
+        />
+      </UserList>
+    </template>
+  </CSelect>
+</template>
 ```
 
 Такой подход полезен, когда команде нужно поведение готового компонента, но не нужна жёстко заданная DOM-структура или визуальный стиль традиционной UI-библиотеки.
@@ -227,12 +223,6 @@ Vite JIT plugin для генерации arbitrary utility-классов по 
 Vueland находится на активной ранней стадии разработки.
 
 API, контракты компонентов, структура пакетов и дизайн-система могут меняться по мере развития платформы. Проект формируется вокруг реальных потребностей frontend-разработки с акцентом на гибкость, поддерживаемость и developer experience.
-
-## Вдохновение
-
-Внутренняя архитектура Vueland во многом основана на изучении [Vuetify](https://vuetifyjs.com).
-Ряд внутренних паттернов был заимствован из исходников Vuetify
-и адаптирован под цели Vueland.
 
 ## Участие в разработке
 

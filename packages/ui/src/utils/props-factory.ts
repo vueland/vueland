@@ -1,4 +1,8 @@
-import type { ComponentObjectPropsOptions, Prop, PropType } from 'vue'
+import type {
+    ComponentObjectPropsOptions,
+    Prop,
+    PropType,
+} from 'vue'
 
 type AnyConstructor =
     | StringConstructor
@@ -100,7 +104,7 @@ export function propsFactory<TProps extends ComponentObjectPropsOptions>(
     ): AppendDefault<TProps, TDefaults>
     (): TProps
 } {
-    return <TDefaults extends Partial<Record<keyof TProps, unknown>> = {}>(
+    return <TDefaults extends Partial<Record<keyof TProps, unknown>> = object>(
         defaults?: TDefaults,
     ): AppendDefault<TProps, TDefaults> => {
         return Object.keys(props).reduce<Record<string, unknown>>((result, key) => {

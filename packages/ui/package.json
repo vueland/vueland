@@ -1,125 +1,123 @@
 {
-  "name": "@vueland/ui",
-  "description": "Vue 3 component library for the Vueland platform",
-  "version": "0.0.1",
-  "private": false,
-  "license": "MIT",
-  "type": "module",
-  "author": {
-    "name": "Anar Allakhverdiev",
-    "url": "https://github.com/wiseadme"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vueland/vueland.git",
-    "directory": "/"
-  },
-  "sideEffects": [
-    "**/*.scss",
-    "**/*.css"
-  ],
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/types.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/types.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
+    "name": "@vueland/ui",
+    "description": "Vue 3 component library for the Vueland platform",
+    "version": "0.0.1",
+    "private": false,
+    "license": "MIT",
+    "type": "module",
+    "author": {
+        "name": "Anar Allakhverdiev",
+        "url": "https://github.com/wiseadme"
     },
-    "./styles.css": "./dist/styles.css",
-    "./css/utils/*": "./dist/css/utils/*",
-    "./components": {
-      "types": "./dist/components/index.d.ts",
-      "import": "./dist/components/index.js",
-      "require": "./dist/components/index.js"
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/vueland/vueland.git",
+        "directory": "/"
     },
-    "./composables": {
-      "types": "./dist/composables/index.d.ts",
-      "import": "./dist/composables/index.js",
-      "require": "./dist/composables/index.js"
+    "sideEffects": [
+        "**/*.scss",
+        "**/*.css"
+    ],
+    "files": [
+        "dist"
+    ],
+    "main": "./dist/index.js",
+    "module": "./dist/index.js",
+    "types": "./dist/types.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/types.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.js"
+        },
+        "./styles.css": "./dist/styles.css",
+        "./css/utils/*": "./dist/css/utils/*",
+        "./components": {
+            "types": "./dist/components/index.d.ts",
+            "import": "./dist/components/index.js",
+            "require": "./dist/components/index.js"
+        },
+        "./composables": {
+            "types": "./dist/composables/index.d.ts",
+            "import": "./dist/composables/index.js",
+            "require": "./dist/composables/index.js"
+        },
+        "./directives": {
+            "types": "./dist/directives/index.d.ts",
+            "import": "./dist/directives/index.js",
+            "require": "./dist/directives/index.js"
+        },
+        "./resolvers": {
+            "types": "./dist/resolvers/index.d.ts",
+            "import": "./dist/resolvers/index.js",
+            "require": "./dist/resolvers/index.js"
+        },
+        "./constants": {
+            "types": "./dist/constants/index.d.ts",
+            "import": "./dist/constants/index.js",
+            "require": "./dist/constants/index.js"
+        },
+        "./enums/*": {
+            "types": "./dist/enums/index.d.ts",
+            "import": "./dist/enums/index.js",
+            "require": "./dist/enums/index.js"
+        },
+        "./utils": {
+            "types": "./dist/utils/index.d.ts",
+            "import": "./dist/utils/index.js",
+            "require": "./dist/utils/index.js"
+        },
+        "./types": {
+            "types": "./dist/types/index.d.ts",
+            "import": "./dist/types/index.d.ts"
+        },
+        "./css/themes/default-theme.css": "./dist/css/themes/default-theme.css"
     },
-    "./directives": {
-      "types": "./dist/directives/index.d.ts",
-      "import": "./dist/directives/index.js",
-      "require": "./dist/directives/index.js"
+    "peerDependencies": {
+        "vue": "^3.5.27"
     },
-    "./resolvers": {
-      "types": "./dist/resolvers/index.d.ts",
-      "import": "./dist/resolvers/index.js",
-      "require": "./dist/resolvers/index.js"
+    "engines": {
+        "node": ">=20.19.0",
+        "pnpm": ">=10"
     },
-    "./constants": {
-      "types": "./dist/constants/index.d.ts",
-      "import": "./dist/constants/index.js",
-      "require": "./dist/constants/index.js"
+    "scripts": {
+        "clean": "rimraf dist",
+        "build": "pnpm run clean && pnpm run build:js && pnpm run build:types",
+        "build:js": "rollup -c ./build/rollup.config.mjs",
+        "build-lib": "pnpm run build:types && rollup -c ./build/rollup.config.mjs && pnpm run gen:globals &&  node ./build/insert-ref.mjs",
+        "build:types": "vue-tsc -p tsconfig.build.json --declaration --emitDeclarationOnly",
+        "test:lib": "vitest run -c vitest.config.ts",
+        "test:deploy": "vitest run -c vitest.config.ts",
+        "test:watch": "vitest -c vitest.config.ts",
+        "typecheck": "vue-tsc -p tsconfig.build.json --noEmit",
+        "types:clean": "rimraf dist/temp-types",
+        "lint:lib": "eslint .",
+        "gen:globals": "node ./build/generate-global-components.mjs"
     },
-    "./enums/*": {
-      "types": "./dist/enums/index.d.ts",
-      "import": "./dist/enums/index.js",
-      "require": "./dist/enums/index.js"
-    },
-    "./utils": {
-      "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils/index.js",
-      "require": "./dist/utils/index.js"
-    },
-    "./types": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/types/index.d.ts"
-    },
-    "./css/themes/default-theme.css": "./dist/css/themes/default-theme.css"
-  },
-  "peerDependencies": {
-    "vue": "^3.5.27"
-  },
-  "engines": {
-    "node": ">=20.19.0",
-    "pnpm": ">=10"
-  },
-  "scripts": {
-    "clean": "rimraf dist",
-    "build": "pnpm run clean && pnpm run build:js && pnpm run build:types",
-    "build:deploy": "pnpm run build:types && rollup -c ./build/rollup.config.mjs && pnpm run copy:all && pnpm run types:clean",
-    "copy:all": "node ./build/copy-dts.mjs && node ./build/insert-ref.mjs",
-    "build:js": "rollup -c ./build/rollup.config.mjs",
-    "build-lib": "pnpm run gen:globals && pnpm run build:types && rollup -c ./build/rollup.config.mjs",
-    "build:types": "vue-tsc -p tsconfig.build.json --declaration --emitDeclarationOnly",
-    "test:lib": "vitest run -c vitest.config.ts",
-    "test:deploy": "vitest run -c vitest.config.ts",
-    "test:watch": "vitest -c vitest.config.ts",
-    "typecheck": "vue-tsc -p tsconfig.build.json --noEmit",
-    "types:clean": "rimraf dist/temp-types",
-    "lint:lib": "eslint .",
-    "gen:globals": "node ./build/generate-global-components.mjs"
-  },
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "^28.0.2",
-    "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-node-resolve": "^16.0.1",
-    "@rollup/plugin-replace": "^6.0.2",
-    "@rollup/plugin-terser": "^0.4.4",
-    "@vitejs/plugin-vue": "^6.0.3",
-    "@vitejs/plugin-vue-jsx": "^5.1.5",
-    "@vitest/coverage-v8": "^4.0.18",
-    "@vue/compiler-sfc": "^3.5.27",
-    "@vue/test-utils": "^2.4.6",
-    "autoprefixer": "^10.4.20",
-    "fs-extra": "^11.3.4",
-    "happy-dom": "^20.4.0",
-    "postcss": "^8.5.1",
-    "rimraf": "^6.0.1",
-    "rollup": "^4.57.1",
-    "rollup-plugin-dts": "^6.3.0",
-    "rollup-plugin-esbuild": "^6.2.1",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-postcss": "^4.0.2",
-    "sass": "^1.97.3",
-    "vitest": "^4.0.18",
-    "vue": "^3.5.27",
-    "vue-tsc": "^2.2.0"
-  }
+    "devDependencies": {
+        "@rollup/plugin-commonjs": "^28.0.2",
+        "@rollup/plugin-json": "^6.1.0",
+        "@rollup/plugin-node-resolve": "^16.0.1",
+        "@rollup/plugin-replace": "^6.0.2",
+        "@rollup/plugin-terser": "^0.4.4",
+        "@vitejs/plugin-vue": "^6.0.3",
+        "@vitejs/plugin-vue-jsx": "^5.1.5",
+        "@vitest/coverage-v8": "^4.0.18",
+        "@vue/compiler-sfc": "^3.5.27",
+        "@vue/test-utils": "^2.4.6",
+        "autoprefixer": "^10.4.20",
+        "fs-extra": "^11.3.4",
+        "happy-dom": "^20.4.0",
+        "postcss": "^8.5.1",
+        "rimraf": "^6.0.1",
+        "rollup": "^4.57.1",
+        "rollup-plugin-dts": "^6.3.0",
+        "rollup-plugin-esbuild": "^6.2.1",
+        "rollup-plugin-peer-deps-external": "^2.2.4",
+        "rollup-plugin-postcss": "^4.0.2",
+        "sass": "^1.97.3",
+        "vitest": "^4.0.18",
+        "vue": "^3.5.27",
+        "vue-tsc": "^2.2.0"
+    }
 }

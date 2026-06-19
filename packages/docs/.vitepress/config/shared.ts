@@ -15,8 +15,8 @@ export const sharedConfig: UserConfig = {
   },
   markdown: {
     theme: {
-      light: 'github-light',
-      dark: 'github-dark',
+      light: 'one-light',
+      dark: 'one-dark-pro',
     },
   },
 }
