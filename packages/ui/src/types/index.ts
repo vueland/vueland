@@ -1,4 +1,5 @@
 export * from './icons'
 export * from './presets'
 export * from './props'
+export * from './theme'
 export * from './utils'

@@ -5,9 +5,9 @@
 $self: '.c-field';
 
 #{$self} {
-  --c-field-border-color: var(--c-app-border-color, #e5e5e5);
-  --c-field-disabled-opacity: 0.5;
-  --c-field-readonly-bg-color: #{map.get($grey, 'lighten-4')};
+  --c-field-border-color: var(--c-app-border-color);
+  --c-field-disabled-opacity: var(--c-app-disabled-opacity);
+  --c-field-readonly-bg-color: var(--c-app-readonly-bg-color);
   --c-field-prepend-min-width: 40px;
   --c-field-append-min-width: 24px;
   --c-field-min-height: 40px;

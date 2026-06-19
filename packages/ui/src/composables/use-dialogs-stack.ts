@@ -16,7 +16,7 @@ export type DialogStackItem = {
     props?: Record<string, any>
 }
 
-export interface DialogsStackApi {
+export interface DialogsStackAPI {
     stack: ShallowRef<DialogStackItem[]>
     current: ComputedRef<DialogStackItem | undefined>
     openDialog: (options: {
@@ -29,7 +29,7 @@ export interface DialogsStackApi {
 
 let counter = 0
 
-export function createDialogsStack(): DialogsStackApi {
+export function createDialogsStack(): DialogsStackAPI {
     const stack = shallowRef<DialogStackItem[]>([])
 
     const current = computed(() => stack.value[stack.value.length - 1])
@@ -74,6 +74,6 @@ export function createDialogsStack(): DialogsStackApi {
     }
 }
 
-export function useDialogsStack(): DialogsStackApi {
+export function useDialogsStack(): DialogsStackAPI {
     return inject($DIALOGS_STACK_API_KEY)!
 }

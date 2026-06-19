@@ -9,7 +9,7 @@ import {
 } from 'vue'
 import { type JSX } from 'vue/jsx-runtime'
 
-import { $DATE_PICKER_HANDLERS_KEY } from '../../constants'
+import { $DATE_PICKER_API_KEY } from '../../constants'
 
 import { parseDate, toDateString } from './helpers'
 import type { DatePickerDate, DisabledDates } from './types'
@@ -29,6 +29,9 @@ export const CDatePickerDates = defineComponent({
         value: Object as PropType<DatePickerDate | null>,
         mondayFirst: Boolean,
         disabledDates: Object as PropType<DisabledDates>,
+        highlightedDates: Array as PropType<(Date | string)[]>,
+        minDate: Object as PropType<DatePickerDate | null>,
+        maxDate: Object as PropType<DatePickerDate | null>,
     },
     emits: {
         'update:value': (_date: DatePickerDate) => !!_date,
@@ -46,38 +49,28 @@ export const CDatePickerDates = defineComponent({
 
         const today = parseDate(new Date())
         const dates = shallowRef<(DatePickerDate | null)[]>([])
-        const transitioning = shallowRef(false)
         const transitionName = shallowRef('c-date-slide-left')
 
-        const handlers = inject($DATE_PICKER_HANDLERS_KEY)
+        const api = inject($DATE_PICKER_API_KEY)!
 
-        if (handlers) {
-            handlers.onNext = () => updateMonth(true)
-            handlers.onPrev = () => updateMonth(false)
-        }
+        api.onNext = () => updateMonth(true)
+        api.onPrev = () => updateMonth(false)
 
         const daysInMonth = computed(() => new Date(props.year, props.month + 1, 0).getDate())
 
         function updateMonth(isNext: boolean) {
             transitionName.value = isNext ? 'c-date-slide-left' : 'c-date-slide-right'
 
-            const month = props.month + (isNext ? 1 : -1)
+            let month = props.month + (isNext ? 1 : -1)
+            let year: number | undefined
 
-            const params: {
-                month: number,
-                year?: number
-            } = { month }
+            if (!isNext && month < FIRST_MONTH) { month = LAST_MONTH; year = props.year - 1 }
+            if (isNext && month > LAST_MONTH) { month = FIRST_MONTH; year = props.year + 1 }
 
-            if (!isNext && month < FIRST_MONTH) {
-                params.month = LAST_MONTH; params.year = props.year - 1
-            }
-
-            if (isNext && month > LAST_MONTH) {
-                params.month = FIRST_MONTH; params.year = props.year + 1
-            }
-
-            transitioning.value = true
-            emit('update:month', params)
+            emit('update:month', {
+                month,
+                year,
+            })
         }
 
         function genDateObject(day: number): DatePickerDate {
@@ -110,93 +103,130 @@ export const CDatePickerDates = defineComponent({
             return a.date === b.date && a.month === b.month && a.year === b.year
         }
 
+        const parsedFromTo = computed(() => {
+            const { from, to } = props.disabledDates ?? {}
+            if (!from || !to) return null
+            return {
+                f: parseDate(new Date(from)).mls ?? 0,
+                t: parseDate(new Date(to)).mls ?? 0,
+            }
+        })
+
+        const parsedRanges = computed(() =>
+            props.disabledDates?.ranges?.map((r) => ({
+                f: parseDate(new Date(r.from)).mls ?? 0,
+                t: parseDate(new Date(r.to)).mls ?? 0,
+            })) ?? [],
+        )
+
+        const parsedHighlighted = computed(() =>
+            props.highlightedDates?.map((d) => parseDate(new Date(d))) ?? [],
+        )
+
         function isDisabled(date: DatePickerDate): boolean {
-            if (!date.date) {
-                return false
-            }
+            if (!date.date) return false
 
-            const { disabledDates } = props
+            const mls = date.mls ?? 0
+            const {
+                disabledDates: d,
+                minDate,
+                maxDate,
+            } = props
 
-            if (!disabledDates) {
-                return false
-            }
+            const checks = [
+                () => !!minDate && mls < (minDate.mls ?? 0),
+                () => !!maxDate && mls > (maxDate.mls ?? 0),
+                () => !!d?.daysOfMonth?.includes(date.date!),
+                () => !!d?.days?.includes(date.day),
+                () => !!d?.dates?.some((v) => `${new Date(v)}` === `${toDateString(date)}`),
+                () => !!parsedFromTo.value && mls >= parsedFromTo.value.f && mls <= parsedFromTo.value.t,
+                () => parsedRanges.value.some((r) => mls >= r.f && mls <= r.t),
+                () => !!d?.custom?.(date),
+            ]
 
-            if (disabledDates.daysOfMonth?.includes(date.date)) {
-                return true
-            }
+            return checks.some((check) => check())
+        }
 
-            if (disabledDates.days !== undefined && disabledDates.days.includes(date.day)) {
-                return true
-            }
-
-            if (disabledDates.dates?.some((d) =>
-                `${new Date(d)}` === `${toDateString(date)}`)) {
-                return true
-            }
-
-            if (disabledDates.from && disabledDates.to) {
-                const from = parseDate(new Date(disabledDates.from))
-                const to = parseDate(new Date(disabledDates.to))
-
-                if ((date.mls ?? 0) >= (from.mls ?? 0) && (date.mls ?? 0) <= (to.mls ?? 0)) {
-                    return true
-                }
-            }
-
-            if (disabledDates.ranges) {
-                for (const r of disabledDates.ranges) {
-                    const from = parseDate(new Date(r.from))
-                    const to = parseDate(new Date(r.to))
-
-                    if ((date.mls ?? 0) >= (from.mls ?? 0) && (date.mls ?? 0) <= (to.mls ?? 0)) {
-                        return true
-                    }
-                }
-            }
-
-            return !!disabledDates.custom?.(date)
+        function isHighlighted(date: DatePickerDate): boolean {
+            return parsedHighlighted.value.some((d) => isEqualDates(date, d))
         }
 
         watch(() => props.month, () => {
             buildDates()
-            transitioning.value = false
         }, { immediate: true })
 
         return () => {
-            const weekRow = (
-                <div class="c-date-picker-dates__week">
-                    {DAYS.map((d) => (
-                        <span class="c-date-picker-dates__day">{props.locale?.[d]}</span>
-                    ))}
-                </div>
-            )
+            const weekDays = DAYS.map((d) => ({
+                day: d,
+                label: props.locale?.[d],
+            }))
 
-            const cellVNodes = dates.value.map((dateObj) => {
-                if (!dateObj || !dateObj.date) {
-                    return <div class="c-date-picker-dates__cell c-date-picker-dates__cell--empty" />
+            const weekRow = slots.week
+                ? slots.week({ days: weekDays })
+                : (
+                    <div class="c-date-picker-dates__week">
+                        {weekDays.map(({ label }) => (
+                            <span class="c-date-picker-dates__day">{label}</span>
+                        ))}
+                    </div>
+                )
+
+            const enrichedDates = dates.value.map((dateObj) => {
+                if (!dateObj || !dateObj.date) return {
+                    dateObj,
+                    empty: true,
+                    disabled: false,
+                    highlighted: false,
+                    isSelected: false,
+                    isToday: false,
                 }
                 const disabled = isDisabled(dateObj)
+                const highlighted = isHighlighted(dateObj)
                 dateObj.isHoliday = disabled
-                const isSelected = isEqualDates(dateObj, props.value)
-                const isToday = isEqualDates(dateObj, today)
+                dateObj.isHighlighted = highlighted
+                return {
+                    dateObj,
+                    empty: false,
+                    disabled,
+                    highlighted,
+                    isSelected: isEqualDates(dateObj, props.value),
+                    isToday: isEqualDates(dateObj, today),
+                }
+            })
 
+            const cellVNodes = enrichedDates.map(({
+                dateObj,
+                empty,
+                disabled,
+                highlighted,
+                isSelected,
+                isToday,
+            }) => {
+                if (empty || !dateObj?.date) {
+
+                    return <div class="c-date-picker-dates__cell c-date-picker-dates__cell--empty" />
+                }
                 return (
                     <div
                         class={[
                             'c-date-picker-dates__cell',
                             isSelected && 'c-date-picker-dates__cell--selected',
-                            isToday && 'c-date-picker-dates__cell--today',
+                            isToday && !isSelected && 'c-date-picker-dates__cell--today',
                             disabled && 'c-date-picker-dates__cell--disabled',
+                            highlighted && 'c-date-picker-dates__cell--highlighted',
                         ]}
                         onClick={() => !disabled && emit('update:value', dateObj!)}
                     >
-                        {slots.date ? slots.date(dateObj) : dateObj.date}
+                        {slots.date ? slots.date({
+                            ...dateObj,
+                            isSelected,
+                            isToday,
+                        }) : dateObj.date}
                     </div>
                 )
             })
 
             const rows: JSX.Element[] = []
-
             for (let i = 0; i < cellVNodes.length; i += 7) {
                 rows.push(
                     <div class="c-date-picker-dates__row">
@@ -205,14 +235,23 @@ export const CDatePickerDates = defineComponent({
                 )
             }
 
-            return (
-                <div class="c-date-picker-dates">
-                    {weekRow}
+            const datesContent = slots.dates
+                ? slots.dates({
+                    dates: enrichedDates,
+                    onSelect: (d: DatePickerDate) => !d.isHoliday && emit('update:value', d),
+                })
+                : (
                     <Transition name={transitionName.value} mode="out-in">
                         <div key={`${props.year}-${props.month}`} class="c-date-picker-dates__dates">
                             {rows}
                         </div>
                     </Transition>
+                )
+
+            return (
+                <div class="c-date-picker-dates">
+                    {weekRow}
+                    {datesContent}
                 </div>
             )
         }

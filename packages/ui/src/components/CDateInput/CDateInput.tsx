@@ -2,6 +2,7 @@ import {
     computed,
     defineComponent,
     ref,
+    type SlotsType,
     useModel,
 } from 'vue'
 
@@ -9,13 +10,17 @@ import { IconAliases } from '../../enums'
 import { emitsFactory, propsFactory } from '../../utils'
 import {
     CDatePicker,
+    type DatePickerDate,
+    type DatePickerEnrichedDate,
+    type DatePickerSlotApi,
     datePickerValueToString,
+    type DatePickerWeekDay,
     type DisabledDates,
     makeCDatePickerProps,
 } from '../CDatePicker'
 import { CField } from '../CField'
 import { CIcon } from '../CIcon'
-import { CInput,type CInputFieldSlotProps , makeCInputProps } from '../CInput'
+import { CInput, type CInputFieldSlotProps, makeCInputProps } from '../CInput'
 import { CMenu } from '../CMenu'
 
 export const makeCDateInputProps = propsFactory({
@@ -24,6 +29,21 @@ export const makeCDateInputProps = propsFactory({
     typeable: Boolean,
     placeholder: String,
 })
+
+type CDateInputSlots = SlotsType<{
+    prepend: void
+    append: void
+    date: DatePickerDate & { isSelected: boolean;
+        isToday: boolean }
+    week: { days: DatePickerWeekDay[] }
+    dates: { dates: DatePickerEnrichedDate[];
+        onSelect: (d: DatePickerDate) => void }
+    'before-header': DatePickerSlotApi
+    header: DatePickerSlotApi
+    'before-body': DatePickerSlotApi
+    body: DatePickerSlotApi
+    footer: DatePickerSlotApi
+}>
 
 export const CDateInput = defineComponent({
     name: 'CDateInput',
@@ -38,6 +58,7 @@ export const CDateInput = defineComponent({
         focus: () => true,
         blur: () => true,
     }),
+    slots: Object as CDateInputSlots,
     setup(props, {
         emit,
         slots,
@@ -65,8 +86,9 @@ export const CDateInput = defineComponent({
 
         function onTypeInput(val: string) {
             if (!props.typeable) return
-            // try to parse typed date
+
             const parsed = new Date(val)
+
             if (!isNaN(parsed.getTime())) {
                 model.value = parsed
                 emit('update:modelValue', parsed)
@@ -104,8 +126,7 @@ export const CDateInput = defineComponent({
                             strategy="reverse"
                         >
                             {{
-                                activator: ({ activator }: { activator: any;
-                                    on: any }) => (
+                                activator: ({ activator }) => (
                                     <div class="c-date-input" {...activator}>
                                         <CField
                                             ref={fieldRef}
@@ -118,6 +139,7 @@ export const CDateInput = defineComponent({
                                             error={field.hasError}
                                             clearable={field.clearable}
                                             readonly={!props.typeable}
+                                            noInput
                                             disabled={props.disabled}
                                             {...field.attrs}
                                             onFocus={() => {
@@ -128,15 +150,11 @@ export const CDateInput = defineComponent({
                                             onClear={onFieldClear}
                                         >
                                             {{
-                                                prepend: () =>
-                                                    slots.prepend?.() ?? (
-                                                        <CIcon
-                                                            name={IconAliases.CALENDAR}
-                                                            size={18}
-                                                            style="cursor:pointer"
-                                                            onClick={() => { menuOpen.value = !menuOpen.value }}
-                                                        />
-                                                    ),
+                                                prepend: () => slots.prepend?.() ?? (
+                                                    <span style="cursor:pointer" onClick={() => { menuOpen.value = !menuOpen.value }}>
+                                                        <CIcon name={IconAliases.CALENDAR} size={18} />
+                                                    </span>
+                                                ),
                                                 ...(slots.append && { append: () => slots.append!() }),
                                             }}
                                         </CField>
@@ -150,16 +168,27 @@ export const CDateInput = defineComponent({
                                         format={props.format}
                                         mondayFirst={props.mondayFirst}
                                         disabledDates={props.disabledDates as DisabledDates | undefined}
+                                        minDate={props.minDate}
+                                        maxDate={props.maxDate}
+                                        highlightedDates={props.highlightedDates}
                                         onUpdate:modelValue={onDateSelect}
                                         onSelected={onDateSelect}
                                     >
-                                        {{ ...(slots.date && { date: slots.date }) }}
+                                        {{
+                                            ...(slots.date && { date: slots.date }),
+                                            ...(slots.week && { week: slots.week }),
+                                            ...(slots.dates && { dates: slots.dates }),
+                                            ...(slots['before-header'] && { 'before-header': slots['before-header'] }),
+                                            ...(slots.header && { header: slots.header }),
+                                            ...(slots['before-body'] && { 'before-body': slots['before-body'] }),
+                                            ...(slots.body && { body: slots.body }),
+                                            ...(slots.footer && { footer: slots.footer }),
+                                        }}
                                     </CDatePicker>
                                 ),
                             }}
                         </CMenu>
                     ),
-                    ...(slots.details && { details: slots.details }),
                 }}
             </CInput>
         )

@@ -4,16 +4,14 @@
 
 $self: '.c-input';
 $input-details-min-height: 24px;
-$input-readonly-bg-color: map.get($colors, 'grey', 'lighten-4');
-
 .c-input {
   --c-input-field-border-radius: var(--c-app-border-radius);
   --c-input-field-text-color: var(--c-app-text-color);
   --c-input-error-color: var(--c-app-error-color);
   --c-input-primary-color: var(--c-app-primary-color);
   --c-input-disabled-color: var(--c-app-disabled-color);
-  --c-input-readonly-color: var(--c-app-primary-color);
-  --c-input-readonly-bg-color: #{$input-readonly-bg-color};
+  --c-input-readonly-color: var(--c-app-readonly-color);
+  --c-input-readonly-bg-color: var(--c-app-readonly-bg-color);
   --c-input-details-min-height: #{$input-details-min-height};
 
   display: flex;

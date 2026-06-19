@@ -5,6 +5,7 @@ export type DatePickerDate = {
     day: number
     mls?: number
     isHoliday?: boolean
+    isHighlighted?: boolean
 }
 
 export type DisabledDates = {
