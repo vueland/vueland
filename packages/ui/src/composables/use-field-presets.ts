@@ -1,33 +1,74 @@
-import { computed, unref } from 'vue'
+import { computed, type ComputedRef, unref } from 'vue'
 
 import type { CFieldProps, CFieldSlots } from '../components/CField/CField'
 import { getPresetIf } from '../helpers'
-import type { FieldPreset } from '../types'
+import type { CFieldPreset, CFieldZone } from '../types'
 
 import { usePresets } from './use-presets'
 
 const EMPTY_FIELD_PRESETS = {
-    root: [],
-    input: [],
-    label: [],
-    prepend: [],
-    append: [],
+    root: [] as string[],
+    input: [] as string[],
+    label: [] as string[],
 }
 
-function mergePresetClasses(base?: string[], ...states: (string[] | undefined)[]): string[] {
-    return [...(base ?? []), ...states.flatMap((it) => it ?? [])]
+type FieldZoneKey = keyof CFieldZone
+
+function mergePresetClasses(...args: (string[] | undefined)[]): string[] {
+    return args.flatMap((it) => it ?? [])
+}
+
+function resolveInteraction(
+    preset: CFieldPreset | undefined,
+    zone: FieldZoneKey,
+    isDisabled: boolean,
+    isReadonly: boolean,
+    hasError: boolean,
+    isFocused: boolean,
+    isFilled: boolean,
+): string[] {
+    const base = preset?.[zone]
+
+    if (isDisabled) {
+        const s = preset?.disabled
+        if (isFocused && s?.focused?.[zone]) return s.focused[zone]!
+        if (isFilled && s?.filled?.[zone]) return s.filled[zone]!
+        // passive state — no fallback to base if state zone not defined
+        return s?.[zone] ?? []
+    }
+    if (isReadonly) {
+        const s = preset?.readonly
+        if (isFocused && s?.focused?.[zone]) return s.focused[zone]!
+        if (isFilled && s?.filled?.[zone]) return s.filled[zone]!
+        // passive state — no fallback to base if state zone not defined
+        return s?.[zone] ?? []
+    }
+    if (hasError) {
+        const s = preset?.error
+        if (isFocused && s?.focused?.[zone]) return s.focused[zone]!
+        if (isFilled && s?.filled?.[zone]) return s.filled[zone]!
+        return s?.[zone] ?? []
+    }
+    if (isFocused) {
+        return preset?.focused?.[zone] ?? []
+    }
+    if (isFilled) {
+        return preset?.filled?.[zone] ?? []
+    }
+
+    return base ?? []
 }
 
 export function useFieldPresets({
     props,
     slots,
-    attrs,
+    hasValue,
 }: {
     props: CFieldProps
     slots: CFieldSlots
-    attrs: Record<string, any>
+    hasValue: ComputedRef<boolean>
 }) {
-    const presets = usePresets<FieldPreset>(props)
+    const presets = usePresets<CFieldPreset>(props)
 
     return computed(() => {
         if (!props.preset) {
@@ -36,79 +77,33 @@ export function useFieldPresets({
 
         const preset = unref(presets)
 
-        const isFilled = !!props.filled
+        const isFilled = unref(hasValue)
         const isPrepended = !!slots.prepend
         const isAppended = !!slots.append
 
         const isFocused = !!props.focused
-        const isReadonly = !!attrs.readonly
-        const isDisabled = !!attrs.disabled
+        const isReadonly = !!props.readonly
+        const isDisabled = !!props.disabled
         const hasError = !!props.error
+
+        const resolve = (zone: FieldZoneKey) =>
+            resolveInteraction(preset, zone, isDisabled, isReadonly, hasError, isFocused, isFilled)
 
         return {
             root: mergePresetClasses(
-                preset?.root,
-
-                getPresetIf(isFilled, preset?.filled?.root),
+                resolve('root'),
                 getPresetIf(isPrepended, preset?.prepended?.root),
                 getPresetIf(isAppended, preset?.appended?.root),
-
-                getPresetIf(isFocused, preset?.focused?.root),
-                getPresetIf(isReadonly, preset?.readonly?.root),
-                getPresetIf(isDisabled, preset?.disabled?.root),
-                getPresetIf(hasError, preset?.error?.root),
             ),
-
             input: mergePresetClasses(
-                preset?.input,
-
-                getPresetIf(isFilled, preset?.filled?.input),
+                resolve('input'),
                 getPresetIf(isPrepended, preset?.prepended?.input),
                 getPresetIf(isAppended, preset?.appended?.input),
-
-                getPresetIf(isFocused, preset?.focused?.input),
-                getPresetIf(isReadonly, preset?.readonly?.input),
-                getPresetIf(isDisabled, preset?.disabled?.input),
-                getPresetIf(hasError, preset?.error?.input),
             ),
-
             label: mergePresetClasses(
-                preset?.label,
-
-                getPresetIf(isFilled, preset?.filled?.label),
+                resolve('label'),
                 getPresetIf(isPrepended, preset?.prepended?.label),
                 getPresetIf(isAppended, preset?.appended?.label),
-
-                getPresetIf(isFocused, preset?.focused?.label),
-                getPresetIf(isReadonly, preset?.readonly?.label),
-                getPresetIf(isDisabled, preset?.disabled?.label),
-                getPresetIf(hasError, preset?.error?.label),
-            ),
-
-            prepend: mergePresetClasses(
-                preset?.prepend,
-
-                getPresetIf(isFilled, preset?.filled?.prepend),
-                getPresetIf(isPrepended, preset?.prepended?.prepend),
-                getPresetIf(isAppended, preset?.appended?.prepend),
-
-                getPresetIf(isFocused, preset?.focused?.prepend),
-                getPresetIf(isReadonly, preset?.readonly?.prepend),
-                getPresetIf(isDisabled, preset?.disabled?.prepend),
-                getPresetIf(hasError, preset?.error?.prepend),
-            ),
-
-            append: mergePresetClasses(
-                preset?.append,
-
-                getPresetIf(isFilled, preset?.filled?.append),
-                getPresetIf(isPrepended, preset?.prepended?.append),
-                getPresetIf(isAppended, preset?.appended?.append),
-
-                getPresetIf(isFocused, preset?.focused?.append),
-                getPresetIf(isReadonly, preset?.readonly?.append),
-                getPresetIf(isDisabled, preset?.disabled?.append),
-                getPresetIf(hasError, preset?.error?.append),
             ),
         }
     })

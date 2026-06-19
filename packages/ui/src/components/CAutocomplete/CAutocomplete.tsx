@@ -5,6 +5,7 @@ import {
     shallowRef,
     unref,
     useModel,
+    type VNode,
     watch,
 } from 'vue'
 
@@ -34,21 +35,17 @@ type CAutocompleteOptions = {
 }
 
 export type CAutocompleteSlots<Item = unknown> = {
-    menu: {
-        items: NormalizedItem<Item>[]
-        onSelect(value: Item): void
-    }
-    field: CInputFieldSlotProps
-    prepend: never
-    append: never
-    chips: {
-        items: ComputedRef<unknown[]>
-    }
-    details: {
-        errorMessage?: string
+    menu?(props: { items: NormalizedItem<Item>[];
+        onSelect(value: Item): void }): VNode
+    field?(props: CInputFieldSlotProps): VNode
+    prepend?(): VNode
+    append?(): VNode
+    chips?(props: { items: ComputedRef<unknown[]> }): VNode[]
+    details?(props: {
+        errorMessage?: string;
         details?: string
-    }
-    'no-items-message': never
+    }): VNode
+    'no-items-message'?(): string
 }
 
 export type CAutocompleteEvents = {
@@ -97,6 +94,7 @@ export const CAutocomplete = genericComponent<
     InferFactoryProps<ReturnType<typeof makeCInputProps>>
 >()({
     name: 'CAutocomplete',
+    inheritAttrs: false,
     props: makeCAutocompleteProps(),
     emits: emitsFactory<CAutocompleteEvents>({
         'update:modelValue': () => true,
@@ -209,10 +207,10 @@ export const CAutocomplete = genericComponent<
                                                 onKeydown={onKeydown}
                                             >
                                                 {{
-                                                    ...(slots.prepend && { prepend: () => slots.prepend!({}) }),
+                                                    ...(slots.prepend && { prepend: () => slots.prepend!() }),
 
                                                     append: () =>
-                                                        slots.append?.({}) ?? (
+                                                        slots.append?.() ?? (
                                                             <CIcon
                                                                 name={IconAliases.DROPDOWN}
                                                                 size={20}

@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { defineComponent, h, reactive, type Reactive } from 'vue'
+import { computed, defineComponent, h, reactive, type Reactive } from 'vue'
 
 import type { CFieldProps } from '../../components/CField/CField'
 import type { CFieldSlots } from '../../components/CField/CField'
@@ -22,6 +22,12 @@ function mountUseFieldPresets({
 } = {}) {
     let result!: ReturnType<typeof useFieldPresets>
 
+    const attrs = reactive({
+        disabled: false,
+        readonly: false,
+        ...initialAttrs,
+    }) as Record<string, any>
+
     const props = reactive({
         preset: undefined,
         filled: false,
@@ -30,9 +36,19 @@ function mountUseFieldPresets({
         ...initialProps,
     }) as Reactive<TestFieldProps>
 
-    const attrs = reactive({
-        ...initialAttrs,
-    }) as Record<string, any>
+    // forward attrs.disabled/readonly into props so useFieldPresets can read them
+    Object.defineProperty(props, 'disabled', {
+        get: () => attrs.disabled,
+        set: (v) => { attrs.disabled = v },
+        enumerable: true,
+        configurable: true,
+    })
+    Object.defineProperty(props, 'readonly', {
+        get: () => attrs.readonly,
+        set: (v) => { attrs.readonly = v },
+        enumerable: true,
+        configurable: true,
+    })
 
     const slots = {
         ...initialSlots,
@@ -44,7 +60,7 @@ function mountUseFieldPresets({
                 result = useFieldPresets({
                     props,
                     slots,
-                    attrs,
+                    hasValue: computed(() => !!props.filled),
                 })
 
                 return () => h('div')
@@ -79,8 +95,6 @@ describe('useFieldPresets', () => {
                         root: ['root'],
                         input: ['input'],
                         label: ['label'],
-                        prepend: ['prepend'],
-                        append: ['append'],
                     },
                 },
             },
@@ -90,12 +104,10 @@ describe('useFieldPresets', () => {
             root: [],
             input: [],
             label: [],
-            prepend: [],
-            append: [],
         })
     })
 
-    it('возвращает базовые классы FieldPreset', () => {
+    it('возвращает базовые классы CFieldPreset', () => {
         const { result } = mountUseFieldPresets({
             props: {
                 preset: 'field.base',
@@ -106,8 +118,6 @@ describe('useFieldPresets', () => {
                         root: ['root'],
                         input: ['input'],
                         label: ['label'],
-                        prepend: ['prepend'],
-                        append: ['append'],
                     },
                 },
             },
@@ -117,8 +127,6 @@ describe('useFieldPresets', () => {
             root: ['root'],
             input: ['input'],
             label: ['label'],
-            prepend: ['prepend'],
-            append: ['append'],
         })
     })
 
@@ -134,8 +142,6 @@ describe('useFieldPresets', () => {
                             root: ['primary-root'],
                             input: ['primary-input'],
                             label: ['primary-label'],
-                            prepend: ['primary-prepend'],
-                            append: ['primary-append'],
                         },
                     },
                 },
@@ -146,8 +152,6 @@ describe('useFieldPresets', () => {
             root: ['primary-root'],
             input: ['primary-input'],
             label: ['primary-label'],
-            prepend: ['primary-prepend'],
-            append: ['primary-append'],
         })
     })
 
@@ -163,26 +167,21 @@ describe('useFieldPresets', () => {
                         root: ['root'],
                         input: ['input'],
                         label: ['label'],
-                        prepend: ['prepend'],
-                        append: ['append'],
                         filled: {
                             root: ['filled-root'],
                             input: ['filled-input'],
                             label: ['filled-label'],
-                            prepend: ['filled-prepend'],
-                            append: ['filled-append'],
                         },
                     },
                 },
             },
         })
 
+        // filled wins interaction → filled zone replaces base
         expect(result.value).toEqual({
-            root: ['root', 'filled-root'],
-            input: ['input', 'filled-input'],
-            label: ['label', 'filled-label'],
-            prepend: ['prepend', 'filled-prepend'],
-            append: ['append', 'filled-append'],
+            root: ['filled-root'],
+            input: ['filled-input'],
+            label: ['filled-label'],
         })
     })
 
@@ -200,14 +199,10 @@ describe('useFieldPresets', () => {
                         root: ['root'],
                         input: ['input'],
                         label: ['label'],
-                        prepend: ['prepend'],
-                        append: ['append'],
                         prepended: {
                             root: ['prepended-root'],
                             input: ['prepended-input'],
                             label: ['prepended-label'],
-                            prepend: ['prepended-prepend'],
-                            append: ['prepended-append'],
                         },
                     },
                 },
@@ -218,8 +213,6 @@ describe('useFieldPresets', () => {
             root: ['root', 'prepended-root'],
             input: ['input', 'prepended-input'],
             label: ['label', 'prepended-label'],
-            prepend: ['prepend', 'prepended-prepend'],
-            append: ['append', 'prepended-append'],
         })
     })
 
@@ -237,14 +230,10 @@ describe('useFieldPresets', () => {
                         root: ['root'],
                         input: ['input'],
                         label: ['label'],
-                        prepend: ['prepend'],
-                        append: ['append'],
                         appended: {
                             root: ['appended-root'],
                             input: ['appended-input'],
                             label: ['appended-label'],
-                            prepend: ['appended-prepend'],
-                            append: ['appended-append'],
                         },
                     },
                 },
@@ -255,12 +244,10 @@ describe('useFieldPresets', () => {
             root: ['root', 'appended-root'],
             input: ['input', 'appended-input'],
             label: ['label', 'appended-label'],
-            prepend: ['prepend', 'appended-prepend'],
-            append: ['append', 'appended-append'],
         })
     })
 
-    it('добавляет focused-зоны после filled/prepended/appended', () => {
+    it('применяет focused-состояние + структурные модификаторы (filled, prepend, append)', () => {
         const { result } = mountUseFieldPresets({
             props: {
                 preset: 'field.base',
@@ -277,63 +264,41 @@ describe('useFieldPresets', () => {
                         root: ['root'],
                         input: ['input'],
                         label: ['label'],
-                        prepend: ['prepend'],
-                        append: ['append'],
 
                         filled: {
                             root: ['filled-root'],
                             input: ['filled-input'],
                             label: ['filled-label'],
-                            prepend: ['filled-prepend'],
-                            append: ['filled-append'],
                         },
 
                         prepended: {
                             root: ['prepended-root'],
                             input: ['prepended-input'],
                             label: ['prepended-label'],
-                            prepend: ['prepended-prepend'],
-                            append: ['prepended-append'],
                         },
 
                         appended: {
                             root: ['appended-root'],
                             input: ['appended-input'],
                             label: ['appended-label'],
-                            prepend: ['appended-prepend'],
-                            append: ['appended-append'],
                         },
 
                         focused: {
                             root: ['focused-root'],
                             input: ['focused-input'],
                             label: ['focused-label'],
-                            prepend: ['focused-prepend'],
-                            append: ['focused-append'],
                         },
                     },
                 },
             },
         })
 
+        // interaction: focused wins over filled → focused zone (filled swallowed)
+        // structural: prepend, append — аддитивны
         expect(result.value).toEqual({
-            root: ['root', 'filled-root', 'prepended-root', 'appended-root', 'focused-root'],
-            input: ['input', 'filled-input', 'prepended-input', 'appended-input', 'focused-input'],
-            label: ['label', 'filled-label', 'prepended-label', 'appended-label', 'focused-label'],
-            prepend: [
-                'prepend',
-                'filled-prepend',
-                'prepended-prepend',
-                'appended-prepend',
-                'focused-prepend',
-            ],
-            append: [
-                'append',
-                'filled-append',
-                'prepended-append',
-                'appended-append',
-                'focused-append',
-            ],
+            root: ['focused-root', 'prepended-root', 'appended-root'],
+            input: ['focused-input', 'prepended-input', 'appended-input'],
+            label: ['focused-label', 'prepended-label', 'appended-label'],
         })
     })
 
@@ -361,9 +326,10 @@ describe('useFieldPresets', () => {
             },
         })
 
-        expect(result.value.root).toEqual(['root', 'readonly-root'])
-        expect(result.value.input).toEqual(['input', 'readonly-input'])
-        expect(result.value.label).toEqual(['label', 'readonly-label'])
+        // readonly wins over base: state zone replaces base zone
+        expect(result.value.root).toEqual(['readonly-root'])
+        expect(result.value.input).toEqual(['readonly-input'])
+        expect(result.value.label).toEqual(['readonly-label'])
     })
 
     it('добавляет disabled-зоны, если attrs.disabled передан', () => {
@@ -390,12 +356,13 @@ describe('useFieldPresets', () => {
             },
         })
 
-        expect(result.value.root).toEqual(['root', 'disabled-root'])
-        expect(result.value.input).toEqual(['input', 'disabled-input'])
-        expect(result.value.label).toEqual(['label', 'disabled-label'])
+        // disabled wins over base: state zone replaces base zone
+        expect(result.value.root).toEqual(['disabled-root'])
+        expect(result.value.input).toEqual(['disabled-input'])
+        expect(result.value.label).toEqual(['disabled-label'])
     })
 
-    it('добавляет error-зоны после focused/readonly/disabled', () => {
+    it('приоритет: disabled побеждает readonly, error, focused', () => {
         const { result } = mountUseFieldPresets({
             props: {
                 preset: 'field.base',
@@ -410,63 +377,20 @@ describe('useFieldPresets', () => {
                 field: {
                     base: {
                         root: ['root'],
-                        input: ['input'],
-                        label: ['label'],
-
-                        focused: {
-                            root: ['focused-root'],
-                            input: ['focused-input'],
-                            label: ['focused-label'],
-                        },
-
-                        readonly: {
-                            root: ['readonly-root'],
-                            input: ['readonly-input'],
-                            label: ['readonly-label'],
-                        },
-
-                        disabled: {
-                            root: ['disabled-root'],
-                            input: ['disabled-input'],
-                            label: ['disabled-label'],
-                        },
-
-                        error: {
-                            root: ['error-root'],
-                            input: ['error-input'],
-                            label: ['error-label'],
-                        },
+                        focused: { root: ['focused-root'] },
+                        readonly: { root: ['readonly-root'] },
+                        disabled: { root: ['disabled-root'] },
+                        error: { root: ['error-root'] },
                     },
                 },
             },
         })
 
-        expect(result.value.root).toEqual([
-            'root',
-            'focused-root',
-            'readonly-root',
-            'disabled-root',
-            'error-root',
-        ])
-
-        expect(result.value.input).toEqual([
-            'input',
-            'focused-input',
-            'readonly-input',
-            'disabled-input',
-            'error-input',
-        ])
-
-        expect(result.value.label).toEqual([
-            'label',
-            'focused-label',
-            'readonly-label',
-            'disabled-label',
-            'error-label',
-        ])
+        // disabled wins — only disabled zone applies (no base fallback since disabled zone is defined)
+        expect(result.value.root).toEqual(['disabled-root'])
     })
 
-    it('соблюдает полный порядок: base → filled → prepended → appended → focused → readonly → disabled → error', () => {
+    it('при всех активных — disabled побеждает среди interaction, структурные аддитивны', () => {
         const { result } = mountUseFieldPresets({
             props: {
                 preset: 'field.base',
@@ -486,48 +410,24 @@ describe('useFieldPresets', () => {
                 field: {
                     base: {
                         label: ['base-label'],
-
-                        filled: {
-                            label: ['filled-label'],
-                        },
-
-                        prepended: {
-                            label: ['prepended-label'],
-                        },
-
-                        appended: {
-                            label: ['appended-label'],
-                        },
-
-                        focused: {
-                            label: ['focused-label'],
-                        },
-
-                        readonly: {
-                            label: ['readonly-label'],
-                        },
-
-                        disabled: {
-                            label: ['disabled-label'],
-                        },
-
-                        error: {
-                            label: ['error-label'],
-                        },
+                        filled: { label: ['filled-label'] },
+                        prepended: { label: ['prepended-label'] },
+                        appended: { label: ['appended-label'] },
+                        focused: { label: ['focused-label'] },
+                        readonly: { label: ['readonly-label'] },
+                        disabled: { label: ['disabled-label'] },
+                        error: { label: ['error-label'] },
                     },
                 },
             },
         })
 
+        // interaction: disabled wins → disabled-label (filled, focused, readonly, error all swallowed)
+        // structural: only prepend, append additive
         expect(result.value.label).toEqual([
-            'base-label',
-            'filled-label',
+            'disabled-label',
             'prepended-label',
             'appended-label',
-            'focused-label',
-            'readonly-label',
-            'disabled-label',
-            'error-label',
         ])
     })
 
@@ -569,8 +469,6 @@ describe('useFieldPresets', () => {
             root: ['root'],
             input: ['input'],
             label: ['label'],
-            prepend: [],
-            append: [],
         })
     })
 
@@ -610,46 +508,29 @@ describe('useFieldPresets', () => {
             },
         })
 
+        // no state → base
         expect(result.value.root).toEqual(['root'])
         expect(result.value.label).toEqual(['label'])
 
+        // filled wins (lowest priority but only active) → replaces base
         props.filled = true
+        expect(result.value.root).toEqual(['filled-root'])
+        expect(result.value.label).toEqual(['filled-label'])
 
-        expect(result.value.root).toEqual(['root', 'filled-root'])
-        expect(result.value.label).toEqual(['label', 'filled-label'])
-
+        // focused wins over filled → focused replaces filled
         props.focused = true
+        expect(result.value.root).toEqual(['focused-root'])
+        expect(result.value.label).toEqual(['focused-label'])
 
-        expect(result.value.root).toEqual(['root', 'filled-root', 'focused-root'])
-        expect(result.value.label).toEqual(['label', 'filled-label', 'focused-label'])
-
+        // disabled wins over focused → disabled replaces
         attrs.disabled = true
+        expect(result.value.root).toEqual(['disabled-root'])
+        expect(result.value.label).toEqual(['disabled-label'])
 
-        expect(result.value.root).toEqual(['root', 'filled-root', 'focused-root', 'disabled-root'])
-        expect(result.value.label).toEqual([
-            'label',
-            'filled-label',
-            'focused-label',
-            'disabled-label',
-        ])
-
+        // error does NOT win — disabled has higher priority
         props.error = true
-
-        expect(result.value.root).toEqual([
-            'root',
-            'filled-root',
-            'focused-root',
-            'disabled-root',
-            'error-root',
-        ])
-
-        expect(result.value.label).toEqual([
-            'label',
-            'filled-label',
-            'focused-label',
-            'disabled-label',
-            'error-label',
-        ])
+        expect(result.value.root).toEqual(['disabled-root'])
+        expect(result.value.label).toEqual(['disabled-label'])
     })
 
     it('возвращает пустые массивы для зон, которые не описаны', () => {
@@ -673,12 +554,122 @@ describe('useFieldPresets', () => {
             },
         })
 
+        // focused wins over filled: focused-root; filled swallowed (no filled-label)
+        // focused has no label/input defined → fallback to base (undefined → [])
         expect(result.value).toEqual({
             root: ['focused-root'],
             input: [],
-            label: ['filled-label'],
-            prepend: [],
-            append: [],
+            label: [],
         })
+    })
+
+    it('применяет error.focused.label при error + focused', () => {
+        const { result } = mountUseFieldPresets({
+            props: {
+                preset: 'field.base',
+                error: true,
+                focused: true,
+            },
+            presets: {
+                field: {
+                    base: {
+                        label: ['base-label'],
+                        error: {
+                            label: ['error-label'],
+                            focused: {
+                                label: ['error-focused-label'],
+                            },
+                        },
+                        focused: {
+                            label: ['focused-label'],
+                        },
+                    },
+                },
+            },
+        })
+
+        // error wins interaction + focused compound → error.focused.label (replaces error.label and focused.label)
+        expect(result.value.label).toEqual(['error-focused-label'])
+    })
+
+    it('применяет error.filled.label при error + filled', () => {
+        const { result } = mountUseFieldPresets({
+            props: {
+                preset: 'field.base',
+                error: true,
+                filled: true,
+            },
+            presets: {
+                field: {
+                    base: {
+                        label: ['base-label'],
+                        error: {
+                            label: ['error-label'],
+                            filled: {
+                                label: ['error-filled-label'],
+                            },
+                        },
+                        filled: {
+                            label: ['filled-label'],
+                        },
+                    },
+                },
+            },
+        })
+
+        // error wins + filled compound → error.filled.label (replaces both error.label and filled.label)
+        expect(result.value.label).toEqual(['error-filled-label'])
+    })
+
+    it('применяет disabled.focused.root при disabled + focused (focused от пропсов)', () => {
+        const { result } = mountUseFieldPresets({
+            props: {
+                preset: 'field.base',
+                focused: true,
+            },
+            attrs: { disabled: true },
+            presets: {
+                field: {
+                    base: {
+                        root: ['base-root'],
+                        disabled: {
+                            root: ['disabled-root'],
+                            focused: {
+                                root: ['disabled-focused-root'],
+                            },
+                        },
+                        focused: {
+                            root: ['focused-root'],
+                        },
+                    },
+                },
+            },
+        })
+
+        // disabled + focused → compound wins: disabled-focused-root (not disabled-root, not focused-root)
+        expect(result.value.root).toEqual(['disabled-focused-root'])
+    })
+
+    it('не применяет compound состояние, если основное состояние не активно', () => {
+        const { result } = mountUseFieldPresets({
+            props: {
+                preset: 'field.base',
+                focused: true,
+            },
+            presets: {
+                field: {
+                    base: {
+                        label: ['base-label'],
+                        error: {
+                            focused: {
+                                label: ['error-focused-label'],
+                            },
+                        },
+                    },
+                },
+            },
+        })
+
+        expect(result.value.label).not.toContain('error-focused-label')
     })
 })

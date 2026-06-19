@@ -10,10 +10,10 @@ import {
 import type { InputState } from '../components/CInput/CInput'
 import type { Maybe } from '../types'
 
-export type ValidateFn = (value: any) => {
-    valid: boolean
-    message: string
-}
+export type ValidateResult = { valid: boolean;
+    message: string }
+
+export type ValidateFn = (value: any) => ValidateResult | Promise<ValidateResult>
 
 export type ValidateOn = 'input' | 'blur'
 
@@ -25,6 +25,7 @@ export type ValidateProps = {
 export type ValidateState = {
     errorMessage: Maybe<string>
     hasError: boolean
+    validating: boolean
 }
 
 export enum InputEvents {
@@ -33,7 +34,11 @@ export enum InputEvents {
 }
 
 export function useValidate(
-    props: ValidateProps & { modelValue: any },
+    props: ValidateProps & {
+        modelValue: any
+        readonly?: boolean
+        disabled?: boolean
+    },
     state: Reactive<InputState>,
 ) {
     const { modelValue, validateOn } = toRefs(props)
@@ -41,31 +46,37 @@ export function useValidate(
     const errors = shallowReactive<ValidateState>({
         errorMessage: undefined,
         hasError: false,
+        validating: false,
     })
 
     const hasRules = computed(() => (props.rules?.length ?? 0) > 0)
 
     function resetValidate() {
-        errors.errorMessage = ''
+        errors.errorMessage = undefined
         errors.hasError = false
+        errors.validating = false
     }
 
-    function update(result: ReturnType<ValidateFn>) {
+    function applyResult(result: ValidateResult) {
         errors.hasError = !result.valid
         errors.errorMessage = !result.valid ? result.message : undefined
     }
 
-    function validate() {
-        if (unref(hasRules)) {
+    async function validate(): Promise<boolean> {
+        if (!unref(hasRules) || props.readonly || props.disabled) return true
+
+        errors.validating = true
+
+        try {
             for (const rule of props.rules!) {
-                const result = rule(props.modelValue)
+                const result = await rule(props.modelValue)
 
-                update(result)
+                applyResult(result)
 
-                if (!result.valid) {
-                    return false
-                }
+                if (!result.valid) return false
             }
+        } finally {
+            errors.validating = false
         }
 
         return true
@@ -73,7 +84,6 @@ export function useValidate(
 
     if (unref(hasRules)) {
         watch(modelValue, (val) => {
-            // при validateOn=blur пропускаем только если значение непустое
             if (unref(validateOn) === InputEvents.BLUR && !!val) return
             validate()
         })

@@ -1,9 +1,9 @@
-export type ButtonPreset = {
+export type CButtonPreset = {
     root?: string[]
     label?: string[]
 }
 
-export type MenuPreset = {
+export type CMenuPreset = {
     root?: string[]
     opened?: {
         root?: string[]
@@ -13,51 +13,45 @@ export type MenuPreset = {
     }
 }
 
-type FieldPresetState = {
+export type CFieldZone = {
     root?: string[]
     input?: string[]
     label?: string[]
-    prepend?: string[]
-    append?: string[]
 }
 
-export type FieldPreset = FieldPresetState & {
-    focused?: FieldPresetState
-    error?: FieldPresetState
-    disabled?: FieldPresetState
-    readonly?: FieldPresetState
-
-    filled?: FieldPresetState
-    prepended?: FieldPresetState
-    appended?: FieldPresetState
+type CFieldCompoundState = CFieldZone & {
+    focused?: CFieldZone
+    filled?: CFieldZone
 }
 
-export type InputPreset = {
+export type CFieldPreset = CFieldZone & {
+    focused?: CFieldZone
+    filled?: CFieldZone
+    error?: CFieldCompoundState
+    disabled?: CFieldCompoundState
+    readonly?: CFieldCompoundState
+    prepended?: CFieldZone
+    appended?: CFieldZone
+}
+
+type CInputZone = {
     root?: string[]
-    field?: string
+    label?: string[]
+    input?: string[]
     details?: string[]
+}
 
-    focused?: {
-        root?: string[]
-        field?: string
-        details?: string[]
-    }
+type CInputCompoundState = CInputZone & {
+    focused?: CInputZone
+    filled?: CInputZone
+}
 
-    error?: {
-        root?: string[]
-        field?: string
-        details?: string[]
-    }
-
-    disabled?: {
-        root?: string[]
-        field?: string
-        details?: string[]
-    }
-
-    readonly?: {
-        root?: string[]
-        field?: string
-        details?: string[]
-    }
+export type CInputPreset = CInputZone & {
+    focused?: CInputZone
+    filled?: CInputZone
+    error?: CInputCompoundState
+    disabled?: CInputCompoundState
+    readonly?: CInputCompoundState
+    prepended?: CInputZone
+    appended?: CInputZone
 }

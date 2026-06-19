@@ -1,12 +1,12 @@
 import { computed, unref } from 'vue'
 
 import type { CMenuProps } from '../components/CMenu/CMenu'
-import type { MenuPreset } from '../types'
+import type { CMenuPreset } from '../types'
 
 import { usePresets } from './use-presets'
 
 export function useMenuPresets({ props }: { props: CMenuProps }) {
-    const presets = usePresets<MenuPreset>(props)
+    const presets = usePresets<CMenuPreset>(props)
 
     return computed(() => ({
         root: props.preset

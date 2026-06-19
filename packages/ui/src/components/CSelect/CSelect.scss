@@ -1,8 +1,12 @@
 .c-select {
   flex: 1 1;
+  cursor: pointer;
 
   & > .c-field > .c-field__append {
     transition: transform .1s linear;
+  }
+
+  &--readonly {
   }
 
   & > .c-field--focused > .c-field__append {

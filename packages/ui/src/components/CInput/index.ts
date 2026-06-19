@@ -4,7 +4,6 @@ export {
     type CInputEmits,
     type CInputFieldSlotProps,
     type CInputKind,
-    type CInputLabelSlotProps,
     type CInputProps,
     type CInputSlots,
     type InputState,

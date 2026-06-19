@@ -49,11 +49,24 @@ describe('CForm', () => {
         vi.clearAllMocks()
     })
 
-    it('рендерит корневой form с классом c-form', () => {
+    it('рендерит корневой form с классом c-form и novalidate', () => {
         const wrapper = mount(CForm)
 
         expect(wrapper.element.tagName).toBe('FORM')
         expect(wrapper.classes()).toContain('c-form')
+        expect(wrapper.attributes('novalidate')).toBeDefined()
+    })
+
+    it('выставляет aria-label при передаче label prop', () => {
+        const wrapper = mount(CForm, { props: { label: 'Форма регистрации' } })
+
+        expect(wrapper.attributes('aria-label')).toBe('Форма регистрации')
+    })
+
+    it('не выставляет aria-label без label prop', () => {
+        const wrapper = mount(CForm)
+
+        expect(wrapper.attributes('aria-label')).toBeUndefined()
     })
 
     it('рендерит содержимое default slot', () => {
@@ -283,7 +296,7 @@ describe('CForm', () => {
     it('предотвращает нативный submit формы', async () => {
         const wrapper = mount(CForm, {
             attachTo: document.body,
-            slots: { default: '<buttonPresets type="submit" class="submit-btn">Submit</buttonPresets>' },
+            slots: { default: '<button type="submit" class="submit-btn">Submit</button>' },
         })
 
         const form = wrapper.find('form')

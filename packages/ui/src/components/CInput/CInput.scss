@@ -1,17 +1,18 @@
 @use "../../styles/modules/global-vars" as *;
+@use "../../styles/maps/colors-map" as *;
+@use "sass:map";
 
 $self: '.c-input';
-$input-details-height: 24px;
-
+$input-details-min-height: 24px;
 .c-input {
   --c-input-field-border-radius: var(--c-app-border-radius);
-  --c-input-details-height: #{$input-details-height};
-  --c-input-clear-action-min-width: 24px;
   --c-input-field-text-color: var(--c-app-text-color);
   --c-input-error-color: var(--c-app-error-color);
   --c-input-primary-color: var(--c-app-primary-color);
-  --c-input-background-color: var(--c-app-surface-color);
   --c-input-disabled-color: var(--c-app-disabled-color);
+  --c-input-readonly-color: var(--c-app-readonly-color);
+  --c-input-readonly-bg-color: var(--c-app-readonly-bg-color);
+  --c-input-details-min-height: #{$input-details-min-height};
 
   display: flex;
   flex-direction: column;
@@ -20,7 +21,6 @@ $input-details-height: 24px;
   color: currentColor;
   position: relative;
   border-radius: var(--c-app-border-radius);
-  background-color: var(--c-input-background-color);
 
   &--focused {
     #{$self}__field {
@@ -28,7 +28,7 @@ $input-details-height: 24px;
     }
   }
 
-  &--has-error {
+  &.c-input--has-error {
     color: var(--c-input-error-color);
   }
 
@@ -42,6 +42,7 @@ $input-details-height: 24px;
   }
 
   &--readonly {
+    color: var(--c-input-readonly-color);
   }
 
   &__field {
@@ -49,10 +50,10 @@ $input-details-height: 24px;
   }
 
   &__details {
-    height: var(--c-input-details-height);
     background-color: transparent;
     display: flex;
     justify-content: start;
     align-items: center;
+    min-height: var(--c-input-details-min-height);
   }
 }

@@ -1,6 +1,16 @@
 import { IconAliases, IconName } from '../enums'
 
 export const ICONS = {
+    [IconName.CHEVRON_LEFT]: {
+        body: '<path d="M169.4 342.7C156.9 330.2 156.9 309.9 169.4 297.4L361.4 105.4C373.9 92.9 394.2 92.9 406.7 105.4C419.2 117.9 419.2 138.2 406.7 150.7L237.3 320L406.6 489.3C419.1 501.8 419.1 522.1 406.6 534.6C394.1 547.1 373.8 547.1 361.3 534.6L169.3 342.6z"/>',
+        viewBox: '0 0 640 640',
+        size: 20,
+    },
+    [IconName.CHEVRON_RIGHT]: {
+        body: '<path d="M470.6 297.4C483.1 309.9 483.1 330.2 470.6 342.7L278.6 534.7C266.1 547.2 245.8 547.2 233.3 534.7C220.8 522.2 220.8 501.9 233.3 489.4L402.7 320L233.4 150.7C220.9 138.2 220.9 117.9 233.4 105.4C245.9 92.9 266.2 92.9 278.7 105.4L470.7 297.4z"/>',
+        viewBox: '0 0 640 640',
+        size: 20,
+    },
     [IconName.CHEVRON_DOWN]: {
         body: '<path d="M297.4 470.6C309.9 483.1 330.2 483.1 342.7 470.6L534.7 278.6C547.2 266.1 547.2 245.8 534.7 233.3C522.2 220.8 501.9 220.8 489.4 233.3L320 402.7L150.6 233.4C138.1 220.9 117.8 220.9 105.3 233.4C92.8 245.9 92.8 266.2 105.3 278.7L297.3 470.7z"/>',
         viewBox: '0 0 640 640',
@@ -48,6 +58,8 @@ export const ICONS = {
 
 export const ALIASES = {
     [IconAliases.DROPDOWN]: ICONS[IconName.CHEVRON_DOWN],
+    [IconAliases.CHEVRON_LEFT]: ICONS[IconName.CHEVRON_LEFT],
+    [IconAliases.CHEVRON_RIGHT]: ICONS[IconName.CHEVRON_RIGHT],
     [IconAliases.CHECKBOX_ON]: ICONS[IconName.CHECKED_BOX],
     [IconAliases.CHECKBOX_OFF]: ICONS[IconName.BOX],
     [IconAliases.CALENDAR]: ICONS[IconName.CALENDAR],

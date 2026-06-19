@@ -1,4 +1,5 @@
 export * from './preset'
+export * from './theme'
 
 export const toCamelCase = (...args: string[]): string =>
     args.reduce((res, s, i) => {

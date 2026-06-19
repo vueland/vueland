@@ -1,23 +1,88 @@
+@use "sass:map";
+@use "../maps/colors-map" as *;
+
 $primary-transition: cubic-bezier(.25, .8, .5, 1);
 
 :root {
-  --global-border-radius: 8px;
-  --global-error-color: #ef231f;
-  --global-success-color: #43d31b;
-  --global-primary-color: #1f77c4;
-  --global-secondary-color: #39638c;
-  --global-base-color: #ffffff;
-  --global-text-color: #3d3d3d;
+  // ---- Brand ----
+  --c-app-primary-color: #{map.get($blue, "darken-2")};
+  --c-app-on-primary-color: #{map.get($white, "base")};
+  --c-app-secondary-color: #{map.get($blue, "darken-3")};
+  --c-app-success-color: #{map.get($green, "base")};
+  --c-app-error-color: #{map.get($red, "darken-1")};
+  --c-app-warning-color: #{map.get($orange, "base")};
+  --c-app-info-color: #{map.get($light-blue, "darken-1")};
+  --c-app-accent-color: #{map.get($light-green, "accent-3")};
 
-  --c-app-primary-color: #1f77c4;
-  --c-app-secondary-color: #213e59;
-  --c-app-success-color: #3eaf1e;
-  --c-app-error-color: #ef231f;
-  --c-app-warning-color: #f6892f;
-  --c-app-info-color: #0b86cc;
-  --c-app-accent-color: #30e40d;
-  --c-app-surface-color: #ffffff;
-  --c-app-disabled-color: #c8c8c8;
-  --c-app-text-color: #3d3d3d;
+  // ---- Surface & background ----
+  --c-app-background-color: #{map.get($grey, "lighten-4")};
+  --c-app-surface-color: #{map.get($white, "base")};
+  --c-app-surface-variant-color: #{map.get($grey, "lighten-3")};
+  --c-app-on-surface-color: #{map.get($grey, "darken-3")};
+
+  // ---- Text ----
+  --c-app-text-color: #{map.get($grey, "darken-3")};
+  --c-app-text-secondary-color: #{map.get($grey, "darken-1")};
+  --c-app-placeholder-color: #{map.get($grey, "base")};
+
+  // ---- States: disabled ----
+  --c-app-disabled-color: #{map.get($grey, "lighten-1")};
+  --c-app-disabled-bg-color: #{map.get($grey, "lighten-3")};
+  --c-app-disabled-opacity: 0.5;
+
+  // ---- States: readonly ----
+  --c-app-readonly-color: #{map.get($blue, "darken-2")};
+  --c-app-readonly-bg-color: #{map.get($grey, "lighten-4")};
+
+  // ---- States: focus ----
+  --c-app-focus-color: #{map.get($blue, "darken-2")};
+
+  // ---- States: error ----
+  --c-app-error-bg-color: #{map.get($red, "lighten-5")};
+
+  // ---- Interactive ----
+  --c-app-hover-color: rgba(0, 0, 0, .06);
+  --c-app-overlay-color: rgba(0, 0, 0, .5);
+  --c-app-shadow-color: rgba(0, 0, 0, .15);
+
+  // ---- Misc ----
+  --c-app-border-color: #{map.get($grey, "lighten-2")};
   --c-app-border-radius: 8px;
+}
+
+// ---- Dark theme ----
+[data-theme="dark"] {
+  --c-app-primary-color: #{map.get($blue, "lighten-3")};
+  --c-app-on-primary-color: #{map.get($grey, "darken-4")};
+  --c-app-secondary-color: #{map.get($blue, "lighten-2")};
+  --c-app-success-color: #{map.get($green, "lighten-2")};
+  --c-app-error-color: #{map.get($red, "lighten-2")};
+  --c-app-warning-color: #{map.get($orange, "lighten-2")};
+  --c-app-info-color: #{map.get($light-blue, "lighten-2")};
+
+  --c-app-background-color: #{map.get($grey, "darken-4")};
+  --c-app-surface-color: #1e1e1e;
+  --c-app-surface-variant-color: #2a2a2a;
+  --c-app-on-surface-color: #{map.get($grey, "lighten-2")};
+
+  --c-app-text-color: #{map.get($grey, "lighten-2")};
+  --c-app-text-secondary-color: #{map.get($grey, "base")};
+  --c-app-placeholder-color: #{map.get($grey, "darken-1")};
+
+  --c-app-disabled-color: #{map.get($grey, "darken-2")};
+  --c-app-disabled-bg-color: #2a2a2a;
+  --c-app-disabled-opacity: 0.4;
+
+  --c-app-readonly-color: #{map.get($blue, "lighten-3")};
+  --c-app-readonly-bg-color: #2a2a2a;
+
+  --c-app-focus-color: #{map.get($blue, "lighten-3")};
+
+  --c-app-error-bg-color: rgba(#{map.get($red, "base")}, .12);
+
+  --c-app-hover-color: rgba(255, 255, 255, .08);
+  --c-app-overlay-color: rgba(0, 0, 0, .7);
+  --c-app-shadow-color: rgba(0, 0, 0, .4);
+
+  --c-app-border-color: #{map.get($grey, "darken-2")};
 }

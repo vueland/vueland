@@ -114,21 +114,21 @@ export const CMenu = defineComponent<CMenuProps>({
         attrs,
         emit,
         slots,
-        expose, 
+        expose,
     }) {
         const THROTTLE_DELAY = 50
 
         const {
             element,
             activatorProps,
-            genListeners, 
+            genListeners,
         } = useActivator(props)
 
         const {
             activator,
             content,
             contentRef,
-            update, 
+            update,
         } = useAutoPosition(props, element)
 
         const presets = useMenuPresets({ props })
@@ -144,13 +144,10 @@ export const CMenu = defineComponent<CMenuProps>({
         const sizesStyles = computed(() => ({
             ...(props.width || unref(activator).width
                 ? { width: convertToUnit(props.width ?? unref(activator).width) }
-                : {}),
-            ...(props.height
-                ? { height: convertToUnit(props.height ?? unref(activator).height) }
-                : {}),
-            ...(props.maxWidth || props.width
-                ? { maxWidth: convertToUnit(props.maxWidth || props.width!) }
-                : {}),
+                : {}
+            ),
+            ...(props.height ? { height: convertToUnit(props.height) } : {}),
+            ...(props.maxWidth || props.width ? { maxWidth: convertToUnit(props.maxWidth || props.width!) } : {}),
             ...(props.minWidth ? { minWidth: convertToUnit(props.minWidth) } : {}),
             ...(props.minHeight ? { minHeight: convertToUnit(props.minHeight) } : {}),
             ...(props.maxHeight ? { maxHeight: convertToUnit(props.maxHeight) } : {}),
@@ -241,17 +238,13 @@ export const CMenu = defineComponent<CMenuProps>({
             toggle,
         })
 
-        watch(
-            () => props.modelValue,
-            (value) => {
-                model.value = Boolean(value)
+        watch(() => props.modelValue, (value) => {
+            model.value = Boolean(value)
 
-                if (value) {
-                    mounted.value = true
-                }
-            },
-            { immediate: true },
-        )
+            if (value) {
+                mounted.value = true
+            }
+        }, { immediate: true })
 
         if (IN_BROWSER) {
             watch(
@@ -271,15 +264,11 @@ export const CMenu = defineComponent<CMenuProps>({
             )
 
             if (unref(detached)) {
-                watch(
-                    model,
-                    (value) => {
-                        if (value) {
-                            open()
-                        }
-                    },
-                    { immediate: true },
-                )
+                watch(model, (value) => {
+                    if (value) {
+                        open()
+                    }
+                }, { immediate: true })
             } else {
                 onMounted(() => {
                     if (unref(model)) {

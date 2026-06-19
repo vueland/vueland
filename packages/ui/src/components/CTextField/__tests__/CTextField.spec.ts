@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import { $VUELAND_UI_KEY } from '../../../constants'
 
@@ -317,7 +317,7 @@ describe('CTextField', () => {
         expect(wrapper.find('.c-text-field__details').text()).toBe('')
     })
 
-    it('применяет preset-классы к root и details и передает field preset в CField', () => {
+    it('применяет preset-классы к root и details и передает сгенерированный field ключ в CField', () => {
         const wrapper = mount(CTextField, {
             props: {
                 modelValue: '',
@@ -332,7 +332,7 @@ describe('CTextField', () => {
                         presets: {
                             textField: {
                                 root: ['preset-root'],
-                                field: 'preset-field',
+                                label: ['preset-label'],
                                 details: ['preset-details'],
                             },
                         },
@@ -344,8 +344,169 @@ describe('CTextField', () => {
         const field = wrapper.getComponent({ name: 'CField' })
 
         expect(wrapper.classes()).toContain('preset-root')
-        expect(field.props('preset')).toBe('preset-field')
+        expect(field.props('preset')).toBe('__field.textField')
         expect(wrapper.get('.c-input__details').classes()).toContain('preset-details')
+    })
+
+    it('принимает null как modelValue без предупреждений', () => {
+        const warn = vi.spyOn(console, 'warn')
+
+        createWrapper({ modelValue: null })
+
+        expect(warn).not.toHaveBeenCalled()
+
+        warn.mockRestore()
+    })
+
+    it('readonly поле фокусируется, но CInput не меняет focused-состояние', async () => {
+        const wrapper = createWrapper({ readonly: true })
+
+        await wrapper.get('input.c-field-input').trigger('focus')
+
+        expect(wrapper.classes()).not.toContain('c-input--focused')
+        expect(wrapper.classes()).toContain('c-input--readonly')
+        expect(wrapper.get('input.c-field-input').attributes('readonly')).toBeDefined()
+    })
+
+    it('CField получает класс c-field--disabled при disabled', () => {
+        const wrapper = createWrapper({ disabled: true })
+
+        expect(wrapper.getComponent({ name: 'CField' }).classes()).toContain('c-field--disabled')
+    })
+
+    it('CField получает класс c-field--readonly при readonly', () => {
+        const wrapper = createWrapper({ readonly: true })
+
+        expect(wrapper.getComponent({ name: 'CField' }).classes()).toContain('c-field--readonly')
+    })
+
+    it('клик на кнопку clear очищает v-model', async () => {
+        const wrapper = createVModelHost({
+            initialValue: 'John',
+            props: { clearable: true, focused: true },
+        })
+
+        await nextTick()
+
+        const clearBtn = wrapper.find('.c-field__clear')
+
+        expect(clearBtn.exists()).toBe(true)
+
+        await clearBtn.trigger('click')
+        await nextTick()
+
+        expect(wrapper.getComponent(CTextField).props('modelValue')).toBeUndefined()
+    })
+
+    it('эмитит focus и blur события', async () => {
+        const wrapper = createWrapper()
+        const input = wrapper.get('input.c-field-input')
+
+        await input.trigger('focus')
+        await nextTick()
+
+        expect(wrapper.emitted('focus')).toBeTruthy()
+
+        await input.trigger('blur')
+        await nextTick()
+
+        expect(wrapper.emitted('blur')).toBeTruthy()
+    })
+
+    it('validateOn=blur не показывает ошибку до blur', async () => {
+        const wrapper = createVModelHost({
+            initialValue: '',
+            props: {
+                id: 'email',
+                validateOn: 'blur',
+                rules: [
+                    (v: string) => ({ valid: !!v, message: 'Обязательное' }),
+                ],
+            },
+        })
+
+        const input = wrapper.get('input.c-field-input')
+
+        await input.trigger('focus')
+        await nextTick()
+
+        expect(wrapper.getComponent(CTextField).classes()).not.toContain('c-input--has-error')
+
+        await input.trigger('blur')
+        await nextTick()
+
+        expect(wrapper.getComponent(CTextField).classes()).toContain('c-input--has-error')
+        expect(wrapper.get('.c-text-field__details').text()).toBe('Обязательное')
+    })
+
+    it('details slot получает errorMessage и details', () => {
+        const wrapper = createWrapper(
+            { details: 'Подсказка' },
+            {
+                details: ({ errorMessage, details }: { errorMessage?: string; details?: string }) =>
+                    h('div', { class: 'custom-details' }, errorMessage ?? details),
+            },
+        )
+
+        expect(wrapper.get('.custom-details').text()).toBe('Подсказка')
+    })
+
+    it('details slot получает hasError и uid при ошибке', async () => {
+        const wrapper = createVModelHost({
+            initialValue: 'x',
+            props: {
+                id: 'field',
+                validateOn: 'input',
+                rules: [(v: string) => ({ valid: !!v, message: 'Обязательное' })],
+            },
+            slots: {
+                details: ({ hasError, uid }: any) =>
+                    h('div', { class: 'slot-d', 'data-has-error': `${hasError}`, 'data-uid': uid }),
+            },
+        })
+
+        await wrapper.get('input.c-field-input').setValue('')
+        await nextTick()
+
+        const el = wrapper.get('.slot-d')
+
+        expect(el.attributes('data-has-error')).toBe('true')
+        expect(el.attributes('data-uid')).toBe('field')
+    })
+
+    it('disabled атрибут попадает на нативный input', () => {
+        const wrapper = createWrapper({ disabled: true })
+
+        expect(wrapper.get('input.c-field-input').attributes('disabled')).toBeDefined()
+    })
+
+    it('применяет focused preset только при активном focused, не при readonly', async () => {
+        const wrapper = mount(CTextField, {
+            props: {
+                modelValue: '',
+                preset: 'textField',
+                readonly: true,
+            },
+            global: {
+                provide: {
+                    [$VUELAND_UI_KEY as symbol]: {
+                        presets: {
+                            textField: {
+                                root: ['preset-root'],
+                                focused: { root: ['preset-focused-root'] },
+                                readonly: { root: ['preset-readonly-root'] },
+                            },
+                        },
+                    },
+                },
+            },
+        })
+
+        await wrapper.get('input.c-field-input').trigger('focus')
+        await nextTick()
+
+        expect(wrapper.getComponent(CTextField).classes()).toContain('preset-readonly-root')
+        expect(wrapper.getComponent(CTextField).classes()).not.toContain('preset-focused-root')
     })
 
     it('применяет error preset при ошибке валидации', async () => {
@@ -368,11 +529,11 @@ describe('CTextField', () => {
                         presets: {
                             textField: {
                                 root: ['preset-root'],
-                                field: 'preset-field',
+                                label: ['preset-label'],
                                 details: ['preset-details'],
                                 error: {
                                     root: ['preset-error-root'],
-                                    field: 'preset-error-field',
+                                    label: ['preset-error-label'],
                                     details: ['preset-error-details'],
                                 },
                             },
@@ -388,7 +549,7 @@ describe('CTextField', () => {
         const field = wrapper.getComponent({ name: 'CField' })
 
         expect(wrapper.getComponent(CTextField).classes()).toContain('preset-error-root')
-        expect(field.props('preset')).toBe('preset-error-field')
+        expect(field.props('preset')).toBe('__field.textField')
         expect(wrapper.get('.c-input__details').classes()).toContain('preset-error-details')
     })
 })

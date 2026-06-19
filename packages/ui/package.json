@@ -67,6 +67,10 @@
       "import": "./dist/utils/index.js",
       "require": "./dist/utils/index.js"
     },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/types/index.d.ts"
+    },
     "./css/themes/default-theme.css": "./dist/css/themes/default-theme.css"
   },
   "peerDependencies": {

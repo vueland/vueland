@@ -1,6 +1,6 @@
-import type { FieldPreset } from '@vueland/ui/types'
+import type { CFieldPreset } from '@vueland/ui/types'
 
-export const base: FieldPreset = {
+export const base: CFieldPreset = {
     root: [''],
     label: ['text-uppercase'],
     focused: {
@@ -11,7 +11,7 @@ export const base: FieldPreset = {
     }
 }
 
-export const error: FieldPreset = {
+export const error: CFieldPreset = {
     root: [''],
     filled: {
         label: ['text-red-darken-2', 'text-uppercase'],

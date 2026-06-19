@@ -8,6 +8,8 @@ import {
 import { createDialogsStack, useDisplay } from './composables'
 import { $BREAKPOINTS_KEY, $DIALOGS_STACK_API_KEY, $VUELAND_UI_KEY } from './constants'
 import type { IconAliases } from './enums'
+import { buildVars } from './helpers'
+import { type ThemesOptions } from './types'
 import { IN_BROWSER } from './utils'
 
 export type IconsOptions = {
@@ -19,17 +21,36 @@ export type IconsOptions = {
 export interface LibOptions {
     components: Record<string, ComponentInstance<any> | FunctionalComponent>
     directives?: Record<string, Directive>
-    themes?: Record<string, any>
+    themes?: ThemesOptions
+    defaultTheme?: string
     icons?: IconsOptions
     presets?: Record<string, Record<string, any>>
     ssr?: boolean
 }
 
 export class VuelandUI {
-    themes: LibOptions['themes'] = {}
+    themes: ThemesOptions = {}
     icons: IconsOptions = {}
     presets: Record<string, Record<string, any>> = {}
+    theme: string = 'light'
     private installed: boolean = false
+
+    applyTheme(name: string): void {
+        const theme = this.themes[name]
+
+        if (!theme) {
+            console.warn(`[VuelandUI] Theme "${name}" not found.`)
+            return
+        }
+
+        if (IN_BROWSER) {
+            const root = document.documentElement
+
+            buildVars(theme).forEach(([prop, val]) => root.style.setProperty(prop, val))
+
+            this.theme = name
+        }
+    }
 
     install(app: App, options: LibOptions): void {
         if (this.installed) return
@@ -62,11 +83,17 @@ export class VuelandUI {
         app.provide($BREAKPOINTS_KEY, display)
         app.provide($DIALOGS_STACK_API_KEY, dialogsStack)
 
-        const unmount = app.unmount
-
         if (IN_BROWSER) {
+            const initialTheme = options.defaultTheme ?? Object.keys(this.themes)[0]
+
+            if (initialTheme) {
+                this.applyTheme(initialTheme)
+            }
+
             window.addEventListener('resize', display.update)
         }
+
+        const unmount = app.unmount
 
         app.unmount = (...args) => {
             window.removeEventListener('resize', display.update)

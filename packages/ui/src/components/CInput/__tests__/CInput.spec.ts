@@ -9,16 +9,17 @@ const basePresets = {
     input: {
         base: {
             root: ['base-root'],
-            field: 'field.base',
+            label: ['base-label'],
             details: ['base-details'],
 
             focused: {
                 root: ['focused-root'],
+                label: ['focused-label'],
             },
 
             error: {
                 root: ['error-root'],
-                field: 'field.error',
+                label: ['error-label'],
                 details: ['error-details'],
             },
 
@@ -315,7 +316,7 @@ describe('CInput', () => {
                 },
             })
 
-            expect((wrapper.vm as any).validate()).toBe(false)
+            expect(await (wrapper.vm as any).validate()).toBe(false)
             await nextTick()
 
             expect(field(wrapper).attributes('aria-invalid')).toBe('true')
@@ -339,7 +340,7 @@ describe('CInput', () => {
                 },
             })
 
-            ;(wrapper.vm as any).validate()
+            ;await (wrapper.vm as any).validate()
             await nextTick()
 
             expect(field(wrapper).attributes('aria-invalid')).toBe('true')
@@ -439,18 +440,18 @@ describe('CInput', () => {
             expect(wrapper.get('.c-input__details').classes()).toContain('base-details')
         })
 
-        it('передаёт field preset в field slot и не применяет его как class на .c-input__field', () => {
+        it('передаёт сгенерированный field ключ в field slot и не применяет его как class на .c-input__field', () => {
             const wrapper = createWrapper({
                 props: {
                     preset: 'input.base',
                 },
             })
 
-            expect(field(wrapper).attributes('data-preset')).toBe('field.base')
-            expect(wrapper.get('.c-input__field').classes()).not.toContain('field.base')
+            expect(field(wrapper).attributes('data-preset')).toBe('__field.input.base')
+            expect(wrapper.get('.c-input__field').classes()).not.toContain('__field.input.base')
         })
 
-        it('заменяет root focused-состоянием, но сохраняет базовый field preset', async () => {
+        it('заменяет root focused-состоянием, field ключ остаётся неизменным', async () => {
             const wrapper = createWrapper({
                 props: {
                     preset: 'input.base',
@@ -462,10 +463,10 @@ describe('CInput', () => {
 
             expect(wrapper.classes()).toContain('focused-root')
             expect(wrapper.classes()).not.toContain('base-root')
-            expect(field(wrapper).attributes('data-preset')).toBe('field.base')
+            expect(field(wrapper).attributes('data-preset')).toBe('__field.input.base')
         })
 
-        it('переопределяет field preset активным error-состоянием', async () => {
+        it('применяет error root и details при ошибке валидации', async () => {
             const wrapper = createWrapper({
                 props: {
                     preset: 'input.base',
@@ -479,16 +480,16 @@ describe('CInput', () => {
                 },
             })
 
-            ;(wrapper.vm as any).validate()
+            ;await (wrapper.vm as any).validate()
             await nextTick()
 
             expect(wrapper.classes()).toContain('error-root')
             expect(wrapper.classes()).not.toContain('base-root')
-            expect(field(wrapper).attributes('data-preset')).toBe('field.error')
+            expect(field(wrapper).attributes('data-preset')).toBe('__field.input.base')
             expect(wrapper.get('.c-input__details').classes()).toContain('error-details')
         })
 
-        it('заменяет root disabled-состоянием и сохраняет базовый field, если disabled.field не задан', () => {
+        it('заменяет root disabled-состоянием, field ключ остаётся неизменным', () => {
             const wrapper = createWrapper({
                 props: {
                     preset: 'input.base',
@@ -498,10 +499,10 @@ describe('CInput', () => {
 
             expect(wrapper.classes()).toContain('disabled-root')
             expect(wrapper.classes()).not.toContain('base-root')
-            expect(field(wrapper).attributes('data-preset')).toBe('field.base')
+            expect(field(wrapper).attributes('data-preset')).toBe('__field.input.base')
         })
 
-        it('заменяет root readonly-состоянием и сохраняет базовый field, если readonly.field не задан', () => {
+        it('заменяет root readonly-состоянием, field ключ остаётся неизменным', () => {
             const wrapper = createWrapper({
                 props: {
                     preset: 'input.base',
@@ -511,7 +512,7 @@ describe('CInput', () => {
 
             expect(wrapper.classes()).toContain('readonly-root')
             expect(wrapper.classes()).not.toContain('base-root')
-            expect(field(wrapper).attributes('data-preset')).toBe('field.base')
+            expect(field(wrapper).attributes('data-preset')).toBe('__field.input.base')
         })
     })
 
@@ -536,7 +537,7 @@ describe('CInput', () => {
                 },
             })
 
-            ;(wrapper.vm as any).validate()
+            ;await (wrapper.vm as any).validate()
             await nextTick()
 
             expect(wrapper.classes()).toContain('c-input--has-error')
@@ -640,10 +641,48 @@ describe('CInput', () => {
                 },
             })
 
-            expect((wrapper.vm as any).validate()).toBe(false)
+            expect(await (wrapper.vm as any).validate()).toBe(false)
             await nextTick()
 
             expect(field(wrapper).attributes('aria-invalid')).toBe('true')
+        })
+
+        it('expose.validate возвращает true при валидном значении', async () => {
+            const wrapper = createWrapper({
+                props: {
+                    modelValue: 'ok',
+                    rules: [
+                        (v: string) => ({ valid: !!v, message: 'Обязательное' }),
+                    ],
+                },
+            })
+
+            expect(await (wrapper.vm as any).validate()).toBe(true)
+            await nextTick()
+
+            expect(field(wrapper).attributes('aria-invalid')).toBeUndefined()
+        })
+
+        it('expose.focus() выставляет focused=true программно', async () => {
+            const wrapper = createWrapper()
+
+            ;(wrapper.vm as any).focus()
+            await nextTick()
+
+            expect(field(wrapper).attributes('data-focused')).toBe('true')
+            expect(wrapper.emitted('focus')).toBeTruthy()
+        })
+
+        it('expose.blur() выставляет focused=false программно', async () => {
+            const wrapper = createWrapper()
+
+            ;(wrapper.vm as any).focus()
+            await nextTick()
+            ;(wrapper.vm as any).blur()
+            await nextTick()
+
+            expect(field(wrapper).attributes('data-focused')).toBe('false')
+            expect(wrapper.emitted('blur')).toBeTruthy()
         })
 
         it('expose.reset сбрасывает ошибку валидации', async () => {
@@ -659,7 +698,7 @@ describe('CInput', () => {
                 },
             })
 
-            ;(wrapper.vm as any).validate()
+            ;await (wrapper.vm as any).validate()
             await nextTick()
 
             expect(field(wrapper).attributes('aria-invalid')).toBe('true')
@@ -686,11 +725,37 @@ describe('CInput', () => {
                 },
             })
 
-            ;(wrapper.vm as any).validate()
+            ;await (wrapper.vm as any).validate()
             await nextTick()
 
             expect(wrapper.get('.test-details').text()).toBe('Обязательное поле')
             expect(field(wrapper).attributes('aria-invalid')).toBe('true')
+        })
+
+        it('сбрасывает ошибку после исправления значения при validateOn=blur', async () => {
+            const wrapper = createWrapper({
+                props: {
+                    id: 'name',
+                    modelValue: '',
+                    validateOn: 'blur',
+                    rules: [
+                        (v: string) => ({ valid: !!v, message: 'Ошибка' }),
+                    ],
+                },
+            })
+
+            await field(wrapper).trigger('focus')
+            await field(wrapper).trigger('blur')
+            await nextTick()
+
+            expect(field(wrapper).attributes('aria-invalid')).toBe('true')
+
+            await wrapper.setProps({ modelValue: 'filled' })
+            await field(wrapper).trigger('focus')
+            await field(wrapper).trigger('blur')
+            await nextTick()
+
+            expect(field(wrapper).attributes('aria-invalid')).toBeUndefined()
         })
 
         it('валидирует на blur при validateOn=blur', async () => {
@@ -723,6 +788,138 @@ describe('CInput', () => {
             expect(wrapper.find('.c-input__details').exists()).toBe(true)
             expect(field(wrapper).attributes('aria-invalid')).toBe('true')
             expect(field(wrapper).attributes('aria-errormessage')).toBe('name-details')
+        })
+    })
+
+    describe('aria — kind=checkbox/radio', () => {
+        it('добавляет aria-labelledby для kind=checkbox без label', () => {
+            const wrapper = createWrapper({
+                props: { id: 'agree', kind: 'checkbox' },
+            })
+
+            expect(field(wrapper).attributes('aria-labelledby')).toBe('agree-label')
+        })
+
+        it('добавляет aria-labelledby для kind=radio без label', () => {
+            const wrapper = createWrapper({
+                props: { id: 'opt', kind: 'radio' },
+            })
+
+            expect(field(wrapper).attributes('aria-labelledby')).toBe('opt-label')
+        })
+
+        it('не добавляет aria-labelledby для kind=input без label', () => {
+            const wrapper = createWrapper({
+                props: { id: 'name', kind: 'input' },
+            })
+
+            expect(field(wrapper).attributes('aria-labelledby')).toBeUndefined()
+        })
+    })
+
+    describe('slots', () => {
+        it('details slot получает uid, errorMessage и hasError', async () => {
+            const wrapper = createWrapper({
+                props: {
+                    id: 'pass',
+                    modelValue: '',
+                    rules: [() => ({ valid: false, message: 'Ошибка' })],
+                },
+                slots: {
+                    details: ({ uid, errorMessage, hasError }: any) =>
+                        h('div', { class: 'slot-details', 'data-uid': uid, 'data-error': `${hasError}` }, errorMessage),
+                },
+            })
+
+            ;await (wrapper.vm as any).validate()
+            await nextTick()
+
+            const el = wrapper.get('.slot-details')
+
+            expect(el.attributes('data-uid')).toBe('pass')
+            expect(el.attributes('data-error')).toBe('true')
+            expect(el.text()).toBe('Ошибка')
+        })
+    })
+
+    describe('presets — приоритеты состояний', () => {
+        it('focused-preset не применяется при disabled', async () => {
+            const wrapper = createWrapper({
+                props: { preset: 'input.base', disabled: true },
+            })
+
+            await field(wrapper).trigger('focus')
+            await nextTick()
+
+            expect(wrapper.classes()).toContain('disabled-root')
+            expect(wrapper.classes()).not.toContain('focused-root')
+        })
+
+        it('focused-preset не применяется при readonly', async () => {
+            const wrapper = createWrapper({
+                props: { preset: 'input.base', readonly: true },
+            })
+
+            await field(wrapper).trigger('focus')
+            await nextTick()
+
+            expect(wrapper.classes()).toContain('readonly-root')
+            expect(wrapper.classes()).not.toContain('focused-root')
+        })
+    })
+
+    describe('state classes — edge cases', () => {
+        it('нет c-input--default при disabled', () => {
+            const wrapper = createWrapper({
+                props: { disabled: true },
+            })
+
+            expect(wrapper.classes()).not.toContain('c-input--default')
+        })
+
+        it('нет c-input--default при readonly', () => {
+            const wrapper = createWrapper({
+                props: { readonly: true },
+            })
+
+            expect(wrapper.classes()).not.toContain('c-input--default')
+        })
+
+        it('нет c-input--default при ошибке', async () => {
+            const wrapper = createWrapper({
+                props: {
+                    rules: [() => ({ valid: false, message: 'err' })],
+                },
+            })
+
+            ;await (wrapper.vm as any).validate()
+            await nextTick()
+
+            expect(wrapper.classes()).not.toContain('c-input--default')
+        })
+    })
+
+    describe('validation — validateOn=input', () => {
+        it('валидирует автоматически при смене modelValue', async () => {
+            const wrapper = createWrapper({
+                props: {
+                    modelValue: 'ok',
+                    validateOn: 'input',
+                    rules: [
+                        (v: string) => ({ valid: v.length >= 3, message: 'Мин. 3 символа' }),
+                    ],
+                },
+            })
+
+            await wrapper.setProps({ modelValue: 'ab' })
+            await nextTick()
+
+            expect(field(wrapper).attributes('aria-invalid')).toBe('true')
+
+            await wrapper.setProps({ modelValue: 'abc' })
+            await nextTick()
+
+            expect(field(wrapper).attributes('aria-invalid')).toBeUndefined()
         })
     })
 

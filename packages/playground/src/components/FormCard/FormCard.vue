@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { markRaw, ref, shallowRef, unref } from 'vue'
+    import { markRaw, ref, shallowRef, unref, watchEffect } from 'vue'
     import { IconAliases } from '@vueland/ui/enums/IconName'
     import { useCore } from '@vueland/ui/composables'
 
@@ -82,6 +82,10 @@
         currentPreset.value = 'input.E'
     }
 
+    watchEffect(() => {
+        console.log(unref(form).radius)
+    })
+
     const onSelect = () => {
         // professions.value = professions.value.slice(0, -1)
     }
@@ -101,7 +105,6 @@
                     :rules="nameRules"
                     validate-on="input"
                     class="form-name"
-                    disabled
                     :preset="currentPreset"
                     details="some text"
                     placeholder="введите текст"
@@ -148,12 +151,14 @@
 <!--                        <div v-for="it of items">{{ it.raw }}</div>-->
 <!--                    </template>-->
                 </c-autocomplete>
+                <c-date-input/>
                 <c-select
                     v-model="form.level"
                     :items="levels"
                     placeholder="выберите пункт"
                     class="mt-4"
                     title-key="title"
+                    readonly
                     label="Select"
                 />
                 <c-checkbox v-model="checkbox" :rules="checkboxRules">

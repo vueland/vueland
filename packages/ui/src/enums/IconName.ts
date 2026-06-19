@@ -1,5 +1,7 @@
 export enum IconName {
     CHEVRON_DOWN = 'chevron-down',
+    CHEVRON_LEFT = 'chevron-left',
+    CHEVRON_RIGHT = 'chevron-right',
     CHECK = 'check',
     CALENDAR = 'calendar',
     BOX = 'checkbox-box',
@@ -15,6 +17,8 @@ export enum IconAliases {
     CHECKBOX_ON = 'checkboxOn',
     CHECKBOX_OFF = 'checkboxOff',
     CALENDAR = 'calendar',
+    CHEVRON_LEFT = 'chevronLeft',
+    CHEVRON_RIGHT = 'chevronRight',
     RADIO_ON = 'radioOn',
     RADIO_OFF = 'radioOff',
     CLOSE = 'close',

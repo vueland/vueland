@@ -22,6 +22,7 @@ export type CFieldSlots = {
     append?(): VNode
     before?(): VNode | VNode[]
     after?(): VNode | VNode[]
+    clear?(): VNode
 }
 
 const makeCFieldProps = propsFactory({
@@ -33,6 +34,9 @@ const makeCFieldProps = propsFactory({
     focused: Boolean,
     clearable: Boolean,
     error: Boolean,
+    disabled: Boolean,
+    readonly: Boolean,
+    noInput: Boolean,
     modelValue: [String, Number] as PropType<string | number | undefined | null>,
     onKeydown: Function as PropType<(e: KeyboardEvent) => void>,
 })
@@ -47,26 +51,31 @@ export const CField = defineComponent({
         const value = useModel(props, 'modelValue')
         const inputRef = shallowRef<HTMLElement>()
 
+        const hasValue = computed(() => props.filled || !!unref(value))
+
         const presets = useFieldPresets({
             slots,
             props,
-            attrs,
+            hasValue,
         })
-        const hasValue = computed(() => props.filled || !!unref(value))
-        const showClearBtn = computed(() => props.clearable && props.focused && unref(hasValue))
+
+        const clearable = computed(() => props.clearable && props.focused && unref(hasValue))
 
         const classes = computed(() => [
             {
                 'c-field--focused': props.focused,
                 'c-field--filled': unref(hasValue),
                 'c-field--has-prepend': !!slots.prepend,
-                'c-field--default': !props.focused && !props.error,
+                'c-field--disabled': props.disabled,
+                'c-field--readonly': props.readonly,
+                'c-field--error': props.error,
+                'c-field--default': !props.focused && !props.error && !props.disabled,
             },
             ...unref(presets).root,
         ])
 
         function focus() {
-            if (attrs.disabled) return
+            if (props.disabled) return
             emit('focus')
         }
 
@@ -76,11 +85,13 @@ export const CField = defineComponent({
 
         function clear() {
             emit('clear')
-            value.value = ''
         }
 
-        function onClick() {
-            unref(inputRef)!.focus()
+        function onMousedown(e: MouseEvent) {
+            e.preventDefault()
+            if (document.activeElement !== unref(inputRef)) {
+                unref(inputRef)?.focus()
+            }
         }
 
         onMounted(() => {
@@ -91,9 +102,17 @@ export const CField = defineComponent({
             const Tag = props.tag ?? 'input'
 
             return (
-                <div class={['c-field', ...unref(classes)]} onClick={onClick}>
+                <div class={['c-field', ...unref(classes)]} onMousedown={onMousedown}>
+                    <div aria-hidden="true" class="c-field__outline">
+                        <div class="c-field__outline-start" />
+                        <div class="c-field__outline-notch">
+                            <span class={unref(presets).label}>{props.label}</span>
+                        </div>
+                        <div class="c-field__outline-end" />
+                    </div>
+
                     {slots.prepend && (
-                        <div class={['c-field__prepend', unref(presets).prepend]}>
+                        <div class="c-field__prepend">
                             {slots.prepend()}
                         </div>
                     )}
@@ -103,8 +122,7 @@ export const CField = defineComponent({
                             id={`${props.id}-label`}
                             for={props.id}
                             tag="label"
-                            class="c-field-label"
-                            style={unref(presets).label}
+                            class={['c-field-label', unref(presets).label]}
                         >
                             {props.label}
                         </CLabel>
@@ -116,13 +134,15 @@ export const CField = defineComponent({
                             id={props.id}
                             ref={inputRef}
                             value={unref(value)}
+                            disabled={props.disabled}
+                            readonly={props.readonly || props.noInput}
                             class={['c-field-input', unref(presets).input]}
                             onInput={(e: InputEvent) => {
                                 value.value = (e.target as HTMLInputElement).value
                             }}
                             onBlur={blur}
                             onFocus={focus}
-                            onClick={(e: Event) => e.stopPropagation()}
+
                             onKeydown={props.onKeydown}
                         />
 
@@ -130,7 +150,7 @@ export const CField = defineComponent({
                     </div>
 
                     <Transition name="fade">
-                        {unref(showClearBtn) && (
+                        {unref(clearable) && (
                             <div class="c-field__clear" onClick={clear}>
                                 {slots.clear?.() ?? <CIcon name={IconAliases.CLOSE} size={24} />}
                             </div>
@@ -138,7 +158,7 @@ export const CField = defineComponent({
                     </Transition>
 
                     {slots.append && (
-                        <div class={['c-field__append', unref(presets).append]}>
+                        <div class="c-field__append">
                             {slots.append()}
                         </div>
                     )}

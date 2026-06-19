@@ -43,6 +43,9 @@ export type CInputProps<T = any> = ValidateProps &
         focused?: boolean
         readonly?: boolean
         kind?: CInputKind
+        onFocus?: () => void
+        onBlur?: () => void
+        onInput?: (v: T) => void
     }
 
 export type CInputEmits<T = any> = {
@@ -51,13 +54,10 @@ export type CInputEmits<T = any> = {
     input: [T]
 }
 
-export type CInputLabelSlotProps = {
-    uid: string
-}
-
 export type CInputDetailsSlotProps = {
     errorMessage: ValidateState['errorMessage']
     hasError: ValidateState['hasError']
+    validating: ValidateState['validating']
     uid: string
     details?: string
 }
@@ -70,17 +70,18 @@ export type CInputFieldSlotProps<T = any> = {
     label?: string
     focused: boolean
     clearable?: boolean
+    readonly?: boolean
+    disabled?: boolean
     preset?: string
     errorMessage: ValidateState['errorMessage']
     hasError: ValidateState['hasError']
+    validating: ValidateState['validating']
     attrs: Record<string, any>
     uid: string
-    validate(): boolean
+    validate(): Promise<boolean>
 }
 
 export type CInputSlots<T = any> = {
-    label?(props: CInputLabelSlotProps): VNodeChild
-
     details?(props: CInputDetailsSlotProps): VNodeChild
 
     field(props: CInputFieldSlotProps<T>): VNodeChild
@@ -122,7 +123,7 @@ export const CInput = genericComponent<
         slots,
     }) {
         const state = shallowReactive<InputState>({
-            focused: (props as any).focused ?? false,
+            focused: props.focused ?? false,
             isDirty: false,
         })
 
@@ -136,15 +137,15 @@ export const CInput = genericComponent<
         const attrs = useAttrs()
 
         const preset = useInputPresets({
-            props: props as any,
+            props,
             state,
             errors,
         })
 
-        const fieldId = useId((props as any).id, { prefix: (props as any).kind })
-        const isListBox = (props as any).kind === 'listbox'
-        const isCheckBox = (props as any).kind === 'checkbox'
-        const isRadio = (props as any).kind === 'radio'
+        const fieldId = useId(props.id, { prefix: props.kind })
+        const isListBox = props.kind === 'listbox'
+        const isCheckBox = props.kind === 'checkbox'
+        const isRadio = props.kind === 'radio'
 
         const hasDetails = computed(
             () => !props.noDetails && (!!props.details || !!slots?.details || errors.hasError),
@@ -191,6 +192,7 @@ export const CInput = genericComponent<
                 'c-input--disabled': !!props.disabled,
                 'c-input--readonly': !!props.readonly,
                 'c-input--clearable': props.clearable,
+                'c-input--validating': errors.validating,
                 [attrs.class as string]: !!attrs.class,
             },
             ...unref(preset).root,
@@ -231,17 +233,20 @@ export const CInput = genericComponent<
             const fieldSlotProps: CInputFieldSlotProps = {
                 errorMessage: errors.errorMessage,
                 hasError: errors.hasError,
-                validate,
+                validating: errors.validating,
                 label: props.label,
                 focused: state.focused,
                 uid: fieldId,
                 preset: unref(preset).field,
+                disabled: props.disabled,
+                readonly: props.readonly,
+                clearable: props.clearable,
+                attrs: unref(fieldAttrs),
+                validate,
                 focus,
                 blur,
                 input,
-                clearable: props.clearable,
                 reset,
-                attrs: unref(fieldAttrs),
             }
 
             return (
@@ -256,6 +261,7 @@ export const CInput = genericComponent<
                                 {slots.details?.({
                                     errorMessage: errors.errorMessage,
                                     hasError: errors.hasError,
+                                    validating: errors.validating,
                                     details: props.details,
                                     uid: fieldId,
                                 })}
