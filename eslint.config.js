@@ -1,85 +1,50 @@
 import js from '@eslint/js'
-import stylistic from '@stylistic/eslint-plugin'
 import prettierConfig from 'eslint-config-prettier'
 import importPlugin from 'eslint-plugin-import'
-import importNewlines from 'eslint-plugin-import-newlines'
 import simpleImportSort from 'eslint-plugin-simple-import-sort'
 import vue from 'eslint-plugin-vue'
 import globals from 'globals'
-import { createRequire } from 'module'
 import tseslint from 'typescript-eslint'
 import vueParser from 'vue-eslint-parser'
 
-const require = createRequire(import.meta.url)
-const newlineDestructuring = require('eslint-plugin-newline-destructuring')
-
-const stylisticRules = {
-    '@stylistic/indent': ['error', 4],
-    '@stylistic/quotes': ['error', 'single', { avoidEscape: true }],
-    '@stylistic/semi': ['error', 'never'],
-    '@stylistic/comma-dangle': ['error', 'always-multiline'],
-    '@stylistic/object-curly-spacing': ['error', 'always'],
-    '@stylistic/arrow-parens': ['error', 'always'],
-    '@stylistic/object-curly-newline': ['error', {
-        ObjectPattern: {
-            multiline: true,
-            minProperties: 3, 
-        },
-        ObjectExpression: {
-            multiline: true,
-            minProperties: 3, 
-        },
-        ImportDeclaration: {
-            multiline: true,
-            minProperties: 4, 
-        },
-        ExportDeclaration: {
-            multiline: true,
-            minProperties: 4, 
-        },
-    }],
-    '@stylistic/object-property-newline': ['error', { allowAllPropertiesOnSameLine: false }],
-}
-
 export default [
+    // ── Глобальные исключения ─────────────────────────────────────────────
     {
         ignores: [
             '**/dist/**',
             '**/.vitepress/cache/**',
             '**/.vitepress/dist/**',
-            '**/__tests__/**',
             '**/node_modules/**',
-            'packages/playground',
-            'packages/docs',
-            '**/*.json',
-            '**/*.yaml',
-            '**/*.yml',
-            '**/*.md',
+            'packages/playground/**',
+            'packages/docs/**',
         ],
     },
 
+    // ── Базовые конфиги ───────────────────────────────────────────────────
     js.configs.recommended,
     ...tseslint.configs.recommended,
     ...vue.configs['flat/recommended'],
+
+    // ── Плагины (регистрация) ─────────────────────────────────────────────
     {
         plugins: {
-            'import': importPlugin,
-            'import-newlines': importNewlines,
+            import: importPlugin,
             'simple-import-sort': simpleImportSort,
-            '@stylistic': stylistic,
-            'newline-destructuring': newlineDestructuring,
         },
     },
+
+    // ── Глобальные правила (все файлы) ────────────────────────────────────
     {
         rules: {
             'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
+
+            // Импорты
             'simple-import-sort/imports': [
                 'error',
                 {
                     groups: [
                         ['^@?\\w'],
                         ['^@/', '^~/'],
-                        ['^\\u0000'],
                         ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
                         ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
                         ['^.+\\.s?css$'],
@@ -91,23 +56,12 @@ export default [
             'import/first': 'error',
             'import/newline-after-import': 'error',
             'import/no-duplicates': ['error', { 'prefer-inline': true }],
-            'newline-destructuring/newline': ['error', {
-                items: 2,
-                itemsWithRest: 2,
-                maxLength: 999, 
-            }],
-            'import-newlines/enforce': ['error', {
-                items: 3,
-                'max-len': 999,
-                semi: false, 
-            }],
         },
     },
 
-    // TS / TSX — stylistic ESLint, без Prettier
+    // ── TypeScript ────────────────────────────────────────────────────────
     {
-        files: ['**/*.{ts,tsx,mjs,js,cjs}'],
-        plugins: { '@stylistic': stylistic },
+        files: ['**/*.{ts,mts,cts}'],
         languageOptions: {
             globals: {
                 ...globals.browser,
@@ -115,24 +69,43 @@ export default [
             },
         },
         rules: {
-            ...stylisticRules,
             '@typescript-eslint/no-explicit-any': 'off',
-            '@typescript-eslint/ban-ts-ignore': 'off',
             '@typescript-eslint/no-empty-object-type': 'error',
-            'vue/require-default-prop': 'off',
+            '@typescript-eslint/ban-ts-comment': ['warn', { minimumDescriptionLength: 3 }],
+            '@typescript-eslint/no-unused-vars': [
+                'error',
+                {
+                    argsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
+                },
+            ],
         },
     },
 
-    // {} намеренно в Vue-internal утилитах и тест-файлах
+    // ── JavaScript / config files ─────────────────────────────────────────
     {
-        files: ['**/src/utils/**/*.ts', '**/*.spec.ts', '**/*.spec.tsx'],
+        files: ['**/*.{js,mjs,cjs}'],
+        languageOptions: {
+            globals: {
+                ...globals.browser,
+                ...globals.node,
+            },
+        },
         rules: {
-            '@typescript-eslint/no-empty-object-type': 'off',
-            'vue/one-component-per-file': 'off',
+            '@typescript-eslint/no-explicit-any': 'off',
+            '@typescript-eslint/no-empty-object-type': 'error',
+            '@typescript-eslint/ban-ts-comment': ['warn', { minimumDescriptionLength: 3 }],
+            '@typescript-eslint/no-unused-vars': [
+                'error',
+                {
+                    argsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
+                },
+            ],
         },
     },
 
-    // Vue SFC
+    // ── Vue SFC ───────────────────────────────────────────────────────────
     {
         files: ['**/*.vue'],
         languageOptions: {
@@ -149,23 +122,80 @@ export default [
             },
         },
         rules: {
-            ...stylisticRules,
-            'no-undef': 'off',
-            'vue/multi-word-component-names': 'error',
+            // Vue форматирование (4 пробела, как в проекте)
             'vue/html-indent': ['error', 4],
+            'vue/script-indent': ['error', 4, { baseIndent: 1 }],
+            'vue/max-attributes-per-line': ['error', { singleline: 1, multiline: 1 }],
+
+            // Vue качество
+            'vue/no-v-html': 'off',
+            'vue/multi-word-component-names': 'error',
             'vue/require-default-prop': 'off',
             'vue/one-component-per-file': 'off',
-            'vue/script-indent': ['error', 4, { baseIndent: 1 }],
+            'vue/no-unused-vars': 'error',
+
+            // Компоненты в template всегда в kebab-case
+            'vue/component-name-in-template-casing': [
+                'error',
+                'kebab-case',
+                {
+                    registeredComponentsOnly: false,
+                    ignores: [],
+                },
+            ],
+
+            // Порядок блоков в SFC: <script> → <template> → <style>
+            'vue/block-order': ['error', { order: ['script', 'template', 'style'] }],
+
+            // Порядок defineXxx макросов внутри <script setup>
+            'vue/define-macros-order': [
+                'error',
+                {
+                    order: [
+                        'defineOptions',
+                        'defineProps',
+                        'defineEmits',
+                        'defineSlots',
+                        'defineModel',
+                    ],
+                },
+            ],
+
+            // Пустая строка между блоками SFC
+            'vue/padding-line-between-blocks': ['error', 'always'],
+
+            // TS в Vue
             '@typescript-eslint/no-explicit-any': 'off',
-            '@typescript-eslint/ban-ts-ignore': 'off',
             '@typescript-eslint/no-unused-expressions': 'off',
+            '@typescript-eslint/no-unused-vars': [
+                'error',
+                {
+                    argsIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
+                },
+            ],
         },
     },
 
-    // eslint-config-prettier отключает правила @stylistic только для файлов,
-    // которые форматирует Prettier (MD/JSON/CSS). TS/TSX/Vue форматирует ESLint.
+    // ── Тесты ─────────────────────────────────────────────────────────────
     {
-        files: ['**/*.{md,json,css,yml,yaml}'],
+        files: ['**/*.spec.ts', '**/__tests__/**/*.ts'],
+        rules: {
+            'vue/one-component-per-file': 'off',
+        },
+    },
+
+    // ── Prettier — только для TS/JS (Vue форматирует ESLint) ─────────────
+    {
+        files: ['**/*.{ts,js,mjs,cjs,mts,cts}'],
         ...prettierConfig,
+    },
+
+    // ── Без точек с запятой в JS/TS/Vue ──────────────────────────────────
+    {
+        files: ['**/*.{ts,js,mjs,cjs,mts,cts,vue}'],
+        rules: {
+            semi: ['error', 'never'],
+        },
     },
 ]

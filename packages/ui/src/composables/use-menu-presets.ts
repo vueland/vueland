@@ -1,6 +1,6 @@
 import { computed, unref } from 'vue'
 
-import type { CMenuProps } from '../components/CMenu/CMenu'
+import type { CMenuProps } from '../components/CMenu'
 import type { CMenuPreset } from '../types'
 
 import { usePresets } from './use-presets'

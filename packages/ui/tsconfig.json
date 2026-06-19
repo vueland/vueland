@@ -5,8 +5,6 @@
     "lib": ["ES2022", "DOM"],
     "composite": true,
     "skipLibCheck": true,
-    "jsx": "preserve",
-    "jsxImportSource": "vue",
     "module": "ESNext",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,

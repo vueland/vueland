@@ -1,9 +1,9 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it, vi } from 'vitest'
-import { defineComponent, h, reactive, type Reactive, nextTick } from 'vue'
+import { defineComponent, h, nextTick,type Reactive, reactive } from 'vue'
 
-import { useValidate, type ValidateFn, type ValidateProps, type ValidateResult } from '../use-validate'
 import type { InputState } from '../../components'
+import { useValidate, type ValidateFn, type ValidateProps, type ValidateResult } from '../use-validate'
 
 type TestProps = ValidateProps & {
     modelValue: any

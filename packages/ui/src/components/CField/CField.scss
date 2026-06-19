@@ -1,6 +1,4 @@
 @use "../../styles/modules/global-vars" as *;
-@use "../../styles/maps/colors-map" as *;
-@use "sass:map";
 
 $self: '.c-field';
 
@@ -112,7 +110,7 @@ $self: '.c-field';
   &-label {
     position: absolute;
     top: 50%;
-    left: 8px;
+    left: var(--c-app-border-radius);
     line-height: .9;
     transform: translate(0, -50%);
     transition: top .2s $primary-transition,
@@ -157,7 +155,7 @@ $self: '.c-field';
   &--focused > &__core > &-label,
   &--filled > &__core > &-label {
     top: 0;
-    left: 8px;
+    left: var(--c-app-border-radius);
     transform: translate(0, -50%) scale(.8);
   }
 
@@ -202,7 +200,7 @@ $self: '.c-field';
   &--has-prepend#{$self}--focused > &__core > &-label,
   &--has-prepend#{$self}--filled > &__core > &-label {
     top: 0;
-    left: 8px;
+    left: var(--c-app-border-radius);
     transform: translate(0, -50%) scale(.8);
   }
 }

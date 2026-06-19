@@ -1,2 +1,2 @@
-export type { CAutocompleteEvents, CAutocompleteSlots } from './CAutocomplete'
-export { CAutocomplete, makeCAutocompleteProps } from './CAutocomplete'
+export { default as CAutocomplete } from './CAutocomplete.vue'
+export * from './types'
