@@ -1,12 +1,7 @@
-import {
-    defineComponent,
-    inject,
-    shallowRef,
-    Transition,
-} from 'vue'
+import { defineComponent, shallowRef, Transition } from 'vue'
 import { type JSX } from 'vue/jsx-runtime'
 
-import { $DATE_PICKER_API_KEY } from '../../constants'
+import { isDef } from '../../helpers'
 
 const CELLS_IN_ROW = 4
 const ON_TABLE = 20
@@ -25,8 +20,11 @@ export const CDatePickerYears = defineComponent({
     },
     emits: { 'update:year': (_year: number) => !!_year },
 
-    setup(props, { emit, slots }) {
-        const api = inject($DATE_PICKER_API_KEY)!
+    setup(props, {
+        emit,
+        slots,
+        expose,
+    }) {
         const allPages: number[][] = []
         const pageIndex = shallowRef(0)
         const transitionName = shallowRef('c-date-slide-left')
@@ -48,35 +46,45 @@ export const CDatePickerYears = defineComponent({
 
         pageIndex.value = allPages.findIndex((p) => p.includes(props.year)) ?? 0
 
-        api.onNext = () => {
-            if (pageIndex.value < allPages.length - 1) {
-                transitionName.value = 'c-date-slide-left'
-                pageIndex.value++
-            }
-        }
-
-        api.onPrev = () => {
-            if (pageIndex.value > 0) {
-                transitionName.value = 'c-date-slide-right'
-                pageIndex.value--
-            }
-        }
+        expose({
+            onNext: () => {
+                if (pageIndex.value < allPages.length - 1) {
+                    transitionName.value = 'c-date-slide-left'
+                    pageIndex.value++
+                }
+            },
+            onPrev: () => {
+                if (pageIndex.value > 0) {
+                    transitionName.value = 'c-date-slide-right'
+                    pageIndex.value--
+                }
+            },
+        })
 
         return () => {
             const currentPage = allPages[pageIndex.value] ?? []
 
-            const enrichedYears = currentPage.map((y) => ({
-                year: y,
-                disabled: (props.minYear !== undefined && y < props.minYear)
-                    || (props.maxYear !== undefined && y > props.maxYear),
-                isSelected: y === props.year,
-                isCurrent: y === CURRENT_YEAR,
-                onSelect: () => {
-                    const disabled = (props.minYear !== undefined && y < props.minYear)
-                        || (props.maxYear !== undefined && y > props.maxYear)
-                    if (!disabled) emit('update:year', y)
-                },
-            }))
+            const {
+                minYear,
+                maxYear,
+                year,
+            } = props
+
+            const enrichedYears = currentPage.map((y) => {
+                const disabled = (isDef(minYear) && y < minYear!) || (isDef(maxYear) && y > maxYear!)
+
+                return ({
+                    year: y,
+                    disabled,
+                    isSelected: y === year,
+                    isCurrent: y === CURRENT_YEAR,
+                    onSelect: () => {
+                        if (!disabled) {
+                            emit('update:year', y)
+                        }
+                    },
+                })
+            })
 
             if (slots.years) {
                 return (

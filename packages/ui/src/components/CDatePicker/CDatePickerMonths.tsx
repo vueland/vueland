@@ -1,7 +1,5 @@
-import { defineComponent, inject, type PropType } from 'vue'
+import { defineComponent, type PropType } from 'vue'
 import { type JSX } from 'vue/jsx-runtime'
-
-import { $DATE_PICKER_API_KEY } from '../../constants'
 
 import type { DatePickerDate } from './types'
 
@@ -27,24 +25,40 @@ export const CDatePickerMonths = defineComponent({
         'update:month': (_month: number) => !!_month,
         'update:year': (_year: number) => !!_year,
     },
-    setup(props, { emit, slots }) {
+    setup(props, {
+        emit,
+        slots,
+        expose,
+    }) {
         const CURRENT_YEAR = new Date().getFullYear()
         const CURRENT_MONTH = new Date().getMonth()
 
-        const api = inject($DATE_PICKER_API_KEY)!
-
-        api.onNext = () => emit('update:year', props.year + 1)
-        api.onPrev = () => emit('update:year', props.year - 1)
+        expose({
+            onNext: () => emit('update:year', props.year + 1),
+            onPrev: () => emit('update:year', props.year - 1),
+        })
 
         function isDisabled(m: number): boolean {
             if (props.minDate) {
-                if (props.year < props.minDate.year) return true
-                if (props.year === props.minDate.year && m < props.minDate.month) return true
+                if (props.year < props.minDate.year) {
+                    return true
+                }
+
+                if (props.year === props.minDate.year && m < props.minDate.month) {
+                    return true
+                }
             }
+
             if (props.maxDate) {
-                if (props.year > props.maxDate.year) return true
-                if (props.year === props.maxDate.year && m > props.maxDate.month) return true
+                if (props.year > props.maxDate.year) {
+                    return true
+                }
+
+                if (props.year === props.maxDate.year && m > props.maxDate.month) {
+                    return true
+                }
             }
+
             return false
         }
 

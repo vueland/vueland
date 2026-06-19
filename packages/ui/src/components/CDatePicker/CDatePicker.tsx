@@ -1,15 +1,16 @@
 import {
+    type ComponentPublicInstance,
     computed,
     defineComponent,
     type PropType,
-    provide,
     reactive,
+    shallowRef,
     type SlotsType,
     Transition,
     unref,
 } from 'vue'
 
-import { $DATE_PICKER_API_KEY } from '../../constants'
+import { isDef } from '../../helpers'
 import { propsFactory } from '../../utils'
 
 import { CDatePickerDates } from './CDatePickerDates'
@@ -20,7 +21,11 @@ import { parseDate } from './helpers'
 import type { DatePickerDate, DisabledDates } from './types'
 import { formatDate, LOCALE } from './utils'
 
-type ViewMode = 'dates' | 'months' | 'years'
+const enum ViewMode {
+    DATES = 0,
+    MONTHS = 1,
+    YEARS = 2,
+}
 
 export type DatePickerSlotApi = {
     view: ViewMode
@@ -65,17 +70,23 @@ export type DatePickerEnrichedYear = {
     onSelect: () => void
 }
 
-type CDatePickerSlots = SlotsType<{
+export type CDatePickerSlots = SlotsType<{
     'before-header': DatePickerSlotApi
     header: DatePickerSlotApi
     'before-body': DatePickerSlotApi
     body: DatePickerSlotApi
     footer: DatePickerSlotApi
-    week: { days: DatePickerWeekDay[] }
-    dates: { dates: DatePickerEnrichedDate[];
-        onSelect: (d: DatePickerDate) => void }
-    date: DatePickerDate & { isSelected: boolean;
-        isToday: boolean }
+    week: {
+        days: DatePickerWeekDay[]
+    }
+    dates: {
+        dates: DatePickerEnrichedDate[];
+        onSelect: (d: DatePickerDate) => void
+    }
+    date: DatePickerDate & {
+        isSelected: boolean;
+        isToday: boolean
+    }
     months: DatePickerEnrichedMonth[]
     month: DatePickerEnrichedMonth
     years: DatePickerEnrichedYear[]
@@ -99,6 +110,11 @@ export const makeCDatePickerProps = propsFactory({
     maxDate: [Date, String] as PropType<Date | string>,
 })
 
+type ModeInstance = ComponentPublicInstance<any, any, any, any,{
+    onNext: () => void,
+    onPrev: () => void,
+}>
+
 export const CDatePicker = defineComponent({
     name: 'CDatePicker',
     props: makeCDatePickerProps(),
@@ -106,16 +122,9 @@ export const CDatePicker = defineComponent({
         'update:modelValue': (_value: Date | null) => !!_value,
         selected: (_value: Date | null) => !!_value,
     },
-    slots: Object as CDatePickerSlots,
+    slots: {} as CDatePickerSlots,
     setup(props, { emit, slots }) {
-        const locale = computed(() => LOCALE[props.lang] ?? LOCALE['en'])
-
-        const handlers = {
-            onNext: () => {},
-            onPrev: () => {},
-        }
-
-        provide($DATE_PICKER_API_KEY, handlers)
+        const picker = shallowRef<ModeInstance>()
 
         const today = parseDate(new Date())
 
@@ -123,6 +132,7 @@ export const CDatePicker = defineComponent({
             props.modelValue ? parseDate(new Date(props.modelValue)) : today,
         )
 
+        const locale = computed(() => LOCALE[props.lang] ?? LOCALE['en'])
         const minDate = computed(() => props.minDate ? parseDate(new Date(props.minDate)) : null)
         const maxDate = computed(() => props.maxDate ? parseDate(new Date(props.maxDate)) : null)
 
@@ -132,19 +142,26 @@ export const CDatePicker = defineComponent({
             view: ViewMode
             bodyTransition: string
         }>({
-            tableMonth: selected.value.month,
-            tableYear: selected.value.year,
-            view: 'dates',
+            tableMonth: unref(selected).month,
+            tableYear: unref(selected).year,
+            view: ViewMode.DATES,
             bodyTransition: 'c-date-slide-left',
         })
 
         const headerValue = computed(() => {
-            if (state.view === 'years') return `${state.tableYear}`
-            if (state.view === 'months') return `${state.tableYear}`
-            return `${locale.value.monthsAbbr[state.tableMonth]} ${state.tableYear}`
+            if (state.view === ViewMode.YEARS) {
+                return `${state.tableYear}`
+            }
+
+            if (state.view === ViewMode.MONTHS) {
+                return `${unref(locale).monthsAbbr[state.tableMonth]}`
+            }
+
+            return `${unref(locale).monthsAbbr[state.tableMonth]} ${state.tableYear}`
         })
 
         const displayYear = computed(() => selected.value.year)
+
         const displayDate = computed(() => {
             const {
                 month,
@@ -158,11 +175,11 @@ export const CDatePicker = defineComponent({
         const prevDisabled = computed(() => {
             if (!minDate.value) return false
 
-            if (state.view === 'dates') {
-                return state.tableYear <= minDate.value.year && state.tableMonth <= minDate.value.month
+            if (state.view === ViewMode.YEARS) {
+                return state.tableYear <= unref(minDate)!.year && state.tableMonth <= unref(minDate)!.month
             }
 
-            if (state.view === 'months') return state.tableYear <= minDate.value.year
+            if (state.view === ViewMode.MONTHS) return state.tableYear <= unref(minDate)!.year
 
             return false
         })
@@ -170,48 +187,57 @@ export const CDatePicker = defineComponent({
         const nextDisabled = computed(() => {
             if (!maxDate.value) return false
 
-            if (state.view === 'dates') {
-                return state.tableYear >= maxDate.value.year && state.tableMonth >= maxDate.value.month
+            if (state.view === ViewMode.DATES) {
+                return state.tableYear >= unref(maxDate)!.year && state.tableMonth >= unref(maxDate)!.month
             }
 
-            if (state.view === 'months') return state.tableYear >= maxDate.value.year
+            if (state.view === ViewMode.MONTHS) {
+                return state.tableYear >= unref(maxDate)!.year
+            }
 
             return false
         })
 
         function onTableToggle() {
-            if (state.view === 'dates') {
-                state.bodyTransition = 'c-date-slide-up'; state.view = 'months'
+            if (state.view === ViewMode.DATES) {
+                state.bodyTransition = 'c-date-slide-up'
+                state.view = ViewMode.MONTHS
                 return
             }
 
-            if (state.view === 'months') {
-                state.bodyTransition = 'c-date-slide-up'; state.view = 'years'
+            if (state.view === ViewMode.MONTHS) {
+                state.bodyTransition = 'c-date-slide-up'
+                state.view = ViewMode.YEARS
                 return
             }
 
-            if (state.view === 'years') {
+            if (state.view === ViewMode.YEARS) {
                 state.bodyTransition = 'c-date-slide-down'
-                state.view = 'months'
+                state.view = ViewMode.MONTHS
             }
         }
 
         function onYearUpdate(year: number) {
             state.tableYear = year
             state.bodyTransition = 'c-date-slide-down'
-            state.view = 'months'
+            state.view = ViewMode.MONTHS
         }
 
         function onMonthUpdate(month: number) {
             state.tableMonth = month
             state.bodyTransition = 'c-date-slide-down'
-            state.view = 'dates'
+            state.view = ViewMode.DATES
         }
 
-        function onMonthChange(params: { month: number;
-            year?: number }) {
+        function onMonthChange(params: {
+            month: number,
+            year?: number
+        }) {
             state.tableMonth = params.month
-            if (params.year !== undefined) state.tableYear = params.year
+
+            if (isDef(params.year)) {
+                state.tableYear = params.year!
+            }
         }
 
         function onDateSelect(date: DatePickerDate) {
@@ -225,7 +251,7 @@ export const CDatePicker = defineComponent({
         function onToday() {
             state.tableMonth = today.month
             state.tableYear = today.year
-            state.view = 'dates'
+            state.view = ViewMode.DATES
         }
 
         const slotApi = () => ({
@@ -234,18 +260,19 @@ export const CDatePicker = defineComponent({
             selected: selected.value,
             prevDisabled: prevDisabled.value,
             nextDisabled: nextDisabled.value,
-            onNext: () => handlers.onNext(),
-            onPrev: () => handlers.onPrev(),
+            onNext: () => unref(picker)?.onNext(),
+            onPrev: () => unref(picker)?.onPrev(),
             onTable: onTableToggle,
             onToday,
         })
 
         const defaultBody = () => (
             <Transition name={state.bodyTransition} mode="out-in">
-                {state.view === 'years' ? (
+                {state.view === ViewMode.YEARS ? (
                     <CDatePickerYears
                         key="years"
                         year={state.tableYear}
+                        ref={picker}
                         minYear={minDate.value?.year}
                         maxYear={maxDate.value?.year}
                         onUpdate:year={onYearUpdate}
@@ -255,11 +282,12 @@ export const CDatePicker = defineComponent({
                             ...(slots.year && { year: slots.year }),
                         }}
                     </CDatePickerYears>
-                ) : state.view === 'months' ? (
+                ) : state.view === ViewMode.MONTHS ? (
                     <CDatePickerMonths
                         key="months"
                         month={state.tableMonth}
                         year={state.tableYear}
+                        ref={picker}
                         locale={locale.value.monthsAbbr}
                         minDate={minDate.value}
                         maxDate={maxDate.value}
@@ -277,6 +305,7 @@ export const CDatePicker = defineComponent({
                         year={state.tableYear}
                         month={state.tableMonth}
                         value={selected.value}
+                        ref={picker}
                         locale={locale.value.week}
                         mondayFirst={props.mondayFirst}
                         disabledDates={props.disabledDates}
@@ -313,8 +342,8 @@ export const CDatePicker = defineComponent({
                     <CDatePickerHeader
                         prevDisabled={prevDisabled.value}
                         nextDisabled={nextDisabled.value}
-                        onNext={() => handlers.onNext()}
-                        onPrev={() => handlers.onPrev()}
+                        onNext={() => unref(picker).onNext()}
+                        onPrev={() => unref(picker).onPrev()}
                         onTable={onTableToggle}
                     >
                         {{ default: () => headerValue.value }}

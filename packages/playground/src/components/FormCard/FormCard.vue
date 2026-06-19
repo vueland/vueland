@@ -151,7 +151,7 @@
 <!--                        <div v-for="it of items">{{ it.raw }}</div>-->
 <!--                    </template>-->
                 </c-autocomplete>
-                <c-date-input/>
+                <c-date-input :disabled-dates="{from: new Date()}"/>
                 <c-select
                     v-model="form.level"
                     :items="levels"

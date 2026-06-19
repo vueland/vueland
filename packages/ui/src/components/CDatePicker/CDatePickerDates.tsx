@@ -1,15 +1,12 @@
 import {
     computed,
     defineComponent,
-    inject,
     type PropType,
     shallowRef,
     Transition,
     watch,
 } from 'vue'
 import { type JSX } from 'vue/jsx-runtime'
-
-import { $DATE_PICKER_API_KEY } from '../../constants'
 
 import { parseDate, toDateString } from './helpers'
 import type { DatePickerDate, DisabledDates } from './types'
@@ -40,7 +37,11 @@ export const CDatePickerDates = defineComponent({
             year?: number
         }) => !!_params,
     },
-    setup(props, { emit, slots }) {
+    setup(props, {
+        emit,
+        slots,
+        expose,
+    }) {
         const FIRST_MONTH = 0
         const LAST_MONTH = 11
         const DAYS = [0, 1, 2, 3, 4, 5, 6]
@@ -51,10 +52,10 @@ export const CDatePickerDates = defineComponent({
         const dates = shallowRef<(DatePickerDate | null)[]>([])
         const transitionName = shallowRef('c-date-slide-left')
 
-        const api = inject($DATE_PICKER_API_KEY)!
-
-        api.onNext = () => updateMonth(true)
-        api.onPrev = () => updateMonth(false)
+        expose({
+            onNext: () => updateMonth(true),
+            onPrev: () => updateMonth(false),
+        })
 
         const daysInMonth = computed(() => new Date(props.year, props.month + 1, 0).getDate())
 
@@ -64,8 +65,15 @@ export const CDatePickerDates = defineComponent({
             let month = props.month + (isNext ? 1 : -1)
             let year: number | undefined
 
-            if (!isNext && month < FIRST_MONTH) { month = LAST_MONTH; year = props.year - 1 }
-            if (isNext && month > LAST_MONTH) { month = FIRST_MONTH; year = props.year + 1 }
+            if (!isNext && month < FIRST_MONTH) {
+                month = LAST_MONTH
+                year = props.year - 1
+            }
+
+            if (isNext && month > LAST_MONTH) {
+                month = FIRST_MONTH
+                year = props.year + 1
+            }
 
             emit('update:month', {
                 month,
@@ -105,7 +113,11 @@ export const CDatePickerDates = defineComponent({
 
         const parsedFromTo = computed(() => {
             const { from, to } = props.disabledDates ?? {}
-            if (!from || !to) return null
+
+            if (!from || !to) {
+                return null
+            }
+
             return {
                 f: parseDate(new Date(from)).mls ?? 0,
                 t: parseDate(new Date(to)).mls ?? 0,
@@ -124,9 +136,12 @@ export const CDatePickerDates = defineComponent({
         )
 
         function isDisabled(date: DatePickerDate): boolean {
-            if (!date.date) return false
+            if (!date.date) {
+                return false
+            }
 
             const mls = date.mls ?? 0
+
             const {
                 disabledDates: d,
                 minDate,

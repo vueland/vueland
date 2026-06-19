@@ -1,144 +1,318 @@
 <template>
-  <div class="example-wrap example-grid">
-    <!-- CInput as base for a PIN input -->
+  <div class="ex-grid">
+
+    <!-- OTP input -->
     <CInput
-      v-model="pin"
-      id="custom-pin"
-      label="PIN code"
+      v-model="otp"
       kind="input"
-      :rules="pinRules"
+      :rules="otpRules"
       validate-on="blur"
     >
       <template #field="field">
-        <div class="custom-pin-field" :class="{ 'has-error': field.hasError }">
-          <label :for="field.uid" class="custom-pin-label">PIN code</label>
-          <input
-            v-bind="field.attrs"
-            :id="field.uid"
-            type="password"
-            maxlength="4"
-            inputmode="numeric"
-            placeholder="••••"
-            class="custom-pin-input"
-            :value="pin"
-            @input="(e: any) => { pin = e.target.value; field.input(e.target.value) }"
-            @focus="field.focus"
-            @blur="field.blur"
-          />
+        <div class="otp-wrap" :class="{ 'otp-wrap--error': field.hasError }">
+          <span class="otp-label">Verification code</span>
+          <div class="otp-cells">
+            <input
+              v-for="(_, i) in 6"
+              :key="i"
+              :ref="el => { if (el) cellRefs[i] = el as HTMLInputElement }"
+              class="otp-cell"
+              :class="{ 'otp-cell--filled': otp[i], 'otp-cell--error': field.hasError }"
+              type="text"
+              inputmode="numeric"
+              maxlength="1"
+              :value="otp[i] ?? ''"
+              @focus="field.focus"
+              @blur="field.blur"
+              @keydown="(e) => onKeydown(e, i)"
+              @input="(e) => onCellInput(e, i, field)"
+              @paste="(e) => onPaste(e, field)"
+            />
+          </div>
+          <span class="otp-hint" :style="{ color: field.hasError ? 'var(--c-app-error-color)' : '' }">
+            {{ field.hasError ? 'Invalid code' : 'Enter the 6-digit code from your email' }}
+          </span>
         </div>
-      </template>
-      <template #details="{ errorMessage, hasError }">
-        <span :style="{ color: hasError ? 'var(--c-app-error-color)' : 'inherit', opacity: hasError ? 1 : .6 }">
-          {{ errorMessage || '4-digit PIN' }}
-        </span>
       </template>
     </CInput>
 
-    <!-- CInput with textarea -->
+    <!-- Search bar -->
+    <CInput v-model="search" kind="input">
+      <template #field="field">
+        <div class="search-bar" :class="{ 'search-bar--focused': field.focused }">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+          <input
+            v-bind="field.attrs"
+            class="search-input"
+            placeholder="Search anything…"
+            :value="search"
+            @input="(e: any) => { search = e.target.value; field.input(e.target.value) }"
+            @focus="field.focus"
+            @blur="field.blur"
+          />
+          <kbd v-if="!search" class="search-kbd">⌘K</kbd>
+          <button v-else class="search-clear" @click="search = ''">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </template>
+    </CInput>
+
+    <!-- Textarea with counter -->
     <CInput
       v-model="bio"
-      id="custom-bio"
-      label="Bio"
       kind="area"
       :rules="bioRules"
       validate-on="input"
-      details="Tell us about yourself"
     >
       <template #field="field">
-        <div class="custom-textarea-wrap">
-          <label :for="field.uid">Bio</label>
+        <div class="rich-textarea" :class="{ 'rich-textarea--focused': field.focused, 'rich-textarea--error': field.hasError }">
+          <div class="rich-textarea__header">
+            <span class="rich-textarea__label">About me</span>
+            <span
+              class="rich-textarea__counter"
+              :class="{ 'rich-textarea__counter--warn': bio.length > 180, 'rich-textarea__counter--error': field.hasError }"
+            >
+              {{ bio.length }}/200
+            </span>
+          </div>
           <textarea
             v-bind="field.attrs"
-            :id="field.uid"
-            rows="3"
-            placeholder="Write something…"
-            class="custom-textarea"
+            class="rich-textarea__input"
+            placeholder="Tell the world something about yourself…"
+            rows="4"
             :value="bio"
             @input="(e: any) => { bio = e.target.value; field.input(e.target.value) }"
             @focus="field.focus"
             @blur="field.blur"
           />
-          <span class="custom-textarea-count">{{ bio.length }}/200</span>
+          <div class="rich-textarea__footer">
+            <span
+              class="rich-textarea__hint"
+              :style="{ color: field.hasError ? 'var(--c-app-error-color)' : '' }"
+            >
+              {{ field.hasError ? 'Maximum 200 characters' : 'Markdown supported' }}
+            </span>
+          </div>
         </div>
       </template>
     </CInput>
+
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const pin = ref('')
+const otp = ref('')
+const search = ref('')
 const bio = ref('')
+const cellRefs = ref<HTMLInputElement[]>([])
 
-const pinRules = [
-  (v: string) => ({ valid: /^\d{4}$/.test(v), message: 'Enter a 4-digit PIN' }),
+const otpRules = [
+  (v: string) => ({ valid: /^\d{6}$/.test(v), message: 'Invalid code' }),
 ]
-
 const bioRules = [
   (v: string) => ({ valid: v.length <= 200, message: 'Maximum 200 characters' }),
 ]
+
+function onCellInput(e: Event, index: number, field: any) {
+  const val = (e.target as HTMLInputElement).value.replace(/\D/g, '').slice(-1)
+  const chars = otp.value.split('')
+  chars[index] = val
+  otp.value = chars.join('').slice(0, 6)
+  field.input(otp.value)
+  if (val && index < 5) cellRefs.value[index + 1]?.focus()
+}
+
+function onKeydown(e: KeyboardEvent, index: number) {
+  if (e.key === 'Backspace' && !otp.value[index] && index > 0) {
+    cellRefs.value[index - 1]?.focus()
+  }
+}
+
+function onPaste(e: ClipboardEvent, field: any) {
+  e.preventDefault()
+  const digits = (e.clipboardData?.getData('text') ?? '').replace(/\D/g, '').slice(0, 6)
+  otp.value = digits
+  field.input(digits)
+  cellRefs.value[Math.min(digits.length, 5)]?.focus()
+}
 </script>
 
 <style scoped>
-.custom-pin-field {
+.ex-grid {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 8px 12px;
-  border: 1px solid var(--c-app-border-color);
-  border-radius: var(--c-app-border-radius);
-  transition: border-color 0.2s;
-}
-.custom-pin-field:focus-within {
-  border-color: var(--c-app-primary-color);
-}
-.custom-pin-field.has-error {
-  border-color: var(--c-app-error-color);
-}
-.custom-pin-label {
-  font-size: 12px;
-  opacity: .6;
-}
-.custom-pin-input {
-  outline: none;
-  border: none;
-  background: transparent;
-  font-size: 18px;
-  letter-spacing: 4px;
-  width: 100%;
-  color: var(--c-app-text-color);
+  gap: 24px;
+  padding: 24px;
+  max-width: 480px;
 }
 
-.custom-textarea-wrap {
+/* ---- OTP ---- */
+.otp-wrap {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 8px 12px;
-  border: 1px solid var(--c-app-border-color);
-  border-radius: var(--c-app-border-radius);
-  transition: border-color 0.2s;
-  position: relative;
+  gap: 12px;
 }
-.custom-textarea-wrap:focus-within {
-  border-color: var(--c-app-primary-color);
-}
-.custom-textarea-wrap label {
-  font-size: 12px;
-  opacity: .6;
-}
-.custom-textarea {
-  outline: none;
-  border: none;
-  background: transparent;
-  resize: none;
-  width: 100%;
+.otp-label {
+  font-size: 13px;
+  font-weight: 600;
   color: var(--c-app-text-color);
-  font-family: inherit;
 }
-.custom-textarea-count {
+.otp-cells {
+  display: flex;
+  gap: 8px;
+}
+.otp-cell {
+  width: 44px;
+  height: 52px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  border: 1.5px solid var(--c-app-border-color);
+  border-radius: 10px;
+  background: var(--c-app-surface-color);
+  color: var(--c-app-text-color);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+  caret-color: transparent;
+}
+.otp-cell:focus {
+  border-color: var(--c-app-primary-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-app-primary-color) 15%, transparent);
+}
+.otp-cell--filled {
+  border-color: var(--c-app-primary-color);
+  background: color-mix(in srgb, var(--c-app-primary-color) 6%, transparent);
+}
+.otp-cell--error {
+  border-color: var(--c-app-error-color) !important;
+}
+.otp-hint {
+  font-size: 12px;
+  color: var(--c-app-text-secondary-color);
+  transition: color .15s;
+}
+
+/* ---- Search ---- */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1.5px solid var(--c-app-border-color);
+  background: var(--c-app-surface-color);
+  transition: border-color .15s, box-shadow .15s;
+}
+.search-bar--focused {
+  border-color: var(--c-app-primary-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-app-primary-color) 15%, transparent);
+}
+.search-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--c-app-text-secondary-color);
+}
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--c-app-text-color);
+  font-size: 14px;
+}
+.search-input::placeholder {
+  color: var(--c-app-text-secondary-color);
+}
+.search-kbd {
   font-size: 11px;
-  opacity: .5;
-  text-align: right;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--c-app-border-color);
+  color: var(--c-app-text-secondary-color);
+  background: var(--c-app-surface-variant-color);
+  font-family: inherit;
+  white-space: nowrap;
+}
+.search-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: var(--c-app-surface-variant-color);
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--c-app-text-secondary-color);
+  flex-shrink: 0;
+}
+
+/* ---- Rich textarea ---- */
+.rich-textarea {
+  border: 1.5px solid var(--c-app-border-color);
+  border-radius: 12px;
+  background: var(--c-app-surface-color);
+  overflow: hidden;
+  transition: border-color .15s, box-shadow .15s;
+}
+.rich-textarea--focused {
+  border-color: var(--c-app-primary-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-app-primary-color) 15%, transparent);
+}
+.rich-textarea--error {
+  border-color: var(--c-app-error-color);
+}
+.rich-textarea__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px 4px;
+}
+.rich-textarea__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-app-text-secondary-color);
+}
+.rich-textarea__counter {
+  font-size: 11px;
+  color: var(--c-app-text-secondary-color);
+  transition: color .15s;
+}
+.rich-textarea__counter--warn { color: var(--c-app-warning-color); }
+.rich-textarea__counter--error { color: var(--c-app-error-color); }
+.rich-textarea__input {
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  padding: 4px 14px;
+  background: transparent;
+  color: var(--c-app-text-color);
+  font-size: 14px;
+  font-family: inherit;
+  line-height: 1.6;
+}
+.rich-textarea__input::placeholder { color: var(--c-app-text-secondary-color); }
+.rich-textarea__footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 14px 10px;
+  border-top: 1px solid var(--c-app-border-color);
+  background: var(--c-app-surface-variant-color);
+}
+.rich-textarea__hint {
+  font-size: 11px;
+  color: var(--c-app-text-secondary-color);
+  transition: color .15s;
 }
 </style>
