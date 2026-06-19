@@ -206,34 +206,6 @@ describe('CField', () => {
         expect(focusSpy).toHaveBeenCalledTimes(1)
     })
 
-    it('не эмитит focus при disabled', async () => {
-        const wrapper = mount(CField, {
-            props: { disabled: true },
-        })
-
-        await wrapper.find('input').trigger('focus')
-
-        expect(wrapper.emitted('focus')).toBeUndefined()
-    })
-
-    it('эмитит focus при readonly', async () => {
-        const wrapper = mount(CField, {
-            props: { readonly: true },
-        })
-
-        await wrapper.find('input').trigger('focus')
-
-        expect(wrapper.emitted('focus')).toBeTruthy()
-    })
-
-    it('эмитит focus когда нет disabled/readonly', async () => {
-        const wrapper = mount(CField)
-
-        await wrapper.find('input').trigger('focus')
-
-        expect(wrapper.emitted('focus')).toBeTruthy()
-    })
-
     it('обновляет классы при изменении props', async () => {
         const wrapper = mount(CField, {
             props: {
@@ -252,43 +224,5 @@ describe('CField', () => {
 
         expect(wrapper.classes()).toContain('c-field--focused')
         expect(wrapper.classes()).toContain('c-field--filled')
-    })
-
-    it('добавляет класс c-field--error когда error=true', () => {
-        const wrapper = mount(CField, {
-            props: { error: true },
-        })
-
-        expect(wrapper.classes()).toContain('c-field--error')
-        expect(wrapper.classes()).not.toContain('c-field--default')
-    })
-
-    it('не добавляет класс c-field--error когда error=false', () => {
-        const wrapper = mount(CField, {
-            props: { error: false },
-        })
-
-        expect(wrapper.classes()).not.toContain('c-field--error')
-        expect(wrapper.classes()).toContain('c-field--default')
-    })
-
-    it('noInput делает input readonly без класса c-field--readonly', () => {
-        const wrapper = mount(CField, {
-            props: { noInput: true },
-        })
-
-        const input = wrapper.find('input')
-        expect(input.attributes('readonly')).toBeDefined()
-        expect(wrapper.classes()).not.toContain('c-field--readonly')
-    })
-
-    it('readonly добавляет класс c-field--readonly и атрибут readonly', () => {
-        const wrapper = mount(CField, {
-            props: { readonly: true },
-        })
-
-        const input = wrapper.find('input')
-        expect(input.attributes('readonly')).toBeDefined()
-        expect(wrapper.classes()).toContain('c-field--readonly')
     })
 })

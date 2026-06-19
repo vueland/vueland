@@ -15,7 +15,8 @@
   "include": [
     "src",
     "src/**/*.json",
-    "env.d.ts"
+    "env.d.ts",
+    "jsx.d.ts"
   ],
   "exclude": [
     "**/*.spec.ts",

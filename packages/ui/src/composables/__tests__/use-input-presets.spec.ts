@@ -1,11 +1,11 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { defineComponent, h, reactive, type Reactive } from 'vue'
+import { defineComponent, h, type Reactive,reactive } from 'vue'
 
-import { $VUELAND_UI_KEY } from '../../constants'
 import type { CInputProps, InputState } from '../../components'
-import type { ValidateState } from '../use-validate'
+import { $VUELAND_UI_KEY } from '../../constants'
 import { useInputPresets } from '../use-input-presets'
+import type { ValidateState } from '../use-validate'
 
 type TestInputProps = CInputProps & {
     modelValue?: any

@@ -1,10 +1,4 @@
-import {
-    computed,
-    defineComponent,
-    h,
-    type PropType,
-    type VNode,
-} from 'vue'
+import { computed, defineComponent, h, type PropType, type VNode } from 'vue'
 
 import { BREAKPOINTS } from '../../constants'
 import { isDef, toCamelCase } from '../../helpers'
@@ -28,32 +22,31 @@ export const CCol = defineComponent({
             default: null,
         },
 
-        ...BREAKPOINTS.reduce(
-            (props, bp) => {
-                props[bp] = {
-                    type: [String, Number] as PropType<string | number>,
-                    default: null,
-                }
+        ...BREAKPOINTS.reduce((props, bp) => {
+            props[bp] = {
+                type: [String, Number] as PropType<string | number>,
+                default: null,
+            }
 
-                props[`order-${bp}`] = {
-                    type: [String, Number] as PropType<string | number>,
-                    default: null,
-                }
+            props[`order-${bp}`] = {
+                type: [String, Number] as PropType<string | number>,
+                default: null,
+            }
 
-                props[`offset-${bp}`] = {
-                    type: [String, Number] as PropType<string | number>,
-                    default: null,
-                }
+            props[`offset-${bp}`] = {
+                type: [String, Number] as PropType<string | number>,
+                default: null,
+            }
 
-                return props
-            },
-            {} as Record<string, any>,
-        ),
+            return props
+        }, {} as Record<string, any>),
     },
 
     setup(props, { slots }): () => VNode {
         const classes = computed<Record<string, boolean>>(() => {
-            const cls: Record<string, boolean> = { 'c-col': true }
+            const cls: Record<string, boolean> = {
+                'c-col': true,
+            }
 
             if (isDef(props.cols)) {
                 cls[`c-col-${props.cols}`] = true

@@ -10,6 +10,8 @@ export const components = [
     ['CChip', './CChip'],
     ['CDialog', './CDialog'],
     ['CDialogsStack', './CDialog'],
+    ['CDatePicker', './CDatePicker'],
+    ['CDateInput', './CDateInput'],
     ['COverlay', './COverlay'],
     ['CField', './CField'],
     ['CForm', './CForm'],

@@ -1,10 +1,4 @@
-import {
-    computed,
-    defineComponent,
-    h,
-    type PropType,
-    type VNode,
-} from 'vue'
+import { computed, defineComponent, h, type PropType, type VNode } from 'vue'
 
 import { BREAKPOINTS } from '../../constants'
 import { isDef, toCamelCase } from '../../helpers'
@@ -12,7 +6,12 @@ import { isDef, toCamelCase } from '../../helpers'
 const positions = ['start', 'center', 'end'] as const
 const justifyValues = [...positions, 'space-between', 'space-around'] as const
 const alignValues = [...positions, 'baseline', 'stretch'] as const
-const alignContentValues = [...positions, 'space-between', 'space-around', 'stretch'] as const
+const alignContentValues = [
+    ...positions,
+    'space-between',
+    'space-around',
+    'stretch',
+] as const
 
 type JustifyValue = (typeof justifyValues)[number]
 type AlignValue = (typeof alignValues)[number]
@@ -31,47 +30,50 @@ export const CRow = defineComponent({
         alignContent: {
             type: String as PropType<AlignContentValue>,
             default: null,
-            validator: (value: string) => alignContentValues.includes(value as AlignContentValue),
+            validator: (value: string) =>
+                alignContentValues.includes(value as AlignContentValue),
         },
 
         justify: {
             type: String as PropType<JustifyValue>,
             default: null,
-            validator: (value: string) => justifyValues.includes(value as JustifyValue),
+            validator: (value: string) =>
+                justifyValues.includes(value as JustifyValue),
         },
 
         noGutter: Boolean,
 
-        ...BREAKPOINTS.reduce(
-            (props, bp) => {
-                props[`justify-${bp}`] = {
-                    type: String as PropType<JustifyValue>,
-                    default: null,
-                    validator: (value: string) => justifyValues.includes(value as JustifyValue),
-                }
+        ...BREAKPOINTS.reduce((props, bp) => {
+            props[`justify-${bp}`] = {
+                type: String as PropType<JustifyValue>,
+                default: null,
+                validator: (value: string) =>
+                    justifyValues.includes(value as JustifyValue),
+            }
 
-                props[`align-${bp}`] = {
-                    type: String as PropType<AlignValue>,
-                    default: null,
-                    validator: (value: string) => alignValues.includes(value as AlignValue),
-                }
+            props[`align-${bp}`] = {
+                type: String as PropType<AlignValue>,
+                default: null,
+                validator: (value: string) =>
+                    alignValues.includes(value as AlignValue),
+            }
 
-                props[`align-content-${bp}`] = {
-                    type: String as PropType<AlignContentValue>,
-                    default: null,
-                    validator: (value: string) =>
-                        alignContentValues.includes(value as AlignContentValue),
-                }
+            props[`align-content-${bp}`] = {
+                type: String as PropType<AlignContentValue>,
+                default: null,
+                validator: (value: string) =>
+                    alignContentValues.includes(value as AlignContentValue),
+            }
 
-                return props
-            },
-            {} as Record<string, any>,
-        ),
+            return props
+        }, {} as Record<string, any>),
     },
 
     setup(props, { slots }): () => VNode {
         const classes = computed<Record<string, boolean>>(() => {
-            const cls: Record<string, boolean> = { 'c-row': true }
+            const cls: Record<string, boolean> = {
+                'c-row': true,
+            }
 
             if (props.noGutter) {
                 cls['no-gutter'] = true

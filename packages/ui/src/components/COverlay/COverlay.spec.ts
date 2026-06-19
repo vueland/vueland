@@ -1,33 +1,18 @@
 import { mount } from '@vue/test-utils'
-import {
-    beforeEach,
-    describe,
-    expect,
-    it,
-    vi,
-} from 'vitest'
-import {
-    defineComponent,
-    h,
-    nextTick,
-    ref,
-} from 'vue'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { defineComponent, h, nextTick, ref } from 'vue'
 
 import { COverlay } from '../index'
 
 const register = vi.fn()
 const unregister = vi.fn()
 
-vi.mock('../../composables', async (importOriginal) => {
-    const actual = await importOriginal()
-    return {
-        ...actual as object,
-        useOverlayStack: () => ({
-            register,
-            unregister,
-        }),
-    }
-})
+vi.mock('../../composables', () => ({
+    useOverlayStack: () => ({
+        register,
+        unregister,
+    }),
+}))
 
 describe('COverlay', () => {
     beforeEach(() => {
@@ -44,7 +29,9 @@ describe('COverlay', () => {
                 modelValue: false,
                 'onUpdate:modelValue': () => {},
             },
-            slots: { default: () => h('div', 'content') },
+            slots: {
+                default: () => h('div', 'content'),
+            },
             attachTo: document.body,
         })
 
@@ -58,7 +45,9 @@ describe('COverlay', () => {
                 modelValue: true,
                 'onUpdate:modelValue': () => {},
             },
-            slots: { default: () => h('div', 'content') },
+            slots: {
+                default: () => h('div', 'content'),
+            },
             attachTo: document.body,
         })
 
@@ -72,7 +61,9 @@ describe('COverlay', () => {
                 modelValue: true,
                 'onUpdate:modelValue': () => {},
             },
-            slots: { default: ({ zIndex }: { zIndex?: number }) => h('div', String(zIndex)) },
+            slots: {
+                default: ({ zIndex }: { zIndex?: number }) => h('div', String(zIndex)),
+            },
             attachTo: document.body,
         })
 
@@ -87,7 +78,9 @@ describe('COverlay', () => {
                 modelValue: false,
                 'onUpdate:modelValue': () => {},
             },
-            slots: { default: () => h('div', { class: 'overlay-content' }, 'teleported') },
+            slots: {
+                default: () => h('div', { class: 'overlay-content' }, 'teleported'),
+            },
             attachTo: document.body,
         })
 
@@ -108,7 +101,9 @@ describe('COverlay', () => {
                 modelValue: false,
                 'onUpdate:modelValue': () => {},
             },
-            slots: { default: () => h('div', { class: 'overlay-content' }, 'custom target') },
+            slots: {
+                default: () => h('div', { class: 'overlay-content' }, 'custom target'),
+            },
             attachTo: document.body,
         })
 
@@ -124,7 +119,9 @@ describe('COverlay', () => {
                 modelValue: false,
                 'onUpdate:modelValue': () => {},
             },
-            slots: { default: () => h('div', 'content') },
+            slots: {
+                default: () => h('div', 'content'),
+            },
             attachTo: document.body,
         })
 
@@ -142,7 +139,9 @@ describe('COverlay', () => {
                 modelValue: true,
                 'onUpdate:modelValue': () => {},
             },
-            slots: { default: () => h('div', 'content') },
+            slots: {
+                default: () => h('div', 'content'),
+            },
             attachTo: document.body,
         })
 
@@ -160,7 +159,9 @@ describe('COverlay', () => {
                 modelValue: true,
                 'onUpdate:modelValue': () => {},
             },
-            slots: { default: () => h('div', 'content') },
+            slots: {
+                default: () => h('div', 'content'),
+            },
             attachTo: document.body,
         })
 
@@ -178,7 +179,9 @@ describe('COverlay', () => {
                 modelValue: false,
                 'onUpdate:modelValue': () => {},
             },
-            slots: { default: () => h('div', 'content') },
+            slots: {
+                default: () => h('div', 'content'),
+            },
             attachTo: document.body,
         })
 
@@ -197,23 +200,20 @@ describe('COverlay', () => {
                 return { model }
             },
             render() {
-                return h(
-                    COverlay,
-                    {
-                        modelValue: this.model,
-                        'onUpdate:modelValue': (val: boolean) => {
-                            this.model = val
-                        },
+                return h(COverlay, {
+                    modelValue: this.model,
+                    'onUpdate:modelValue': (val: boolean) => {
+                        this.model = val
                     },
-                    {
-                        default: ({ zIndex }: { zIndex?: number }) =>
-                            h('div', { class: 'content' }, String(zIndex)),
-                    },
-                )
+                }, {
+                    default: ({ zIndex }: { zIndex?: number }) => h('div', { class: 'content' }, String(zIndex)),
+                })
             },
         })
 
-        const wrapper = mount(Host, { attachTo: document.body })
+        const wrapper = mount(Host, {
+            attachTo: document.body,
+        })
 
         expect(unregister).toHaveBeenCalledTimes(1)
         expect(register).not.toHaveBeenCalled()

@@ -147,18 +147,17 @@
                             size="20"
                         />
                     </template>
-<!--                    <template #menu="{items}">-->
-<!--                        <div v-for="it of items">{{ it.raw }}</div>-->
-<!--                    </template>-->
+                   <template #menu="{items}">
+                       <div v-for="it of items">{{ it.raw }}</div>
+                    </template>
                 </c-autocomplete>
-                <c-date-input :disabled-dates="{from: new Date()}"/>
+                <c-date-input :disabled-dates="{from: new Date()}" monday-first label="Выберите дату" lang="ru"/>
                 <c-select
                     v-model="form.level"
                     :items="levels"
                     placeholder="выберите пункт"
                     class="mt-4"
                     title-key="title"
-                    readonly
                     label="Select"
                 />
                 <c-checkbox v-model="checkbox" :rules="checkboxRules">

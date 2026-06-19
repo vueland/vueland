@@ -1,9 +1,8 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { computed, defineComponent, h, reactive, type Reactive } from 'vue'
+import { computed, defineComponent, h, type Reactive,reactive } from 'vue'
 
-import type { CFieldProps } from '../../components/CField/CField'
-import type { CFieldSlots } from '../../components/CField/CField'
+import { type CFieldProps ,type  CFieldSlots } from '../../components/CField/CField'
 import { $VUELAND_UI_KEY } from '../../constants'
 import { useFieldPresets } from '../use-field-presets'
 

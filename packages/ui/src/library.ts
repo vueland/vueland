@@ -22,9 +22,9 @@ export interface LibOptions {
     components: Record<string, ComponentInstance<any> | FunctionalComponent>
     directives?: Record<string, Directive>
     themes?: ThemesOptions
-    defaultTheme?: string
     icons?: IconsOptions
     presets?: Record<string, Record<string, any>>
+    theme?: string
     ssr?: boolean
 }
 
@@ -32,7 +32,7 @@ export class VuelandUI {
     themes: ThemesOptions = {}
     icons: IconsOptions = {}
     presets: Record<string, Record<string, any>> = {}
-    theme: string = 'light'
+    theme?: string
     private installed: boolean = false
 
     applyTheme(name: string): void {
@@ -84,7 +84,7 @@ export class VuelandUI {
         app.provide($DIALOGS_STACK_API_KEY, dialogsStack)
 
         if (IN_BROWSER) {
-            const initialTheme = options.defaultTheme ?? Object.keys(this.themes)[0]
+            const initialTheme = options.theme ?? Object.keys(this.themes)[0]
 
             if (initialTheme) {
                 this.applyTheme(initialTheme)
