@@ -14,7 +14,6 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const scssUtils = fs.readdirSync(path.resolve(__dirname, '../src/styles/utils'))
-const scssThemes = fs.readdirSync(path.resolve(__dirname, '../src/styles/themes'))
 
 const vuePlugin = vue({
     target: 'node',
@@ -74,7 +73,6 @@ export default defineConfig([
             directives: 'src/directives/index.ts',
             resolvers: 'src/resolvers/index.ts',
             utils: 'src/utils/index.ts',
-            // types: 'src/types/index.ts',
             constants: 'src/constants/index.ts',
             enums: 'src/enums/index.ts',
         },
@@ -95,27 +93,24 @@ export default defineConfig([
             ...base.plugins,
         ],
     },
+    {
+        input: 'src/styles/lib.scss',
+        output: {
+            dir: 'dist/css',
+            sourcemap: false,
+        },
+        ...base,
+        plugins: [
+            makeCssPlugin('lib.css'),
+            ...base.plugins,
+        ],
+    },
     ...scssUtils.map((file) => {
         const [name] = file.split('.')
         return {
             input: `src/styles/utils/${file}`,
             output: {
                 dir: 'dist/css/utils',
-                sourcemap: false,
-            },
-            ...base,
-            plugins: [
-                makeCssPlugin(`${name}.css`),
-                ...base.plugins,
-            ],
-        }
-    }),
-    ...scssThemes.map((file) => {
-        const [name] = file.split('.')
-        return {
-            input: `src/styles/themes/${file}`,
-            output: {
-                dir: 'dist/css/themes',
                 sourcemap: false,
             },
             ...base,

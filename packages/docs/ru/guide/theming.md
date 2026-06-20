@@ -10,6 +10,7 @@ Vueland UI поддерживает систему тем на основе CSS-
 import * as components from '@vueland/ui/components'
 import { createVuelandUI } from '@vueland/ui'
 import '@vueland/ui/styles.css'
+import '@vueland/ui/css/lib.css'
 
 export const vueland = createVuelandUI({
   components,

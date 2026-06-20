@@ -5,6 +5,7 @@
   {"file": "typography", "title": "Типографика"},
   {"file": "text", "title": "Текст"},
   {"file": "flex", "title": "Флекс"},
+  {"file": "grid", "title": "CSS Grid"},
   {"file": "display", "title": "Отображение"},
   {"file": "sizing", "title": "Размеры"},
   {"file": "position", "title": "Позиционирование"},

@@ -30,8 +30,6 @@
             "import": "./dist/index.js",
             "require": "./dist/index.js"
         },
-        "./styles.css": "./dist/styles.css",
-        "./css/utils/*": "./dist/css/utils/*",
         "./components": {
             "types": "./dist/components/index.d.ts",
             "import": "./dist/components/index.js",
@@ -71,9 +69,11 @@
             "types": "./dist/types/index.d.ts",
             "import": "./dist/types/index.d.ts"
         },
-        "./css/themes/default-theme.css": "./dist/css/themes/default-theme.css",
+        "./css/lib.css": "./dist/css/lib.css",
+        "./styles.css": "./dist/styles.css",
+        "./css/utils/*": "./dist/css/utils/*",
         "./styles/scss/styles.scss": "./dist/scss/styles.scss",
-        "./styles/scss/themes/default-theme.scss": "./dist/scss/themes/default-theme.scss"
+        "./styles/scss/lib.scss": "./dist/scss/lib.scss"
     },
     "peerDependencies": {
         "vue": "^3.5.27"

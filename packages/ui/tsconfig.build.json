@@ -14,10 +14,8 @@
     "src",
     "src/**/*.json",
     "env.d.ts",
-    "jsx.d.ts"
   ],
   "exclude": [
     "**/*.spec.ts",
-    "**/*.spec.tsx",
   ]
 }
