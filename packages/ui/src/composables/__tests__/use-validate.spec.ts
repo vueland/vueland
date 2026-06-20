@@ -1,9 +1,25 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
-import { defineComponent, h, reactive, type Reactive, nextTick } from 'vue'
+import {
+    describe,
+    expect,
+    it,
+    vi,
+} from 'vitest'
+import {
+    defineComponent,
+    h,
+    nextTick,
+    type Reactive,
+    reactive,
+} from 'vue'
 
-import { useValidate, type ValidateFn, type ValidateProps, type ValidateResult } from '../use-validate'
 import type { InputState } from '../../components'
+import {
+    useValidate,
+    type ValidateFn,
+    type ValidateProps,
+    type ValidateResult,
+} from '../use-validate'
 
 type TestProps = ValidateProps & {
     modelValue: any
@@ -12,16 +28,25 @@ type TestProps = ValidateProps & {
 }
 
 function createRule(valid: boolean, message = 'Error'): ValidateFn {
-    return () => ({ valid, message })
+    return () => ({
+        valid,
+        message, 
+    })
 }
 
 function createAsyncRule(valid: boolean, message = 'Error', delay = 10): ValidateFn {
-    return () => new Promise((resolve) => setTimeout(() => resolve({ valid, message }), delay))
+    return () => new Promise((resolve) => setTimeout(() => resolve({
+        valid,
+        message, 
+    }), delay))
 }
 
 function mountUseValidate(
     initialProps: TestProps,
-    initialState: InputState = { focused: false, isDirty: false },
+    initialState: InputState = {
+        focused: false,
+        isDirty: false, 
+    },
 ) {
     let api!: ReturnType<typeof useValidate>
 
@@ -38,7 +63,12 @@ function mountUseValidate(
         }),
     )
 
-    return { wrapper, props, state, api }
+    return {
+        wrapper,
+        props,
+        state,
+        api, 
+    }
 }
 
 describe('useValidate', () => {
@@ -75,8 +105,14 @@ describe('useValidate', () => {
     })
 
     it('останавливается на первой ошибке', async () => {
-        const firstRule = vi.fn(() => ({ valid: false, message: 'First error' }))
-        const secondRule = vi.fn(() => ({ valid: false, message: 'Second error' }))
+        const firstRule = vi.fn(() => ({
+            valid: false,
+            message: 'First error', 
+        }))
+        const secondRule = vi.fn(() => ({
+            valid: false,
+            message: 'Second error', 
+        }))
 
         const { api } = mountUseValidate({
             modelValue: '',
@@ -95,7 +131,10 @@ describe('useValidate', () => {
             message: 'Invalid value',
         }))
 
-        const { api, props } = mountUseValidate({ modelValue: 'invalid', rules: [rule] })
+        const { api, props } = mountUseValidate({
+            modelValue: 'invalid',
+            rules: [rule], 
+        })
 
         expect(await api.validate()).toBe(false)
         expect(rule).toHaveBeenLastCalledWith('invalid')
@@ -126,7 +165,10 @@ describe('useValidate', () => {
     it('очищает ошибку после успешной повторной валидации', async () => {
         const { api, props } = mountUseValidate({
             modelValue: '',
-            rules: [(value: string) => ({ valid: !!value, message: 'Required field' })],
+            rules: [(value: string) => ({
+                valid: !!value,
+                message: 'Required field', 
+            })],
         })
 
         expect(await api.validate()).toBe(false)
@@ -143,7 +185,10 @@ describe('useValidate', () => {
         const { api, props } = mountUseValidate({
             modelValue: 'abc',
             validateOn: 'input',
-            rules: [(value: string) => ({ valid: value.length >= 3, message: 'Минимум 3 символа' })],
+            rules: [(value: string) => ({
+                valid: value.length >= 3,
+                message: 'Минимум 3 символа', 
+            })],
         })
 
         expect(api.errors.hasError).toBe(false)
@@ -165,7 +210,10 @@ describe('useValidate', () => {
     it('по умолчанию валидирует при изменении modelValue как validateOn=input', async () => {
         const { props } = mountUseValidate({
             modelValue: 'hello',
-            rules: [(value: string) => ({ valid: value.length >= 3, message: 'Минимум 3 символа' })],
+            rules: [(value: string) => ({
+                valid: value.length >= 3,
+                message: 'Минимум 3 символа', 
+            })],
         })
 
         props.modelValue = 'hi'
@@ -182,7 +230,10 @@ describe('useValidate', () => {
                 validateOn: 'blur',
                 rules: [createRule(false, 'Required field')],
             },
-            { focused: true, isDirty: false },
+            {
+                focused: true,
+                isDirty: false, 
+            },
         )
 
         expect(api.errors.hasError).toBe(false)
@@ -196,7 +247,10 @@ describe('useValidate', () => {
     })
 
     it('при validateOn=blur не валидирует truthy modelValue на input-change', async () => {
-        const rule = vi.fn((value: string) => ({ valid: value.length >= 3, message: 'Минимум 3 символа' }))
+        const rule = vi.fn((value: string) => ({
+            valid: value.length >= 3,
+            message: 'Минимум 3 символа', 
+        }))
 
         const { props } = mountUseValidate({
             modelValue: 'abc',
@@ -211,7 +265,10 @@ describe('useValidate', () => {
     })
 
     it('при validateOn=blur валидирует empty modelValue на input-change', async () => {
-        const rule = vi.fn((value: string) => ({ valid: !!value, message: 'Required field' }))
+        const rule = vi.fn((value: string) => ({
+            valid: !!value,
+            message: 'Required field', 
+        }))
 
         const { api, props } = mountUseValidate({
             modelValue: 'abc',
@@ -229,7 +286,10 @@ describe('useValidate', () => {
 
     describe('readonly / disabled', () => {
         it('возвращает true и не запускает rules если readonly=true', async () => {
-            const rule = vi.fn(() => ({ valid: false, message: 'Error' }))
+            const rule = vi.fn(() => ({
+                valid: false,
+                message: 'Error', 
+            }))
 
             const { api, props } = mountUseValidate({
                 modelValue: '',
@@ -244,7 +304,10 @@ describe('useValidate', () => {
         })
 
         it('возвращает true и не запускает rules если disabled=true', async () => {
-            const rule = vi.fn(() => ({ valid: false, message: 'Error' }))
+            const rule = vi.fn(() => ({
+                valid: false,
+                message: 'Error', 
+            }))
 
             const { api, props } = mountUseValidate({
                 modelValue: '',
@@ -259,7 +322,10 @@ describe('useValidate', () => {
         })
 
         it('не запускает watcher при изменении modelValue если readonly=true', async () => {
-            const rule = vi.fn((v: string) => ({ valid: !!v, message: 'Required' }))
+            const rule = vi.fn((v: string) => ({
+                valid: !!v,
+                message: 'Required', 
+            }))
 
             const { props } = mountUseValidate({
                 modelValue: 'abc',
@@ -304,11 +370,20 @@ describe('useValidate', () => {
 
     describe('blur watcher', () => {
         it('валидирует при blur независимо от validateOn', async () => {
-            const rule = vi.fn(() => ({ valid: false, message: 'Required' }))
+            const rule = vi.fn(() => ({
+                valid: false,
+                message: 'Required', 
+            }))
 
             const { state } = mountUseValidate(
-                { modelValue: '', rules: [rule] },
-                { focused: true, isDirty: false },
+                {
+                    modelValue: '',
+                    rules: [rule], 
+                },
+                {
+                    focused: true,
+                    isDirty: false, 
+                },
             )
 
             state.focused = false
@@ -319,11 +394,21 @@ describe('useValidate', () => {
         })
 
         it('не валидирует при переходе focused: false → true', async () => {
-            const rule = vi.fn(() => ({ valid: true, message: '' }))
+            const rule = vi.fn(() => ({
+                valid: true,
+                message: '', 
+            }))
 
             const { state } = mountUseValidate(
-                { modelValue: '', validateOn: 'blur', rules: [rule] },
-                { focused: false, isDirty: false },
+                {
+                    modelValue: '',
+                    validateOn: 'blur',
+                    rules: [rule], 
+                },
+                {
+                    focused: false,
+                    isDirty: false, 
+                },
             )
 
             state.focused = true
@@ -371,9 +456,15 @@ describe('useValidate', () => {
             const { api } = mountUseValidate({
                 modelValue: 'val',
                 rules: [
-                    () => { calls.push('sync'); return { valid: true, message: '' } },
+                    () => { calls.push('sync'); return {
+                        valid: true,
+                        message: '', 
+                    } },
                     createAsyncRule(true, '', 5),
-                    () => { calls.push('sync2'); return { valid: true, message: '' } },
+                    () => { calls.push('sync2'); return {
+                        valid: true,
+                        message: '', 
+                    } },
                 ],
             })
 

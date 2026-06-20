@@ -23,12 +23,12 @@ const fa = createFontAwesomeResolver({
         'fas:trash': faTrash,
         'fab:github': faGithub,
     },
-})
+});
 
 export const ui = createVuelandUI({
     components,
     ssr: false,
-    defaultTheme: 'light',
+    theme: 'light',
     themes: {
         light: {
             primary: '#1976d2',

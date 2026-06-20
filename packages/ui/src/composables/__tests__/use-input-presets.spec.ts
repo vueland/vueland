@@ -1,11 +1,20 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
-import { defineComponent, h, reactive, type Reactive } from 'vue'
+import {
+    describe,
+    expect,
+    it,
+} from 'vitest'
+import {
+    defineComponent,
+    h,
+    type Reactive,
+    reactive,
+} from 'vue'
 
-import { $VUELAND_UI_KEY } from '../../constants'
 import type { CInputProps, InputState } from '../../components'
-import type { ValidateState } from '../use-validate'
+import { $VUELAND_UI_KEY } from '../../constants'
 import { useInputPresets } from '../use-input-presets'
+import type { ValidateState } from '../use-validate'
 
 type TestInputProps = CInputProps & {
     modelValue?: any
@@ -55,15 +64,7 @@ function mountUseInputPresets({
                 return () => h('div')
             },
         }),
-        {
-            global: {
-                provide: {
-                    [$VUELAND_UI_KEY as symbol]: {
-                        presets: corePresets,
-                    },
-                },
-            },
-        },
+        { global: { provide: { [$VUELAND_UI_KEY as symbol]: { presets: corePresets } } } },
     )
 
     return {
@@ -182,7 +183,10 @@ describe('useInputPresets', () => {
 
     it('не применяет focused, если поле disabled', () => {
         const { result } = mountUseInputPresets({
-            props: { preset: 'input.base', disabled: true },
+            props: {
+                preset: 'input.base',
+                disabled: true, 
+            },
             state: { focused: true },
             presets: {
                 input: {
@@ -200,7 +204,10 @@ describe('useInputPresets', () => {
 
     it('не применяет focused, если поле readonly', () => {
         const { result } = mountUseInputPresets({
-            props: { preset: 'input.base', readonly: true },
+            props: {
+                preset: 'input.base',
+                readonly: true, 
+            },
             state: { focused: true },
             presets: {
                 input: {
@@ -219,7 +226,10 @@ describe('useInputPresets', () => {
     it('возвращает error root и details при ошибке с сообщением', () => {
         const { result } = mountUseInputPresets({
             props: { preset: 'input.base' },
-            errors: { hasError: true, errorMessage: 'Required' },
+            errors: {
+                hasError: true,
+                errorMessage: 'Required', 
+            },
             presets: {
                 input: {
                     base: {
@@ -241,7 +251,10 @@ describe('useInputPresets', () => {
     it('для details применяет error.details только если есть errorMessage', () => {
         const { result } = mountUseInputPresets({
             props: { preset: 'input.base' },
-            errors: { hasError: true, errorMessage: undefined },
+            errors: {
+                hasError: true,
+                errorMessage: undefined, 
+            },
             presets: {
                 input: {
                     base: {
@@ -257,9 +270,16 @@ describe('useInputPresets', () => {
 
     it('соблюдает приоритет: disabled > readonly > error > focused', () => {
         const { result } = mountUseInputPresets({
-            props: { preset: 'input.base', disabled: true, readonly: true },
+            props: {
+                preset: 'input.base',
+                disabled: true,
+                readonly: true, 
+            },
             state: { focused: true },
-            errors: { hasError: true, errorMessage: 'Required' },
+            errors: {
+                hasError: true,
+                errorMessage: 'Required', 
+            },
             presets: {
                 input: {
                     base: {
@@ -280,7 +300,10 @@ describe('useInputPresets', () => {
         const { result } = mountUseInputPresets({
             props: { preset: 'input.base' },
             state: { focused: true },
-            errors: { hasError: true, errorMessage: 'Required' },
+            errors: {
+                hasError: true,
+                errorMessage: 'Required', 
+            },
             presets: {
                 input: {
                     base: {
@@ -295,7 +318,12 @@ describe('useInputPresets', () => {
     })
 
     it('реактивно обновляет preset при изменении состояния', () => {
-        const { result, state, errors, props } = mountUseInputPresets({
+        const {
+            result,
+            state,
+            errors,
+            props,
+        } = mountUseInputPresets({
             props: { preset: 'input.base' },
             presets: {
                 input: {
@@ -303,7 +331,10 @@ describe('useInputPresets', () => {
                         root: ['base-root'],
                         details: ['base-details'],
                         focused: { root: ['focused-root'] },
-                        error: { root: ['error-root'], details: ['error-details'] },
+                        error: {
+                            root: ['error-root'],
+                            details: ['error-details'], 
+                        },
                         disabled: { root: ['disabled-root'] },
                     },
                 },
@@ -333,7 +364,10 @@ describe('useInputPresets', () => {
                     base: {
                         label: ['base-label'],
                         input: ['base-input'],
-                        focused: { label: ['focused-label'], input: ['focused-input'] },
+                        focused: {
+                            label: ['focused-label'],
+                            input: ['focused-input'], 
+                        },
                         filled: { label: ['filled-label'] },
                         error: { label: ['error-label'] },
                         disabled: { input: ['disabled-input'] },
@@ -362,15 +396,16 @@ describe('useInputPresets', () => {
         const { result } = mountUseInputPresets({
             props: { preset: 'input.base' },
             state: { focused: true },
-            errors: { hasError: true, errorMessage: 'Required' },
+            errors: {
+                hasError: true,
+                errorMessage: 'Required', 
+            },
             presets: {
                 input: {
                     base: {
                         error: {
                             root: ['error-root'],
-                            focused: {
-                                root: ['error-focused-root'],
-                            },
+                            focused: { root: ['error-focused-root'] },
                         },
                         focused: { root: ['focused-root'] },
                     },

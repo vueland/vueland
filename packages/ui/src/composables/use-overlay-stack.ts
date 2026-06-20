@@ -1,6 +1,10 @@
 const BASE_Z_INDEX = 2000
 const stack: number[] = []
 
+export function clearOverlayStack() {
+    stack.length = 0
+}
+
 export function useOverlayStack() {
     let zIndex = -1
 

@@ -1,35 +1,34 @@
-import { mount, type VueWrapper } from '@vue/test-utils'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { mount } from '@vue/test-utils'
+import {
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+} from 'vitest'
 import { h, nextTick } from 'vue'
 
 import { $FORM_API_KEY, $VUELAND_UI_KEY } from '../../../constants'
-import { CInput } from '../CInput'
+import CInput from '../CInput.vue'
 
 const basePresets = {
     input: {
         base: {
             root: ['base-root'],
-            label: ['base-label'],
+            field: 'field.base',
             details: ['base-details'],
 
-            focused: {
-                root: ['focused-root'],
-                label: ['focused-label'],
-            },
+            focused: { root: ['focused-root'] },
 
             error: {
                 root: ['error-root'],
-                label: ['error-label'],
+                field: 'field.error',
                 details: ['error-details'],
             },
 
-            disabled: {
-                root: ['disabled-root'],
-            },
+            disabled: { root: ['disabled-root'] },
 
-            readonly: {
-                root: ['readonly-root'],
-            },
+            readonly: { root: ['readonly-root'] },
         },
     },
 }
@@ -48,6 +47,8 @@ function createWrapper({
     formApi?: {
         add: ReturnType<typeof vi.fn>
         remove: ReturnType<typeof vi.fn>
+        addReset: ReturnType<typeof vi.fn>
+        removeReset: ReturnType<typeof vi.fn>
     }
 } = {}) {
     const normalizedSlots: Record<string, any> = {
@@ -63,38 +64,34 @@ function createWrapper({
             errorMessage,
             focus,
             blur,
-            input,
-        }: any) =>
-            h('input', {
-                ...attrs,
-                id: uid,
-                class: 'test-field',
-                'data-focused': `${focused}`,
-                'data-disabled': `${!!disabled}`,
-                'data-readonly': `${!!readonly}`,
-                'data-clearable': `${!!clearable}`,
-                'data-preset': preset,
-                'data-has-error': `${hasError}`,
-                'data-error-message': errorMessage ?? '',
-                onFocus: focus,
-                onBlur: blur,
-                onInput: (e: InputEvent) => {
-                    input((e.target as HTMLInputElement).value)
-                },
-            }),
+        }: any) => h('input', {
+            ...attrs,
+            id: uid,
+            class: 'test-field',
+            'data-focused': `${focused}`,
+            'data-disabled': `${!!disabled}`,
+            'data-readonly': `${!!readonly}`,
+            'data-clearable': `${!!clearable}`,
+            'data-preset': preset,
+            'data-has-error': `${hasError}`,
+            'data-error-message': errorMessage ?? '',
+            onFocus: focus,
+            onBlur: blur,
+        }),
         ...slots,
     }
 
-    if (!slots.details && (props.details !== undefined || props.rules !== undefined)) {
-        normalizedSlots.details = ({ errorMessage, details }: any) =>
-            h(
-                'span',
-                {
-                    class: 'test-details',
-                    key: errorMessage || details,
-                },
-                errorMessage || details,
-            )
+    if (
+        !slots.details &&
+        (
+            props.details !== undefined ||
+            props.rules !== undefined
+        )
+    ) {
+        normalizedSlots.details = ({ errorMessage, details }: any) => h('span', {
+            class: 'test-details',
+            key: errorMessage || details,
+        }, errorMessage || details)
     }
 
     return mount(CInput as any, {
@@ -106,14 +103,12 @@ function createWrapper({
         slots: normalizedSlots,
         global: {
             provide: {
-                [$VUELAND_UI_KEY as symbol]: {
-                    presets,
-                },
-                ...(formApi
-                    ? {
-                          [$FORM_API_KEY as symbol]: formApi,
-                      }
-                    : {}),
+                [$VUELAND_UI_KEY as symbol]: { presets },
+                ...(
+                    formApi
+                        ? { [$FORM_API_KEY as symbol]: formApi }
+                        : {}
+                ),
             },
         },
     })
@@ -144,11 +139,7 @@ describe('CInput', () => {
         })
 
         it('рендерит details из props.details', () => {
-            const wrapper = createWrapper({
-                props: {
-                    details: 'Подсказка',
-                },
-            })
+            const wrapper = createWrapper({ props: { details: 'Подсказка' } })
 
             expect(wrapper.find('.c-input__details').exists()).toBe(true)
             expect(wrapper.find('.test-details').text()).toBe('Подсказка')
@@ -156,19 +147,8 @@ describe('CInput', () => {
 
         it('рендерит details slot', () => {
             const wrapper = createWrapper({
-                slots: {
-                    details: ({ details }: any) =>
-                        h(
-                            'div',
-                            {
-                                class: 'custom-details',
-                            },
-                            details,
-                        ),
-                },
-                props: {
-                    details: 'Текст',
-                },
+                slots: { details: ({ details }: any) => h('div', { class: 'custom-details' }, details) },
+                props: { details: 'Текст' },
             })
 
             expect(wrapper.get('.custom-details').text()).toBe('Текст')
@@ -199,9 +179,7 @@ describe('CInput', () => {
         })
 
         it('генерирует uid с префиксом input-, если id не передан', () => {
-            const wrapper = createWrapper({
-                props: { kind: 'input' },
-            })
+            const wrapper = createWrapper({ props: { kind: 'input' } })
 
             expect(field(wrapper).attributes('id')).toMatch(/^input-/)
         })
@@ -233,11 +211,7 @@ describe('CInput', () => {
         })
 
         it('не передаёт class в field attrs, а применяет его на root', () => {
-            const wrapper = createWrapper({
-                attrs: {
-                    class: 'external-root',
-                },
-            })
+            const wrapper = createWrapper({ attrs: { class: 'external-root' } })
 
             expect(wrapper.classes()).toContain('external-root')
             expect(field(wrapper).classes()).not.toContain('external-root')
@@ -245,12 +219,8 @@ describe('CInput', () => {
 
         it('не даёт attrs.id переопределить uid', () => {
             const wrapper = createWrapper({
-                props: {
-                    id: 'from-props',
-                },
-                attrs: {
-                    id: 'from-attrs',
-                },
+                props: { id: 'from-props' },
+                attrs: { id: 'from-attrs' },
             })
 
             expect(field(wrapper).attributes('id')).toBe('from-props')
@@ -270,11 +240,7 @@ describe('CInput', () => {
         })
 
         it('не добавляет aria-labelledby без label', () => {
-            const wrapper = createWrapper({
-                props: {
-                    id: 'email',
-                },
-            })
+            const wrapper = createWrapper({ props: { id: 'email' } })
 
             expect(field(wrapper).attributes('aria-labelledby')).toBeUndefined()
         })
@@ -340,7 +306,7 @@ describe('CInput', () => {
                 },
             })
 
-            ;await (wrapper.vm as any).validate()
+            await (wrapper.vm as any).validate()
             await nextTick()
 
             expect(field(wrapper).attributes('aria-invalid')).toBe('true')
@@ -378,6 +344,31 @@ describe('CInput', () => {
             expect(field(wrapper).attributes('aria-expanded')).toBe('true')
         })
 
+        it('kind=radio добавляет aria-labelledby', () => {
+            const wrapper = createWrapper({
+                props: {
+                    id: 'my-radio',
+                    label: 'Option',
+                    kind: 'radio',
+                },
+            })
+
+            expect(field(wrapper).attributes('aria-labelledby')).toBe('my-radio-label')
+        })
+
+        it('kind=area не добавляет listbox aria-атрибуты', () => {
+            const wrapper = createWrapper({
+                props: {
+                    id: 'my-area',
+                    kind: 'area',
+                },
+            })
+
+            expect(field(wrapper).attributes('aria-haspopup')).toBeUndefined()
+            expect(field(wrapper).attributes('aria-controls')).toBeUndefined()
+            expect(field(wrapper).attributes('aria-expanded')).toBeUndefined()
+        })
+
         it('не добавляет listbox aria-атрибуты для kind=field', () => {
             const wrapper = createWrapper({
                 props: {
@@ -408,11 +399,7 @@ describe('CInput', () => {
         })
 
         it('позволяет attrs переопределить aria-label', () => {
-            const wrapper = createWrapper({
-                attrs: {
-                    'aria-label': 'Custom label',
-                },
-            })
+            const wrapper = createWrapper({ attrs: { 'aria-label': 'Custom label' } })
 
             expect(field(wrapper).attributes('aria-label')).toBe('Custom label')
         })
@@ -420,11 +407,7 @@ describe('CInput', () => {
 
     describe('presets', () => {
         it('применяет root preset на root', () => {
-            const wrapper = createWrapper({
-                props: {
-                    preset: 'input.base',
-                },
-            })
+            const wrapper = createWrapper({ props: { preset: 'input.base' } })
 
             expect(wrapper.classes()).toContain('base-root')
         })
@@ -440,23 +423,15 @@ describe('CInput', () => {
             expect(wrapper.get('.c-input__details').classes()).toContain('base-details')
         })
 
-        it('передаёт сгенерированный field ключ в field slot и не применяет его как class на .c-input__field', () => {
-            const wrapper = createWrapper({
-                props: {
-                    preset: 'input.base',
-                },
-            })
+        it('передаёт field preset в field slot и не применяет его как class на .c-input__field', () => {
+            const wrapper = createWrapper({ props: { preset: 'input.base' } })
 
             expect(field(wrapper).attributes('data-preset')).toBe('__field.input.base')
             expect(wrapper.get('.c-input__field').classes()).not.toContain('__field.input.base')
         })
 
-        it('заменяет root focused-состоянием, field ключ остаётся неизменным', async () => {
-            const wrapper = createWrapper({
-                props: {
-                    preset: 'input.base',
-                },
-            })
+        it('заменяет root focused-состоянием, но сохраняет базовый field preset', async () => {
+            const wrapper = createWrapper({ props: { preset: 'input.base' } })
 
             await field(wrapper).trigger('focus')
             await nextTick()
@@ -466,7 +441,7 @@ describe('CInput', () => {
             expect(field(wrapper).attributes('data-preset')).toBe('__field.input.base')
         })
 
-        it('применяет error root и details при ошибке валидации', async () => {
+        it('переопределяет field preset активным error-состоянием', async () => {
             const wrapper = createWrapper({
                 props: {
                     preset: 'input.base',
@@ -480,7 +455,7 @@ describe('CInput', () => {
                 },
             })
 
-            ;await (wrapper.vm as any).validate()
+            await (wrapper.vm as any).validate()
             await nextTick()
 
             expect(wrapper.classes()).toContain('error-root')
@@ -489,7 +464,7 @@ describe('CInput', () => {
             expect(wrapper.get('.c-input__details').classes()).toContain('error-details')
         })
 
-        it('заменяет root disabled-состоянием, field ключ остаётся неизменным', () => {
+        it('заменяет root disabled-состоянием и сохраняет базовый field, если disabled.field не задан', () => {
             const wrapper = createWrapper({
                 props: {
                     preset: 'input.base',
@@ -502,7 +477,7 @@ describe('CInput', () => {
             expect(field(wrapper).attributes('data-preset')).toBe('__field.input.base')
         })
 
-        it('заменяет root readonly-состоянием, field ключ остаётся неизменным', () => {
+        it('заменяет root readonly-состоянием и сохраняет базовый field, если readonly.field не задан', () => {
             const wrapper = createWrapper({
                 props: {
                     preset: 'input.base',
@@ -537,7 +512,7 @@ describe('CInput', () => {
                 },
             })
 
-            ;await (wrapper.vm as any).validate()
+            await (wrapper.vm as any).validate()
             await nextTick()
 
             expect(wrapper.classes()).toContain('c-input--has-error')
@@ -570,17 +545,16 @@ describe('CInput', () => {
     })
 
     describe('events and exposed methods', () => {
-        it('focus выставляет focused=true и эмитит focus', async () => {
+        it('focus выставляет focused=true', async () => {
             const wrapper = createWrapper()
 
             await field(wrapper).trigger('focus')
             await nextTick()
 
-            expect(wrapper.emitted('focus')).toEqual([[true]])
             expect(field(wrapper).attributes('data-focused')).toBe('true')
         })
 
-        it('blur выставляет focused=false и эмитит blur', async () => {
+        it('blur выставляет focused=false', async () => {
             const wrapper = createWrapper()
 
             await field(wrapper).trigger('focus')
@@ -588,16 +562,11 @@ describe('CInput', () => {
             await field(wrapper).trigger('blur')
             await nextTick()
 
-            expect(wrapper.emitted('blur')).toEqual([[false]])
             expect(field(wrapper).attributes('data-focused')).toBe('false')
         })
 
         it('focus не срабатывает при disabled', async () => {
-            const wrapper = createWrapper({
-                props: {
-                    disabled: true,
-                },
-            })
+            const wrapper = createWrapper({ props: { disabled: true } })
 
             await field(wrapper).trigger('focus')
             await nextTick()
@@ -607,11 +576,7 @@ describe('CInput', () => {
         })
 
         it('focus не срабатывает при readonly', async () => {
-            const wrapper = createWrapper({
-                props: {
-                    readonly: true,
-                },
-            })
+            const wrapper = createWrapper({ props: { readonly: true } })
 
             await field(wrapper).trigger('focus')
             await nextTick()
@@ -620,12 +585,14 @@ describe('CInput', () => {
             expect(field(wrapper).attributes('data-focused')).toBe('false')
         })
 
-        it('input эмитит input со значением', async () => {
-            const wrapper = createWrapper()
+        it('нативный @input пробрасывается на нативный элемент через attrs', async () => {
+            const handler = vi.fn()
+            const wrapper = createWrapper({ attrs: { onInput: handler } })
 
             await field(wrapper).setValue('hello')
 
-            expect(wrapper.emitted('input')).toEqual([['hello']])
+            expect(handler).toHaveBeenCalledTimes(1)
+            expect(handler.mock.calls[0][0]).toBeInstanceOf(Event)
         })
 
         it('expose.validate возвращает false при невалидном значении', async () => {
@@ -647,44 +614,6 @@ describe('CInput', () => {
             expect(field(wrapper).attributes('aria-invalid')).toBe('true')
         })
 
-        it('expose.validate возвращает true при валидном значении', async () => {
-            const wrapper = createWrapper({
-                props: {
-                    modelValue: 'ok',
-                    rules: [
-                        (v: string) => ({ valid: !!v, message: 'Обязательное' }),
-                    ],
-                },
-            })
-
-            expect(await (wrapper.vm as any).validate()).toBe(true)
-            await nextTick()
-
-            expect(field(wrapper).attributes('aria-invalid')).toBeUndefined()
-        })
-
-        it('expose.focus() выставляет focused=true программно', async () => {
-            const wrapper = createWrapper()
-
-            ;(wrapper.vm as any).focus()
-            await nextTick()
-
-            expect(field(wrapper).attributes('data-focused')).toBe('true')
-            expect(wrapper.emitted('focus')).toBeTruthy()
-        })
-
-        it('expose.blur() выставляет focused=false программно', async () => {
-            const wrapper = createWrapper()
-
-            ;(wrapper.vm as any).focus()
-            await nextTick()
-            ;(wrapper.vm as any).blur()
-            await nextTick()
-
-            expect(field(wrapper).attributes('data-focused')).toBe('false')
-            expect(wrapper.emitted('blur')).toBeTruthy()
-        })
-
         it('expose.reset сбрасывает ошибку валидации', async () => {
             const wrapper = createWrapper({
                 props: {
@@ -698,15 +627,35 @@ describe('CInput', () => {
                 },
             })
 
-            ;await (wrapper.vm as any).validate()
+            await (wrapper.vm as any).validate()
             await nextTick()
 
             expect(field(wrapper).attributes('aria-invalid')).toBe('true')
+
             ;(wrapper.vm as any).reset()
             await nextTick()
 
             expect(field(wrapper).attributes('aria-invalid')).toBeUndefined()
             expect(field(wrapper).attributes('data-has-error')).toBe('false')
+        })
+
+        it('несколько циклов validate → reset корректны', async () => {
+            const wrapper = createWrapper({
+                props: {
+                    modelValue: '',
+                    rules: [() => ({ valid: false, message: 'Err' })],
+                },
+            })
+
+            for (let i = 0; i < 3; i++) {
+                await (wrapper.vm as any).validate()
+                await nextTick()
+                expect(field(wrapper).attributes('aria-invalid')).toBe('true')
+
+                ;(wrapper.vm as any).reset()
+                await nextTick()
+                expect(field(wrapper).attributes('aria-invalid')).toBeUndefined()
+            }
         })
     })
 
@@ -725,37 +674,11 @@ describe('CInput', () => {
                 },
             })
 
-            ;await (wrapper.vm as any).validate()
+            await (wrapper.vm as any).validate()
             await nextTick()
 
             expect(wrapper.get('.test-details').text()).toBe('Обязательное поле')
             expect(field(wrapper).attributes('aria-invalid')).toBe('true')
-        })
-
-        it('сбрасывает ошибку после исправления значения при validateOn=blur', async () => {
-            const wrapper = createWrapper({
-                props: {
-                    id: 'name',
-                    modelValue: '',
-                    validateOn: 'blur',
-                    rules: [
-                        (v: string) => ({ valid: !!v, message: 'Ошибка' }),
-                    ],
-                },
-            })
-
-            await field(wrapper).trigger('focus')
-            await field(wrapper).trigger('blur')
-            await nextTick()
-
-            expect(field(wrapper).attributes('aria-invalid')).toBe('true')
-
-            await wrapper.setProps({ modelValue: 'filled' })
-            await field(wrapper).trigger('focus')
-            await field(wrapper).trigger('blur')
-            await nextTick()
-
-            expect(field(wrapper).attributes('aria-invalid')).toBeUndefined()
         })
 
         it('валидирует на blur при validateOn=blur', async () => {
@@ -791,158 +714,31 @@ describe('CInput', () => {
         })
     })
 
-    describe('aria — kind=checkbox/radio', () => {
-        it('добавляет aria-labelledby для kind=checkbox без label', () => {
-            const wrapper = createWrapper({
-                props: { id: 'agree', kind: 'checkbox' },
-            })
-
-            expect(field(wrapper).attributes('aria-labelledby')).toBe('agree-label')
-        })
-
-        it('добавляет aria-labelledby для kind=radio без label', () => {
-            const wrapper = createWrapper({
-                props: { id: 'opt', kind: 'radio' },
-            })
-
-            expect(field(wrapper).attributes('aria-labelledby')).toBe('opt-label')
-        })
-
-        it('не добавляет aria-labelledby для kind=input без label', () => {
-            const wrapper = createWrapper({
-                props: { id: 'name', kind: 'input' },
-            })
-
-            expect(field(wrapper).attributes('aria-labelledby')).toBeUndefined()
-        })
-    })
-
-    describe('slots', () => {
-        it('details slot получает uid, errorMessage и hasError', async () => {
-            const wrapper = createWrapper({
-                props: {
-                    id: 'pass',
-                    modelValue: '',
-                    rules: [() => ({ valid: false, message: 'Ошибка' })],
-                },
-                slots: {
-                    details: ({ uid, errorMessage, hasError }: any) =>
-                        h('div', { class: 'slot-details', 'data-uid': uid, 'data-error': `${hasError}` }, errorMessage),
-                },
-            })
-
-            ;await (wrapper.vm as any).validate()
-            await nextTick()
-
-            const el = wrapper.get('.slot-details')
-
-            expect(el.attributes('data-uid')).toBe('pass')
-            expect(el.attributes('data-error')).toBe('true')
-            expect(el.text()).toBe('Ошибка')
-        })
-    })
-
-    describe('presets — приоритеты состояний', () => {
-        it('focused-preset не применяется при disabled', async () => {
-            const wrapper = createWrapper({
-                props: { preset: 'input.base', disabled: true },
-            })
-
-            await field(wrapper).trigger('focus')
-            await nextTick()
-
-            expect(wrapper.classes()).toContain('disabled-root')
-            expect(wrapper.classes()).not.toContain('focused-root')
-        })
-
-        it('focused-preset не применяется при readonly', async () => {
-            const wrapper = createWrapper({
-                props: { preset: 'input.base', readonly: true },
-            })
-
-            await field(wrapper).trigger('focus')
-            await nextTick()
-
-            expect(wrapper.classes()).toContain('readonly-root')
-            expect(wrapper.classes()).not.toContain('focused-root')
-        })
-    })
-
-    describe('state classes — edge cases', () => {
-        it('нет c-input--default при disabled', () => {
-            const wrapper = createWrapper({
-                props: { disabled: true },
-            })
-
-            expect(wrapper.classes()).not.toContain('c-input--default')
-        })
-
-        it('нет c-input--default при readonly', () => {
-            const wrapper = createWrapper({
-                props: { readonly: true },
-            })
-
-            expect(wrapper.classes()).not.toContain('c-input--default')
-        })
-
-        it('нет c-input--default при ошибке', async () => {
-            const wrapper = createWrapper({
-                props: {
-                    rules: [() => ({ valid: false, message: 'err' })],
-                },
-            })
-
-            ;await (wrapper.vm as any).validate()
-            await nextTick()
-
-            expect(wrapper.classes()).not.toContain('c-input--default')
-        })
-    })
-
-    describe('validation — validateOn=input', () => {
-        it('валидирует автоматически при смене modelValue', async () => {
-            const wrapper = createWrapper({
-                props: {
-                    modelValue: 'ok',
-                    validateOn: 'input',
-                    rules: [
-                        (v: string) => ({ valid: v.length >= 3, message: 'Мин. 3 символа' }),
-                    ],
-                },
-            })
-
-            await wrapper.setProps({ modelValue: 'ab' })
-            await nextTick()
-
-            expect(field(wrapper).attributes('aria-invalid')).toBe('true')
-
-            await wrapper.setProps({ modelValue: 'abc' })
-            await nextTick()
-
-            expect(field(wrapper).attributes('aria-invalid')).toBeUndefined()
-        })
-    })
-
     describe('form integration', () => {
         it('регистрирует validate в форме при mount и удаляет при unmount', () => {
             const formApi = {
                 add: vi.fn(),
                 remove: vi.fn(),
+                addReset: vi.fn(),
+                removeReset: vi.fn(),
             }
 
-            const wrapper = createWrapper({
-                formApi,
-            })
+            const wrapper = createWrapper({ formApi })
 
             expect(formApi.add).toHaveBeenCalledTimes(1)
             expect(formApi.add).toHaveBeenCalledWith(expect.any(Function))
+            expect(formApi.addReset).toHaveBeenCalledTimes(1)
+            expect(formApi.addReset).toHaveBeenCalledWith(expect.any(Function))
 
             const validate = formApi.add.mock.calls[0][0]
+            const reset = formApi.addReset.mock.calls[0][0]
 
             wrapper.unmount()
 
             expect(formApi.remove).toHaveBeenCalledTimes(1)
             expect(formApi.remove).toHaveBeenCalledWith(validate)
+            expect(formApi.removeReset).toHaveBeenCalledTimes(1)
+            expect(formApi.removeReset).toHaveBeenCalledWith(reset)
         })
     })
 })

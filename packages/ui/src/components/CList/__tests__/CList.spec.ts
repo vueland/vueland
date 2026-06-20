@@ -1,12 +1,21 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
-import { defineComponent, h, inject, nextTick, ref } from 'vue'
+import {
+    describe,
+    expect,
+    it,
+} from 'vitest'
+import {
+    defineComponent,
+    h,
+    inject,
+    nextTick,
+    ref,
+} from 'vue'
 
 import { $LIST_API_KEY } from '../../../constants'
 import { CList } from '../../index'
 
 type ListApi<T> = {
-    model: { value: T | T[] | null }
     select: (item: T) => void
     unselect: (item: T) => void
     isActive: (item: T) => boolean
@@ -23,11 +32,7 @@ describe('CList', () => {
             template: '<div />',
         })
 
-        const wrapper = mount(CList<number>, {
-            slots: {
-                default: () => h(CProbe),
-            },
-        })
+        const wrapper = mount(CList<number>, { slots: { default: () => h(CProbe) } })
 
         const probe = wrapper.findComponent(CProbe)
 
@@ -35,15 +40,10 @@ describe('CList', () => {
         expect(typeof (probe.vm as any).api.select).toBe('function')
         expect(typeof (probe.vm as any).api.unselect).toBe('function')
         expect(typeof (probe.vm as any).api.isActive).toBe('function')
-        expect((probe.vm as any).api.model.value).toBe(null)
     })
 
     it('пробрасывает class из attrs', () => {
-        const wrapper = mount(CList, {
-            attrs: {
-                class: 'custom-list another-class',
-            },
-        })
+        const wrapper = mount(CList, { attrs: { class: 'custom-list another-class' } })
 
         expect(wrapper.classes()).toContain('c-list')
         expect(wrapper.classes()).toContain('custom-list')
@@ -51,11 +51,7 @@ describe('CList', () => {
     })
 
     it('добавляет класс readonly', () => {
-        const wrapper = mount(CList, {
-            props: {
-                readonly: true,
-            },
-        })
+        const wrapper = mount(CList, { props: { readonly: true } })
 
         expect(wrapper.classes()).toContain('c-list--readonly')
     })
@@ -66,26 +62,18 @@ describe('CList', () => {
         const Host = defineComponent({
             setup() {
                 return () =>
-                    h(
-                        CList<number>,
-                        {
-                            modelValue: model.value,
-                            'onUpdate:modelValue': (v: any) => {
-                                model.value = v
-                            },
+                    h(CList<number>, {
+                        modelValue: model.value,
+                        'onUpdate:modelValue': (v: any) => {
+                            model.value = v
                         },
-                        {
-                            default: (slotProps: any) =>
-                                h(
-                                    'button',
-                                    {
-                                        class: 'select-btn',
-                                        onClick: () => slotProps.select(42),
-                                    },
-                                    'select',
-                                ),
-                        },
-                    )
+                    }, {
+                        default: (slotProps: any) =>
+                            h('button', {
+                                class: 'select-btn',
+                                onClick: () => slotProps.select(42),
+                            }, 'select'),
+                    })
             },
         })
 
@@ -104,21 +92,17 @@ describe('CList', () => {
         const Host = defineComponent({
             setup() {
                 return () =>
-                    h(
-                        CList<number>,
-                        {
-                            modelValue: model.value,
-                            'onUpdate:modelValue': (v: any) => {
-                                model.value = v
-                            },
+                    h(CList<number>, {
+                        modelValue: model.value,
+                        'onUpdate:modelValue': (v: any) => {
+                            model.value = v
                         },
-                        {
-                            default: (slotProps: any) => {
-                                latestIsActive = slotProps.isActive
-                                return h('div')
-                            },
+                    }, {
+                        default: (slotProps: any) => {
+                            latestIsActive = slotProps.isActive
+                            return h('div')
                         },
-                    )
+                    })
             },
         })
 
@@ -136,26 +120,18 @@ describe('CList', () => {
         const Host = defineComponent({
             setup() {
                 return () =>
-                    h(
-                        CList<number>,
-                        {
-                            modelValue: model.value,
-                            'onUpdate:modelValue': (v: any) => {
-                                model.value = v
-                            },
+                    h(CList<number>, {
+                        modelValue: model.value,
+                        'onUpdate:modelValue': (v: any) => {
+                            model.value = v
                         },
-                        {
-                            default: (slotProps: any) =>
-                                h(
-                                    'button',
-                                    {
-                                        class: 'unselect-btn',
-                                        onClick: () => slotProps.unselect(42),
-                                    },
-                                    'unselect',
-                                ),
-                        },
-                    )
+                    }, {
+                        default: (slotProps: any) =>
+                            h('button', {
+                                class: 'unselect-btn',
+                                onClick: () => slotProps.unselect(42),
+                            }, 'unselect'),
+                    })
             },
         })
 
@@ -173,27 +149,19 @@ describe('CList', () => {
         const Host = defineComponent({
             setup() {
                 return () =>
-                    h(
-                        CList<number>,
-                        {
-                            mandatory: true,
-                            modelValue: model.value,
-                            'onUpdate:modelValue': (v: any) => {
-                                model.value = v
-                            },
+                    h(CList<number>, {
+                        mandatory: true,
+                        modelValue: model.value,
+                        'onUpdate:modelValue': (v: any) => {
+                            model.value = v
                         },
-                        {
-                            default: (slotProps: any) =>
-                                h(
-                                    'button',
-                                    {
-                                        class: 'unselect-btn',
-                                        onClick: () => slotProps.unselect(42),
-                                    },
-                                    'unselect',
-                                ),
-                        },
-                    )
+                    }, {
+                        default: (slotProps: any) =>
+                            h('button', {
+                                class: 'unselect-btn',
+                                onClick: () => slotProps.unselect(42),
+                            }, 'unselect'),
+                    })
             },
         })
 
@@ -211,27 +179,19 @@ describe('CList', () => {
         const Host = defineComponent({
             setup() {
                 return () =>
-                    h(
-                        CList<number>,
-                        {
-                            multiple: true,
-                            modelValue: model.value,
-                            'onUpdate:modelValue': (v: any) => {
-                                model.value = v
-                            },
+                    h(CList<number>, {
+                        multiple: true,
+                        modelValue: model.value,
+                        'onUpdate:modelValue': (v: any) => {
+                            model.value = v
                         },
-                        {
-                            default: (slotProps: any) =>
-                                h(
-                                    'button',
-                                    {
-                                        class: 'select-btn',
-                                        onClick: () => slotProps.select(10),
-                                    },
-                                    'select',
-                                ),
-                        },
-                    )
+                    }, {
+                        default: (slotProps: any) =>
+                            h('button', {
+                                class: 'select-btn',
+                                onClick: () => slotProps.select(10),
+                            }, 'select'),
+                    })
             },
         })
 
@@ -249,37 +209,25 @@ describe('CList', () => {
         const Host = defineComponent({
             setup() {
                 return () =>
-                    h(
-                        CList<number>,
-                        {
-                            multiple: true,
-                            modelValue: model.value,
-                            'onUpdate:modelValue': (v: any) => {
-                                model.value = v
-                            },
+                    h(CList<number>, {
+                        multiple: true,
+                        modelValue: model.value,
+                        'onUpdate:modelValue': (v: any) => {
+                            model.value = v
                         },
-                        {
-                            default: (slotProps: any) =>
-                                h('div', [
-                                    h(
-                                        'button',
-                                        {
-                                            class: 'select-1',
-                                            onClick: () => slotProps.select(1),
-                                        },
-                                        'select-1',
-                                    ),
-                                    h(
-                                        'button',
-                                        {
-                                            class: 'select-2',
-                                            onClick: () => slotProps.select(2),
-                                        },
-                                        'select-2',
-                                    ),
-                                ]),
-                        },
-                    )
+                    }, {
+                        default: (slotProps: any) =>
+                            h('div', [
+                                h('button', {
+                                    class: 'select-1',
+                                    onClick: () => slotProps.select(1),
+                                }, 'select-1'),
+                                h('button', {
+                                    class: 'select-2',
+                                    onClick: () => slotProps.select(2),
+                                }, 'select-2'),
+                            ]),
+                    })
             },
         })
 
@@ -298,27 +246,19 @@ describe('CList', () => {
         const Host = defineComponent({
             setup() {
                 return () =>
-                    h(
-                        CList<number>,
-                        {
-                            multiple: true,
-                            modelValue: model.value,
-                            'onUpdate:modelValue': (v: any) => {
-                                model.value = v
-                            },
+                    h(CList<number>, {
+                        multiple: true,
+                        modelValue: model.value,
+                        'onUpdate:modelValue': (v: any) => {
+                            model.value = v
                         },
-                        {
-                            default: (slotProps: any) =>
-                                h(
-                                    'button',
-                                    {
-                                        class: 'unselect-btn',
-                                        onClick: () => slotProps.unselect(2),
-                                    },
-                                    'unselect',
-                                ),
-                        },
-                    )
+                    }, {
+                        default: (slotProps: any) =>
+                            h('button', {
+                                class: 'unselect-btn',
+                                onClick: () => slotProps.unselect(2),
+                            }, 'unselect'),
+                    })
             },
         })
 
@@ -337,22 +277,18 @@ describe('CList', () => {
         const Host = defineComponent({
             setup() {
                 return () =>
-                    h(
-                        CList<number>,
-                        {
-                            multiple: true,
-                            modelValue: model.value,
-                            'onUpdate:modelValue': (v: any) => {
-                                model.value = v
-                            },
+                    h(CList<number>, {
+                        multiple: true,
+                        modelValue: model.value,
+                        'onUpdate:modelValue': (v: any) => {
+                            model.value = v
                         },
-                        {
-                            default: (slotProps: any) => {
-                                latestIsActive = slotProps.isActive
-                                return h('div')
-                            },
+                    }, {
+                        default: (slotProps: any) => {
+                            latestIsActive = slotProps.isActive
+                            return h('div')
                         },
-                    )
+                    })
             },
         })
 
@@ -370,27 +306,19 @@ describe('CList', () => {
         const Host = defineComponent({
             setup() {
                 return () =>
-                    h(
-                        CList<number>,
-                        {
-                            readonly: true,
-                            modelValue: model.value,
-                            'onUpdate:modelValue': (v: any) => {
-                                model.value = v
-                            },
+                    h(CList<number>, {
+                        readonly: true,
+                        modelValue: model.value,
+                        'onUpdate:modelValue': (v: any) => {
+                            model.value = v
                         },
-                        {
-                            default: (slotProps: any) =>
-                                h(
-                                    'button',
-                                    {
-                                        class: 'select-btn',
-                                        onClick: () => slotProps.select(5),
-                                    },
-                                    'select',
-                                ),
-                        },
-                    )
+                    }, {
+                        default: (slotProps: any) =>
+                            h('button', {
+                                class: 'select-btn',
+                                onClick: () => slotProps.select(5),
+                            }, 'select'),
+                    })
             },
         })
 
@@ -408,27 +336,19 @@ describe('CList', () => {
         const Host = defineComponent({
             setup() {
                 return () =>
-                    h(
-                        CList<number>,
-                        {
-                            readonly: true,
-                            modelValue: model.value,
-                            'onUpdate:modelValue': (v: any) => {
-                                model.value = v
-                            },
+                    h(CList<number>, {
+                        readonly: true,
+                        modelValue: model.value,
+                        'onUpdate:modelValue': (v: any) => {
+                            model.value = v
                         },
-                        {
-                            default: (slotProps: any) =>
-                                h(
-                                    'button',
-                                    {
-                                        class: 'unselect-btn',
-                                        onClick: () => slotProps.unselect(5),
-                                    },
-                                    'unselect',
-                                ),
-                        },
-                    )
+                    }, {
+                        default: (slotProps: any) =>
+                            h('button', {
+                                class: 'unselect-btn',
+                                onClick: () => slotProps.unselect(5),
+                            }, 'unselect'),
+                    })
             },
         })
 
@@ -449,21 +369,17 @@ describe('CList', () => {
         const Host = defineComponent({
             setup() {
                 return () =>
-                    h(
-                        CList<{ id: number }>,
-                        {
-                            modelValue: model.value,
-                            'onUpdate:modelValue': (v: any) => {
-                                model.value = v as { id: number }
-                            },
+                    h(CList<{ id: number }>, {
+                        modelValue: model.value,
+                        'onUpdate:modelValue': (v: any) => {
+                            model.value = v as { id: number }
                         },
-                        {
-                            default: (slotProps: any) => {
-                                latestIsActive = slotProps.isActive
-                                return h('div')
-                            },
+                    }, {
+                        default: (slotProps: any) => {
+                            latestIsActive = slotProps.isActive
+                            return h('div')
                         },
-                    )
+                    })
             },
         })
 
@@ -482,27 +398,19 @@ describe('CList', () => {
         const Host = defineComponent({
             setup() {
                 return () =>
-                    h(
-                        CList<{ id: number }>,
-                        {
-                            multiple: true,
-                            modelValue: model.value,
-                            'onUpdate:modelValue': (v: any) => {
-                                model.value = v
-                            },
+                    h(CList<{ id: number }>, {
+                        multiple: true,
+                        modelValue: model.value,
+                        'onUpdate:modelValue': (v: any) => {
+                            model.value = v
                         },
-                        {
-                            default: (slotProps: any) =>
-                                h(
-                                    'button',
-                                    {
-                                        class: 'unselect-btn',
-                                        onClick: () => slotProps.unselect(item1),
-                                    },
-                                    'unselect',
-                                ),
-                        },
-                    )
+                    }, {
+                        default: (slotProps: any) =>
+                            h('button', {
+                                class: 'unselect-btn',
+                                onClick: () => slotProps.unselect(item1),
+                            }, 'unselect'),
+                    })
             },
         })
 
@@ -512,6 +420,132 @@ describe('CList', () => {
         await nextTick()
 
         expect(model.value).toEqual([{ id: 999 }, item2])
+    })
+
+    describe('role', () => {
+        it('без props role и selectable не устанавливает атрибут role', () => {
+            const wrapper = mount(CList)
+            expect(wrapper.attributes('role')).toBeUndefined()
+        })
+
+        it('selectable=true устанавливает role="listbox"', () => {
+            const wrapper = mount(CList, { props: { selectable: true } })
+            expect(wrapper.attributes('role')).toBe('listbox')
+        })
+
+        it('prop role="menu" устанавливает role="menu"', () => {
+            const wrapper = mount(CList, { props: { role: 'menu' } })
+            expect(wrapper.attributes('role')).toBe('menu')
+        })
+
+        it('prop role имеет приоритет над selectable', () => {
+            const wrapper = mount(CList, { props: { role: 'menu', selectable: true } })
+            expect(wrapper.attributes('role')).toBe('menu')
+        })
+    })
+
+    describe('aria-multiselectable', () => {
+        it('multiple=true устанавливает aria-multiselectable="true"', () => {
+            const wrapper = mount(CList, { props: { multiple: true } })
+            expect(wrapper.attributes('aria-multiselectable')).toBe('true')
+        })
+
+        it('без multiple устанавливает aria-multiselectable="false"', () => {
+            const wrapper = mount(CList)
+            expect(wrapper.attributes('aria-multiselectable')).toBe('false')
+        })
+    })
+
+    describe('tabindex', () => {
+        it('без role и selectable не устанавливает tabindex', () => {
+            const wrapper = mount(CList)
+            expect(wrapper.attributes('tabindex')).toBeUndefined()
+        })
+
+        it('selectable=true устанавливает tabindex="-1"', () => {
+            const wrapper = mount(CList, { props: { selectable: true } })
+            expect(wrapper.attributes('tabindex')).toBe('-1')
+        })
+
+        it('role="listbox" устанавливает tabindex="-1"', () => {
+            const wrapper = mount(CList, { props: { role: 'listbox' } })
+            expect(wrapper.attributes('tabindex')).toBe('-1')
+        })
+
+        it('role="menu" устанавливает tabindex="-1"', () => {
+            const wrapper = mount(CList, { props: { role: 'menu' } })
+            expect(wrapper.attributes('tabindex')).toBe('-1')
+        })
+
+        it('кастомный tabindex через attrs перекрывает вычисленный', () => {
+            const wrapper = mount(CList, {
+                props: { selectable: true },
+                attrs: { tabindex: 0 },
+            })
+            expect(wrapper.attributes('tabindex')).toBe('0')
+        })
+    })
+
+    describe('multiple + mandatory', () => {
+        it('multiple + mandatory: unselect не удаляет последний элемент', async () => {
+            const model = ref<number[]>([42])
+
+            const Host = defineComponent({
+                setup() {
+                    return () =>
+                        h(CList<number>, {
+                            multiple: true,
+                            mandatory: true,
+                            modelValue: model.value,
+                            'onUpdate:modelValue': (v: any) => {
+                                model.value = v
+                            },
+                        }, {
+                            default: (slotProps: any) =>
+                                h('button', {
+                                    class: 'unselect-btn',
+                                    onClick: () => slotProps.unselect(42),
+                                }, 'unselect'),
+                        })
+                },
+            })
+
+            const wrapper = mount(Host)
+            await wrapper.find('.unselect-btn').trigger('click')
+            await nextTick()
+
+            expect(model.value).toEqual([42])
+        })
+
+        it('multiple + mandatory: unselect удаляет не последний элемент', async () => {
+            const model = ref<number[]>([1, 2])
+
+            const Host = defineComponent({
+                setup() {
+                    return () =>
+                        h(CList<number>, {
+                            multiple: true,
+                            mandatory: true,
+                            modelValue: model.value,
+                            'onUpdate:modelValue': (v: any) => {
+                                model.value = v
+                            },
+                        }, {
+                            default: (slotProps: any) =>
+                                h('button', {
+                                    class: 'unselect-btn',
+                                    onClick: () => slotProps.unselect(1),
+                                }, 'unselect'),
+                        })
+                },
+            })
+
+            const wrapper = mount(Host)
+            await wrapper.find('.unselect-btn').trigger('click')
+            await nextTick()
+
+            expect(model.value).toEqual([2])
+        })
     })
 
     it('slot получает select, unselect и isActive', async () => {

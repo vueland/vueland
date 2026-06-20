@@ -1,6 +1,20 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { computed, defineComponent, h, nextTick, reactive, shallowRef } from 'vue'
+import {
+    afterEach,
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+} from 'vitest'
+import {
+    computed,
+    defineComponent,
+    h,
+    nextTick,
+    reactive,
+    shallowRef,
+} from 'vue'
 
 import { $APP_API_KEY } from '../../constants'
 import { useAutoPosition } from '../use-auto-position'
@@ -84,9 +98,7 @@ async function flushRaf() {
 }
 
 async function createHarness(initialProps: HarnessProps = {}) {
-    const props = reactive({
-        ...initialProps,
-    })
+    const props = reactive({ ...initialProps })
 
     let api!: ReturnType<typeof useAutoPosition>
 
@@ -173,13 +185,13 @@ describe('useAutoPosition', () => {
             clearTimeout(id)
         })
 
-        vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (
+        vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function(
             this: HTMLElement,
         ) {
             return sizes.get(this)?.width ?? 0
         })
 
-        vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function (
+        vi.spyOn(HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(function(
             this: HTMLElement,
         ) {
             return sizes.get(this)?.height ?? 0
@@ -238,9 +250,7 @@ describe('useAutoPosition', () => {
     })
 
     it('позиционирует content под activator при bottom=true', async () => {
-        const { api, update } = await createHarness({
-            bottom: true,
-        })
+        const { api, update } = await createHarness({ bottom: true })
 
         await update()
 
@@ -249,9 +259,11 @@ describe('useAutoPosition', () => {
     })
 
     it('позиционирует content над activator при top=true', async () => {
-        const { api, content, update } = await createHarness({
-            top: true,
-        })
+        const {
+            api,
+            content,
+            update,
+        } = await createHarness({ top: true })
 
         setSize(content, {
             width: 120,
@@ -265,9 +277,12 @@ describe('useAutoPosition', () => {
     })
 
     it('позиционирует content слева от activator при left=true', async () => {
-        const { api, activator, content, update } = await createHarness({
-            left: true,
-        })
+        const {
+            api,
+            activator,
+            content,
+            update,
+        } = await createHarness({ left: true })
 
         setRect(activator, {
             top: 200,
@@ -288,9 +303,12 @@ describe('useAutoPosition', () => {
     })
 
     it('позиционирует content справа от activator при right=true', async () => {
-        const { api, activator, content, update } = await createHarness({
-            right: true,
-        })
+        const {
+            api,
+            activator,
+            content,
+            update,
+        } = await createHarness({ right: true })
 
         setRect(activator, {
             top: 200,
@@ -394,9 +412,12 @@ describe('useAutoPosition', () => {
             value: 500,
         })
 
-        const { api, activator, content, update } = await createHarness({
-            strategy: 'bounce',
-        })
+        const {
+            api,
+            activator,
+            content,
+            update,
+        } = await createHarness({ strategy: 'bounce' })
 
         setRect(activator, {
             top: 100,
@@ -416,7 +437,12 @@ describe('useAutoPosition', () => {
     })
 
     it('bounce ограничивает content по левому краю viewport', async () => {
-        const { api, activator, content, update } = await createHarness({
+        const {
+            api,
+            activator,
+            content,
+            update,
+        } = await createHarness({
             left: true,
             strategy: 'bounce',
         })
@@ -444,7 +470,12 @@ describe('useAutoPosition', () => {
             value: 320,
         })
 
-        const { api, activator, content, update } = await createHarness({
+        const {
+            api,
+            activator,
+            content,
+            update,
+        } = await createHarness({
             bottom: true,
             strategy: 'bounce',
         })
@@ -467,7 +498,12 @@ describe('useAutoPosition', () => {
     })
 
     it('bounce ограничивает content по верхнему краю viewport', async () => {
-        const { api, activator, content, update } = await createHarness({
+        const {
+            api,
+            activator,
+            content,
+            update,
+        } = await createHarness({
             top: true,
             strategy: 'bounce',
         })
@@ -490,7 +526,12 @@ describe('useAutoPosition', () => {
     })
 
     it('reverse открывает снизу, если сверху не хватает места', async () => {
-        const { api, activator, content, update } = await createHarness({
+        const {
+            api,
+            activator,
+            content,
+            update,
+        } = await createHarness({
             top: true,
             strategy: 'reverse',
         })
@@ -518,7 +559,12 @@ describe('useAutoPosition', () => {
             value: 320,
         })
 
-        const { api, activator, content, update } = await createHarness({
+        const {
+            api,
+            activator,
+            content,
+            update,
+        } = await createHarness({
             bottom: true,
             strategy: 'reverse',
         })
@@ -541,7 +587,12 @@ describe('useAutoPosition', () => {
     })
 
     it('reverse открывает справа, если слева не хватает места', async () => {
-        const { api, activator, content, update } = await createHarness({
+        const {
+            api,
+            activator,
+            content,
+            update,
+        } = await createHarness({
             left: true,
             strategy: 'reverse',
         })
@@ -569,7 +620,12 @@ describe('useAutoPosition', () => {
             value: 500,
         })
 
-        const { api, activator, content, update } = await createHarness({
+        const {
+            api,
+            activator,
+            content,
+            update,
+        } = await createHarness({
             right: true,
             strategy: 'reverse',
         })
@@ -592,7 +648,11 @@ describe('useAutoPosition', () => {
     })
 
     it('реагирует на изменение positionX и positionY', async () => {
-        const { api, props, update } = await createHarness({
+        const {
+            api,
+            props,
+            update,
+        } = await createHarness({
             positionX: 100,
             positionY: 100,
         })
@@ -612,7 +672,11 @@ describe('useAutoPosition', () => {
     })
 
     it('реагирует на изменение offsetX и offsetY', async () => {
-        const { api, props, update } = await createHarness({
+        const {
+            api,
+            props,
+            update,
+        } = await createHarness({
             bottom: true,
             offsetX: 0,
             offsetY: 0,
@@ -633,9 +697,11 @@ describe('useAutoPosition', () => {
     })
 
     it('реагирует на изменение направления позиционирования', async () => {
-        const { api, props, update } = await createHarness({
-            bottom: true,
-        })
+        const {
+            api,
+            props,
+            update,
+        } = await createHarness({ bottom: true })
 
         await update()
 
@@ -655,7 +721,12 @@ describe('useAutoPosition', () => {
             value: 320,
         })
 
-        const { api, activator, content, update } = await createHarness({
+        const {
+            api,
+            activator,
+            content,
+            update,
+        } = await createHarness({
             bottom: true,
             strategy: 'bounce',
         })
@@ -790,7 +861,11 @@ describe('useAutoPosition', () => {
     it('отменяет запланированный requestAnimationFrame при unmount', async () => {
         const cancelSpy = vi.spyOn(window, 'cancelAnimationFrame')
 
-        const { props, wrapper, update } = await createHarness({
+        const {
+            props,
+            wrapper,
+            update,
+        } = await createHarness({
             positionX: 100,
             positionY: 100,
         })

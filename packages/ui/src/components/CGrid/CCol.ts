@@ -28,27 +28,24 @@ export const CCol = defineComponent({
             default: null,
         },
 
-        ...BREAKPOINTS.reduce(
-            (props, bp) => {
-                props[bp] = {
-                    type: [String, Number] as PropType<string | number>,
-                    default: null,
-                }
+        ...BREAKPOINTS.reduce((props, bp) => {
+            props[bp] = {
+                type: [String, Number] as PropType<string | number>,
+                default: null,
+            }
 
-                props[`order-${bp}`] = {
-                    type: [String, Number] as PropType<string | number>,
-                    default: null,
-                }
+            props[`order-${bp}`] = {
+                type: [String, Number] as PropType<string | number>,
+                default: null,
+            }
 
-                props[`offset-${bp}`] = {
-                    type: [String, Number] as PropType<string | number>,
-                    default: null,
-                }
+            props[`offset-${bp}`] = {
+                type: [String, Number] as PropType<string | number>,
+                default: null,
+            }
 
-                return props
-            },
-            {} as Record<string, any>,
-        ),
+            return props
+        }, {} as Record<string, any>),
     },
 
     setup(props, { slots }): () => VNode {

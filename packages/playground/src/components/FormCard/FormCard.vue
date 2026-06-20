@@ -82,12 +82,8 @@
         currentPreset.value = 'input.E'
     }
 
-    watchEffect(() => {
-        console.log(unref(form).radius)
-    })
-
-    const onSelect = () => {
-        // professions.value = professions.value.slice(0, -1)
+    const onSelect = (e) => {
+        console.log(e)
     }
 
 </script>
@@ -108,9 +104,10 @@
                     :preset="currentPreset"
                     details="some text"
                     placeholder="введите текст"
-                    clearable
                     min="3"
+                    clearable
                     max="5"
+                    @input="onSelect"
                 />
                 <c-select
                     v-model="form.radius"
@@ -147,18 +144,24 @@
                             size="20"
                         />
                     </template>
-<!--                    <template #menu="{items}">-->
-<!--                        <div v-for="it of items">{{ it.raw }}</div>-->
-<!--                    </template>-->
+                   <template #menu="{items}">
+                       <div v-for="it of items">{{ it.raw }}</div>
+                    </template>
                 </c-autocomplete>
-                <c-date-input/>
+                <c-date-input
+                    :disabled-dates="{from: new Date()}"
+                    monday-first
+                    label="Выберите дату"
+                    lang="ru"
+                    class="mt-4"
+                    clearable
+                />
                 <c-select
                     v-model="form.level"
                     :items="levels"
                     placeholder="выберите пункт"
                     class="mt-4"
                     title-key="title"
-                    readonly
                     label="Select"
                 />
                 <c-checkbox v-model="checkbox" :rules="checkboxRules">

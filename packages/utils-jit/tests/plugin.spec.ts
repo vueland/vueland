@@ -35,7 +35,7 @@ function asHookPlugin(plugin: Plugin): HookPlugin {
     return plugin as HookPlugin
 }
 
-function callHook<T extends (...args: any[]) => any>(
+function callHook<T extends(...args: any[]) => any>(
     hook: T | { handler: T },
     ...args: Parameters<T>
 ): ReturnType<T> {

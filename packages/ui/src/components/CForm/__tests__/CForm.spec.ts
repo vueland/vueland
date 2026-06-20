@@ -100,6 +100,52 @@ describe('CForm', () => {
         expect(typeof slotValidateSpy.mock.calls[0]?.[0]).toBe('function')
     })
 
+    it('передает reset в default slot', () => {
+        let slotReset: unknown
+
+        mount(CForm, {
+            slots: {
+                default: ({ validate, reset }: any) => {
+                    void validate
+                    slotReset = reset
+                    return h('div')
+                },
+            },
+        })
+
+        expect(typeof slotReset).toBe('function')
+    })
+
+    it('slot reset вызывает зарегистрированные reset-функции', async () => {
+        const resetMock = vi.fn()
+
+        const ResetField = defineComponent({
+            name: 'ResetField',
+            setup() {
+                const formApi = inject<any>($FORM_API_KEY)
+                formApi?.addReset(resetMock)
+                return () => h('div')
+            },
+        })
+
+        let slotReset: (() => void) | undefined
+
+        mount(CForm, {
+            slots: {
+                default: ({ validate, reset }: any) => {
+                    void validate
+                    slotReset = reset
+                    return h(ResetField)
+                },
+            },
+        })
+
+        slotReset!()
+        await nextTick()
+
+        expect(resetMock).toHaveBeenCalledTimes(1)
+    })
+
     it('expose.validate доступен через ref', async () => {
         const wrapper = mount(CForm)
 
@@ -373,6 +419,84 @@ describe('CForm', () => {
         expect(calls).toEqual(['first', 'second', 'third'])
     })
 
+    it('expose.reset вызывает все зарегистрированные reset-функции', async () => {
+        const resetFirst = vi.fn()
+        const resetSecond = vi.fn()
+
+        const ResetField = defineComponent({
+            name: 'ResetField',
+            props: { resetFn: { type: Function, required: true } },
+            setup(props) {
+                const formApi = inject<any>($FORM_API_KEY)
+                formApi?.addReset(props.resetFn)
+                return () => h('div')
+            },
+            beforeUnmount() {
+                const formApi = inject<any>($FORM_API_KEY)
+                formApi?.removeReset(this.resetFn)
+            },
+        })
+
+        const wrapper = mount(CForm, {
+            slots: {
+                default: () => [
+                    h(ResetField, { resetFn: resetFirst }),
+                    h(ResetField, { resetFn: resetSecond }),
+                ],
+            },
+        })
+
+        ;(wrapper.vm as any).reset()
+
+        expect(resetFirst).toHaveBeenCalledTimes(1)
+        expect(resetSecond).toHaveBeenCalledTimes(1)
+    })
+
+    it('expose.reset не вызывает reset размонтированного поля', async () => {
+        const resetFn = vi.fn()
+        const show = ref(true)
+
+        const ResetField = defineComponent({
+            name: 'ResetField',
+            setup() {
+                const formApi = inject<any>($FORM_API_KEY)
+                formApi?.addReset(resetFn)
+                return () => h('div')
+            },
+            beforeUnmount() {
+                const formApi = inject<any>($FORM_API_KEY)
+                formApi?.removeReset(resetFn)
+            },
+        })
+
+        const Host = defineComponent({
+            components: { CForm, ResetField },
+            setup() { return { show } },
+            template: '<CForm ref="formRef"><ResetField v-if="show" /></CForm>',
+        })
+
+        const wrapper = mount(Host)
+
+        show.value = false
+        await nextTick()
+
+        ;(wrapper.vm.$refs.formRef as any).reset()
+
+        expect(resetFn).not.toHaveBeenCalled()
+    })
+
+    it('эмитит submit при отправке формы', async () => {
+        const wrapper = mount(CForm, { attachTo: document.body })
+
+        wrapper.find('form').element.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+        await nextTick()
+
+        expect(wrapper.emitted('submit')).toHaveLength(1)
+        expect(wrapper.emitted('submit')![0][0]).toBeInstanceOf(Event)
+
+        wrapper.unmount()
+    })
+
     it('корректно удаляет только конкретный валидатор при размонтировании одного из нескольких полей', async () => {
         const first = vi.fn(() => true)
         const second = vi.fn(() => true)
@@ -425,5 +549,74 @@ describe('CForm', () => {
         expect(first).toHaveBeenCalledTimes(1)
         expect(second).not.toHaveBeenCalled()
         expect(third).toHaveBeenCalledTimes(1)
+    })
+
+    describe('async валидаторы', () => {
+        it('validate ждёт async валидаторы и возвращает true', async () => {
+            const asyncValid = vi.fn(async () => true)
+
+            const wrapper = mount(CForm, {
+                slots: { default: () => h(RegisteringField, { validateFn: asyncValid }) },
+            })
+
+            await expect((wrapper.vm as any).validate()).resolves.toBe(true)
+            expect(asyncValid).toHaveBeenCalledTimes(1)
+        })
+
+        it('validate возвращает false если async валидатор отклонил', async () => {
+            const asyncInvalid = vi.fn(async () => false)
+
+            const wrapper = mount(CForm, {
+                slots: { default: () => h(RegisteringField, { validateFn: asyncInvalid }) },
+            })
+
+            await expect((wrapper.vm as any).validate()).resolves.toBe(false)
+        })
+
+        it('validate запускает sync и async валидаторы параллельно', async () => {
+            const order: string[] = []
+
+            const syncFn = vi.fn(() => {
+                order.push('sync')
+                return true
+            })
+            const asyncFn = vi.fn(async () => {
+                order.push('async')
+                return true
+            })
+
+            const wrapper = mount(CForm, {
+                slots: {
+                    default: () => [
+                        h(RegisteringField, { validateFn: syncFn }),
+                        h(RegisteringField, { validateFn: asyncFn }),
+                    ],
+                },
+            })
+
+            await expect((wrapper.vm as any).validate()).resolves.toBe(true)
+            expect(order).toEqual(['sync', 'async'])
+        })
+
+        it('validate возвращает false если один из нескольких async валидаторов не прошёл', async () => {
+            const first = vi.fn(async () => true)
+            const second = vi.fn(async () => false)
+            const third = vi.fn(async () => true)
+
+            const wrapper = mount(CForm, {
+                slots: {
+                    default: () => [
+                        h(RegisteringField, { validateFn: first }),
+                        h(RegisteringField, { validateFn: second }),
+                        h(RegisteringField, { validateFn: third }),
+                    ],
+                },
+            })
+
+            await expect((wrapper.vm as any).validate()).resolves.toBe(false)
+            expect(first).toHaveBeenCalledTimes(1)
+            expect(second).toHaveBeenCalledTimes(1)
+            expect(third).toHaveBeenCalledTimes(1)
+        })
     })
 })

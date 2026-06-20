@@ -1,9 +1,65 @@
 # CApp
 
-`CApp` is a Vueland UI component.
+`CApp` is the root layout component of Vueland UI. It must wrap your entire application. It sets up the scroll management API for overlays (dialogs, menus, tooltips) and provides the `role="application"` landmark for accessibility.
 
-This page preserves the original documentation route and describes the component purpose so navigation never points to missing pages.
+## Basic usage
 
-## Work in progress
+```vue
+<template>
+  <CApp>
+    <CMain>
+      <!-- your page content -->
+    </CMain>
+  </CApp>
+</template>
+```
 
-Detailed API documentation for props, slots, events and CSS variables can be extended as the library evolves.
+## Scroll management
+
+`CApp` provides `ApplicationApi` via inject, consumed internally by `CDialog`, `CMenu`, and `COverlay` to block and restore page scroll when overlays are open. You can also access it directly with `inject($APP_API_KEY)`.
+
+```ts
+import { inject } from 'vue'
+import { $APP_API_KEY } from '@vueland/ui/constants'
+import type { ApplicationApi } from '@vueland/ui/types'
+
+const app = inject<ApplicationApi>($APP_API_KEY)
+
+app?.blockScroll()    // lock scroll
+app?.unblockScroll()  // restore scroll
+app?.getScrollTop()   // current scroll Y
+app?.getScrollLeft()  // current scroll X
+```
+
+---
+
+## API
+
+### Props
+
+`CApp` has no props.
+
+### Slots
+
+| Slot | Description |
+|------|-------------|
+| `default` | Application content |
+
+### Events
+
+`CApp` emits no events.
+
+### Expose
+
+`CApp` exposes nothing directly. Use `inject($APP_API_KEY)` to access the scroll API.
+
+### CSS classes
+
+| Class | Description |
+|-------|-------------|
+| `c-app` | Root element |
+| `c-app__wrapper` | Inner wrapper for scroll content |
+
+### Accessibility
+
+The root element carries `role="application"`, which marks the area as an interactive web application for screen readers.

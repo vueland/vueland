@@ -1,4 +1,8 @@
-import { type Component, computed, type ComputedRef } from 'vue'
+import {
+    type Component,
+    computed,
+    type ComputedRef,
+} from 'vue'
 
 import { useCore } from './use-core'
 

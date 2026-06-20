@@ -1,6 +1,18 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { defineComponent, h, inject, nextTick } from 'vue'
+import {
+    afterEach,
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+} from 'vitest'
+import {
+    defineComponent,
+    h,
+    inject,
+    nextTick,
+} from 'vue'
 
 import { $APP_API_KEY } from '../../../constants'
 import { CApp, CBtn } from '../../index'
@@ -36,13 +48,22 @@ describe('CApp', () => {
     })
 
     it('рендерит slot', () => {
-        const wrapper = mount(CApp, {
-            slots: {
-                default: () => h(CBtn),
-            },
-        })
+        const wrapper = mount(CApp, { slots: { default: () => h(CBtn) } })
 
         expect(wrapper.find('button').exists()).toBe(true)
+    })
+
+    it('имеет role="application" на корневом элементе', () => {
+        const wrapper = mount(CApp)
+
+        expect(wrapper.attributes('role')).toBe('application')
+    })
+
+    it('рендерит пустой c-app__wrapper без слота', () => {
+        const wrapper = mount(CApp)
+
+        expect(wrapper.find('.c-app__wrapper').exists()).toBe(true)
+        expect(wrapper.find('.c-app__wrapper').text()).toBe('')
     })
 
     it('пробрасывает API через provide', () => {
@@ -56,11 +77,7 @@ describe('CApp', () => {
             },
         })
 
-        mount(CApp, {
-            slots: {
-                default: () => h(Consumer),
-            },
-        })
+        mount(CApp, { slots: { default: () => h(Consumer) } })
 
         expect(api).toBeTruthy()
         expect(api.getScrollTop).toBeTypeOf('function')
@@ -79,11 +96,7 @@ describe('CApp', () => {
             },
         })
 
-        mount(CApp, {
-            slots: {
-                default: () => h(Consumer),
-            },
-        })
+        mount(CApp, { slots: { default: () => h(Consumer) } })
 
         // Меняем значения скролла
         Object.defineProperty(window, 'scrollY', {
@@ -132,11 +145,7 @@ describe('CApp', () => {
             value: 15,
         })
 
-        const wrapper = mount(CApp, {
-            slots: {
-                default: () => h(Consumer),
-            },
-        })
+        const wrapper = mount(CApp, { slots: { default: () => h(Consumer) } })
 
         api.blockScroll()
         await nextTick()
@@ -177,11 +186,7 @@ describe('CApp', () => {
             value: 25,
         })
 
-        const wrapper = mount(CApp, {
-            slots: {
-                default: () => h(Consumer),
-            },
-        })
+        const wrapper = mount(CApp, { slots: { default: () => h(Consumer) } })
 
         // Блокируем скролл
         api.blockScroll()
@@ -222,11 +227,7 @@ describe('CApp', () => {
             return 1
         })
 
-        mount(CApp, {
-            slots: {
-                default: () => h(Consumer),
-            },
-        })
+        mount(CApp, { slots: { default: () => h(Consumer) } })
 
         api.unblockScroll()
         await nextTick()

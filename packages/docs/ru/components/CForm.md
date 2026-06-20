@@ -19,7 +19,7 @@ import AirlineFormExample from '../../examples/CForm/AirlineFormExample.vue'
 ```vue
 <template>
   <CForm ref="formRef">
-    <template #default="{ validate }">
+    <template #default="{ validate, reset }">
       <CTextField
         v-model="form.email"
         label="Email"
@@ -94,7 +94,7 @@ function handleReset() {
 ```vue
 <template>
   <CForm ref="formRef">
-    <template #default="{ validate }">
+    <template #default="{ validate, reset }">
       <div class="form-grid">
         <CTextField v-model="form.firstName" label="Имя" :rules="requiredRule" validate-on="blur" preset="input.indigo" />
         <CTextField v-model="form.lastName" label="Фамилия" :rules="requiredRule" validate-on="blur" preset="input.indigo" />
@@ -163,7 +163,7 @@ function handleReset() {
 ```vue
 <template>
   <CForm ref="formRef">
-    <template #default="{ validate }">
+    <template #default="{ validate, reset }">
 
       <!-- Шаг 1: Детали рейса -->
       <div v-if="currentStep === 0">
@@ -240,7 +240,7 @@ async function handleNext(validate: () => Promise<boolean>) {
 ```vue
 <template>
   <CForm>
-    <template #default="{ validate }">
+    <template #default="{ validate, reset }">
       <CTextField
         v-model="form.username"
         label="Логин"
@@ -300,23 +300,27 @@ async function handleSubmit(validate: () => Promise<boolean>) {
 
 | Slot | Props | Description |
 |------|-------|-------------|
-| `default` | `{ validate }` | Содержимое формы с функцией validate |
+| `default` | `{ validate, reset }` | Содержимое формы с функциями validate и reset |
 
 #### Пропсы слота `default`
 
 | Prop | Type | Description |
 |------|------|-------------|
 | `validate` | `() => Promise<boolean>` | Запускает валидацию всех зарегистрированных полей. Возвращает `true`, если все поля валидны |
+| `reset` | `() => void` | Сбрасывает состояние валидации всех зарегистрированных полей |
 
-### Events
+### События
 
-`CForm` не эмитит собственных событий. Нативное событие `submit` блокируется через `onSubmit={(e) => e.preventDefault()}`.
+| Событие | Аргументы | Описание |
+|---------|-----------|----------|
+| `submit` | `Event` | Эмитится при отправке формы. Нативный submit блокируется автоматически |
 
 ### Expose
 
-| Method | Signature | Description |
-|--------|-----------|-------------|
+| Метод | Сигнатура | Описание |
+|-------|-----------|----------|
 | `validate` | `() => Promise<boolean>` | Запустить валидацию всех полей |
+| `reset` | `() => void` | Сбросить состояние валидации всех полей |
 
 ```vue
 <template>

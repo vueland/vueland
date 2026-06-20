@@ -1,5 +1,10 @@
 import { mount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import {
+    describe,
+    expect,
+    it,
+    vi,
+} from 'vitest'
 import { defineComponent, h } from 'vue'
 
 import { $FORM_API_KEY } from '../../constants'
@@ -21,9 +26,7 @@ function mountUseForm(formApi?: unknown) {
                 provide:
                     formApi === undefined
                         ? {}
-                        : {
-                              [$FORM_API_KEY as symbol]: formApi,
-                          },
+                        : { [$FORM_API_KEY as symbol]: formApi },
             },
         },
     )

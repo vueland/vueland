@@ -13,6 +13,8 @@ declare module 'vue' {
         CChip: typeof import('./CChip').CChip
         CDialog: typeof import('./CDialog').CDialog
         CDialogsStack: typeof import('./CDialog').CDialogsStack
+        CDatePicker: typeof import('./CDatePicker').CDatePicker
+        CDateInput: typeof import('./CDateInput').CDateInput
         COverlay: typeof import('./COverlay').COverlay
         CField: typeof import('./CField').CField
         CForm: typeof import('./CForm').CForm

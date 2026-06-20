@@ -1,2 +1,2 @@
-export * from './COverlay'
-// export * from './tyoes'
+export { default as COverlay } from './COverlay.vue'
+export * from './tyoes'
