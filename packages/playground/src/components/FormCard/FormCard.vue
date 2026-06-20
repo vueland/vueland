@@ -145,7 +145,7 @@
                         />
                     </template>
                    <template #menu="{items}">
-                       <div v-for="it of items">{{ it.raw }}</div>
+                       <div v-for="it of items" class="mt-[10px]">{{ it.raw }}</div>
                     </template>
                 </c-autocomplete>
                 <c-date-input

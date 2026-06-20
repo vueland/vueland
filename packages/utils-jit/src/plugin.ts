@@ -366,13 +366,57 @@ export function utilsJIT(options?: JitOptions): Plugin {
         writeCssFile(notify)
     }
 
+    function buildScssBreakpointsMap(bps: Record<string, number>): string {
+        const entries = Object.entries(bps)
+            .map(([key, value]) => `'${key}': ${value === 0 ? '0' : `${value}px`}`)
+            .join(', ')
+
+        return `(${entries})`
+    }
+
     return {
         name: 'utils-jit',
         enforce: 'pre',
 
+        config() {
+            if (!options?.breakpoints) return
+
+            const bpMap = buildScssBreakpointsMap(options.breakpoints)
+
+            return {
+                define: {
+                    __VUELAND_BREAKPOINTS__: JSON.stringify(options.breakpoints),
+                },
+                css: {
+                    preprocessorOptions: {
+                        scss: {
+                            additionalData(source: string, filename: string) {
+                                if (filename.includes('styles/styles.scss')) {
+                                    return source.replace(
+                                        '@forward "maps/grids"',
+                                        `@forward "maps/grids" with ($grid-breakpoints: ${bpMap})`,
+                                    )
+                                }
+
+                                if (filename.includes('CGrid/CGrid.scss')) {
+                                    return source.replace(
+                                        '@use "../../styles/maps/grids" as *;',
+                                        `@use "../../styles/maps/grids" as * with ($grid-breakpoints: ${bpMap});`,
+                                    )
+                                }
+
+                                return source
+                            },
+                        },
+                    },
+                },
+            }
+        },
+
         configResolved(config: any) {
             root = config.root
             outFile = path.resolve(root, resolvedOptions.outFile)
+
             rebuildAll(false)
         },
 

@@ -1,102 +1,96 @@
 <template>
-  <div class="ex-wrap">
-    <CCard class="elevation-3" style="max-width: 520px; width: 100%">
-      <CCardHeader class="bg-indigo pa-6 d-flex align-center" style="gap: 12px; color: #fff">
-        <CIcon name="fas:user-circle" :size="28" source="fa" />
-        <span style="font-size: 18px; font-weight: 600">Edit Profile</span>
-      </CCardHeader>
+  <div class="d-flex justify-center pa-6">
+    <CCard class="elevation-2 form-card">
+      <div class="form-header d-flex align-center gap-3 px-6 py-5">
+        <div class="header-icon d-flex align-center justify-center">
+          <CIcon name="fas:user" :size="18" source="fa" />
+        </div>
+        <div>
+          <div class="fs-lg fw-bold">Edit Profile</div>
+          <div class="fs-sm" style="opacity:.5">Update your information</div>
+        </div>
+      </div>
 
-      <CCardBody class="pa-6">
+      <CCardBody class="px-6 pb-6 pt-5">
         <CForm ref="formRef">
           <template #default="{ validate }">
-            <div class="form-grid">
+            <div class="d-flex flex-col gap-4">
+              <div class="form-row gap-4">
+                <CTextField
+                  v-model="form.firstName"
+                  label="First name"
+                  :rules="requiredRule"
+                  validate-on="blur"
+                  preset="input.blue"
+                />
+                <CTextField
+                  v-model="form.lastName"
+                  label="Last name"
+                  :rules="requiredRule"
+                  validate-on="blur"
+                  preset="input.blue"
+                />
+              </div>
+
               <CTextField
-                v-model="form.firstName"
-                label="First name"
-                :rules="requiredRule"
+                v-model="form.email"
+                label="Email"
+                type="email"
+                :rules="emailRules"
                 validate-on="blur"
-                preset="input.indigo"
-              />
+                preset="input.blue"
+              >
+                <template #prepend>
+                  <CIcon name="fas:envelope" :size="14" source="fa" />
+                </template>
+              </CTextField>
+
               <CTextField
-                v-model="form.lastName"
-                label="Last name"
-                :rules="requiredRule"
+                v-model="form.phone"
+                label="Phone"
+                type="tel"
+                :rules="phoneRules"
                 validate-on="blur"
-                preset="input.indigo"
-              />
+                preset="input.blue"
+              >
+                <template #prepend>
+                  <CIcon name="fas:phone" :size="14" source="fa" />
+                </template>
+              </CTextField>
 
-              <div class="form-full">
-                <CTextField
-                  v-model="form.email"
-                  label="Email"
-                  type="email"
-                  :rules="emailRules"
-                  validate-on="blur"
-                  preset="input.indigo"
-                >
-                  <template #prepend>
-                    <CIcon name="fas:envelope" :size="14" source="fa" />
-                  </template>
-                </CTextField>
-              </div>
+              <CTextField
+                v-model="form.website"
+                label="Website"
+                validate-on="blur"
+                preset="input.blue"
+              >
+                <template #prepend>
+                  <CIcon name="fas:globe" :size="14" source="fa" />
+                </template>
+              </CTextField>
 
-              <div class="form-full">
-                <CTextField
-                  v-model="form.phone"
-                  label="Phone"
-                  type="tel"
-                  :rules="phoneRules"
-                  validate-on="blur"
-                  preset="input.indigo"
-                >
-                  <template #prepend>
-                    <CIcon name="fas:phone" :size="14" source="fa" />
-                  </template>
-                </CTextField>
-              </div>
+              <CTextField
+                v-model="form.username"
+                label="Username"
+                readonly
+                preset="input.blue"
+              >
+                <template #prepend>
+                  <CIcon name="fas:at" :size="14" source="fa" />
+                </template>
+                <template #details>
+                  <span class="fs-xs" style="opacity:.5">Username cannot be changed</span>
+                </template>
+              </CTextField>
 
-              <div class="form-full">
-                <CTextField
-                  v-model="form.website"
-                  label="Website"
-                  validate-on="blur"
-                  preset="input.indigo"
-                >
-                  <template #prepend>
-                    <CIcon name="fas:globe" :size="14" source="fa" />
-                  </template>
-                </CTextField>
-              </div>
-
-              <div class="form-full readonly-block">
-                <CTextField
-                  v-model="form.username"
-                  label="Username"
-                  readonly
-                  preset="input.indigo"
-                >
-                  <template #prepend>
-                    <CIcon name="fas:at" :size="14" source="fa" />
-                  </template>
-                  <template #details>
-                    <span style="opacity: .6; font-size: 12px">Username cannot be changed</span>
-                  </template>
-                </CTextField>
-              </div>
-
-              <div class="form-actions">
-                <CBtn
-                  class="bg-indigo elevation-1"
-                  style="color: #fff"
-                  :disabled="saving"
-                  @click="() => handleSave(validate)"
-                >
+              <div class="d-flex align-center gap-3 mt-2">
+                <CBtn class="btn-primary" :disabled="saving" @click="() => handleSave(validate)">
                   {{ saving ? 'Saving…' : 'Save changes' }}
                 </CBtn>
-                <CBtn variant="text" @click="handleReset">Cancel</CBtn>
+                <CBtn class="btn-ghost" @click="handleReset">Cancel</CBtn>
               </div>
 
-              <div v-if="saved" class="form-full success-msg text-green">
+              <div v-if="saved" class="d-flex align-center gap-2 text-green fw-semi-bold fs-sm">
                 <CIcon name="fas:check" :size="13" source="fa" />
                 Profile updated successfully
               </div>
@@ -123,21 +117,15 @@ const form = ref({
   website: '',
   username: 'alexjohnson',
 })
-
 const original = { ...form.value }
 
 const requiredRule = [(v: string) => ({ valid: !!v?.trim(), message: 'Required' })]
-
 const emailRules = [
   (v: string) => ({ valid: !!v, message: 'Email is required' }),
   (v: string) => ({ valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), message: 'Invalid email' }),
 ]
-
 const phoneRules = [
-  (v: string) => ({
-    valid: !v || /^\+?[\d\s\-()]{7,}$/.test(v),
-    message: 'Invalid phone number',
-  }),
+  (v: string) => ({ valid: !v || /^\+?[\d\s\-()]{7,}$/.test(v), message: 'Invalid phone number' }),
 ]
 
 async function handleSave(validate: () => Promise<boolean>) {
@@ -150,7 +138,6 @@ async function handleSave(validate: () => Promise<boolean>) {
   }
   saving.value = false
 }
-
 function handleReset() {
   form.value = { ...original }
   saved.value = false
@@ -159,38 +146,42 @@ function handleReset() {
 </script>
 
 <style scoped>
-.ex-wrap {
-  padding: 24px;
-  display: flex;
-  justify-content: center;
-}
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.form-full {
-  grid-column: 1 / -1;
-}
-.form-actions {
-  grid-column: 1 / -1;
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-.success-msg {
+.form-card { max-width: 480px; width: 100%; }
+
+.form-header { border-bottom: 1px solid var(--vp-c-divider, #e5e5e5); }
+
+.header-icon {
+  width: 40px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-weight: 500;
-  font-size: 13px;
+  justify-content: center;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #27d98c, #2f8cff);
+  color: #fff;
+  flex-shrink: 0;
+  line-height: 1;
 }
-.readonly-block :deep(.c-field--readonly) {
-  opacity: 0.75;
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
-@media (max-width: 500px) {
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
+
+.btn-primary {
+  background: linear-gradient(135deg, #27d98c, #2f8cff);
+  color: #fff !important;
+  font-weight: 600;
+  padding: 0 24px;
+}
+
+.btn-ghost {
+  background: transparent !important;
+  border: 1.5px solid var(--vp-c-divider, #ddd) !important;
+  color: var(--vp-c-text-2) !important;
+}
+
+@media (max-width: 480px) {
+  .form-row { grid-template-columns: 1fr; }
 }
 </style>

@@ -148,6 +148,57 @@ describe('plugins / base shape', () => {
     })
 })
 
+describe('plugins / scss breakpoints injection', () => {
+    function getAdditionalData(plugin: any): ((source: string, filename: string) => string) | undefined {
+        return plugin.config?.()?.css?.preprocessorOptions?.scss?.additionalData
+    }
+
+    const STYLES_FILE = '/path/to/@vueland/ui/src/styles/styles.scss'
+    const STYLES_SOURCE = '@forward "maps/grids";\n@use "ress";\n@use "utils/flex";'
+
+    it('config хук не возвращается если breakpoints не переданы', () => {
+        const plugin = utilsJIT() as any
+
+        expect(plugin.config?.()).toBeUndefined()
+    })
+
+    it('additionalData подменяет @forward в styles.scss с кастомными брейкпоинтами', () => {
+        const plugin = utilsJIT({ breakpoints: { sm: 640, md: 768, lg: 1024 } }) as any
+        const fn = getAdditionalData(plugin)!
+        const result = fn(STYLES_SOURCE, STYLES_FILE)
+
+        expect(result).toContain("@forward \"maps/grids\" with ($grid-breakpoints: ('sm': 640px, 'md': 768px, 'lg': 1024px))")
+        expect(result).not.toContain('@forward "maps/grids";')
+    })
+
+    it('additionalData не трогает другие scss файлы', () => {
+        const plugin = utilsJIT({ breakpoints: { sm: 640 } }) as any
+        const fn = getAdditionalData(plugin)!
+        const otherSource = '.foo { display: flex; }'
+        const result = fn(otherSource, '/path/to/utils/_flex.scss')
+
+        expect(result).toBe(otherSource)
+    })
+
+    it('additionalData корректно обрабатывает xs: 0', () => {
+        const plugin = utilsJIT({ breakpoints: { xs: 0, sm: 640 } }) as any
+        const fn = getAdditionalData(plugin)!
+        const result = fn(STYLES_SOURCE, STYLES_FILE)
+
+        expect(result).toContain("'xs': 0")
+        expect(result).toContain("'sm': 640px")
+    })
+
+    it('additionalData не меняет остальное содержимое styles.scss', () => {
+        const plugin = utilsJIT({ breakpoints: { sm: 640 } }) as any
+        const fn = getAdditionalData(plugin)!
+        const result = fn(STYLES_SOURCE, STYLES_FILE)
+
+        expect(result).toContain('@use "ress"')
+        expect(result).toContain('@use "utils/flex"')
+    })
+})
+
 describe('plugins / filesystem integration', () => {
     let project: ReturnType<typeof createTempProject>
 

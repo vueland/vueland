@@ -545,6 +545,27 @@ describe('CInput', () => {
     })
 
     describe('events and exposed methods', () => {
+        it('focused prop инициализирует state.focused=true', async () => {
+            const wrapper = createWrapper({ props: { focused: true } })
+
+            await nextTick()
+
+            expect(field(wrapper).attributes('data-focused')).toBe('true')
+            expect(wrapper.classes()).toContain('c-input--focused')
+        })
+
+        it('изменение v-model:focused извне обновляет focused состояние', async () => {
+            const wrapper = createWrapper({ props: { focused: false } })
+
+            expect(field(wrapper).attributes('data-focused')).toBe('false')
+
+            await wrapper.setProps({ focused: true })
+            await nextTick()
+
+            expect(field(wrapper).attributes('data-focused')).toBe('true')
+            expect(wrapper.classes()).toContain('c-input--focused')
+        })
+
         it('focus выставляет focused=true', async () => {
             const wrapper = createWrapper()
 

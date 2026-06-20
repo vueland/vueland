@@ -6,7 +6,7 @@ import {
 } from 'vitest'
 
 import { BREAKPOINTS } from '../../../constants'
-import { CCol } from '../../index'
+import { CCol } from '../CCol'
 
 describe('CCol', () => {
     it('рендерится как div', () => {

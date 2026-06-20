@@ -1,18 +1,125 @@
 # Utility Classes
 
-Utility classes are a compact set of helper CSS classes for common layout and typography tasks. They do not replace the component approach and do not turn the library into a Tailwind-style framework.
+Vueland UI provides two complementary layers of CSS utilities:
+
+- **Predefined utilities** — a set of ready-made classes for spacing, colors, typography, layout and more. Compiled from SCSS and shipped with the library.
+- **JIT utilities** — arbitrary-value classes generated on demand by the `@vueland/utils-jit` Vite plugin, based on classes actually used in your source files.
+
+Both layers support **responsive variants** and share the same breakpoint configuration when `@vueland/utils-jit` is used.
+
+The same breakpoints also drive the [Grid system components](/en/components/CRow) — `CRow`, `CCol`, and `CSpacer` — so column widths and alignment respond to the same values as utility classes.
+
+## Predefined utilities
+
+Simply add the needed class to any HTML element or component:
+
+```html
+<div class="pa-4 text-center bg-blue text-white">
+  Hello, world!
+</div>
+```
+
+### Responsive variants
+
+Most utilities support responsive prefixes that apply styles from the given breakpoint upward (mobile-first):
+
+| Prefix | Default min-width |
+|--------|-------------------|
+| (none) | all sizes         |
+| `sm:`  | 600px             |
+| `md:`  | 960px             |
+| `lg:`  | 1280px            |
+| `xl:`  | 1920px            |
+| `xxl:` | 2560px            |
+
+```html
+<div class="pa-2 md:pa-6 lg:pa-10">
+  Responsive padding
+</div>
+```
+
+## JIT utilities (arbitrary values)
+
+The `@vueland/utils-jit` Vite plugin extends the utility layer with arbitrary values in square brackets:
+
+```html
+<div class="w-[320px] h-[200px] bg-[#42b883] z-[100]">
+  Arbitrary values
+</div>
+```
+
+JIT classes are generated on demand — only the classes actually used in your source files end up in the CSS bundle. Nothing is shipped upfront.
+
+### Setup
+
+```ts
+// vite.config.ts
+import { utilsJIT } from '@vueland/utils-jit'
+
+export default defineConfig({
+  plugins: [utilsJIT()],
+})
+```
+
+```ts
+// Import the generated file in your entry
+import 'src/.generated/utils-jit.css'
+```
+
+### Responsive JIT classes
+
+JIT classes support the same responsive prefixes as predefined utilities:
+
+```html
+<div class="w-[100%] md:w-[720px] lg:w-[960px]">
+  Responsive widths
+</div>
+```
+
+### Hover and focus variants
+
+```html
+<button class="bg-[#42b883] hover:bg-[#33a06f] focus:outline-[2px]">
+  Button
+</button>
+```
+
+## Syncing breakpoints across both layers
+
+When you configure `breakpoints` in `utilsJIT()`, they are automatically applied to **both** layers — predefined SCSS utilities and JIT classes — without any extra configuration:
+
+```ts
+// vite.config.ts
+utilsJIT({
+  breakpoints: {
+    xs: 0,
+    sm: 600,
+    md: 960,
+    lg: 1280,
+    xl: 1920,
+    xxl: 2560,
+  },
+})
+```
+
+After this, `sm:d-flex` (predefined) and `sm:w-[960px]` (JIT) both activate at exactly `600px`. The reactive `useDisplay` composable in JS uses the same values as well. See [Breakpoints](/en/guide/breakpoints) for details.
 
 ## Sections
 
-- [Colors](./colors)
-- [Position](./position)
-- [Spacing](./spacing)
-- [Flex](./flex)
-- [Typography](./typography)
-- [Display](./display)
-- [Overflow](./overflow)
-- [Sizing](./sizing)
-- [Opacity](./opacity)
-- [Text](./text)
-- [Radius](./radius)
-- [Elevation](./elevation)
+| Section | Description |
+|---------|-------------|
+| [Colors](./colors) | Background, text color, hover/active states |
+| [Spacing](./spacing) | margin, padding, gap |
+| [Typography](./typography) | Font size, weight, line height |
+| [Text](./text) | Alignment, transform, wrap |
+| [Flex](./flex) | Flexbox utilities |
+| [Display](./display) | display values |
+| [Sizing](./sizing) | width, height, min/max |
+| [Positioning](./position) | position, inset, z-index |
+| [Borders](./borders) | border-width, style, color |
+| [Radius](./radius) | border-radius |
+| [Elevation](./elevation) | box-shadow (Material Design) |
+| [Opacity](./opacity) | opacity |
+| [Overflow](./overflow) | overflow |
+| [Helpers](./helpers) | visibility, pointer-events, object-fit and more |
+| [Cursor](./cursor) | cursor |

@@ -1,6 +1,6 @@
 import { inject } from 'vue'
 
-import type { ApplicationApi } from '../components/CApp'
+import type { ApplicationApi } from '../components'
 import { $APP_API_KEY } from '../constants'
 
 export function useApplication() {

@@ -16,14 +16,12 @@
 
 ## Scroll management
 
-`CApp` provides `ApplicationApi` via inject, consumed internally by `CDialog`, `CMenu`, and `COverlay` to block and restore page scroll when overlays are open. You can also access it directly with `inject($APP_API_KEY)`.
+`CApp` provides `ApplicationApi` via inject, consumed internally by `CDialog`, `CMenu`, and `COverlay` to block and restore page scroll when overlays are open. You can also access it directly with composable `useApplication`.
 
 ```ts
-import { inject } from 'vue'
-import { $APP_API_KEY } from '@vueland/ui/constants'
-import type { ApplicationApi } from '@vueland/ui/types'
+import { useApplication } from '@vueland/ui/composables'
 
-const app = inject<ApplicationApi>($APP_API_KEY)
+const app = useApplication()
 
 app?.blockScroll()    // lock scroll
 app?.unblockScroll()  // restore scroll

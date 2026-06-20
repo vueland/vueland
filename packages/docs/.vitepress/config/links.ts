@@ -45,6 +45,22 @@ export function createSidebar(locale: Locale): DefaultTheme.Sidebar {
                         text: t.sidebar.guide.gettingStarted,
                         link: link(locale, '/guide/getting-started'),
                     },
+                    {
+                        text: t.sidebar.guide.theming,
+                        link: link(locale, '/guide/theming'),
+                    },
+                    {
+                        text: t.sidebar.guide.icons,
+                        link: link(locale, '/guide/icons'),
+                    },
+                    {
+                        text: t.sidebar.guide.presets,
+                        link: link(locale, '/guide/presets'),
+                    },
+                    {
+                        text: t.sidebar.guide.breakpoints,
+                        link: link(locale, '/guide/breakpoints'),
+                    },
                 ],
             },
         ],

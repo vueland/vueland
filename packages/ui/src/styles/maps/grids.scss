@@ -15,9 +15,9 @@ $grid-gutters: (
 
 $grid-breakpoints: (
   'xs': 0,
-  'sm': 576px,
-  'md': 768px,
-  'lg': 992px,
-  'xl': 1200px,
-  'xxl': 1920px
-);
+  'sm': 600px,
+  'md': 960px,
+  'lg': 1280px,
+  'xl': 1920px,
+  'xxl': 2560px
+) !default;

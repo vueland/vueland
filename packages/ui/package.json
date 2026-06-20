@@ -71,7 +71,9 @@
             "types": "./dist/types/index.d.ts",
             "import": "./dist/types/index.d.ts"
         },
-        "./css/themes/default-theme.css": "./dist/css/themes/default-theme.css"
+        "./css/themes/default-theme.css": "./dist/css/themes/default-theme.css",
+        "./styles/scss/styles.scss": "./dist/scss/styles.scss",
+        "./styles/scss/themes/default-theme.scss": "./dist/scss/themes/default-theme.scss"
     },
     "peerDependencies": {
         "vue": "^3.5.27"
@@ -82,9 +84,10 @@
     },
     "scripts": {
         "clean": "rimraf dist",
-        "build": "pnpm run clean && pnpm run build:js && pnpm run build:types",
+        "build": "pnpm run clean && pnpm run build:js && pnpm run build:types && pnpm run build:scss",
         "build:js": "rollup -c ./build/rollup.config.mjs",
-        "build-lib": "pnpm run build:types && rollup -c ./build/rollup.config.mjs && pnpm run gen:globals &&  node ./build/insert-ref.mjs",
+        "build:scss": "node ./build/copy-scss.mjs",
+        "build-lib": "pnpm run build:types && rollup -c ./build/rollup.config.mjs && pnpm run gen:globals && node ./build/insert-ref.mjs && pnpm run build:scss",
         "build:types": "vue-tsc -p tsconfig.build.json --declaration --emitDeclarationOnly",
         "test:lib": "vitest run -c vitest.config.ts",
         "test:deploy": "vitest run -c vitest.config.ts",

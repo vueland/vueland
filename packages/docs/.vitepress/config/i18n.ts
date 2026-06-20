@@ -20,6 +20,10 @@ export type LocaleMessages = {
         guide: {
             title: string
             gettingStarted: string
+            theming: string
+            icons: string
+            presets: string
+            breakpoints: string
         }
 
         components: string
@@ -71,6 +75,10 @@ export const messages: Record<Locale, LocaleMessages> = {
             guide: {
                 title: 'Guide',
                 gettingStarted: 'Getting started',
+                theming: 'Theming',
+                icons: 'Icons',
+                presets: 'Presets',
+                breakpoints: 'Breakpoints',
             },
 
             components: 'Components',
@@ -121,6 +129,10 @@ export const messages: Record<Locale, LocaleMessages> = {
             guide: {
                 title: 'Руководство',
                 gettingStarted: 'Начало работы',
+                theming: 'Темификация',
+                icons: 'Иконки',
+                presets: 'Пресеты',
+                breakpoints: 'Брейкпоинты',
             },
 
             components: 'Компоненты',

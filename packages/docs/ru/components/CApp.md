@@ -16,14 +16,12 @@
 
 ## Управление прокруткой
 
-`CApp` предоставляет `ApplicationApi` через `provide/inject`. Внутренне он используется `CDialog`, `CMenu` и `COverlay` для блокировки и восстановления прокрутки страницы при открытии оверлеев. Вы также можете получить доступ напрямую через `inject($APP_API_KEY)`.
+`CApp` предоставляет `ApplicationApi` через `provide/inject`. Внутренне он используется `CDialog`, `CMenu` и `COverlay` для блокировки и восстановления прокрутки страницы при открытии оверлеев. Вы также можете получить доступ напрямую через композабл `useApplication`.
 
 ```ts
-import { inject } from 'vue'
-import { $APP_API_KEY } from '@vueland/ui/constants'
-import type { ApplicationApi } from '@vueland/ui/types'
+import { useApplication } from '@vueland/ui/composables'
 
-const app = inject<ApplicationApi>($APP_API_KEY)
+const app = useApplication()
 
 app?.blockScroll()    // заблокировать прокрутку
 app?.unblockScroll()  // восстановить прокрутку

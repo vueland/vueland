@@ -1,5 +1,11 @@
 # @vueland/utils-jit
 
+## 0.2.4
+
+### Patch Changes
+
+- When `breakpoints` option is provided, the plugin now automatically injects custom breakpoint values into `@vueland/ui` SCSS utilities via Vite's `additionalData` hook. This makes `breakpoints` a single source of truth for both JIT class generation and predefined SCSS responsive classes.
+
 ## 0.2.3
 
 ### Patch Changes

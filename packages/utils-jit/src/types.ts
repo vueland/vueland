@@ -39,6 +39,7 @@ export type JitOptions = {
 
     /**
      * Breakpoints в px.
+     * Используются для JIT-генерации адаптивных классов и для SCSS-утилит @vueland/ui.
      */
     breakpoints?: Record<string, number>
 

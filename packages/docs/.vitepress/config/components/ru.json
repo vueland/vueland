@@ -20,37 +20,42 @@
         "title": "CForm"
       },
       {
-        "file": "CAutocomplete",
-        "title": "CAutocomplete"
-      },
-      {
-        "file": "CSelect",
-        "title": "CSelect"
-      },
-      {
         "file": "CTextField",
         "title": "CTextField"
       },
       {
         "file": "CInput",
         "title": "CInput"
-      },
-      {
-        "file": "CCheckbox",
-        "title": "CCheckbox"
-      },
-      {
-        "file": "CRadio",
-        "title": "CRadio"
       }
     ]
   },
   {
     "title": "Действия",
+    "items": []
+  },
+  {
+    "title": "Контент",
     "items": [
       {
-        "file": "CBtn",
-        "title": "CBtn"
+        "file": "CCard",
+        "title": "CCard"
+      }
+    ]
+  },
+  {
+    "title": "Сетка",
+    "items": [
+      {
+        "file": "CRow",
+        "title": "CRow"
+      },
+      {
+        "file": "CCol",
+        "title": "CCol"
+      },
+      {
+        "file": "CSpacer",
+        "title": "CSpacer"
       }
     ]
   }

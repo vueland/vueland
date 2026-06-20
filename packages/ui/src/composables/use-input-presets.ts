@@ -28,15 +28,6 @@ function resolveZone(
     return []
 }
 
-function setNestedValue(obj: Record<string, any>, dotPath: string, value: any): void {
-    const parts = dotPath.split('.')
-    let current = obj
-    for (let i = 0; i < parts.length - 1; i++) {
-        if (!current[parts[i]]) current[parts[i]] = {}
-        current = current[parts[i]]
-    }
-    current[parts[parts.length - 1]] = value
-}
 
 const FIELD_PRESET_SIMPLE_STATES = ['focused', 'filled', 'prepended', 'appended'] as const
 const FIELD_PRESET_COMPOUND_STATES = ['error', 'disabled', 'readonly'] as const
@@ -73,6 +64,16 @@ function buildFieldPreset(preset: CInputPreset): CFieldPreset {
         ...simple,
         ...compound,
     }
+}
+
+function setNestedValue(obj: Record<string, any>, dotPath: string, value: any): void {
+    const parts = dotPath.split('.')
+    let current = obj
+    for (let i = 0; i < parts.length - 1; i++) {
+        if (!current[parts[i]]) current[parts[i]] = {}
+        current = current[parts[i]]
+    }
+    current[parts[parts.length - 1]] = value
 }
 
 export function useInputPresets({

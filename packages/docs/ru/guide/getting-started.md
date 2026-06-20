@@ -1,75 +1,207 @@
 # Быстрый старт
 
-Этот раздел описывает базовую установку и подключение **Vueland UI** в приложение на Vue 3.
+Это руководство описывает два режима подключения — выберите подходящий.
 
-## Установка
+## Выбор варианта
 
-Установите пакет библиотеки:
+| | Готовый CSS | SCSS + JIT |
+|---|---|---|
+| Утилитарные классы | Фиксированные брейкпоинты | **Настраиваемые брейкпоинты** |
+| Произвольные значения (`w-[320px]`) | ✗ | ✓ через `@vueland/utils-jit` |
+| Кастомные брейкпоинты | ✗ | ✓ один конфиг, все слои синхронизированы |
+| Сложность подключения | Минимальная | Требует Vite + SCSS |
+
+---
+
+## Вариант A — Готовый CSS (быстрый старт)
+
+Подходит для проектов, которым не нужны кастомные брейкпоинты и произвольные значения утилит.
+
+### 1. Установка
 
 ```bash
-yarn add @vueland/ui
+pnpm add @vueland/ui
 ```
 
-## Подключение библиотеки
-
-Создайте файл плагина, например `plugin.ts`, и инициализируйте Vueland UI.
+### 2. Создание плагина
 
 ```ts
+// src/plugins/vueland.ts
 import * as components from '@vueland/ui/components'
 import { createVuelandUI } from '@vueland/ui'
 import '@vueland/ui/styles.css'
-import '@vueland/ui/css/themes/default-theme.css'
 
 export const vueland = createVuelandUI({
   components,
-  ssr: false,
-  themes: {},
-  icons: {},
+  theme: 'light',
+  themes: {
+    light: { primary: '#1976d2', /* ... */ },
+  },
 })
 ```
 
-## Подключение к приложению
-
-Подключите плагин в точке входа приложения.
+### 3. Подключение к приложению
 
 ```ts
+// src/main.ts
 import { createApp } from 'vue'
 import App from './App.vue'
-import { vueland } from './plugins'
+import { vueland } from './plugins/vueland'
 
-const app = createApp(App)
-
-app.use(vueland)
-app.mount('#app')
+createApp(App).use(vueland).mount('#app')
 ```
 
-## Структура проекта
+---
 
-```txt
-src
-├─ plugin.ts
-├─ main.ts
-├─ App.vue
-└─ styles
-   └─ index.scss
+## Вариант B — SCSS + JIT (рекомендуется)
+
+Полное подключение с кастомными брейкпоинтами, произвольными значениями утилит и единой точкой конфигурации адаптивности.
+
+**Требования:** Vite, Sass (`pnpm add -D sass`).
+
+### 1. Установка
+
+```bash
+pnpm add @vueland/ui
+pnpm add -D @vueland/utils-jit sass
 ```
 
-## Что делает `createVuelandUI`
+### 2. Настройка Vite
 
-Функция создает Vue-плагин, который:
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import { utilsJIT } from '@vueland/utils-jit'
 
-- регистрирует компоненты библиотеки;
-- подключает инфраструктурные зависимости;
-- инициализирует темы и иконки;
-- настраивает поддержку SSR.
+export default defineConfig({
+  plugins: [
+    vue(),
+    utilsJIT({
+      breakpoints: {
+        xs: 0,
+        sm: 600,
+        md: 960,
+        lg: 1280,
+        xl: 1920,
+        xxl: 2560,
+      },
+    }),
+  ],
+})
+```
 
-## Опции конфигурации
+> `breakpoints` здесь становятся единственной точкой истины — они управляют JIT-классами (`sm:w-[960px]`), предопределёнными SCSS-утилитами (`md:d-flex`) и composable `useDisplay` одновременно.
+
+### 3. Создание SCSS точки входа
+
+```scss
+/* src/styles/main.scss */
+
+/* 1. Базовые стили Vueland (компоненты, утилиты, reset) */
+@use '@vueland/ui/styles/scss/styles.scss';
+
+/* 2. Переменные темы */
+@use '@vueland/ui/styles/scss/themes/default-theme.scss';
+
+/* 3. Ваши стили */
+@use './variables';
+@use './overrides';
+```
+
+> **Почему `@use`, а не `@import`?**
+> `@use` — это современная система модулей Sass: переменные изолированы и не дублируются. `@import` считается устаревшим.
+
+### 4. Создание плагина
+
+```ts
+// src/plugins/vueland.ts
+import * as components from '@vueland/ui/components'
+import { createVuelandUI } from '@vueland/ui'
+
+export const vueland = createVuelandUI({
+  components,
+  theme: 'light',
+  themes: {
+    light: { primary: '#1976d2', /* ... */ },
+  },
+  // breakpoints подтягиваются из utils-jit автоматически
+  // передайте явно только если хотите переопределить их для useDisplay
+})
+```
+
+### 5. Подключение к приложению
+
+```ts
+// src/main.ts
+import { createApp } from 'vue'
+import App from './App.vue'
+import { vueland } from './plugins/vueland'
+
+// SCSS точка входа (Vite компилирует автоматически)
+import './styles/main.scss'
+
+// JIT-сгенерированные утилиты
+import 'src/.generated/utils-jit.css'
+
+createApp(App).use(vueland).mount('#app')
+```
+
+### 6. Использование утилитарных классов
+
+```vue
+<template>
+  <!-- Предопределённые утилиты с адаптивными вариантами -->
+  <div class="d-flex flex-col md:flex-row gap-4 pa-4">
+
+    <!-- Произвольные значения через JIT -->
+    <div class="w-[320px] h-[200px] bg-[#42b883] radius-[8px]">
+      Карточка
+    </div>
+
+    <!-- Адаптивные JIT-классы -->
+    <div class="w-[100%] md:w-[480px] lg:w-[640px]">
+      Сайдбар
+    </div>
+
+  </div>
+</template>
+```
+
+---
+
+## Структура проекта (Вариант B)
+
+```
+src/
+├── plugins/
+│   └── vueland.ts        ← createVuelandUI
+├── styles/
+│   ├── main.scss         ← SCSS точка входа: @use vueland + свои стили
+│   ├── variables.scss    ← ваши SCSS-переменные
+│   └── overrides.scss    ← переопределения компонентов
+├── .generated/
+│   └── utils-jit.css     ← генерируется автоматически (добавьте в .gitignore)
+├── main.ts               ← импорт стилей + монтирование приложения
+└── App.vue
+```
+
+Добавьте `.generated/` в `.gitignore`:
+
+```
+src/.generated/
+```
+
+---
+
+## Опции `createVuelandUI`
 
 | Опция | Тип | Описание |
-| --- | --- | --- |
-| `components` | `Record` | Список регистрируемых компонентов |
-| `ssr` | `boolean` | Включает поддержку SSR |
-| `themes` | `object` | Конфигурация тем |
-| `icons` | `object` | Конфигурация иконок |
-
-После подключения библиотеки компоненты **Vueland UI** становятся доступными во всем приложении.
+|---|---|---|
+| `components` | `Record` | Компоненты для глобальной регистрации |
+| `theme` | `string` | Активная тема при старте |
+| `themes` | `ThemesOptions` | Определения цветов темы |
+| `icons` | `IconsOptions` | Наборы иконок и псевдонимы |
+| `presets` | `Record` | Пресеты стилей компонентов |
+| `breakpoints` | `Record<string, number>` | Кастомные брейкпоинты для `useDisplay`. При использовании `utils-jit` подтягиваются автоматически — явное значение имеет приоритет. Подробнее в [Брейкпоинты](/ru/guide/breakpoints) |
+| `ssr` | `boolean` | Поддержка SSR |
