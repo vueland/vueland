@@ -15,19 +15,19 @@ $radius-scale: (
     border-radius: #{$value} !important;
   }
 
-  .radius-top-left-#{$key} {
+  .radius-tl-#{$key} {
     border-top-left-radius: #{$value} !important;
   }
 
-  .radius-top-right-#{$key} {
+  .radius-tr-#{$key} {
     border-top-right-radius: #{$value} !important;
   }
 
-  .radius-bottom-left-#{$key} {
+  .radius-bl-#{$key} {
     border-bottom-left-radius: #{$value} !important;
   }
 
-  .radius-bottom-right-#{$key} {
+  .radius-br-#{$key} {
     border-bottom-right-radius: #{$value} !important;
   }
 }

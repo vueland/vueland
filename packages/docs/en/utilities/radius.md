@@ -22,10 +22,10 @@ Utilities for controlling the CSS `border-radius` property.
 
 | Class | Property |
 |-------|----------|
-| `radius-top-left-{n}` | `border-top-left-radius` |
-| `radius-top-right-{n}` | `border-top-right-radius` |
-| `radius-bottom-left-{n}` | `border-bottom-left-radius` |
-| `radius-bottom-right-{n}` | `border-bottom-right-radius` |
+| `radius-tl-{n}` | `border-top-left-radius` |
+| `radius-tr-{n}` | `border-top-right-radius` |
+| `radius-bl-{n}` | `border-bottom-left-radius` |
+| `radius-br-{n}` | `border-bottom-right-radius` |
 
 Valid `{n}` values: `0`, `2`, `4`, `6`, `8`, `12`, `16`, `24`, `32`.
 
@@ -42,12 +42,12 @@ Valid `{n}` values: `0`, `2`, `4`, `6`, `8`, `12`, `16`, `24`, `32`.
 <img class="radius-circle" style="width: 48px; height: 48px" src="avatar.jpg" />
 
 <!-- Rounded top only -->
-<div class="radius-top-left-8 radius-top-right-8">
+<div class="radius-tl-8 radius-tr-8">
   Card header
 </div>
 
 <!-- Asymmetric corners -->
-<div class="radius-top-left-16 radius-bottom-right-16">
+<div class="radius-tl-16 radius-br-16">
   Asymmetric design
 </div>
 ```

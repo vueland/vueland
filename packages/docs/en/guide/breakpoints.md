@@ -5,7 +5,7 @@ Vueland uses a **single breakpoint system** shared across four layers:
 - **CSS utility classes** — predefined responsive classes like `sm:d-flex`, `md:pa-4`
 - **JIT classes** — arbitrary responsive classes like `sm:bg-[#fff]`, `lg:w-[960px]`
 - **`useDisplay`** — reactive JS composable that exposes the current screen state
-- **Grid components** — `CRow` and `CCol` use the same breakpoints for responsive column widths and alignment props (e.g. `md="6"`, `:align-lg="'center'"`)
+- **Grid components** — `CRow` and `CCol` use the same breakpoints for responsive column widths and alignment props (e.g. `md="6"`, `align-lg="'center'"`)
 
 See [Grid system](/en/components/CRow) for the component API.
 
@@ -84,8 +84,8 @@ In your app entry file, import both SCSS source files:
 
 ```ts
 // src/main.ts
-import '@vueland/ui/src/styles/styles.scss'  // utilities + CSS variables
-import '@vueland/ui/src/styles/lib.scss'      // component styles
+import '@vueland/ui/styles/styles.scss'  // utilities + CSS variables
+import '@vueland/ui/styles/lib.scss'      // component styles
 ```
 
 This triggers Vite's SCSS preprocessor, which is where the plugin intercepts the compilation and rewrites the `$grid-breakpoints` map with your values. All four layers — predefined utilities (`sm:d-flex`), JIT classes, grid component media queries, and `useDisplay` — share the same values as a result.
