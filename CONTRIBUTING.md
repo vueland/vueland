@@ -68,7 +68,7 @@ pnpm test        # тесты проходят
 ## Создание нового компонента
 
 1. Создай директорию `packages/ui/src/components/CMyComponent/`
-2. Добавь `CMyComponent.tsx` — компонент
+2. Добавь `CMyComponent.vue` — компонент
 3. Добавь `index.ts` — реэкспорт
 4. Добавь `CMyComponent.scss` — стили (если нужны)
 5. Добавь `__tests__/CMyComponent.spec.ts` — тесты
