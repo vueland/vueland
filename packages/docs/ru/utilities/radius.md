@@ -20,12 +20,12 @@
 
 ## Отдельные углы
 
-| Класс | Свойство |
-|-------|----------|
-| `radius-top-left-{n}` | `border-top-left-radius` |
-| `radius-top-right-{n}` | `border-top-right-radius` |
-| `radius-bottom-left-{n}` | `border-bottom-left-radius` |
-| `radius-bottom-right-{n}` | `border-bottom-right-radius` |
+| Класс           | Свойство |
+|-----------------|----------|
+| `radius-tl-{n}` | `border-top-left-radius` |
+| `radius-tr-{n}` | `border-top-right-radius` |
+| `radius-bl-{n}` | `border-bottom-left-radius` |
+| `radius-br-{n}` | `border-bottom-right-radius` |
 
 Допустимые значения `{n}`: `0`, `2`, `4`, `6`, `8`, `12`, `16`, `24`, `32`.
 
@@ -42,12 +42,12 @@
 <img class="radius-circle" style="width: 48px; height: 48px" src="avatar.jpg" />
 
 <!-- Скруглён только сверху -->
-<div class="radius-top-left-8 radius-top-right-8">
+<div class="radius-tl-8 radius-tr-8">
   Шапка карточки
 </div>
 
 <!-- Разные радиусы -->
-<div class="radius-top-left-16 radius-bottom-right-16">
+<div class="radius-tl-16 radius-br-16">
   Асимметричные углы
 </div>
 ```
