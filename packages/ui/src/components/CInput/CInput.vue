@@ -29,10 +29,18 @@
     })
 
     const props = defineProps<CInputProps<T>>()
-    defineEmits<CInputEmits>()
+
+    defineEmits<CInputEmits<T>>()
+
     const slots = defineSlots<CInputSlots>()
+
+    const focusedModel = defineModel<boolean>('focused', { default: false })
+
+    const INTERNAL_HANDLERS = new Set(['onUpdate:modelValue', 'onUpdate:focused'])
+
     const state = shallowReactive<InputState>({
-        focused: props.focused ?? false,
+        get focused() { return focusedModel.value },
+        set focused(v: boolean) { focusedModel.value = v },
         isDirty: false,
     })
 
@@ -62,8 +70,6 @@
         errors.hasError)
     )
 
-    const INTERNAL_HANDLERS = new Set(['onFocus', 'onBlur', 'onUpdate:modelValue'])
-
     const normalizedAttrsMap = computed(() => Object.entries(attrs).reduce((acc, [k, v]) => {
         if (
             FIELD_ATTRS.has(k)
@@ -79,7 +85,6 @@
 
     const fieldAttrs = computed(() => ({
         ...(props.label || isCheckBox || isRadio ? { 'aria-labelledby': `${fieldId}-label` } : {}),
-        ...(props.label ? { 'aria-label': props.label } : {}),
         ...(unref(hasDetails) ? { 'aria-describedby': `${fieldId}-details` } : {}),
         ...(errors.hasError ? { 'aria-invalid': 'true' } : {}),
         ...(errors.errorMessage && unref(hasDetails) ? { 'aria-errormessage': `${fieldId}-details` } : {}),
@@ -99,8 +104,8 @@
             'c-input--disabled': props.disabled,
             'c-input--readonly': props.readonly,
             'c-input--clearable': props.clearable,
-            [attrs.class as string]: !!attrs.class,
         },
+        attrs.class,
         ...unref(preset).root
     ])
 

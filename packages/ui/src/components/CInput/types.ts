@@ -29,6 +29,7 @@ export type CInputProps<T = any> = ValidateProps &
 
 export type CInputEmits<T = any> = {
     (e: 'update:modelValue', value: T): void
+    (e: 'update:focused', value: boolean): void
 }
 
 export type CInputDetailsSlotProps = {
