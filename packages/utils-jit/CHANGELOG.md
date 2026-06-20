@@ -1,5 +1,11 @@
 # @vueland/utils-jit
 
+## 0.2.5
+
+### Patch Changes
+
+- [#34](https://github.com/vueland/vueland/pull/34) [`94648a5`](https://github.com/vueland/vueland/commit/94648a54b3287ebb92aac0f861679bc0a747290b) Thanks [@wiseadme](https://github.com/wiseadme)! - shared breakpoints between jit and ui
+
 ## 0.2.4
 
 ### Patch Changes
