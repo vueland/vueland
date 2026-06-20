@@ -1,0 +1,173 @@
+@use "../maps/grids" as *;
+
+$grid-cols-count: $columns;
+$grid-rows-count: 6;
+
+// ─── grid-template-columns ───────────────────────────────────────────────────
+
+@for $i from 1 through $grid-cols-count {
+  .grid-cols-#{$i} {
+    grid-template-columns: repeat(#{$i}, minmax(0, 1fr)) !important;
+  }
+}
+
+.grid-cols-none { grid-template-columns: none !important; }
+
+// ─── grid-template-rows ──────────────────────────────────────────────────────
+
+@for $i from 1 through $grid-rows-count {
+  .grid-rows-#{$i} {
+    grid-template-rows: repeat(#{$i}, minmax(0, 1fr)) !important;
+  }
+}
+
+.grid-rows-none { grid-template-rows: none !important; }
+
+// ─── col-span ────────────────────────────────────────────────────────────────
+
+@for $i from 1 through $grid-cols-count {
+  .col-span-#{$i} {
+    grid-column: span #{$i} / span #{$i} !important;
+  }
+}
+
+.col-span-full { grid-column: 1 / -1 !important; }
+
+// ─── row-span ────────────────────────────────────────────────────────────────
+
+@for $i from 1 through $grid-rows-count {
+  .row-span-#{$i} {
+    grid-row: span #{$i} / span #{$i} !important;
+  }
+}
+
+.row-span-full { grid-row: 1 / -1 !important; }
+
+// ─── col-start / col-end ─────────────────────────────────────────────────────
+
+@for $i from 1 through ($grid-cols-count + 1) {
+  .col-start-#{$i} { grid-column-start: #{$i} !important; }
+  .col-end-#{$i}   { grid-column-end:   #{$i} !important; }
+}
+
+.col-start-auto { grid-column-start: auto !important; }
+.col-end-auto   { grid-column-end:   auto !important; }
+
+// ─── row-start / row-end ─────────────────────────────────────────────────────
+
+@for $i from 1 through ($grid-rows-count + 1) {
+  .row-start-#{$i} { grid-row-start: #{$i} !important; }
+  .row-end-#{$i}   { grid-row-end:   #{$i} !important; }
+}
+
+.row-start-auto { grid-row-start: auto !important; }
+.row-end-auto   { grid-row-end:   auto !important; }
+
+// ─── grid-auto-flow ──────────────────────────────────────────────────────────
+
+.grid-flow-row        { grid-auto-flow: row !important; }
+.grid-flow-col        { grid-auto-flow: column !important; }
+.grid-flow-dense      { grid-auto-flow: dense !important; }
+.grid-flow-row-dense  { grid-auto-flow: row dense !important; }
+.grid-flow-col-dense  { grid-auto-flow: column dense !important; }
+
+// ─── grid-auto-columns ───────────────────────────────────────────────────────
+
+.auto-cols-auto { grid-auto-columns: auto !important; }
+.auto-cols-min  { grid-auto-columns: min-content !important; }
+.auto-cols-max  { grid-auto-columns: max-content !important; }
+.auto-cols-fr   { grid-auto-columns: minmax(0, 1fr) !important; }
+
+// ─── grid-auto-rows ──────────────────────────────────────────────────────────
+
+.auto-rows-auto { grid-auto-rows: auto !important; }
+.auto-rows-min  { grid-auto-rows: min-content !important; }
+.auto-rows-max  { grid-auto-rows: max-content !important; }
+.auto-rows-fr   { grid-auto-rows: minmax(0, 1fr) !important; }
+
+// ─── place-items ─────────────────────────────────────────────────────────────
+
+.place-items-start   { place-items: start !important; }
+.place-items-end     { place-items: end !important; }
+.place-items-center  { place-items: center !important; }
+.place-items-stretch { place-items: stretch !important; }
+.place-items-baseline { place-items: baseline !important; }
+
+// ─── place-content ───────────────────────────────────────────────────────────
+
+.place-content-start   { place-content: start !important; }
+.place-content-end     { place-content: end !important; }
+.place-content-center  { place-content: center !important; }
+.place-content-stretch { place-content: stretch !important; }
+.place-content-between { place-content: space-between !important; }
+.place-content-around  { place-content: space-around !important; }
+.place-content-evenly  { place-content: space-evenly !important; }
+
+// ─── place-self ──────────────────────────────────────────────────────────────
+
+.place-self-auto    { place-self: auto !important; }
+.place-self-start   { place-self: start !important; }
+.place-self-end     { place-self: end !important; }
+.place-self-center  { place-self: center !important; }
+.place-self-stretch { place-self: stretch !important; }
+
+// ─── Responsive variants ─────────────────────────────────────────────────────
+
+@each $size, $breakpoint in $grid-breakpoints {
+  @if $breakpoint != 0 {
+    @media (min-width: $breakpoint) {
+
+      @for $i from 1 through $grid-cols-count {
+        .#{$size}\:grid-cols-#{$i} {
+          grid-template-columns: repeat(#{$i}, minmax(0, 1fr)) !important;
+        }
+        .#{$size}\:col-span-#{$i} {
+          grid-column: span #{$i} / span #{$i} !important;
+        }
+        .#{$size}\:col-start-#{$i} { grid-column-start: #{$i} !important; }
+        .#{$size}\:col-end-#{$i}   { grid-column-end:   #{$i} !important; }
+      }
+
+      .#{$size}\:grid-cols-none { grid-template-columns: none !important; }
+      .#{$size}\:col-span-full  { grid-column: 1 / -1 !important; }
+
+      @for $i from 1 through $grid-rows-count {
+        .#{$size}\:grid-rows-#{$i} {
+          grid-template-rows: repeat(#{$i}, minmax(0, 1fr)) !important;
+        }
+        .#{$size}\:row-span-#{$i} {
+          grid-row: span #{$i} / span #{$i} !important;
+        }
+        .#{$size}\:row-start-#{$i} { grid-row-start: #{$i} !important; }
+        .#{$size}\:row-end-#{$i}   { grid-row-end:   #{$i} !important; }
+      }
+
+      .#{$size}\:grid-rows-none { grid-template-rows: none !important; }
+      .#{$size}\:row-span-full  { grid-row: 1 / -1 !important; }
+
+      .#{$size}\:grid-flow-row       { grid-auto-flow: row !important; }
+      .#{$size}\:grid-flow-col       { grid-auto-flow: column !important; }
+      .#{$size}\:grid-flow-dense     { grid-auto-flow: dense !important; }
+      .#{$size}\:grid-flow-row-dense { grid-auto-flow: row dense !important; }
+      .#{$size}\:grid-flow-col-dense { grid-auto-flow: column dense !important; }
+
+      .#{$size}\:place-items-start    { place-items: start !important; }
+      .#{$size}\:place-items-end      { place-items: end !important; }
+      .#{$size}\:place-items-center   { place-items: center !important; }
+      .#{$size}\:place-items-stretch  { place-items: stretch !important; }
+
+      .#{$size}\:place-content-start   { place-content: start !important; }
+      .#{$size}\:place-content-end     { place-content: end !important; }
+      .#{$size}\:place-content-center  { place-content: center !important; }
+      .#{$size}\:place-content-stretch { place-content: stretch !important; }
+      .#{$size}\:place-content-between { place-content: space-between !important; }
+      .#{$size}\:place-content-around  { place-content: space-around !important; }
+
+      .#{$size}\:place-self-auto    { place-self: auto !important; }
+      .#{$size}\:place-self-start   { place-self: start !important; }
+      .#{$size}\:place-self-end     { place-self: end !important; }
+      .#{$size}\:place-self-center  { place-self: center !important; }
+      .#{$size}\:place-self-stretch { place-self: stretch !important; }
+    }
+  }
+}

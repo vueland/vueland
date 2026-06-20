@@ -5,6 +5,7 @@
   {"file": "typography", "title": "Typography"},
   {"file": "text", "title": "Text"},
   {"file": "flex", "title": "Flex"},
+  {"file": "grid", "title": "Grid"},
   {"file": "display", "title": "Display"},
   {"file": "sizing", "title": "Sizing"},
   {"file": "position", "title": "Positioning"},

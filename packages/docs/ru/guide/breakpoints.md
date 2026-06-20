@@ -80,12 +80,12 @@ export default defineConfig({
 Это самый важный шаг. Значения брейкпоинтов внедряются в SCSS **на этапе компиляции** Vite-плагином. Если импортировать готовый скомпилированный файл (`@vueland/ui/dist/styles.css`) вместо SCSS-исходника, плагину нечего перехватывать — кастомные брейкпоинты не попадут ни в утилитарные классы, ни в компоненты сетки.
 :::
 
-В точке входа приложения импортируйте оба SCSS-исходника — утилиты и тему компонентов по умолчанию:
+В точке входа приложения импортируйте оба SCSS-исходника:
 
 ```ts
 // src/main.ts
-import '@vueland/ui/src/styles/styles.scss'
-import '@vueland/ui/src/styles/themes/default-theme.scss'
+import '@vueland/ui/src/styles/styles.scss'  // утилиты + CSS-переменные
+import '@vueland/ui/src/styles/lib.scss'      // стили компонентов
 ```
 
 Это запускает SCSS-препроцессор Vite, в ходе которого плагин перехватывает компиляцию и подставляет ваши значения в переменную `$grid-breakpoints`. В результате все четыре слоя — предопределённые утилиты (`sm:d-flex`), JIT-классы, media-запросы компонентов сетки и `useDisplay` — работают с одними и теми же числами.
@@ -106,7 +106,7 @@ import { createVuelandUI } from '@vueland/ui'
 import * as components from '@vueland/ui/components'
 
 import '@vueland/ui/src/styles/styles.scss'
-import '@vueland/ui/src/styles/themes/default-theme.scss'
+import '@vueland/ui/src/styles/lib.scss'
 import 'src/.generated/utils-jit.css'
 
 import App from './App.vue'

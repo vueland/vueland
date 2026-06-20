@@ -1,6 +1,6 @@
 # Типографика
 
-Утилиты для управления размером шрифта, насыщенностью, межстрочным интервалом и межбуквенным расстоянием.
+Утилиты для управления размером шрифта, насыщенностью, начертанием, межстрочным интервалом и межбуквенным расстоянием.
 
 ## Размер шрифта
 
@@ -49,6 +49,29 @@
 | `ls-wider` | 0.05em |
 | `ls-widest` | 0.1em |
 
+## Начертание (font-style)
+
+| Класс | CSS |
+|-------|-----|
+| `italic` | `font-style: italic` |
+| `not-italic` | `font-style: normal` |
+
+## Шорткаты насыщенности
+
+Наряду с `fw-*` классами доступна длинная форма `font-weight-*` — удобна при составлении имён классов в шаблонах или рядом с `text-*` цветовыми классами:
+
+| Класс | font-weight |
+|-------|-------------|
+| `font-weight-thin` | 100 |
+| `font-weight-light` | 300 |
+| `font-weight-regular` | 400 |
+| `font-weight-medium` | 500 |
+| `font-weight-semi-bold` | 600 |
+| `font-weight-bold` | 700 |
+| `font-weight-heavy` | 900 |
+
+`fw-bold` и `font-weight-bold` дают одинаковый результат.
+
 ## Адаптивные варианты
 
 Все классы поддерживают адаптивные префиксы:
@@ -69,4 +92,6 @@
 <p class="fs-xs fw-light lh-loose ls-widest">Маленький лёгкий текст</p>
 <h2 class="fs-3xl fw-bold lh-tight ls-tight">Крупный заголовок</h2>
 <span class="fs-base fw-medium lh-normal">Обычный текст</span>
+<em class="italic fs-lg text-grey">Курсивная подпись</em>
+<strong class="font-weight-bold fs-xl">Выделенное значение</strong>
 ```

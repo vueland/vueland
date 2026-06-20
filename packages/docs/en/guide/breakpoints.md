@@ -80,12 +80,12 @@ export default defineConfig({
 This is the most critical step. The breakpoint values are injected into the SCSS **at compile time** by the Vite plugin. If you import the pre-built CSS file (`@vueland/ui/dist/styles.css`) instead of the SCSS source, the plugin has nothing to patch and your custom breakpoints will never reach the utility classes or grid components.
 :::
 
-In your app entry file, import both SCSS source files — utilities and the default component theme:
+In your app entry file, import both SCSS source files:
 
 ```ts
 // src/main.ts
-import '@vueland/ui/src/styles/styles.scss'
-import '@vueland/ui/src/styles/themes/default-theme.scss'
+import '@vueland/ui/src/styles/styles.scss'  // utilities + CSS variables
+import '@vueland/ui/src/styles/lib.scss'      // component styles
 ```
 
 This triggers Vite's SCSS preprocessor, which is where the plugin intercepts the compilation and rewrites the `$grid-breakpoints` map with your values. All four layers — predefined utilities (`sm:d-flex`), JIT classes, grid component media queries, and `useDisplay` — share the same values as a result.
@@ -106,7 +106,7 @@ import { createVuelandUI } from '@vueland/ui'
 import * as components from '@vueland/ui/components'
 
 import '@vueland/ui/src/styles/styles.scss'
-import '@vueland/ui/src/styles/themes/default-theme.scss'
+import '@vueland/ui/src/styles/lib.scss'
 import 'src/.generated/utils-jit.css'
 
 import App from './App.vue'

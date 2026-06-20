@@ -42,6 +42,7 @@ import { createVuelandUI, createFontAwesomeResolver } from '@vueland/ui'
 import { faUser, faTrash, faHouse } from '@fortawesome/free-solid-svg-icons'
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
 import '@vueland/ui/styles.css'
+import '@vueland/ui/css/lib.css'
 
 export const vueland = createVuelandUI({
   components,

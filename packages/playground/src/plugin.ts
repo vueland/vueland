@@ -2,8 +2,7 @@ import { createVuelandUI } from '@vueland/ui'
 import * as components from '@vueland/ui/components'
 
 import '@vueland/ui/styles/styles.scss'
-import '@vueland/ui/styles/themes/default-theme.scss'
-import '@vueland/ui/styles/utils/_colors.scss'
+import '@vueland/ui/styles/lib.scss'
 
 import { ALIASES } from '@vueland/ui/constants/icons'
 import { createFontAwesomeResolver } from '@vueland/ui/resolvers'
