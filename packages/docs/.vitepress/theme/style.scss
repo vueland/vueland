@@ -126,7 +126,10 @@
 
 /* ─── Tables ────────────────────────────────────────────────── */
 
+/* VitePress ставит display:block + overflow-x:auto на table — перебиваем */
 .vp-doc table {
+  display: table !important;
+  overflow-x: visible !important;
   width: 100%;
   border-collapse: collapse;
   border-radius: 10px;

@@ -1,23 +1,31 @@
 <template>
-  <div class="ex-wrap">
-    <CCard class="elevation-3" style="max-width: 400px">
-      <CCardHeader class="bg-indigo pa-6 d-flex align-center" style="gap: 12px; color: #fff">
-        <CIcon name="fas:user-circle" :size="32" source="fa" />
-        <span style="font-size: 20px; font-weight: 600">Sign In</span>
-      </CCardHeader>
+  <div class="d-flex justify-center pa-6">
+    <CCard class="elevation-2 form-card">
+      <div class="form-header d-flex align-center gap-3 px-6 py-5">
+        <div class="header-icon d-flex align-center justify-center">
+          <CIcon name="fas:lock" :size="18" source="fa" />
+        </div>
+        <div>
+          <div class="fs-lg fw-bold">Sign In</div>
+          <div class="fs-sm" style="opacity:.5">Welcome back</div>
+        </div>
+      </div>
 
-      <CCardBody class="pa-6">
-        <CForm ref="formRef" @submit.prevent="onSubmit">
+      <CCardBody class="px-6 pb-6 pt-5">
+        <CForm ref="formRef" @submit.prevent>
           <template #default="{ validate }">
-            <div style="display: flex; flex-direction: column; gap: 8px">
+            <div class="d-flex flex-col gap-4">
               <CTextField
                 v-model="form.email"
                 label="Email"
                 type="email"
                 :rules="emailRules"
                 validate-on="blur"
+                preset="input.blue"
               >
-                <template #prepend><CIcon name="fas:envelope" :size="16" source="fa" /></template>
+                <template #prepend>
+                  <CIcon name="fas:envelope" :size="14" source="fa" />
+                </template>
               </CTextField>
 
               <CTextField
@@ -26,29 +34,33 @@
                 label="Password"
                 :rules="passwordRules"
                 validate-on="blur"
+                preset="input.blue"
               >
-                <template #prepend><CIcon name="fas:lock" :size="16" source="fa" /></template>
+                <template #prepend>
+                  <CIcon name="fas:lock" :size="14" source="fa" />
+                </template>
                 <template #append>
                   <CIcon
                     :name="showPwd ? 'fas:eye-slash' : 'fas:eye'"
-                    :size="16"
+                    :size="14"
                     source="fa"
-                    style="cursor:pointer"
+                    class="cursor-pointer"
                     @click="showPwd = !showPwd"
                   />
                 </template>
               </CTextField>
 
-              <div class="d-flex mt-2" style="gap: 8px">
-                <CBtn class="bg-indigo elevation-1" style="color:#fff" @click="() => handleSubmit(validate)">
+              <div class="d-flex align-center gap-3 mt-2">
+                <CBtn class="btn-primary" @click="() => handleSubmit(validate)">
                   Sign in
                 </CBtn>
-                <CBtn variant="text" @click="handleReset">Reset</CBtn>
+                <CBtn class="btn-ghost" @click="handleReset">Reset</CBtn>
               </div>
 
-              <p v-if="success" class="d-flex align-center mt-2 text-green" style="gap: 6px; font-weight: 500; margin: 0">
-                <CIcon name="fas:check" :size="14" source="fa" /> Logged in as {{ form.email }}
-              </p>
+              <div v-if="success" class="d-flex align-center gap-2 text-green fw-semi-bold fs-sm">
+                <CIcon name="fas:check" :size="13" source="fa" />
+                Logged in as {{ form.email }}
+              </div>
             </div>
           </template>
         </CForm>
@@ -63,12 +75,11 @@ import { ref } from 'vue'
 const formRef = ref()
 const success = ref(false)
 const showPwd = ref(false)
-
 const form = ref({ email: '', password: '' })
 
 const emailRules = [
   (v: string) => ({ valid: !!v, message: 'Email is required' }),
-  (v: string) => ({ valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), message: 'Invalid email' }),
+  (v: string) => ({ valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), message: 'Invalid email address' }),
 ]
 const passwordRules = [
   (v: string) => ({ valid: !!v, message: 'Password is required' }),
@@ -78,19 +89,41 @@ const passwordRules = [
 async function handleSubmit(validate: () => Promise<boolean>) {
   if (await validate()) success.value = true
 }
-
 function handleReset() {
   form.value = { email: '', password: '' }
   success.value = false
+  formRef.value?.reset?.()
 }
-
-function onSubmit() {}
 </script>
 
 <style scoped>
-.ex-wrap {
-  padding: 24px;
+.form-card { max-width: 400px; width: 100%; }
+
+.form-header { border-bottom: 1px solid var(--vp-c-divider, #e5e5e5); }
+
+.header-icon {
   display: flex;
+  align-items: center;
   justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #27d98c, #2f8cff);
+  color: #fff;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #27d98c, #2f8cff);
+  color: #fff !important;
+  font-weight: 600;
+  padding: 0 24px;
+}
+
+.btn-ghost {
+  background: transparent !important;
+  border: 1.5px solid var(--vp-c-divider, #ddd) !important;
+  color: var(--vp-c-text-2) !important;
 }
 </style>

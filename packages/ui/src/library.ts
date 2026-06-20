@@ -5,16 +5,22 @@ import {
     type FunctionalComponent,
 } from 'vue'
 
-import { createDialogsStack, useDisplay } from './composables'
+import {
+    breakpoints,
+    createDialogsStack,
+    useDisplay,
+} from './composables'
 import {
     $BREAKPOINTS_KEY,
     $DIALOGS_STACK_API_KEY,
     $VUELAND_UI_KEY,
 } from './constants'
-import type { IconAliases } from './enums'
+import { BreakpointLabels, type IconAliases } from './enums'
 import { buildVars } from './helpers'
 import { type ThemesOptions } from './types'
 import { IN_BROWSER } from './utils'
+
+declare const __VUELAND_BREAKPOINTS__: Record<string, number> | undefined
 
 export type IconsOptions = {
     dir?: string
@@ -26,6 +32,7 @@ export interface LibOptions {
     components: Record<string, ComponentInstance<any> | FunctionalComponent>
     directives?: Record<string, Directive>
     themes?: ThemesOptions
+    breakpoints?: Record<BreakpointLabels, number>
     icons?: IconsOptions
     presets?: Record<string, Record<string, any>>
     theme?: string
@@ -36,6 +43,7 @@ export class VuelandUI {
     themes: ThemesOptions = {}
     icons: IconsOptions = {}
     presets: Record<string, Record<string, any>> = {}
+    breakpoints: Record<BreakpointLabels, number> = breakpoints
     theme?: string
     private installed: boolean = false
 
@@ -64,6 +72,15 @@ export class VuelandUI {
         this.themes = options.themes ?? {}
         this.presets = options.presets ?? {}
 
+        const injectedBreakpoints =
+            typeof __VUELAND_BREAKPOINTS__ !== 'undefined'
+                ? (__VUELAND_BREAKPOINTS__ as Record<BreakpointLabels, number>)
+                : undefined
+
+        const resolvedBreakpoints = options.breakpoints ?? injectedBreakpoints ?? breakpoints
+
+        this.breakpoints = resolvedBreakpoints
+
         const { components, directives = {} } = options
 
         for (const key in components) {
@@ -80,7 +97,7 @@ export class VuelandUI {
 
         const { createDisplay } = useDisplay()
 
-        const display = createDisplay(options.ssr)
+        const display = createDisplay(resolvedBreakpoints)
         const dialogsStack = createDialogsStack()
 
         app.provide($VUELAND_UI_KEY, this)

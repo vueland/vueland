@@ -298,9 +298,9 @@ async function handleSubmit(validate: () => Promise<boolean>) {
 
 ### Slots
 
-| Slot | Props | Description |
-|------|-------|-------------|
-| `default` | `{ validate, reset }` | Содержимое формы с функциями validate и reset |
+| Slot | Описание |
+|---|---|
+| `default` | Содержимое формы. Получает `{ validate, reset }` |
 
 #### Пропсы слота `default`
 

@@ -1,36 +1,37 @@
 <template>
-  <div class="ex-wrap">
-    <CCard class="elevation-3 airline-card">
+  <div class="d-flex justify-center pa-6">
+    <div class="elevation-2 airline-card">
       <!-- Header -->
-      <div class="airline-header">
-        <div class="airline-logo">
-          <CIcon name="fas:globe" :size="22" source="fa" />
-          <span>VueAir</span>
+      <div class="airline-header px-6 pt-5 pb-4">
+        <div class="brand mb-4 d-flex justify-center align-center">
+          <CIcon name="fas:globe" :size="18" source="fa" />
+          <span class="fs-lg fw-bold">VueAir</span>
         </div>
-        <div class="airline-steps">
+        <div class="steps d-flex align-center">
           <div
             v-for="(step, i) in steps"
             :key="i"
-            class="step"
-            :class="{ active: currentStep === i, done: currentStep > i }"
+            class="step-item d-flex align-center"
+            :class="{ 'step-item--active': currentStep === i, 'step-item--done': currentStep > i }"
           >
-            <div class="step-dot">
-              <CIcon v-if="currentStep > i" name="fas:check" :size="10" source="fa" />
+            <div class="step-dot d-flex align-center justify-center">
+              <CIcon v-if="currentStep > i" name="fas:check" :size="9" source="fa" />
               <span v-else>{{ i + 1 }}</span>
             </div>
-            <span class="step-label">{{ step }}</span>
+            <span class="step-label fs-xs fw-semi-bold text-uppercase">{{ step }}</span>
+            <div v-if="i < steps.length - 1" class="step-line" />
           </div>
         </div>
       </div>
 
-      <CCardBody class="pa-6">
+      <div class="px-6 pb-6 pt-5">
         <CForm ref="formRef">
           <template #default="{ validate }">
 
-            <!-- Step 1: Flight search -->
-            <div v-if="currentStep === 0">
-              <h3 class="section-title">Flight details</h3>
-              <div class="form-grid">
+            <!-- Step 1: Flight -->
+            <div v-if="currentStep === 0" class="d-flex flex-col gap-4">
+              <div class="fs-sm fw-semi-bold" style="opacity:.6">Flight details</div>
+              <div class="form-row gap-4">
                 <CTextField
                   v-model="flight.from"
                   label="From"
@@ -39,10 +40,9 @@
                   preset="input.blue"
                 >
                   <template #prepend>
-                    <CIcon name="fas:map-marker-alt" :size="14" source="fa" />
+                    <CIcon name="fas:map-marker-alt" :size="13" source="fa" />
                   </template>
                 </CTextField>
-
                 <CTextField
                   v-model="flight.to"
                   label="To"
@@ -51,23 +51,20 @@
                   preset="input.blue"
                 >
                   <template #prepend>
-                    <CIcon name="fas:map-marker-alt" :size="14" source="fa" />
+                    <CIcon name="fas:map-marker-alt" :size="13" source="fa" />
                   </template>
                 </CTextField>
-
-                <CTextField
+              </div>
+              <div class="form-row gap-4">
+                <CDateInput
                   v-model="flight.departure"
                   label="Departure date"
-                  placeholder="DD.MM.YYYY"
                   :rules="departureDateRule"
+                  :min-date="today"
                   validate-on="blur"
+                  clearable
                   preset="input.blue"
-                >
-                  <template #prepend>
-                    <CIcon name="fas:calendar-alt" :size="14" source="fa" />
-                  </template>
-                </CTextField>
-
+                />
                 <CTextField
                   v-model="flight.passengers"
                   label="Passengers"
@@ -77,133 +74,109 @@
                   preset="input.blue"
                 >
                   <template #prepend>
-                    <CIcon name="fas:user" :size="14" source="fa" />
+                    <CIcon name="fas:user" :size="13" source="fa" />
                   </template>
                 </CTextField>
-
-                <div class="form-full">
-                  <div class="class-select">
-                    <span class="class-label">Class</span>
-                    <div class="class-options">
-                      <button
-                        v-for="cls in classes"
-                        :key="cls"
-                        class="class-btn"
-                        :class="{ selected: flight.class === cls }"
-                        @click="flight.class = cls"
-                      >
-                        {{ cls }}
-                      </button>
-                    </div>
-                  </div>
+              </div>
+              <div class="d-flex align-center gap-3">
+                <span class="fs-sm" style="opacity:.55">Class</span>
+                <div class="d-flex gap-2">
+                  <button
+                    v-for="cls in classes"
+                    :key="cls"
+                    class="class-btn fs-sm"
+                    :class="{ 'class-btn--active': flight.class === cls }"
+                    @click="flight.class = cls"
+                  >
+                    {{ cls }}
+                  </button>
                 </div>
               </div>
             </div>
 
-            <!-- Step 2: Passenger details -->
-            <div v-if="currentStep === 1">
-              <h3 class="section-title">Passenger information</h3>
-              <div class="form-grid">
+            <!-- Step 2: Passenger -->
+            <div v-if="currentStep === 1" class="d-flex flex-col gap-4">
+              <div class="fs-sm fw-semi-bold" style="opacity:.6">Passenger information</div>
+              <div class="form-row gap-4">
                 <CTextField
                   v-model="passenger.firstName"
                   label="First name"
                   :rules="requiredRule"
                   validate-on="blur"
-                  preset="input.teal"
+                  preset="input.blue"
                 />
                 <CTextField
                   v-model="passenger.lastName"
                   label="Last name"
                   :rules="requiredRule"
                   validate-on="blur"
-                  preset="input.teal"
+                  preset="input.blue"
                 />
-                <div class="form-full">
-                  <CTextField
-                    v-model="passenger.passport"
-                    label="Passport number"
-                    :rules="passportRule"
-                    validate-on="blur"
-                    preset="input.teal"
-                  >
-                    <template #prepend>
-                      <CIcon name="fas:briefcase" :size="14" source="fa" />
-                    </template>
-                  </CTextField>
-                </div>
-                <div class="form-full">
-                  <CTextField
-                    v-model="passenger.email"
-                    label="Contact email"
-                    type="email"
-                    :rules="emailRules"
-                    validate-on="blur"
-                    preset="input.teal"
-                  >
-                    <template #prepend>
-                      <CIcon name="fas:envelope" :size="14" source="fa" />
-                    </template>
-                  </CTextField>
-                </div>
-                <div class="form-full">
-                  <CTextField
-                    v-model="passenger.phone"
-                    label="Phone number"
-                    type="tel"
-                    :rules="phoneRules"
-                    validate-on="blur"
-                    preset="input.teal"
-                  >
-                    <template #prepend>
-                      <CIcon name="fas:phone" :size="14" source="fa" />
-                    </template>
-                  </CTextField>
-                </div>
               </div>
+              <CTextField
+                v-model="passenger.passport"
+                label="Passport number"
+                :rules="passportRule"
+                validate-on="blur"
+                preset="input.blue"
+              >
+                <template #prepend>
+                  <CIcon name="fas:briefcase" :size="13" source="fa" />
+                </template>
+              </CTextField>
+              <CTextField
+                v-model="passenger.email"
+                label="Contact email"
+                type="email"
+                :rules="emailRules"
+                validate-on="blur"
+                preset="input.blue"
+              >
+                <template #prepend>
+                  <CIcon name="fas:envelope" :size="13" source="fa" />
+                </template>
+              </CTextField>
+              <CTextField
+                v-model="passenger.phone"
+                label="Phone number"
+                type="tel"
+                :rules="phoneRules"
+                validate-on="blur"
+                preset="input.blue"
+              >
+                <template #prepend>
+                  <CIcon name="fas:phone" :size="13" source="fa" />
+                </template>
+              </CTextField>
             </div>
 
             <!-- Step 3: Payment -->
-            <div v-if="currentStep === 2">
-              <h3 class="section-title">Payment details</h3>
-              <div class="booking-summary">
-                <div class="summary-row">
-                  <span>Route</span>
-                  <strong>{{ flight.from }} → {{ flight.to }}</strong>
-                </div>
-                <div class="summary-row">
-                  <span>Date</span>
-                  <strong>{{ flight.departure }}</strong>
-                </div>
-                <div class="summary-row">
-                  <span>Passengers</span>
-                  <strong>{{ flight.passengers }} × {{ flight.class }}</strong>
-                </div>
-                <div class="summary-row total">
-                  <span>Total</span>
-                  <strong>$ {{ totalPrice }}</strong>
-                </div>
+            <div v-if="currentStep === 2" class="d-flex flex-col gap-4">
+              <div class="fs-sm fw-semi-bold" style="opacity:.6">Payment details</div>
+              <div class="summary">
+                <div class="summary-row"><span>Route</span><strong>{{ flight.from }} → {{ flight.to }}</strong></div>
+                <div class="summary-row"><span>Date</span><strong>{{ flight.departure?.toLocaleDateString('en-GB') }}</strong></div>
+                <div class="summary-row"><span>Passengers</span><strong>{{ flight.passengers }} × {{ flight.class }}</strong></div>
+                <div class="summary-row summary-row--total"><span>Total</span><strong>${{ totalPrice }}</strong></div>
               </div>
-
-              <div class="form-grid mt-4">
-                <div class="form-full">
-                  <CTextField
-                    v-model="payment.card"
-                    label="Card number"
-                    :rules="cardRule"
-                    validate-on="blur"
-                    preset="input.deepPurple"
-                  >
-                    <template #prepend>
-                      <CIcon name="fas:credit-card" :size="14" source="fa" />
-                    </template>
-                  </CTextField>
-                </div>
+              <CTextField
+                v-model="payment.card"
+                label="Card number"
+                :rules="cardRule"
+                validate-on="blur"
+                preset="input.blue"
+              >
+                <template #prepend>
+                  <CIcon name="fas:credit-card" :size="13" source="fa" />
+                </template>
+              </CTextField>
+              <div class="form-row gap-4">
                 <CTextField
                   v-model="payment.expiry"
                   label="Expiry (MM/YY)"
                   :rules="expiryRule"
                   validate-on="blur"
-                  preset="input.deepPurple"
+                  preset="input.blue"
                 />
                 <CTextField
                   v-model="payment.cvv"
@@ -211,58 +184,40 @@
                   type="password"
                   :rules="cvvRule"
                   validate-on="blur"
-                  preset="input.deepPurple"
+                  preset="input.blue"
                 >
                   <template #prepend>
-                    <CIcon name="fas:shield-alt" :size="14" source="fa" />
+                    <CIcon name="fas:shield-alt" :size="13" source="fa" />
                   </template>
                 </CTextField>
               </div>
             </div>
 
             <!-- Success -->
-            <div v-if="currentStep === 3" class="success-screen">
-              <div class="success-icon text-green">
-                <CIcon name="fas:check" :size="32" source="fa" />
+            <div v-if="currentStep === 3" class="d-flex flex-col align-center gap-3 py-4">
+              <div class="success-icon d-flex align-center justify-center">
+                <CIcon name="fas:check" :size="28" source="fa" />
               </div>
-              <h3>Booking confirmed!</h3>
-              <p>
-                Your flight from <strong>{{ flight.from }}</strong> to
-                <strong>{{ flight.to }}</strong> on <strong>{{ flight.departure }}</strong>
-                has been booked.
-              </p>
-              <p style="opacity: .6; font-size: 13px">
+              <div class="fs-lg fw-bold">Booking confirmed!</div>
+              <div class="fs-sm text-center" style="opacity:.65">
+                {{ flight.from }} → {{ flight.to }} on {{ flight.departure?.toLocaleDateString('en-GB') }}<br>
                 Confirmation sent to {{ passenger.email }}
-              </p>
-              <CBtn class="bg-blue elevation-1 mt-4" style="color:#fff" @click="handleRestart">
-                Book another flight
-              </CBtn>
+              </div>
+              <CBtn class="btn-primary mt-2" @click="handleRestart">Book another flight</CBtn>
             </div>
 
             <!-- Navigation -->
-            <div v-if="currentStep < 3" class="form-actions mt-4">
-              <CBtn
-                v-if="currentStep > 0"
-                variant="text"
-                @click="currentStep--"
-              >
-                Back
-              </CBtn>
-              <CBtn
-                class="elevation-1"
-                :class="stepColor"
-                style="color: #fff"
-                :disabled="submitting"
-                @click="() => handleNext(validate)"
-              >
-                {{ submitting ? 'Processing…' : currentStep === 2 ? 'Pay & Confirm' : 'Continue' }}
+            <div v-if="currentStep < 3" class="d-flex align-center gap-3 mt-5">
+              <CBtn v-if="currentStep > 0" class="btn-ghost" @click="currentStep--">← Back</CBtn>
+              <CBtn class="btn-primary" :disabled="submitting" @click="() => handleNext(validate)">
+                {{ submitting ? 'Processing…' : currentStep === 2 ? 'Pay & Confirm' : 'Continue →' }}
               </CBtn>
             </div>
 
           </template>
         </CForm>
-      </CCardBody>
-    </CCard>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -275,10 +230,12 @@ const submitting = ref(false)
 
 const steps = ['Flight', 'Passenger', 'Payment']
 const classes = ['Economy', 'Business', 'First']
-
 const classPrices: Record<string, number> = { Economy: 299, Business: 799, First: 1499 }
 
-const flight = ref({ from: '', to: '', departure: '', passengers: '1', class: 'Economy' })
+const today = new Date()
+const flight = ref<{ from: string; to: string; departure: Date | null; passengers: string; class: string }>(
+  { from: '', to: '', departure: null, passengers: '1', class: 'Economy' },
+)
 const passenger = ref({ firstName: '', lastName: '', passport: '', email: '', phone: '' })
 const payment = ref({ card: '', expiry: '', cvv: '' })
 
@@ -286,47 +243,34 @@ const totalPrice = computed(() =>
   (classPrices[flight.value.class] * Number(flight.value.passengers)).toLocaleString(),
 )
 
-const stepColor = computed(() =>
-  currentStep.value === 0 ? 'bg-blue' : currentStep.value === 1 ? 'bg-teal' : 'bg-deep-purple',
-)
-
 const requiredRule = [(v: string) => ({ valid: !!v?.trim(), message: 'Required' })]
-
 const departureDateRule = [
-  (v: string) => ({ valid: !!v?.trim(), message: 'Required' }),
-  (v: string) => ({ valid: /^\d{2}\.\d{2}\.\d{4}$/.test(v), message: 'Use DD.MM.YYYY format' }),
+  (v: Date | null) => ({ valid: !!v, message: 'Select departure date' }),
 ]
-
 const passengersRule = [
   (v: string) => ({ valid: !!v, message: 'Required' }),
   (v: string) => ({ valid: Number(v) >= 1 && Number(v) <= 9, message: '1–9 passengers' }),
 ]
-
 const passportRule = [
   (v: string) => ({ valid: !!v?.trim(), message: 'Required' }),
-  (v: string) => ({ valid: /^[A-Z0-9]{6,9}$/.test(v.toUpperCase()), message: 'Invalid passport number' }),
+  (v: string) => ({ valid: /^[A-Z0-9]{6,9}$/.test(v.toUpperCase()), message: 'Invalid passport' }),
 ]
-
 const emailRules = [
   (v: string) => ({ valid: !!v, message: 'Required' }),
   (v: string) => ({ valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), message: 'Invalid email' }),
 ]
-
 const phoneRules = [
   (v: string) => ({ valid: !!v, message: 'Required' }),
   (v: string) => ({ valid: /^\+?[\d\s\-()]{7,}$/.test(v), message: 'Invalid phone' }),
 ]
-
 const cardRule = [
   (v: string) => ({ valid: !!v, message: 'Required' }),
   (v: string) => ({ valid: v.replace(/\s/g, '').length === 16, message: '16-digit card number' }),
 ]
-
 const expiryRule = [
   (v: string) => ({ valid: !!v, message: 'Required' }),
   (v: string) => ({ valid: /^\d{2}\/\d{2}$/.test(v), message: 'MM/YY format' }),
 ]
-
 const cvvRule = [
   (v: string) => ({ valid: !!v, message: 'Required' }),
   (v: string) => ({ valid: /^\d{3,4}$/.test(v), message: '3–4 digits' }),
@@ -335,140 +279,119 @@ const cvvRule = [
 async function handleNext(validate: () => Promise<boolean>) {
   const valid = await validate()
   if (!valid) return
-
   if (currentStep.value === 2) {
     submitting.value = true
     await new Promise((r) => setTimeout(r, 1000))
     submitting.value = false
   }
-
   currentStep.value++
 }
 
 function handleRestart() {
   currentStep.value = 0
-  flight.value = { from: '', to: '', departure: '', passengers: '1', class: 'Economy' }
+  flight.value = { from: '', to: '', departure: null, passengers: '1', class: 'Economy' }
   passenger.value = { firstName: '', lastName: '', passport: '', email: '', phone: '' }
   payment.value = { card: '', expiry: '', cvv: '' }
 }
 </script>
 
 <style scoped>
-.ex-wrap {
-  padding: 24px;
-  display: flex;
-  justify-content: center;
-}
 .airline-card {
   max-width: 520px;
   width: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--vp-c-bg, #fff);
 }
+
 .airline-header {
-  background: linear-gradient(135deg, #1565c0 0%, #0288d1 100%);
-  padding: 20px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  background: linear-gradient(135deg, #1a6ef5 0%, #0fb8d4 100%);
   color: #fff;
 }
-.airline-logo {
+
+.brand {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
 }
-.airline-steps {
+
+.steps { width: 100%; }
+
+.step-item {
   display: flex;
-  gap: 24px;
-}
-.step {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  opacity: 0.5;
+  gap: 6px;
+  opacity: .4;
   transition: opacity .2s;
+  flex-shrink: 0;
 }
-.step.active,
-.step.done {
-  opacity: 1;
-}
+.step-item--active,
+.step-item--done { opacity: 1; }
+
 .step-dot {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 2px solid #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
-  font-weight: 600;
-  background: transparent;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,.8);
+  flex-shrink: 0;
   transition: background .2s;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
 }
-.step.done .step-dot {
+.step-dot span {
+  display: block;
+  line-height: 1;
+}
+.step-item--done .step-dot {
   background: #fff;
-  color: #1565c0;
+  color: #1a6ef5;
+  border-color: #fff;
 }
-.step.active .step-dot {
-  background: rgba(255,255,255,.25);
+.step-item--active .step-dot {
+  background: rgba(255,255,255,.2);
 }
+
 .step-label {
-  font-size: 10px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-.section-title {
-  margin: 0 0 16px;
-  font-size: 15px;
-  font-weight: 600;
-  opacity: .8;
-}
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.form-full {
-  grid-column: 1 / -1;
-}
-.mt-4 { margin-top: 16px; }
-.class-select {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.class-label {
-  font-size: 13px;
-  opacity: .6;
+  letter-spacing: .05em;
   white-space: nowrap;
 }
-.class-options {
-  display: flex;
-  gap: 6px;
+
+.step-line {
+  flex: 1;
+  min-width: 16px;
+  height: 1px;
+  background: rgba(255,255,255,.3);
+  margin: 0 8px;
 }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
 .class-btn {
-  padding: 6px 14px;
+  padding: 5px 14px;
   border-radius: 20px;
-  border: 1.5px solid var(--c-app-border-color, #e0e0e0);
+  border: 1.5px solid var(--vp-c-divider, #e0e0e0);
   background: transparent;
   cursor: pointer;
-  font-size: 13px;
-  transition: all .15s;
   color: inherit;
+  transition: all .15s;
 }
-.class-btn.selected {
-  border-color: var(--c-app-primary-color, #1976d2);
-  background: var(--c-app-primary-color, #1976d2);
+.class-btn--active {
+  border-color: #2f8cff;
+  background: #2f8cff;
   color: #fff;
 }
-.booking-summary {
-  background: var(--c-app-bg-color, #f5f5f5);
-  border-radius: 8px;
-  padding: 16px;
+
+.summary {
+  background: var(--vp-c-bg-soft, #f5f5f5);
+  border-radius: 10px;
+  padding: 14px 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -478,45 +401,41 @@ function handleRestart() {
   justify-content: space-between;
   font-size: 13px;
 }
-.summary-row span {
-  opacity: .6;
-}
-.summary-row.total {
-  border-top: 1px solid var(--c-app-border-color, #e0e0e0);
-  padding-top: 8px;
-  margin-top: 4px;
+.summary-row span { opacity: .55; }
+.summary-row--total {
+  border-top: 1px solid var(--vp-c-divider, #e0e0e0);
+  padding-top: 10px;
+  margin-top: 2px;
   font-size: 15px;
 }
-.form-actions {
-  display: flex;
-  gap: 8px;
-  flex-direction: row-reverse;
-}
-.success-screen {
-  text-align: center;
-  padding: 16px 0;
-}
+
 .success-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: #e8f5e9;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 16px;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #27d98c, #2f8cff);
+  color: #fff;
+  line-height: 1;
 }
-.success-screen h3 {
-  margin: 0 0 8px;
-  font-size: 18px;
+
+.btn-primary {
+  background: linear-gradient(135deg, #27d98c, #2f8cff);
+  color: #fff !important;
+  font-weight: 600;
+  //padding: 0 24px;
 }
-.success-screen p {
-  margin: 0 0 8px;
-  font-size: 14px;
+.btn-ghost {
+  background: transparent !important;
+  border: 1.5px solid var(--vp-c-divider, #ddd) !important;
+  color: var(--vp-c-text-2) !important;
 }
-@media (max-width: 500px) {
-  .airline-steps { gap: 12px; }
+
+@media (max-width: 480px) {
+  .form-row { grid-template-columns: 1fr; }
+  .steps { gap: 12px; }
   .step-label { display: none; }
-  .form-grid { grid-template-columns: 1fr; }
 }
 </style>

@@ -2,7 +2,7 @@
 @use "sass:map";
 
 $step: 4;
-$max: 10;
+$max: 20;
 
 @for $r from 0 through $max {
   $z: $r * $step;

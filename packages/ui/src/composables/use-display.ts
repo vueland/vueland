@@ -7,16 +7,17 @@ import {
     watchEffect,
 } from 'vue'
 
+import { BreakpointLabels } from '../enums'
 import { IN_BROWSER } from '../utils'
 
 export const breakpoints = {
-    xs: 0,
-    sm: 600,
-    md: 960,
-    lg: 1280,
-    xl: 1920,
-    xxl: 2560,
-}
+    [BreakpointLabels.XS]: 0,
+    [BreakpointLabels.SM]: 600,
+    [BreakpointLabels.MD]: 960,
+    [BreakpointLabels.LG]: 1280,
+    [BreakpointLabels.XL]: 1920,
+    [BreakpointLabels.XXL]: 2560,
+} as const
 
 export interface AppBreakpoints {
     xxl: MaybeRef<boolean>
@@ -56,12 +57,12 @@ export function useDisplay() {
     const width = shallowRef(0)
     const height = shallowRef(0)
 
-    const getClientWidth = (isSSR = false) => {
-        return IN_BROWSER && !isSSR ? window.innerWidth : 0
+    const getClientWidth = () => {
+        return IN_BROWSER ? window.innerWidth : 0
     }
 
-    const getClientHeight = (isSSR = false) => {
-        return IN_BROWSER && !isSSR ? window.innerHeight : 0
+    const getClientHeight = () => {
+        return IN_BROWSER ? window.innerHeight : 0
     }
 
     const update = () => {
@@ -69,9 +70,9 @@ export function useDisplay() {
         height.value = getClientHeight()
     }
 
-    const createDisplay = (ssr: boolean = false) => {
-        width.value = getClientWidth(ssr)
-        height.value = getClientHeight(ssr)
+    const createDisplay = (points: Record<BreakpointLabels, number> = breakpoints) => {
+        width.value = getClientWidth()
+        height.value = getClientHeight()
 
         watchEffect(() => {
             const {
@@ -80,8 +81,9 @@ export function useDisplay() {
                 lg,
                 md,
                 sm,
-                xs, 
-            } = breakpoints
+                xs,
+            } = points
+
             const screen = unref(width)
 
             state.xs = screen < sm

@@ -1,18 +1,18 @@
 [
-  {
-    "file": "",
-    "title": "Введение"
-  },
-  {
-    "file": "text",
-    "title": "Текст"
-  },
-  {
-    "file": "radius",
-    "title": "Радиусы"
-  },
-  {
-    "file": "elevation",
-    "title": "Тени"
-  }
+  {"file": "", "title": "Введение"},
+  {"file": "colors", "title": "Цвета"},
+  {"file": "spacing", "title": "Отступы"},
+  {"file": "typography", "title": "Типографика"},
+  {"file": "text", "title": "Текст"},
+  {"file": "flex", "title": "Флекс"},
+  {"file": "display", "title": "Отображение"},
+  {"file": "sizing", "title": "Размеры"},
+  {"file": "position", "title": "Позиционирование"},
+  {"file": "borders", "title": "Рамки"},
+  {"file": "radius", "title": "Радиусы"},
+  {"file": "elevation", "title": "Тени"},
+  {"file": "opacity", "title": "Прозрачность"},
+  {"file": "overflow", "title": "Переполнение"},
+  {"file": "helpers", "title": "Помощники"},
+  {"file": "cursor", "title": "Курсор"}
 ]

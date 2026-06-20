@@ -13,11 +13,12 @@ export default defineConfig({
         vueJsx(),
         utilsJIT({
             breakpoints: {
-                xs: 480,
-                sm: 640,
-                md: 768,
-                lg: 1024,
-                xl: 1440,
+                xs: 0,
+                sm: 600,
+                md: 960,
+                lg: 1280,
+                xl: 1920,
+                xxl: 2560,
             },
             rules: [
                 defineRule({
@@ -46,11 +47,6 @@ export default defineConfig({
             },
     },
 
-    css: {
-        preprocessorOptions: {
-            scss: {},
-        },
-    },
 
     server: {
         host: '0.0.0.0',

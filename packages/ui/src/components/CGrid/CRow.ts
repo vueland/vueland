@@ -88,11 +88,11 @@ export const CRow = defineComponent({
             }
 
             if (isDef(props.align)) {
-                cls[`align-${props.align}`] = true
+                cls[`items-${props.align}`] = true
             }
 
             if (isDef(props.alignContent)) {
-                cls[`align-content-${props.alignContent}`] = true
+                cls[`content-${props.alignContent}`] = true
             }
 
             for (const bp of BREAKPOINTS) {
@@ -105,11 +105,11 @@ export const CRow = defineComponent({
                 }
 
                 if (isDef(props[alignVal])) {
-                    cls[`${bp}:align-${props[alignVal]}`] = true
+                    cls[`${bp}:items-${props[alignVal]}`] = true
                 }
 
                 if (isDef(props[contentVal])) {
-                    cls[`${bp}:align-content-${props[contentVal]}`] = true
+                    cls[`${bp}:content-${props[contentVal]}`] = true
                 }
             }
 

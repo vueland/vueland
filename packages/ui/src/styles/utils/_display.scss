@@ -1,11 +1,32 @@
-.d-block {
-  display: block;
-}
+@use "../maps/grids" as *;
 
-.d-inline-block {
-  display: inline-block;
-}
+.d-none         { display: none !important; }
+.d-block        { display: block !important; }
+.d-inline       { display: inline !important; }
+.d-inline-block { display: inline-block !important; }
+.d-flex         { display: flex !important; }
+.d-inline-flex  { display: inline-flex !important; }
+.d-grid         { display: grid !important; }
+.d-inline-grid  { display: inline-grid !important; }
+.d-table        { display: table !important; }
+.d-table-row    { display: table-row !important; }
+.d-table-cell   { display: table-cell !important; }
+.d-contents     { display: contents !important; }
 
-.d-inline {
-  display: inline;
+@each $size, $breakpoint in $grid-breakpoints {
+  @if $breakpoint != 0 {
+    @media (min-width: $breakpoint) {
+      .#{$size}\:d-none         { display: none !important; }
+      .#{$size}\:d-block        { display: block !important; }
+      .#{$size}\:d-inline       { display: inline !important; }
+      .#{$size}\:d-inline-block { display: inline-block !important; }
+      .#{$size}\:d-flex         { display: flex !important; }
+      .#{$size}\:d-inline-flex  { display: inline-flex !important; }
+      .#{$size}\:d-grid         { display: grid !important; }
+      .#{$size}\:d-inline-grid  { display: inline-grid !important; }
+      .#{$size}\:d-table        { display: table !important; }
+      .#{$size}\:d-table-cell   { display: table-cell !important; }
+      .#{$size}\:d-contents     { display: contents !important; }
+    }
+  }
 }

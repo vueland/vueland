@@ -384,6 +384,9 @@ export function utilsJIT(options?: JitOptions): Plugin {
             const bpMap = buildScssBreakpointsMap(options.breakpoints)
 
             return {
+                define: {
+                    __VUELAND_BREAKPOINTS__: JSON.stringify(options.breakpoints),
+                },
                 css: {
                     preprocessorOptions: {
                         scss: {
@@ -392,6 +395,13 @@ export function utilsJIT(options?: JitOptions): Plugin {
                                     return source.replace(
                                         '@forward "maps/grids"',
                                         `@forward "maps/grids" with ($grid-breakpoints: ${bpMap})`,
+                                    )
+                                }
+
+                                if (filename.includes('CGrid/CGrid.scss')) {
+                                    return source.replace(
+                                        '@use "../../styles/maps/grids" as *;',
+                                        `@use "../../styles/maps/grids" as * with ($grid-breakpoints: ${bpMap});`,
                                     )
                                 }
 

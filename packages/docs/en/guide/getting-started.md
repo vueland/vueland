@@ -1,75 +1,207 @@
-# Getting started
+# Getting Started
 
-This section explains how to install **Vueland UI** and connect it to a Vue 3 application.
+This guide covers two setup modes depending on your needs.
 
-## Installation
+## Choose your setup
 
-Install the library package:
+| | Pre-built CSS | SCSS + JIT |
+|---|---|---|
+| Utility classes | Fixed breakpoints | **Customizable breakpoints** |
+| Arbitrary values (`w-[320px]`) | ✗ | ✓ via `@vueland/utils-jit` |
+| Custom breakpoints | ✗ | ✓ single config, all layers synced |
+| Setup complexity | Minimal | Requires Vite + SCSS |
+
+---
+
+## Option A — Pre-built CSS (quick start)
+
+Best for projects that don't need custom breakpoints or arbitrary utility values.
+
+### 1. Install
 
 ```bash
-yarn add @vueland/ui
+pnpm add @vueland/ui
 ```
 
-## Registering the library
-
-Create a plugin file, for example `plugin.ts`, and initialize Vueland UI.
+### 2. Create the plugin
 
 ```ts
+// src/plugins/vueland.ts
 import * as components from '@vueland/ui/components'
 import { createVuelandUI } from '@vueland/ui'
 import '@vueland/ui/styles.css'
-import '@vueland/ui/css/themes/default-theme.css'
 
 export const vueland = createVuelandUI({
   components,
-  ssr: false,
-  themes: {},
-  icons: {},
+  theme: 'light',
+  themes: {
+    light: { primary: '#1976d2', /* ... */ },
+  },
 })
 ```
 
-## Connecting it to the app
-
-Use the plugin in the application entry point.
+### 3. Connect to the app
 
 ```ts
+// src/main.ts
 import { createApp } from 'vue'
 import App from './App.vue'
-import { vueland } from './plugins'
+import { vueland } from './plugins/vueland'
 
-const app = createApp(App)
-
-app.use(vueland)
-app.mount('#app')
+createApp(App).use(vueland).mount('#app')
 ```
 
-## Project structure
+---
 
-```txt
-src
-├─ plugin.ts
-├─ main.ts
-├─ App.vue
-└─ styles
-   └─ index.scss
+## Option B — SCSS + JIT (recommended)
+
+Full setup with custom breakpoints, arbitrary utility values, and a single source of truth for responsive config.
+
+**Requirements:** Vite, Sass (`pnpm add -D sass`).
+
+### 1. Install
+
+```bash
+pnpm add @vueland/ui
+pnpm add -D @vueland/utils-jit sass
 ```
 
-## What `createVuelandUI` does
+### 2. Configure Vite
 
-The function creates a Vue plugin that:
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import { utilsJIT } from '@vueland/utils-jit'
 
-- registers library components;
-- connects infrastructure dependencies;
-- initializes themes and icons;
-- configures SSR support.
+export default defineConfig({
+  plugins: [
+    vue(),
+    utilsJIT({
+      breakpoints: {
+        xs: 0,
+        sm: 600,
+        md: 960,
+        lg: 1280,
+        xl: 1920,
+        xxl: 2560,
+      },
+    }),
+  ],
+})
+```
 
-## Configuration options
+> `breakpoints` here become the single source of truth — they control JIT responsive classes (`sm:w-[960px]`), predefined SCSS utilities (`md:d-flex`), and the `useDisplay` composable, all at once.
+
+### 3. Create your SCSS entry point
+
+```scss
+/* src/styles/main.scss */
+
+/* 1. Import Vueland base styles (components, utilities, reset) */
+@use '@vueland/ui/styles/scss/styles.scss';
+
+/* 2. Import your theme variables */
+@use '@vueland/ui/styles/scss/themes/default-theme.scss';
+
+/* 3. Your own styles */
+@use './variables';
+@use './overrides';
+```
+
+> **Why `@use` and not `@import`?**
+> `@use` is the modern Sass module system — it scopes variables and avoids duplication. `@import` is deprecated.
+
+### 4. Create the plugin
+
+```ts
+// src/plugins/vueland.ts
+import * as components from '@vueland/ui/components'
+import { createVuelandUI } from '@vueland/ui'
+
+export const vueland = createVuelandUI({
+  components,
+  theme: 'light',
+  themes: {
+    light: { primary: '#1976d2', /* ... */ },
+  },
+  // breakpoints are picked up from utils-jit automatically
+  // pass explicitly here only if you want to override them for useDisplay
+})
+```
+
+### 5. Connect to the app
+
+```ts
+// src/main.ts
+import { createApp } from 'vue'
+import App from './App.vue'
+import { vueland } from './plugins/vueland'
+
+// Import your SCSS entry (Vite compiles it)
+import './styles/main.scss'
+
+// Import the JIT-generated utilities
+import 'src/.generated/utils-jit.css'
+
+createApp(App).use(vueland).mount('#app')
+```
+
+### 6. Use utility classes
+
+```vue
+<template>
+  <!-- Predefined utilities with responsive variants -->
+  <div class="d-flex flex-col md:flex-row gap-4 pa-4">
+
+    <!-- Arbitrary values via JIT -->
+    <div class="w-[320px] h-[200px] bg-[#42b883] radius-[8px]">
+      Card
+    </div>
+
+    <!-- Responsive JIT -->
+    <div class="w-[100%] md:w-[480px] lg:w-[640px]">
+      Sidebar
+    </div>
+
+  </div>
+</template>
+```
+
+---
+
+## Full project structure (Option B)
+
+```
+src/
+├── plugins/
+│   └── vueland.ts        ← createVuelandUI
+├── styles/
+│   ├── main.scss         ← SCSS entry: @use vueland + your styles
+│   ├── variables.scss    ← your SCSS variables
+│   └── overrides.scss    ← component overrides
+├── .generated/
+│   └── utils-jit.css     ← auto-generated by utils-jit (gitignore this)
+├── main.ts               ← imports styles + mounts app
+└── App.vue
+```
+
+Add `.generated/` to your `.gitignore`:
+
+```
+src/.generated/
+```
+
+---
+
+## `createVuelandUI` options
 
 | Option | Type | Description |
-| --- | --- | --- |
-| `components` | `Record` | Components to register |
-| `ssr` | `boolean` | Enables SSR support |
-| `themes` | `object` | Theme configuration |
-| `icons` | `object` | Icon configuration |
-
-After the library is connected, **Vueland UI** components are available across the whole application.
+|---|---|---|
+| `components` | `Record` | Components to register globally |
+| `theme` | `string` | Active theme on startup |
+| `themes` | `ThemesOptions` | Theme color definitions |
+| `icons` | `IconsOptions` | Icon sets and aliases |
+| `presets` | `Record` | Component style presets |
+| `breakpoints` | `Record<string, number>` | Custom breakpoints for `useDisplay`. Auto-synced from `utils-jit` when used — explicit value takes priority. See [Breakpoints](/en/guide/breakpoints) |
+| `ssr` | `boolean` | SSR support |

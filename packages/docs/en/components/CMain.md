@@ -1,9 +1,36 @@
 # CMain
 
-`CMain` is a Vueland UI component.
+`CMain` is the main content area of the application. It stretches to fill all available space inside [`CApp`](/en/components/CApp) and serves as the semantic container for page content.
 
-This page preserves the original documentation route and describes the component purpose so navigation never points to missing pages.
+## Basic usage
 
-## Work in progress
+```vue
+<CApp>
+  <CMain>
+    <!-- page content -->
+  </CMain>
+</CApp>
+```
 
-Detailed API documentation for props, slots, events and CSS variables can be extended as the library evolves.
+## Props
+
+| Prop | Type | Default | Description |
+|---|---|---|---|
+| `tag` | `string` | `'div'` | HTML tag of the root element |
+
+## Slots
+
+| Slot | Description |
+|---|---|
+| `default` | Page content |
+
+## CSS variables
+
+`CMain` does not define its own CSS variables. Style it with utility classes or directly via the `.c-main` selector.
+
+```scss
+.c-main {
+  flex: 1 0 auto;
+  max-width: 100%;
+}
+```

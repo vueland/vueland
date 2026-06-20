@@ -5,8 +5,8 @@
 .c-row {
   display: flex;
   flex-wrap: wrap;
-  margin-right: -#{math.div(map.get($grid-gutters, 'xl'), 2)};
-  margin-left: -#{math.div(map.get($grid-gutters, 'xl'), 2)};
+  margin-right: -#{math.div(map.get($grid-gutters, 'xs'), 2)};
+  margin-left: -#{math.div(map.get($grid-gutters, 'xs'), 2)};
 }
 
 .c-row.no-gutter {
@@ -22,8 +22,8 @@
 .c-col {
   width: 100%;
   position: relative;
-  padding-right: math.div(map.get($grid-gutters, 'xl'), 2);
-  padding-left: math.div(map.get($grid-gutters, 'xl'), 2);
+  padding-right: math.div(map.get($grid-gutters, 'xs'), 2);
+  padding-left: math.div(map.get($grid-gutters, 'xs'), 2);
 }
 
 .c-spacer {
@@ -42,17 +42,8 @@
 }
 
 @each $size, $breakpoint in $grid-breakpoints {
-  @media all and (min-width: $breakpoint) {
-    .c-row {
-      margin-right: -#{math.div(map.get($grid-gutters, $size), 2)};
-      margin-left: -#{math.div(map.get($grid-gutters, $size), 2)};
-    }
-
-    .c-col {
-      padding-right: math.div(map.get($grid-gutters, $size), 2);
-      padding-left: math.div(map.get($grid-gutters, $size), 2);
-    }
-
+  @if $breakpoint == 0 {
+    // xs: no media query — classes apply unconditionally (base layer)
     @for $i from 1 through $columns {
       $p: math.div($i, $columns);
 
@@ -67,6 +58,35 @@
 
       .#{$size}\:order-#{$i} {
         order: $i;
+      }
+    }
+  } @else {
+    @media all and (min-width: $breakpoint) {
+      .c-row {
+        margin-right: -#{math.div(map.get($grid-gutters, $size), 2)};
+        margin-left: -#{math.div(map.get($grid-gutters, $size), 2)};
+      }
+
+      .c-col {
+        padding-right: math.div(map.get($grid-gutters, $size), 2);
+        padding-left: math.div(map.get($grid-gutters, $size), 2);
+      }
+
+      @for $i from 1 through $columns {
+        $p: math.div($i, $columns);
+
+        .c-col.#{$size}-#{$i} {
+          flex: 0 0 math.percentage($p);
+          max-width: math.percentage($p);
+        }
+
+        .#{$size}\:offset-#{$i} {
+          margin-left: math.percentage($p);
+        }
+
+        .#{$size}\:order-#{$i} {
+          order: $i;
+        }
       }
     }
   }

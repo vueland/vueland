@@ -49,9 +49,9 @@ The following breakpoints are available by default:
 
 ```ts
 {
-  sm: 640,
-  md: 768,
-  lg: 1024,
+  sm: 600,
+  md: 960,
+  lg: 1280,
   xl: 1280,
   '2xl': 1536,
 }

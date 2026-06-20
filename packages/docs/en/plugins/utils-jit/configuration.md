@@ -15,12 +15,12 @@ export default defineConfig({
       include: [/\.(vue|js|ts|jsx|tsx|html)$/],
       exclude: [/src\/fixtures/],
       breakpoints: {
-        xs: 480,
-        sm: 640,
-        md: 768,
-        lg: 1024,
-        xl: 1280,
-        '2xl': 1536,
+        xs: 0,
+        sm: 600,
+        md: 960,
+        lg: 1280,
+        xl: 1920,
+        xxl: 2560,
       },
       debug: false,
     }),
@@ -35,7 +35,7 @@ export default defineConfig({
 | `include` | `Array<string \| RegExp>` | `[/\.(vue\|js\|ts\|jsx\|tsx\|html)$/]` | Files that should be scanned. |
 | `exclude` | `Array<string \| RegExp>` | Service directories | Files and directories that should be ignored. |
 | `outFile` | `string` | `src/.generated/utils-jit.css` | Path to the generated CSS file relative to the Vite root. |
-| `breakpoints` | `Record<string, number>` | `sm`, `md`, `lg`, `xl`, `2xl` | Responsive variants. Custom values are added to the defaults or override them. |
+| `breakpoints` | `Record<string, number>` | `{ sm: 600, md: 960, lg: 1280, xl: 1920, xxl: 2560 }` | Responsive breakpoints. When passed, fully replaces the defaults. |
 | `rules` | `UtilityRule[]` | `[]` | Custom utility rules. |
 | `variants` | `VariantMap` | `{}` | Custom variants that are added to the built-in variants. |
 | `banner` | `string` | `/* @vueland/utils-jit: generated utilities */` | Banner at the top of the generated CSS file. |
@@ -110,27 +110,37 @@ utilsJIT({
 
 ## `breakpoints`
 
-An object with responsive variants. The key is used in the class name, and the value is used as `min-width` in pixels.
+An object of responsive breakpoints. The key is used as a class prefix, the value is the `min-width` in pixels. When provided, the object **fully replaces** the built-in defaults.
 
 ```ts
 utilsJIT({
   breakpoints: {
-    xs: 480,
-    sm: 640,
-    md: 768,
-    lg: 1024,
-    xl: 1280,
-    '2xl': 1536,
-    '3xl': 1920,
+    xs: 0,
+    sm: 600,
+    md: 960,
+    lg: 1280,
+    xl: 1920,
+    xxl: 2560,
   },
 })
 ```
 
-After that, you can use:
+After that you can use:
 
 ```html
-<div class="xs:w-[320px] 3xl:w-[1600px]"></div>
+<div class="sm:w-[640px] lg:w-[1024px]"></div>
 ```
+
+### Key naming constraints
+
+Breakpoint keys can be any string — they become CSS class prefixes and are valid in that context. However, if you use `@vueland/ui` and want the same breakpoints to apply to **predefined SCSS utility classes** (`sm:d-flex`, `md:pa-4`), the keys must be valid SCSS identifiers: they **cannot start with a digit**.
+
+| Key | JIT classes | SCSS utilities (with `@vueland/ui`) |
+|-----|-------------|-------------------------------------|
+| `sm`, `md`, `xxl` | ✓ | ✓ |
+| `'2xl'`, `'3xl'` | ✓ | ✗ invalid SCSS identifier |
+
+If you only use `utils-jit` without `@vueland/ui` SCSS, keys like `'2xl'` are perfectly fine.
 
 ## `variants`
 
@@ -298,23 +308,24 @@ Check that:
 - the utility is supported by built-in rules or added through `rules`;
 - the variant exists in `breakpoints` or `variants`.
 
-### `xs:` or `3xl:` does not work
+### A responsive prefix does not work
 
-Add the breakpoint to the configuration:
+The breakpoint must be explicitly listed in the `breakpoints` option. The default set only includes `sm`, `md`, `lg`, `xl`, `xxl` — any other prefix must be added manually:
 
 ```ts
 utilsJIT({
   breakpoints: {
-    xs: 480,
-    sm: 640,
-    md: 768,
-    lg: 1024,
-    xl: 1280,
-    '2xl': 1536,
-    '3xl': 1920,
+    xs: 0,
+    sm: 600,
+    md: 960,
+    lg: 1280,
+    xl: 1920,
+    xxl: 2560,
   },
 })
 ```
+
+> If you also use `@vueland/ui` SCSS utilities, avoid keys that start with a digit (`'2xl'`, `'3xl'`). See [Key naming constraints](#key-naming-constraints).
 
 ### A custom rule does not work
 
