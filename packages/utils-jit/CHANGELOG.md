@@ -1,5 +1,11 @@
 # @vueland/utils-jit
 
+## 0.2.6
+
+### Patch Changes
+
+- [#40](https://github.com/vueland/vueland/pull/40) [`1f25263`](https://github.com/vueland/vueland/commit/1f252633b157d324875728830ccf3890e0f49a64) Thanks [@wiseadme](https://github.com/wiseadme)! - updates
+
 ## 0.2.5
 
 ### Patch Changes
