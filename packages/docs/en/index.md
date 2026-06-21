@@ -12,15 +12,15 @@ title: Vueland
 <div class="vueland-hero__content">
 <p class="vueland-hero__eyebrow">Vueland</p>
 
-<h1>Modern frontend platform for Vue 3</h1>
+<h1>A frontend platform for Vue 3</h1>
 
 <p class="vueland-hero__description">
-A UI platform for Vue 3: components, global settings, utility classes
-and a Vite JIT plugin that generates CSS from real source usage.
+Not just a component library — a platform. Components, utility classes, a preset engine, global settings, composables, and a growing plugin ecosystem, all designed to work together from day one.
 </p>
 
 <div class="vueland-hero__actions">
 <a class="vueland-button vueland-button--primary" href="/vueland/en/guide/getting-started">Get started</a>
+<a class="vueland-button vueland-button--secondary" href="https://github.com/vueland/vueland" target="_blank">⭐ Star on GitHub</a>
 </div>
 </div>
 </section>

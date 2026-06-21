@@ -16,6 +16,7 @@ $self: '.c-menu';
   overflow: hidden;
   color: var(--menu-text-color);
   max-height: var(--menu-max-height);
+  outline: none;
   box-shadow: map.get($shadow-key-umbra, 3), map.get($shadow-key-penumbra, 3), map.get($shadow-key-ambient, 3);
 
   &__content {

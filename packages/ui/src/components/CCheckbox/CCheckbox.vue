@@ -23,7 +23,7 @@
         <c-input
             :model-value="model"
             v-bind="$attrs"
-            kind="checkbox"
+            role="checkbox"
         >
             <template #field="{uid, label, attrs, hasError, readonly, disabled}">
                 <checkbox-element

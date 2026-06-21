@@ -11,7 +11,7 @@ export interface InputState {
     isDirty: boolean
 }
 
-export type CInputKind = 'checkbox' | 'radio' | 'input' | 'area' | 'listbox'
+export type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 
 export type CInputProps<T = any> = ValidateProps &
     PresetProps & {
@@ -24,7 +24,7 @@ export type CInputProps<T = any> = ValidateProps &
         disabled?: boolean
         focused?: boolean
         readonly?: boolean
-        kind?: CInputKind
+        role?: CInputRole
     }
 
 export type CInputEmits<T = any> = {

@@ -1,5 +1,6 @@
 <script setup lang="ts" generic="T">
     import {
+        computed,
         shallowRef,
         unref,
         watch
@@ -41,6 +42,9 @@
     const menuRef = shallowRef()
     const menuListRef = shallowRef()
 
+    const ariaControls = computed(() => unref(menuListRef)?.listId)
+    const ariaActiveDescendant = computed(() => unref(menuListRef)?.activeDescendant)
+
     const { onKeydown } = useKeyboard({
         Backspace: () => {
             if (!unref(inputValue)) {
@@ -59,10 +63,9 @@
             unref(inputRef).blur()
             unref(fieldRef).$el.blur()
         },
-        ArrowDown: () => {
-            menuListRef.value.focus()
-        }
-    })
+        ArrowDown: () => unref(menuListRef)?.navigateDown(),
+        ArrowUp: () => unref(menuListRef)?.navigateUp(),
+    }, { prevent: ['ArrowDown', 'ArrowUp'] })
 
     function clear() {
         model.value = props.multiple ? [] : undefined
@@ -88,13 +91,15 @@
         ref="inputRef"
         :model-value="model"
         v-bind="$attrs"
-        kind="listbox"
+        role="combobox"
+        :aria-controls="ariaControls"
+        :aria-activedescendant="ariaActiveDescendant"
     >
         <template #field="field">
             <c-menu
                 :id="`${field.uid}-menu`"
                 ref="menuRef"
-                bottom
+                align="bottom"
                 open-on-focus
                 close-on-click-outside
                 :close-on-content-click="!multiple"

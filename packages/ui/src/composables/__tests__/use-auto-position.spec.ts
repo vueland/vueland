@@ -249,8 +249,8 @@ describe('useAutoPosition', () => {
         expect(api.content.value.left).toBe(200)
     })
 
-    it('позиционирует content под activator при bottom=true', async () => {
-        const { api, update } = await createHarness({ bottom: true })
+    it('позиционирует content под activator при align=bottom', async () => {
+        const { api, update } = await createHarness({ align: 'bottom' })
 
         await update()
 
@@ -258,12 +258,12 @@ describe('useAutoPosition', () => {
         expect(api.content.value.left).toBe(200)
     })
 
-    it('позиционирует content над activator при top=true', async () => {
+    it('позиционирует content над activator при align=top', async () => {
         const {
             api,
             content,
             update,
-        } = await createHarness({ top: true })
+        } = await createHarness({ align: 'top' })
 
         setSize(content, {
             width: 120,
@@ -276,13 +276,13 @@ describe('useAutoPosition', () => {
         expect(api.content.value.left).toBe(200)
     })
 
-    it('позиционирует content слева от activator при left=true', async () => {
+    it('позиционирует content слева от activator при align=left', async () => {
         const {
             api,
             activator,
             content,
             update,
-        } = await createHarness({ left: true })
+        } = await createHarness({ align: 'left' })
 
         setRect(activator, {
             top: 200,
@@ -302,13 +302,13 @@ describe('useAutoPosition', () => {
         expect(api.content.value.left).toBe(280)
     })
 
-    it('позиционирует content справа от activator при right=true', async () => {
+    it('позиционирует content справа от activator при align=right', async () => {
         const {
             api,
             activator,
             content,
             update,
-        } = await createHarness({ right: true })
+        } = await createHarness({ align: 'right' })
 
         setRect(activator, {
             top: 200,
@@ -330,7 +330,7 @@ describe('useAutoPosition', () => {
 
     it('учитывает offsetX и offsetY', async () => {
         const { api, update } = await createHarness({
-            bottom: true,
+            align: 'bottom',
             offsetX: 16,
             offsetY: 12,
         })
@@ -343,7 +343,7 @@ describe('useAutoPosition', () => {
 
     it('учитывает строковые offsetX и offsetY', async () => {
         const { api, update } = await createHarness({
-            bottom: true,
+            align: 'bottom',
             offsetX: '16',
             offsetY: '12',
         })
@@ -374,8 +374,8 @@ describe('useAutoPosition', () => {
 
         await update()
 
-        expect(api.content.value.left).toBe(20)
-        expect(api.content.value.top).toBe(20)
+        expect(api.content.value.left).toBe(10)
+        expect(api.content.value.top).toBe(10)
     })
 
     it('добавляет offset к positionX и positionY', async () => {
@@ -433,7 +433,7 @@ describe('useAutoPosition', () => {
 
         await update()
 
-        expect(api.content.value.left).toBe(360)
+        expect(api.content.value.left).toBe(370)
     })
 
     it('bounce ограничивает content по левому краю viewport', async () => {
@@ -443,7 +443,7 @@ describe('useAutoPosition', () => {
             content,
             update,
         } = await createHarness({
-            left: true,
+            align: 'left',
             strategy: 'bounce',
         })
 
@@ -461,7 +461,7 @@ describe('useAutoPosition', () => {
 
         await update()
 
-        expect(api.content.value.left).toBe(20)
+        expect(api.content.value.left).toBe(10)
     })
 
     it('bounce ограничивает content по нижнему краю viewport', async () => {
@@ -476,7 +476,7 @@ describe('useAutoPosition', () => {
             content,
             update,
         } = await createHarness({
-            bottom: true,
+            align: 'bottom',
             strategy: 'bounce',
         })
 
@@ -494,7 +494,7 @@ describe('useAutoPosition', () => {
 
         await update()
 
-        expect(api.content.value.top).toBe(200)
+        expect(api.content.value.top).toBe(210)
     })
 
     it('bounce ограничивает content по верхнему краю viewport', async () => {
@@ -504,7 +504,7 @@ describe('useAutoPosition', () => {
             content,
             update,
         } = await createHarness({
-            top: true,
+            align: 'top',
             strategy: 'bounce',
         })
 
@@ -522,7 +522,7 @@ describe('useAutoPosition', () => {
 
         await update()
 
-        expect(api.content.value.top).toBe(20)
+        expect(api.content.value.top).toBe(10)
     })
 
     it('reverse открывает снизу, если сверху не хватает места', async () => {
@@ -532,7 +532,7 @@ describe('useAutoPosition', () => {
             content,
             update,
         } = await createHarness({
-            top: true,
+            align: 'top',
             strategy: 'reverse',
         })
 
@@ -565,7 +565,7 @@ describe('useAutoPosition', () => {
             content,
             update,
         } = await createHarness({
-            bottom: true,
+            align: 'bottom',
             strategy: 'reverse',
         })
 
@@ -593,7 +593,7 @@ describe('useAutoPosition', () => {
             content,
             update,
         } = await createHarness({
-            left: true,
+            align: 'left',
             strategy: 'reverse',
         })
 
@@ -626,7 +626,7 @@ describe('useAutoPosition', () => {
             content,
             update,
         } = await createHarness({
-            right: true,
+            align: 'right',
             strategy: 'reverse',
         })
 
@@ -677,7 +677,7 @@ describe('useAutoPosition', () => {
             props,
             update,
         } = await createHarness({
-            bottom: true,
+            align: 'bottom',
             offsetX: 0,
             offsetY: 0,
         })
@@ -701,14 +701,13 @@ describe('useAutoPosition', () => {
             api,
             props,
             update,
-        } = await createHarness({ bottom: true })
+        } = await createHarness({ align: 'bottom' })
 
         await update()
 
         expect(api.content.value.top).toBe(140)
 
-        props.bottom = false
-        props.top = true
+        props.align = 'top'
 
         await flushRaf()
 
@@ -727,7 +726,7 @@ describe('useAutoPosition', () => {
             content,
             update,
         } = await createHarness({
-            bottom: true,
+            align: 'bottom',
             strategy: 'bounce',
         })
 
@@ -772,7 +771,7 @@ describe('useAutoPosition', () => {
 
         await flushRaf()
 
-        expect(api.content.value.top).toBe(180)
+        expect(api.content.value.top).toBe(190)
     })
 
     it('батчит несколько scheduled updates в один requestAnimationFrame', async () => {
@@ -879,5 +878,78 @@ describe('useAutoPosition', () => {
         wrapper.unmount()
 
         expect(cancelSpy).toHaveBeenCalled()
+    })
+
+    it('центрирует content под activator при align=bottom-center', async () => {
+        const { api, update } = await createHarness({ align: 'bottom-center' })
+
+        await update()
+
+        // activator: left=200, width=120 → center=260; content width=120 → left=260-60=200
+        expect(api.content.value.top).toBe(140)
+        expect(api.content.value.left).toBe(200)
+    })
+
+    it('центрирует content над activator при align=top-center', async () => {
+        const { api, update } = await createHarness({ align: 'top-center' })
+
+        await update()
+
+        expect(api.content.value.top).toBe(40)
+        expect(api.content.value.left).toBe(200)
+    })
+
+    it('выравнивает content по правому краю activator при align=bottom-right', async () => {
+        const {
+            api,
+            content,
+            update,
+        } = await createHarness({ align: 'bottom-right' })
+
+        setSize(content, { width: 80, height: 60 })
+
+        await update()
+
+        // activator: left=200, width=120, right=320; content width=80 → left=320-80=240
+        expect(api.content.value.top).toBe(140)
+        expect(api.content.value.left).toBe(240)
+    })
+
+    it('центрирует content справа от activator при align=right-center', async () => {
+        const {
+            api,
+            activator,
+            content,
+            update,
+        } = await createHarness({ align: 'right-center' })
+
+        setRect(activator, { top: 200, left: 400, width: 100, height: 40 })
+        setSize(content, { width: 120, height: 60 })
+
+        await update()
+
+        // left = activator.left + activator.width = 400 + 100 = 500
+        // top = activator.top + activator.height/2 - content.height/2 = 200 + 20 - 30 = 190
+        expect(api.content.value.left).toBe(500)
+        expect(api.content.value.top).toBe(190)
+    })
+
+    it('центрирует content слева от activator при align=left-center', async () => {
+        const {
+            api,
+            activator,
+            content,
+            update,
+        } = await createHarness({ align: 'left-center' })
+
+        setRect(activator, { top: 200, left: 400, width: 100, height: 40 })
+        setSize(content, { width: 120, height: 60 })
+
+        await update()
+
+        // left = activator.left - content.width = 400 - 120 = 280
+        // top = 200 + 20 - 30 = 190
+        expect(api.content.value.left).toBe(280)
+        expect(api.content.value.top).toBe(190)
     })
 })

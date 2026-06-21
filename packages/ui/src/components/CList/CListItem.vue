@@ -18,9 +18,15 @@
 
     const list = useList<T>()
 
-    const tabindex = shallowRef(-1)
+    const myIndex = shallowRef(-1)
+    const focused = shallowRef(false)
 
     const isInActiveList = computed(() => unref(list?.role) === 'listbox' || unref(list?.role) === 'menu')
+
+    const myId = computed(() => isInActiveList.value && list?.listId && myIndex.value >= 0
+        ? `${list.listId}-option-${myIndex.value}`
+        : undefined
+    )
 
     const isSelected = computed(() => isDef(props.value)
         ? list?.isActive?.(props.value!)
@@ -29,11 +35,11 @@
 
     const classes = computed(() => ({
         'c-list-item--active': unref(isSelected),
-        'c-list-item--focused': unref(tabindex) > -1,
+        'c-list-item--focused': unref(focused),
     }))
 
     const attrs = computed(() => ({
-        ...(unref(tabindex) > -1 ? { tabindex: 0 } : {}),
+        ...(unref(myId) ? { id: unref(myId) } : {}),
         ...(isInActiveList.value ? { role: 'option' } : {}),
         'aria-selected': unref(isSelected),
     }))
@@ -44,21 +50,20 @@
     }
 
     function focus() {
-        tabindex.value = 0
+        list?.setDescendant?.(unref(myId))
+        focused.value = true
     }
 
     function blur() {
-        tabindex.value = -1
+        list?.setDescendant?.(undefined)
+        focused.value = false
     }
 
-    const handlers = {
-        focus,
-        blur 
-    }
+    const handlers = { focus, blur }
 
     onMounted(() => {
         if (unref(isInActiveList)) {
-            list.register(handlers)
+            myIndex.value = list.register(handlers)
         }
     })
 

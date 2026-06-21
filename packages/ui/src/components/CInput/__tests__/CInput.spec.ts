@@ -169,19 +169,16 @@ describe('CInput', () => {
     describe('id / uid', () => {
         it('использует props.id как uid без дополнительного префикса', () => {
             const wrapper = createWrapper({
-                props: {
-                    id: 'email',
-                    kind: 'input',
-                },
+                props: { id: 'email' },
             })
 
             expect(field(wrapper).attributes('id')).toBe('email')
         })
 
-        it('генерирует uid с префиксом input-, если id не передан', () => {
-            const wrapper = createWrapper({ props: { kind: 'input' } })
+        it('генерирует uid без префикса, если role не передан', () => {
+            const wrapper = createWrapper({})
 
-            expect(field(wrapper).attributes('id')).toMatch(/^input-/)
+            expect(field(wrapper).attributes('id')).toBeDefined()
         })
     })
 
@@ -326,14 +323,15 @@ describe('CInput', () => {
             expect(field(wrapper).attributes('aria-disabled')).toBe('true')
         })
 
-        it('добавляет listbox aria-атрибуты при kind=listbox', async () => {
+        it('role=combobox добавляет aria атрибуты на поле', async () => {
             const wrapper = createWrapper({
                 props: {
                     id: 'select',
-                    kind: 'listbox',
+                    role: 'combobox',
                 },
             })
 
+            expect(field(wrapper).attributes('role')).toBe('combobox')
             expect(field(wrapper).attributes('aria-haspopup')).toBe('listbox')
             expect(field(wrapper).attributes('aria-controls')).toBe('select-menu')
             expect(field(wrapper).attributes('aria-expanded')).toBe('false')
@@ -344,24 +342,21 @@ describe('CInput', () => {
             expect(field(wrapper).attributes('aria-expanded')).toBe('true')
         })
 
-        it('kind=radio добавляет aria-labelledby', () => {
+        it('role=radio добавляет aria-labelledby', () => {
             const wrapper = createWrapper({
                 props: {
                     id: 'my-radio',
                     label: 'Option',
-                    kind: 'radio',
+                    role: 'radio',
                 },
             })
 
             expect(field(wrapper).attributes('aria-labelledby')).toBe('my-radio-label')
         })
 
-        it('kind=area не добавляет listbox aria-атрибуты', () => {
+        it('не добавляет combobox aria-атрибуты без role', () => {
             const wrapper = createWrapper({
-                props: {
-                    id: 'my-area',
-                    kind: 'area',
-                },
+                props: { id: 'my-input' },
             })
 
             expect(field(wrapper).attributes('aria-haspopup')).toBeUndefined()
@@ -369,24 +364,11 @@ describe('CInput', () => {
             expect(field(wrapper).attributes('aria-expanded')).toBeUndefined()
         })
 
-        it('не добавляет listbox aria-атрибуты для kind=field', () => {
-            const wrapper = createWrapper({
-                props: {
-                    id: 'input',
-                    kind: 'field',
-                },
-            })
-
-            expect(field(wrapper).attributes('aria-haspopup')).toBeUndefined()
-            expect(field(wrapper).attributes('aria-controls')).toBeUndefined()
-            expect(field(wrapper).attributes('aria-expanded')).toBeUndefined()
-        })
-
-        it('позволяет attrs переопределить listbox aria-атрибуты', () => {
+        it('позволяет attrs переопределить combobox aria-атрибуты', () => {
             const wrapper = createWrapper({
                 props: {
                     id: 'select',
-                    kind: 'listbox',
+                    role: 'combobox',
                 },
                 attrs: {
                     'aria-controls': 'custom-menu',

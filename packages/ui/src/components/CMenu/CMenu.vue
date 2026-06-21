@@ -6,6 +6,7 @@
         provide,
         shallowRef,
         unref,
+        useAttrs,
         watch
     } from 'vue'
 
@@ -13,8 +14,8 @@
         useActivator,
         useAutoPosition,
         useDelayedActions,
+        useId,
         useKeyboard,
-        useMenuPresets
     } from '../../composables'
     import { $MENU_API_KEY } from '../../constants'
     import { vClickOutside } from '../../directives'
@@ -34,10 +35,16 @@
     })
 
     const props = defineProps<CMenuProps>()
+
     const emit = defineEmits<CMenuEvents>()
+
     const model = defineModel<boolean>({ default: false })
+
+
     const { transition = 'fade' } = props
     const THROTTLE_DELAY = 50
+
+    const attrs = useAttrs()
 
     const {
         element,
@@ -52,11 +59,12 @@
         update,
     } = useAutoPosition(props, element)
 
-    const presets = useMenuPresets({ props })
-
     const { openDelay, closeDelay } = useDelayedActions(props)
 
     const mounted = shallowRef(props.ssr || props.modelValue)
+
+    const _generatedId = useId(undefined, { prefix: 'c-menu' })
+    const menuId = computed(() => attrs.id as string ?? _generatedId)
 
     const detached = computed(() => isDef(props.positionX) || isDef(props.positionY))
 
@@ -75,10 +83,7 @@
         ...unref(sizesStyles)
     }))
 
-    const classes = computed(() => ([
-        { 'c-menu--visible': unref(model) },
-        ...unref(presets).root
-    ]))
+    const classes = computed(() => ({ 'c-menu--visible': unref(model) }))
 
     const open = () => {
         mounted.value = true
@@ -88,7 +93,7 @@
                 model.value = true
             }
 
-            // update()
+            update()
 
             emit('open')
         })
@@ -123,7 +128,9 @@
         }
     }
 
-    const { onKeydown } = useKeyboard({Escape: () => close()})
+    const { onKeydown } = useKeyboard({
+        Escape: () => close(),
+    })
 
     const listeners = genListeners({
         open,
@@ -190,12 +197,14 @@
             <div
                 v-if="mounted"
                 v-show="model"
+                v-bind="$attrs"
+                :id="menuId"
                 ref="contentRef"
                 v-click-outside="onClickOutside"
                 class="c-menu"
                 :class="classes"
                 :style="{...styles, zIndex}"
-                v-bind="$attrs"
+                tabindex="-1"
                 @click="onContentClick"
             >
                 <div class="c-menu__content">

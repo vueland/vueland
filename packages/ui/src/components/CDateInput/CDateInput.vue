@@ -110,7 +110,6 @@
         ref="inputRef"
         :model-value="model"
         v-bind="$attrs"
-        kind="input"
         :label
         :details
         :no-details

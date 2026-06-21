@@ -9,10 +9,14 @@
         useAttrs
     } from 'vue'
 
-    import { useKeyboard } from '../../composables'
+    import { useId, useKeyboard } from '../../composables'
     import { $LIST_API_KEY } from '../../constants'
 
-    import type { CListProps, CListSlots } from './types'
+    import type {
+        CListProps,
+        CListSlots,
+        ListItemControls
+    } from './types'
 
     defineOptions({
         name: 'CList',
@@ -28,9 +32,11 @@
 
     const focused = shallowRef(false)
     const listEl = shallowRef()
+    const activeDescendant = shallowRef<string | undefined>()
+    const listId = useId(undefined, { prefix: 'c-list' })
 
     let handlers: any[] = []
-    let index = 0
+    let currentIndex = -1
 
     const classes = computed(() => ({
         'c-list--readonly': props.readonly,
@@ -69,7 +75,11 @@
 
         if (props.multiple) {
             const current = unref(model) as T[]
-            if (props.mandatory && current?.length <= 1) return
+
+            if (props.mandatory && current?.length <= 1) {
+                return
+            }
+
             model.value = current?.filter(item => toRaw(item) !== toRaw(listItem))
         } else {
             if (props.mandatory) return
@@ -85,43 +95,58 @@
         }
     }
 
-    function register(itemControls: { focus: () => void, blur: () => void }) {
+    function register(itemControls: ListItemControls): number {
+        const idx = handlers.length
         handlers.push(itemControls)
+        return idx
     }
 
-    function unregister(itemControls: { focus: () => void, blur: () => void }) {
+    function unregister(itemControls: ListItemControls) {
         handlers = handlers.filter(it => it !== itemControls)
+    }
+
+    function setDescendant(id: string | undefined) {
+        activeDescendant.value = id
     }
 
     async function focus() {
         focused.value = true
         await nextTick()
         unref(listEl).focus()
+    }
 
+    function navigateDown() {
+        if (!handlers.length) return
+        const next = Math.min(handlers.length - 1, currentIndex + 1)
+        handlers[currentIndex]?.blur()
+        handlers[next].focus()
+        currentIndex = next
+    }
+
+    function navigateUp() {
+        if (!handlers.length || currentIndex <= 0) return
+        const prev = currentIndex - 1
+        handlers[currentIndex]?.blur()
+        handlers[prev].focus()
+        currentIndex = prev
     }
 
     const { onKeydown } = useKeyboard({
-        ArrowDown: () => {
-            handlers[index].focus()
-            handlers[index - 1]?.blur()
-            index = Math.min(handlers.length - 1, index + 1)
-        },
-        ArrowUp: () => {
-            handlers[index]?.blur()
-            index = Math.min(handlers.length - 1, Math.max(0, index - 1))
-            handlers[index].focus()
-        }
+        ArrowDown: navigateDown,
+        ArrowUp: navigateUp,
     })
 
-    defineExpose({ focus })
+    defineExpose({ focus, listId, activeDescendant, navigateDown, navigateUp })
 
     provide($LIST_API_KEY, {
         role,
+        listId,
         register,
         unregister,
         select,
         unselect,
         isActive,
+        setDescendant,
     })
 </script>
 
@@ -133,6 +158,7 @@
         :role
         :tabindex
         :aria-multiselectable="multiple"
+        :aria-activedescendant="activeDescendant"
         @keydown="onKeydown"
     >
         <slot

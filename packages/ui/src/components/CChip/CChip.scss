@@ -1,0 +1,9 @@
+.c-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: var(--c-app-border-radius);
+  color: var(--c-app-text-color);
+  background-color: var(--c-app-surface-color);
+  overflow: hidden;
+}

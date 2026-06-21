@@ -89,13 +89,21 @@ export function createSidebar(locale: Locale): DefaultTheme.Sidebar {
         [`${p}/utilities/`]: [
             {
                 text: t.sidebar.utilities.title,
+                link: link(locale, '/utilities/'),
                 items: utilities[locale].map((source) => item(locale, 'utilities', source)),
             },
         ],
 
-        [`${p}/plugins/`]: plugins[locale].map((group) => ({
-            text: group.title,
-            items: group.items.map((source) => item(locale, 'plugins', source)),
-        })),
+        [`${p}/plugins/`]: [
+            {
+                text: t.sidebar.plugins.title,
+                link: link(locale, '/plugins/'),
+            },
+            ...plugins[locale].map((group) => ({
+                text: group.title,
+                collapsed: true,
+                items: group.items.map((source) => item(locale, 'plugins', source)),
+            })),
+        ],
     }
 }

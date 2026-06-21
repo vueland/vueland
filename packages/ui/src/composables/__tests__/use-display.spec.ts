@@ -156,13 +156,13 @@ describe('useDisplay / AndUp / AndLess флаги', () => {
 describe('useDisplay / update', () => {
     it('update обновляет ширину и пересчитывает состояние', async () => {
         setWidth(100)
-        const { createDisplay } = useDisplay()
+        const { createDisplay, update } = useDisplay()
         const display = createDisplay()
         await nextTick()
         expect(display.xs.value).toBe(true)
 
         setWidth(1000)
-        display.update()
+        update()
         await nextTick()
         expect(display.xs.value).toBe(false)
         expect(display.md.value).toBe(true)
