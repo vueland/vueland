@@ -52,8 +52,8 @@ import { createApp } from 'vue'
 import { createVuelandUI } from '@vueland/ui'
 import * as components from '@vueland/ui/components'
 
-import '@vueland/ui/src/styles/styles.scss'
-import '@vueland/ui/src/styles/lib.scss'
+import '@vueland/ui/styles/styles.scss'
+import '@vueland/ui/styles/lib.scss'
 
 import App from './App.vue'
 
