@@ -1,9 +1,17 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-//    "types": ["vite/client"],
     "allowJs": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@vueland/ui/*": ["../../packages/ui/src/*"],
+      "@/*": ["../../packages/ui/src/*"]
+    }
   },
-  "include": [".vitepress/**/*.ts", ".vitepress/**/*.vue"]
+  "include": [
+    ".vitepress/**/*.ts",
+    ".vitepress/**/*.vue",
+    "examples/**/*.vue",
+    "../../packages/ui/src/components/global-components.d.ts"
+  ]
 }

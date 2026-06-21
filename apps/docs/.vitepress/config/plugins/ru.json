@@ -1,5 +1,18 @@
 [
   {
+    "title": "ESLint Script Setup",
+    "items": [
+      {
+        "title": "Быстрый старт",
+        "file": "eslint-script-setup/getting-started"
+      },
+      {
+        "title": "Правила",
+        "file": "eslint-script-setup/rules"
+      }
+    ]
+  },
+  {
     "title": "Utils JIT",
     "items": [
       {

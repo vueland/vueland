@@ -6,15 +6,16 @@
     "paths": {
       "@vueland/ui/*": [
         "../../packages/ui/src/*"
+      ],
+      "@/*": [
+        "../../packages/ui/src/*"
       ]
     },
-    "types": [
-      "../../packages/ui/src/components/global-components.d.ts"
-    ]
   },
   "include": [
     "src",
     "vite.config.ts",
     "src/**/*.scss",
+    "../../packages/ui/src/components/global-components.d.ts"
   ]
 }

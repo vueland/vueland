@@ -6,6 +6,10 @@
   <h1>@vueland/eslint-script-setup</h1>
   <p>ESLint plugin for Vue 3 <code>&lt;script setup&gt;</code> code ordering</p>
   <p>
+    <a href="https://vueland.github.io/vueland/en/plugins/eslint-script-setup/getting-started">
+      <img src="https://img.shields.io/badge/docs-vueland-blue?style=flat" alt="Documentation">
+    </a>
+    &nbsp;
     <a href="https://github.com/vueland/vueland">
       <img src="https://img.shields.io/github/stars/vueland/vueland?style=flat&logo=github&label=Star%20us%20on%20GitHub" alt="GitHub Stars">
     </a>
