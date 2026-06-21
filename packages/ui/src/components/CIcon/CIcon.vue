@@ -17,10 +17,11 @@
 
     const props = defineProps<CIconProps>()
 
-    const { tag = 'span' } = props
-
     const attrs = useAttrs()
+
     const resolvedIcon = useIcon(props)
+
+    const { tag = 'span' } = props
 
     const rootStyle = computed(() => ({
         width: convertToUnit(unref(resolvedIcon).size ?? props.width ?? props.size ?? 16),

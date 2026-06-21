@@ -70,6 +70,41 @@ const count = useCounter()
 }]
 ```
 
+### Адаптация под существующий проект
+
+Полный порядок может быть слишком жёстким для большой устоявшейся кодовой базы. Опция `order` принимает **любое подмножество** категорий — проверяется только их порядок относительно друг друга, всё остальное игнорируется.
+
+**Минимальный пресет — только макросы:**
+
+```js
+// Гарантирует что defineProps / defineEmits всегда идут раньше composable
+'@vueland/script-setup-order': ['warn', {
+  order: ['import', 'type', 'macros'],
+}]
+```
+
+**Средний пресет — добавляем composable:**
+
+```js
+// Также проверяет что composable идут после макросов
+'@vueland/script-setup-order': ['warn', {
+  order: ['import', 'type', 'macros', 'composable'],
+}]
+```
+
+**Полный пресет (дефолтный `recommended`):**
+
+```js
+'@vueland/script-setup-order': ['error', {
+  order: [
+    'import', 'type', 'macros', 'composable', 'reactive',
+    'variable', 'computed', 'function', 'watchEffect', 'watch', 'lifecycle'
+  ],
+}]
+```
+
+> **Совет для существующих проектов:** начните с уровня `warn` и минимального подмножества `order`. Постепенно расширяйте список и переключайтесь на `error` по мере выравнивания кодовой базы.
+
 ---
 
 ## `no-multi-declaration`

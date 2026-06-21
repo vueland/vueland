@@ -21,9 +21,10 @@
     }>()
 
     const focused = defineModel<boolean>('focused', { default: false })
-    const isCheckable = computed(() => !props.readonly && !props.disabled)
 
     const { CHECKBOX_ON, CHECKBOX_OFF } = IconAliases
+
+    const isCheckable = computed(() => !props.readonly && !props.disabled)
 
     const classes = computed(() => ({
         'c-checkbox--default': !unref(focused) && !props.error && unref(isCheckable) && !props.checked,

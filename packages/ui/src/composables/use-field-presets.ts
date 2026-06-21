@@ -1,8 +1,4 @@
-import {
-    computed,
-    type ComputedRef,
-    unref,
-} from 'vue'
+import { computed, unref } from 'vue'
 
 import type { CFieldProps, CFieldSlots } from '@/components'
 import { getPresetIf } from '@/helpers'
@@ -35,27 +31,48 @@ function resolveInteraction(
 
     if (isDisabled) {
         const s = preset?.disabled
-        if (isFocused && s?.focused?.[zone]) return s.focused[zone]!
-        if (isFilled && s?.filled?.[zone]) return s.filled[zone]!
+
+        if (isFocused && s?.focused?.[zone]) {
+            return s.focused[zone]!
+        }
+
+        if (isFilled && s?.filled?.[zone]) {
+            return s.filled[zone]!
+        }
         // passive state — no fallback to base if state zone not defined
         return s?.[zone] ?? []
     }
     if (isReadonly) {
         const s = preset?.readonly
-        if (isFocused && s?.focused?.[zone]) return s.focused[zone]!
-        if (isFilled && s?.filled?.[zone]) return s.filled[zone]!
+
+        if (isFocused && s?.focused?.[zone]) {
+            return s.focused[zone]!
+        }
+
+        if (isFilled && s?.filled?.[zone]) {
+            return s.filled[zone]!
+        }
         // passive state — no fallback to base if state zone not defined
         return s?.[zone] ?? []
     }
     if (hasError) {
         const s = preset?.error
-        if (isFocused && s?.focused?.[zone]) return s.focused[zone]!
-        if (isFilled && s?.filled?.[zone]) return s.filled[zone]!
+
+        if (isFocused && s?.focused?.[zone]) {
+            return s.focused[zone]!
+        }
+
+        if (isFilled && s?.filled?.[zone]) {
+            return s.filled[zone]!
+        }
+
         return s?.[zone] ?? []
     }
+
     if (isFocused) {
         return preset?.focused?.[zone] ?? []
     }
+
     if (isFilled) {
         return preset?.filled?.[zone] ?? []
     }
@@ -63,16 +80,12 @@ function resolveInteraction(
     return base ?? []
 }
 
-export function useFieldPresets({
-    props,
-    slots,
-    hasValue,
-}: {
+export function useFieldPresets({ props, slots }: {
     props: CFieldProps
     slots: CFieldSlots
-    hasValue: ComputedRef<boolean>
 }) {
     const presets = usePresets<CFieldPreset>(props)
+
 
     return computed(() => {
         if (!props.preset) {
@@ -80,8 +93,7 @@ export function useFieldPresets({
         }
 
         const preset = unref(presets)
-
-        const isFilled = unref(hasValue)
+        const isFilled = props.filled || !!props.modelValue
         const isPrepended = !!slots.prepend
         const isAppended = !!slots.append
 

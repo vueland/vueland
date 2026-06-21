@@ -4,7 +4,8 @@
         reactive,
         shallowRef,
         unref,
-        type VNodeChild
+        type VNodeChild,
+        watch
     } from 'vue'
 
     import { isDef } from '@/helpers'
@@ -16,6 +17,14 @@
     import { parseDate } from './helpers'
     import type { DatePickerDate, DisabledDates } from './types'
     import { LOCALE } from './utils'
+
+    const enum ViewMode {
+        DATES = 0,
+        MONTHS = 1,
+        YEARS = 2,
+    }
+
+    type PickerRef = InstanceType<typeof CDatePickerDates> | InstanceType<typeof CDatePickerMonths> | InstanceType<typeof CDatePickerYears> | null
 
     defineOptions({ name: 'CDatePicker' })
 
@@ -50,47 +59,15 @@
         year?(props: EnrichedYear): VNodeChild
     }>()
 
-    const enum ViewMode {
-        DATES = 0,
-        MONTHS = 1,
-        YEARS = 2,
-    }
-
-    export type DatePickerSlotApi = {
-        view: ViewMode
-        value: string
-        selected: DatePickerDate
-        disablePrev: boolean
-        disableNext: boolean
-        onNext: () => void
-        onPrev: () => void
-        onTable: () => void
-        onToday: () => void
-    }
-
-    export type DatePickerWeekDay = {
-        day: number
-        label: string | undefined
-    }
-
-    export type DatePickerEnrichedDate = EnrichedDate
-    export type DatePickerEnrichedMonth = EnrichedMonth
-    export type DatePickerEnrichedYear = EnrichedYear
-
-    export type CDatePickerProps = {
-        modelValue?: Date | string | null
-        lang?: string
-        format?: string
-        mondayFirst?: boolean
-        disabledDates?: DisabledDates
-        highlightedDates?: (Date | string)[]
-        minDate?: Date | string
-        maxDate?: Date | string
-    }
-
-    type PickerRef = InstanceType<typeof CDatePickerDates> | InstanceType<typeof CDatePickerMonths> | InstanceType<typeof CDatePickerYears> | null
-
     const picker = shallowRef<PickerRef>(null)
+
+    const state = reactive({
+        tableMonth: 0,
+        tableYear: 0,
+        view: ViewMode.DATES as ViewMode,
+        bodyTransition: 'c-date-slide-left',
+    })
+
     const today = parseDate(new Date())
 
     const selected = computed<DatePickerDate>(() =>
@@ -98,15 +75,10 @@
     )
 
     const locale = computed(() => LOCALE[props.lang] ?? LOCALE['en'])
-    const minDate = computed(() => props.minDate ? parseDate(new Date(props.minDate)) : null)
-    const maxDate = computed(() => props.maxDate ? parseDate(new Date(props.maxDate)) : null)
 
-    const state = reactive({
-        tableMonth: unref(selected).month,
-        tableYear: unref(selected).year,
-        view: ViewMode.DATES as ViewMode,
-        bodyTransition: 'c-date-slide-left',
-    })
+    const minDate = computed(() => props.minDate ? parseDate(new Date(props.minDate)) : null)
+
+    const maxDate = computed(() => props.maxDate ? parseDate(new Date(props.maxDate)) : null)
 
     const headerValue = computed(() => {
         if (state.view === ViewMode.YEARS) {
@@ -227,6 +199,45 @@
         state.tableMonth = today.month
         state.tableYear = today.year
         state.view = ViewMode.DATES
+    }
+
+    watch(selected, (val) => {
+        state.tableMonth = val.month
+        state.tableYear = val.year
+    }, { immediate: true })
+
+    export type DatePickerSlotApi = {
+        view: ViewMode
+        value: string
+        selected: DatePickerDate
+        disablePrev: boolean
+        disableNext: boolean
+        onNext: () => void
+        onPrev: () => void
+        onTable: () => void
+        onToday: () => void
+    }
+
+    export type DatePickerWeekDay = {
+        day: number
+        label: string | undefined
+    }
+
+    export type DatePickerEnrichedDate = EnrichedDate
+
+    export type DatePickerEnrichedMonth = EnrichedMonth
+
+    export type DatePickerEnrichedYear = EnrichedYear
+
+    export type CDatePickerProps = {
+        modelValue?: Date | string | null
+        lang?: string
+        format?: string
+        mondayFirst?: boolean
+        disabledDates?: DisabledDates
+        highlightedDates?: (Date | string)[]
+        minDate?: Date | string
+        maxDate?: Date | string
     }
 </script>
 

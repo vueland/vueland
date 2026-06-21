@@ -5,7 +5,6 @@ import {
     it,
 } from 'vitest'
 import {
-    computed,
     defineComponent,
     h,
     type Reactive,
@@ -64,11 +63,7 @@ function mountUseFieldPresets({
     const wrapper = mount(
         defineComponent({
             setup() {
-                result = useFieldPresets({
-                    props,
-                    slots,
-                    hasValue: computed(() => !!props.filled),
-                })
+                result = useFieldPresets({ props, slots })
 
                 return () => h('div')
             },

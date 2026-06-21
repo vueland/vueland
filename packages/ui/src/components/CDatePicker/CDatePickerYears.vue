@@ -1,5 +1,9 @@
 <script setup lang="ts">
-    import { computed, shallowRef } from 'vue'
+    import {
+        computed,
+        shallowRef,
+        watch
+    } from 'vue'
 
     import { isDef } from '@/helpers'
 
@@ -20,6 +24,8 @@
         year?(props: EnrichedYear): any
     }>()
 
+    defineExpose({ onNext, onPrev })
+
     export type EnrichedYear = {
         year: number
         disabled: boolean
@@ -28,26 +34,19 @@
         onSelect: () => void
     }
 
+    const pageIndex = shallowRef(0)
+
+    const transitionName = shallowRef('c-date-slide-left')
+
     const CELLS_IN_ROW = 4
+
     const ON_TABLE = 20
+
     const LIMIT = 100
+
     const CURRENT_YEAR = new Date().getFullYear()
 
-    const allPages: number[][] = []
-    const fromYear = CURRENT_YEAR - LIMIT
-    let page: number[] = []
-
-    for (let i = 0; i <= LIMIT * 2; i++) {
-        page.push(fromYear + i)
-        if (page.length === ON_TABLE) {
-            allPages.push(page)
-            page = []
-        }
-    }
-    if (page.length) allPages.push(page)
-
-    const pageIndex = shallowRef(allPages.findIndex((p) => p.includes(props.year)) ?? 0)
-    const transitionName = shallowRef('c-date-slide-left')
+    const allPages = buildYearPages(CURRENT_YEAR - LIMIT, LIMIT)
 
     const enrichedYears = computed<EnrichedYear[]>(() =>
         (allPages[pageIndex.value] ?? []).map((y) => {
@@ -70,20 +69,37 @@
         return result
     })
 
-    defineExpose({
-        onNext() {
-            if (pageIndex.value < allPages.length - 1) {
-                transitionName.value = 'c-date-slide-left'
-                pageIndex.value++
+    function buildYearPages(from: number, limit: number): number[][] {
+        const pages: number[][] = []
+        let page: number[] = []
+        for (let i = 0; i <= limit * 2; i++) {
+            page.push(from + i)
+            if (page.length === ON_TABLE) {
+                pages.push(page)
+                page = []
             }
-        },
-        onPrev() {
-            if (pageIndex.value > 0) {
-                transitionName.value = 'c-date-slide-right'
-                pageIndex.value--
-            }
-        },
-    })
+        }
+        if (page.length) pages.push(page)
+        return pages
+    }
+
+    function onNext() {
+        if (pageIndex.value < allPages.length - 1) {
+            transitionName.value = 'c-date-slide-left'
+            pageIndex.value++
+        }
+    }
+
+    function onPrev() {
+        if (pageIndex.value > 0) {
+            transitionName.value = 'c-date-slide-right'
+            pageIndex.value--
+        }
+    }
+
+    watch(() => props.year, (year) => {
+        pageIndex.value = allPages.findIndex((p) => p.includes(year)) ?? 0
+    }, { immediate: true })
 </script>
 
 <template>

@@ -70,6 +70,41 @@ const count = useCounter()
 }]
 ```
 
+### Adapting to an existing project
+
+The full order can feel too strict for a large established codebase. The `order` option accepts **any subset** of categories — only the listed ones are enforced relative to each other; everything else is ignored.
+
+**Minimal preset — macros only:**
+
+```js
+// Ensures defineProps / defineEmits always come before composables
+'@vueland/script-setup-order': ['warn', {
+  order: ['import', 'type', 'macros'],
+}]
+```
+
+**Medium preset — add composables:**
+
+```js
+// Also enforces that composables follow macros
+'@vueland/script-setup-order': ['warn', {
+  order: ['import', 'type', 'macros', 'composable'],
+}]
+```
+
+**Full preset (default `recommended`):**
+
+```js
+'@vueland/script-setup-order': ['error', {
+  order: [
+    'import', 'type', 'macros', 'composable', 'reactive',
+    'variable', 'computed', 'function', 'watchEffect', 'watch', 'lifecycle'
+  ],
+}]
+```
+
+> **Tip for existing projects:** start with `warn` severity and a minimal `order` subset. Broaden the list and switch to `error` gradually as the codebase is aligned.
+
 ---
 
 ## `no-multi-declaration`
