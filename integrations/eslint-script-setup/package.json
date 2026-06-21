@@ -1,7 +1,7 @@
 {
   "name": "@vueland/eslint-script-setup",
   "description": "ESLint plugin for Vue 3 script setup code style",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "license": "MIT",
   "type": "module",
   "private": false,
