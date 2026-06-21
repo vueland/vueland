@@ -1,9 +1,8 @@
-import path from 'node:path'
-
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import { defineConfig, type PluginOption } from 'vite'
 import { defineRule, utilsJIT } from '@vueland/utils-jit'
+import path from 'node:path'
+import { defineConfig, type PluginOption } from 'vite'
 
 const useBuiltUi = process.env.USE_BUILT_UI === 'true'
 

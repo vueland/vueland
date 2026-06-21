@@ -17,5 +17,5 @@ export const B: CInputPreset = {
     root: ['text-cyan'],
     error: {
         root: ['text-pink'],
-    }
+    },
 }

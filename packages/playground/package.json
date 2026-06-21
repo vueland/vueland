@@ -8,7 +8,8 @@
     "build-play": "vite build",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit",
-    "lint": "eslint ."
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx,.vue .",
+    "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx,.vue ."
   },
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^7.2.0",
@@ -18,6 +19,18 @@
     "vue": "^3.5.27"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vueland/eslint-script-setup": "workspace:*",
+    "eslint": "^9.39.2",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-import-newlines": "^2.0.0",
+    "eslint-plugin-newline-destructuring": "^1.2.2",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
+    "eslint-plugin-vue": "^10.7.0",
+    "globals": "^17.3.0",
+    "typescript-eslint": "^8.54.0",
+    "vue-eslint-parser": "^10.2.0",
     "@vitejs/plugin-vue": "^6.0.3",
     "@vitejs/plugin-vue-jsx": "^5.1.5",
     "sass": "^1.97.3",

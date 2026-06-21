@@ -1,15 +1,40 @@
 <script setup lang="ts">
     import { useBreakpoints } from '@vueland/ui/composables'
+    import {
+        computed,
+        onMounted,
+        shallowRef,
+        unref,
+        watchEffect
+    } from 'vue'
 
     const bp = useBreakpoints()
 
-    console.log(bp)
+    const m = shallowRef()
+
+    const varia = 'chek'
+
+    const fullName = computed(() => unref(m))
+
+    watchEffect(() => {
+
+    })
+
+    onMounted(() => {
+
+    })
+
+
 </script>
 
 <template>
     <c-app>
         <c-main>
-            <c-row class="pt-2" align="end" justify="start">
+            <c-row
+                class="pt-2"
+                align="end"
+                justify="start"
+            >
                 <c-col
                     v-for="it of 10"
                     :key="it"
@@ -18,6 +43,7 @@
                     xl="3"
                     lg="3"
                     md="4"
+
                     sm="6"
                     class="elevation-2 radius-8 d-flex justify-center align-center"
                 >
@@ -42,7 +68,13 @@
                                 align="top-center"
                             >
                                 <template #activator="{ on, activator }">
-                                    <c-btn v-on="on" v-bind="activator" class="bg-primary text-white elevation-2 hover:bg-blue">APPROVE</c-btn>
+                                    <c-btn
+                                        v-bind="activator"
+                                        class="bg-primary text-white elevation-2 hover:bg-blue"
+                                        v-on="on"
+                                    >
+                                        APPROVE
+                                    </c-btn>
                                 </template>
                                 <span>ooops some tooltip text here</span>
                             </c-tooltip>
@@ -53,3 +85,4 @@
         </c-main>
     </c-app>
 </template>
+

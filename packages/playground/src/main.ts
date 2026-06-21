@@ -1,6 +1,8 @@
 import { createApp } from 'vue'
+
 import App from './App.vue'
 import { ui } from './plugin'
+
 import './styles/index.scss'
 import './.generated/utils-jit.css'
 

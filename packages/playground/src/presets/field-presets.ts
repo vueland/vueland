@@ -4,16 +4,16 @@ export const base: CFieldPreset = {
     root: [''],
     label: ['text-uppercase'],
     focused: {
-        label: ['text-amber']
+        label: ['text-amber'],
     },
     filled: {
         label: ['text-green', 'text-uppercase'],
-    }
+    },
 }
 
 export const error: CFieldPreset = {
     root: [''],
     filled: {
         label: ['text-red-darken-2', 'text-uppercase'],
-    }
+    },
 }
