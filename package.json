@@ -14,7 +14,9 @@
     "directory": "/"
   },
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "integrations/*",
+    "apps/*"
   ],
   "scripts": {
     "build:all": "npm run build:jit && npm run build:lib && npm run build:docs && npm run build:eslint",

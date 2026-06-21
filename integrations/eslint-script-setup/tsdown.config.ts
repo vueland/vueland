@@ -10,4 +10,5 @@ export default defineConfig({
     target: 'es2020',
     outDir: 'dist',
     deps: { neverBundle: ['eslint', 'vue-eslint-parser'] },
+    alias: { '@': './src' },
 })

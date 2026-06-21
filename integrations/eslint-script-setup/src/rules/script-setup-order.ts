@@ -1,7 +1,7 @@
 import type { Rule } from 'eslint'
 
-import { type ClassifyConfig, classifyNode } from '../utils/classify'
-import { buildEntries, detectOrderConflicts } from '../utils/deps-graph'
+import { type ClassifyConfig, classifyNode } from '@/utils/classify'
+import { buildEntries, detectOrderConflicts } from '@/utils/deps-graph'
 import {
     CATEGORY_ORDER,
     COMPUTED_APIS,
@@ -10,7 +10,7 @@ import {
     REACTIVE_APIS,
     WATCH_APIS,
     WATCH_EFFECT_APIS,
-} from '../utils/types'
+} from '@/utils/types'
 
 type AnyNode = { type: string; [key: string]: unknown }
 

@@ -42,7 +42,7 @@ export default defineConfig({
         alias: useBuiltUi
             ? {}
             : {
-                '@vueland/ui': path.resolve(__dirname, '../ui/src/'),
+                '@vueland/ui': path.resolve(__dirname, '../../packages/ui/src/'),
             },
     },
 
