@@ -23,16 +23,22 @@ export interface Dimensions {
     height: number
 }
 
+export type AlignSide = 'top' | 'bottom' | 'left' | 'right'
+
+export type AlignValue =
+    | AlignSide
+    | 'top-center' | 'top-left' | 'top-right'
+    | 'bottom-center' | 'bottom-left' | 'bottom-right'
+    | 'left-center'
+    | 'right-center'
+
 export interface AutoPositionProps {
     strategy?: 'reverse' | 'bounce'
     positionX?: number
     positionY?: number
     offsetX?: number | string
     offsetY?: number | string
-    left?: boolean
-    right?: boolean
-    top?: boolean
-    bottom?: boolean
+    align?: AlignValue
 }
 
 type MaybeElement = Element | ComponentPublicInstance | undefined
@@ -42,6 +48,23 @@ type ResolvedElement = HTMLElement | undefined
 type AutoPositionInputProps = DimensionsProps & AutoPositionProps
 
 const SCREEN_EDGE_OFFSET = 10
+
+const REVERSE_SIDE: Record<AlignSide, AlignSide> = {
+    top: 'bottom',
+    bottom: 'top',
+    left: 'right',
+    right: 'left',
+}
+
+function parseSide(align?: AlignValue): AlignSide | undefined {
+    return align?.split('-')[0] as AlignSide | undefined
+}
+
+function parseCross(align?: AlignValue): string | undefined {
+    if (!align) return undefined
+    const idx = align.indexOf('-')
+    return idx === -1 ? undefined : align.slice(idx + 1)
+}
 
 function resolveElement(value: MaybeElement): ResolvedElement {
     if (!value) {
@@ -108,7 +131,9 @@ export function useAutoPosition(
     const offsetX = computed(() => Number(props.offsetX) || 0)
     const offsetY = computed(() => Number(props.offsetY) || 0)
 
-    const isHorizontalDirection = computed(() => props.left || props.right)
+    const side = computed(() => parseSide(props.align))
+    const cross = computed(() => parseCross(props.align))
+    const isHorizontalSide = computed(() => unref(side) === 'left' || unref(side) === 'right')
     const isReverseStrategy = computed(() => props.strategy === 'reverse')
 
     let frameId = 0
@@ -195,57 +220,56 @@ export function useAutoPosition(
         }
     }
 
-    const getBaseTop = () => {
+    const getBaseTop = (s = unref(side), c = unref(cross)): number => {
         if (isDef(props.positionY)) {
             return props.positionY! + unref(offsetY)
         }
 
-        if (props.top) {
-            return unref(activator).top - unref(content).height - unref(offsetY)
-        }
+        const act = unref(activator)
+        const cnt = unref(content)
 
-        if (props.bottom) {
-            return unref(activator).top + unref(activator).height + unref(offsetY)
-        }
+        if (s === 'top') return act.top - cnt.height - unref(offsetY)
+        if (s === 'bottom') return act.top + act.height + unref(offsetY)
 
-        return unref(activator).top + unref(offsetY)
+        // horizontal side: vertical cross-alignment
+        if (c === 'center') return act.top + act.height / 2 - cnt.height / 2
+
+        return act.top + unref(offsetY)
     }
 
-    const getBaseLeft = () => {
+    const getBaseLeft = (s = unref(side), c = unref(cross)): number => {
         if (isDef(props.positionX)) {
             return props.positionX! + unref(offsetX)
         }
 
-        if (props.left) {
-            return unref(activator).left - unref(content).width - unref(offsetX)
-        }
+        const act = unref(activator)
+        const cnt = unref(content)
 
-        if (props.right) {
-            return unref(activator).left + unref(activator).width + unref(offsetX)
-        }
+        if (s === 'left') return act.left - cnt.width - unref(offsetX)
+        if (s === 'right') return act.left + act.width + unref(offsetX)
 
-        return unref(activator).left + unref(offsetX)
+        // vertical side: horizontal cross-alignment
+        if (c === 'center') return act.left + act.width / 2 - cnt.width / 2
+        if (c === 'right') return act.left + act.width - cnt.width
+
+        return act.left + unref(offsetX)
     }
 
     const getReversedTop = () => {
-        if (props.top) {
-            return unref(activator).top + unref(activator).height + unref(offsetY)
-        }
+        const s = unref(side)
 
-        if (props.bottom) {
-            return unref(activator).top - unref(content).height - unref(offsetY)
+        if (s && !unref(isHorizontalSide)) {
+            return getBaseTop(REVERSE_SIDE[s])
         }
 
         return getBaseTop()
     }
 
     const getReversedLeft = () => {
-        if (props.left) {
-            return unref(activator).left + unref(activator).width + unref(offsetX)
-        }
+        const s = unref(side)
 
-        if (props.right) {
-            return unref(activator).left - unref(content).width - unref(offsetX)
+        if (s && unref(isHorizontalSide)) {
+            return getBaseLeft(REVERSE_SIDE[s])
         }
 
         return getBaseLeft()
@@ -294,7 +318,7 @@ export function useAutoPosition(
             return top
         }
 
-        if (!unref(isReverseStrategy) || unref(isHorizontalDirection)) {
+        if (!unref(isReverseStrategy) || unref(isHorizontalSide)) {
             return clampTopToViewport(top)
         }
 
@@ -310,7 +334,7 @@ export function useAutoPosition(
             return left
         }
 
-        if (!unref(isReverseStrategy) || !unref(isHorizontalDirection)) {
+        if (!unref(isReverseStrategy) || !unref(isHorizontalSide)) {
             return clampLeftToViewport(left)
         }
 
@@ -427,10 +451,7 @@ export function useAutoPosition(
             () => [
                 props.positionX,
                 props.positionY,
-                props.top,
-                props.bottom,
-                props.left,
-                props.right,
+                props.align,
                 props.offsetX,
                 props.offsetY,
                 props.strategy,

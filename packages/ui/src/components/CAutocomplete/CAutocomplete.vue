@@ -99,7 +99,7 @@
             <c-menu
                 :id="`${field.uid}-menu`"
                 ref="menuRef"
-                bottom
+                align="bottom"
                 open-on-focus
                 close-on-click-outside
                 :close-on-content-click="!multiple"

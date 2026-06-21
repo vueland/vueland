@@ -5,7 +5,6 @@ import type {
     ActivatorProps,
     AutoPositionProps,
     DelayProps,
-    PresetProps,
 } from '../../composables'
 import type { DimensionsProps } from '../../types'
 import type { COverlayProps } from '../COverlay'
@@ -15,7 +14,6 @@ export type CMenuProps =
     DimensionsProps &
     AutoPositionProps &
     DelayProps &
-    PresetProps &
     Partial<COverlayProps> & {
     closeOnClickOutside?: boolean
     closeOnContentClick?: boolean

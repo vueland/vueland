@@ -16,7 +16,6 @@
         useDelayedActions,
         useId,
         useKeyboard,
-        useMenuPresets
     } from '../../composables'
     import { $MENU_API_KEY } from '../../constants'
     import { vClickOutside } from '../../directives'
@@ -60,8 +59,6 @@
         update,
     } = useAutoPosition(props, element)
 
-    const presets = useMenuPresets({ props })
-
     const { openDelay, closeDelay } = useDelayedActions(props)
 
     const mounted = shallowRef(props.ssr || props.modelValue)
@@ -86,10 +83,7 @@
         ...unref(sizesStyles)
     }))
 
-    const classes = computed(() => ([
-        { 'c-menu--visible': unref(model) },
-        ...unref(presets).root
-    ]))
+    const classes = computed(() => ({ 'c-menu--visible': unref(model) }))
 
     const open = () => {
         mounted.value = true

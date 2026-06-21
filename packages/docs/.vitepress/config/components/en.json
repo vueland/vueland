@@ -1,62 +1,56 @@
 [
   {
-    "title": "General",
+    "title": "Layout",
     "items": [
-      {
-        "file": "CApp",
-        "title": "CApp"
-      },
-      {
-        "file": "CMain",
-        "title": "CMain"
-      }
+      { "file": "CApp",  "title": "CApp ★" },
+      { "file": "CMain", "title": "CMain ★" }
+    ]
+  },
+  {
+    "title": "Grid",
+    "items": [
+      { "file": "CRow",    "title": "CRow ★" },
+      { "file": "CCol",    "title": "CCol ★" },
+      { "file": "CSpacer", "title": "CSpacer ★" }
     ]
   },
   {
     "title": "Form controls",
     "items": [
-      {
-        "file": "CForm",
-        "title": "CForm"
-      },
-      {
-        "file": "CTextField",
-        "title": "CTextField"
-      },
-      {
-        "file": "CInput",
-        "title": "CInput"
-      }
+      { "file": "CForm",         "title": "CForm ★" },
+      { "file": "CTextField",    "title": "CTextField ★" },
+      { "file": "CInput",        "title": "CInput ★" },
+      { "file": "CField",        "title": "CField" },
+      { "file": "CCheckbox",     "title": "CCheckbox" },
+      { "file": "CRadio",        "title": "CRadio" },
+      { "file": "CSwitch",       "title": "CSwitch" },
+      { "file": "CSelect",       "title": "CSelect" },
+      { "file": "CAutocomplete", "title": "CAutocomplete" }
     ]
   },
   {
     "title": "Actions",
-    "items": []
+    "items": [
+      { "file": "CBtn", "title": "CBtn" }
+    ]
   },
   {
     "title": "Content",
     "items": [
-      {
-        "file": "CCard",
-        "title": "CCard"
-      }
+      { "file": "CCard",  "title": "CCard ★" },
+      { "file": "CList",  "title": "CList" },
+      { "file": "CIcon",  "title": "CIcon" },
+      { "file": "CImg",   "title": "CImg" },
+      { "file": "CLabel", "title": "CLabel" }
     ]
   },
   {
-    "title": "Grid system",
+    "title": "Overlays",
     "items": [
-      {
-        "file": "CRow",
-        "title": "CRow"
-      },
-      {
-        "file": "CCol",
-        "title": "CCol"
-      },
-      {
-        "file": "CSpacer",
-        "title": "CSpacer"
-      }
+      { "file": "CMenu",    "title": "CMenu ★" },
+      { "file": "CTooltip", "title": "CTooltip ★" },
+      { "file": "CDialog",  "title": "CDialog" },
+      { "file": "COverlay", "title": "COverlay" }
     ]
   }
 ]

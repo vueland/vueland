@@ -2,32 +2,43 @@
   <img src="https://raw.githubusercontent.com/vueland/vueland/master/logo.png" style="max-width: 100%;">
 </div>
 
-# @vueland/ui
+<div align="center">
+  <h1>@vueland/ui</h1>
+  <p>UI layer of the <a href="https://github.com/vueland/vueland">Vueland platform</a></p>
+  <p>
+    <a href="https://vueland.github.io/vueland/en/components/">Documentation</a> ·
+    <a href="https://www.npmjs.com/package/@vueland/ui">npm</a>
+  </p>
+  <p>
+    <a href="https://github.com/vueland/vueland">
+      <img src="https://img.shields.io/github/stars/vueland/vueland?style=flat&logo=github&label=Star%20us%20on%20GitHub" alt="GitHub Stars">
+    </a>
+  </p>
+</div>
+
+---
 
 > **⚠️ Active development — not production ready**
-> The library is under active development. APIs may change between releases without notice. Use in production at your own risk.
+> APIs may change between releases without notice. Production-ready components are marked **Stable** in the docs.
 
-Vue 3 component library for the Vueland platform. Provides a set of UI components, a 12-column flexbox grid system, utility classes, and a single breakpoint configuration shared across all layers.
+`@vueland/ui` is the UI layer of the Vueland platform. It provides components built for real-world frontend needs: a 12-column grid, form controls with validation and presets, overlays, composables, and a slot-first architecture that lets you replace visual sections of complex components without losing their behavior.
 
 ## Documentation
 
-Full documentation, examples, and guides are available at:
+Full documentation, examples, and component API references:
 
 https://vueland.github.io/vueland/en/guide/getting-started
 
 ## Installation
 
-::: code-group
-
-```bash [pnpm]
+```bash
+# pnpm
 pnpm add @vueland/ui
-```
 
-```bash [npm]
+# npm
 npm install @vueland/ui
-```
 
-```bash [yarn]
+# yarn
 yarn add @vueland/ui
 ```
 
@@ -51,7 +62,7 @@ app.use(createVuelandUI({ components }))
 app.mount('#app')
 ```
 
-> **Import SCSS source, not pre-compiled CSS.** The styles are compiled by Vite at build time. If you import `dist/styles.css`, custom breakpoints configured via `@vueland/utils-jit` will not be applied.
+> **Import SCSS source, not pre-compiled CSS.** Styles are compiled by Vite at build time. If you import `dist/styles.css`, breakpoints configured via `@vueland/utils-jit` will not be applied.
 
 ### 2. Use components
 
@@ -59,17 +70,17 @@ Components are registered globally after `app.use(vueland)`:
 
 ```vue
 <template>
-  <c-row>
-    <c-col cols="12" sm="6" md="4">
-      <c-card class="pa-4 elevation-2">Hello Vueland</c-card>
-    </c-col>
-  </c-row>
+  <CRow>
+    <CCol cols="12" sm="6" md="4">
+      <CCard class="pa-4 elevation-2">Hello Vueland</CCard>
+    </CCol>
+  </CRow>
 </template>
 ```
 
 ## Breakpoints
 
-The default breakpoint scale follows Material Design:
+Material Design breakpoint scale, shared across the grid, utility classes, and `useDisplay`:
 
 | Name | min-width |
 |------|-----------|
@@ -80,28 +91,19 @@ The default breakpoint scale follows Material Design:
 | xl   | 1920px    |
 | xxl  | 2560px    |
 
-Breakpoints are shared across four layers: predefined SCSS utility classes, JIT classes, grid components (`CRow`, `CCol`), and the `useDisplay` composable.
-
-To customize them, use [`@vueland/utils-jit`](https://www.npmjs.com/package/@vueland/utils-jit) — one config in `vite.config.ts` syncs all layers automatically. See the [Breakpoints guide](https://vueland.github.io/vueland/en/guide/breakpoints) for the full step-by-step setup.
+To customize breakpoints, use [`@vueland/utils-jit`](https://www.npmjs.com/package/@vueland/utils-jit) — one config in `vite.config.ts` syncs all layers. See the [Breakpoints guide](https://vueland.github.io/vueland/en/guide/breakpoints).
 
 ## Grid system
 
-12-column flexbox grid built on `CRow`, `CCol`, and `CSpacer`:
-
 ```vue
-<c-row align="center" justify="space-between">
-  <!-- full width on mobile, 6 cols on sm+, 4 cols on md+ -->
-  <c-col cols="12" sm="6" md="4">
-    <c-card class="pa-4">Card</c-card>
-  </c-col>
-</c-row>
+<CRow align="center" justify="space-between">
+  <CCol cols="12" sm="6" md="4">
+    <CCard class="pa-4">Card</CCard>
+  </CCol>
+</CRow>
 ```
 
-Responsive column props, offset, order, and row-level alignment all follow the same breakpoint scale.
-
 ## Utility classes
-
-Predefined utility classes cover spacing, colors, typography, flex, display, sizing, elevation, borders, and more. All support responsive prefixes:
 
 ```html
 <div class="pa-2 md:pa-6 lg:pa-10">responsive padding</div>
@@ -111,26 +113,34 @@ Predefined utility classes cover spacing, colors, typography, flex, display, siz
 
 ## `useDisplay` composable
 
-Reactive screen state in JS/Vue, synced to the same breakpoints:
-
 ```vue
 <script setup lang="ts">
-import { inject } from 'vue'
-import { $BREAKPOINTS_KEY } from '@vueland/ui/constants'
+import { useBreakpoints } from '@vueland/ui/composables'
 
-const display = inject($BREAKPOINTS_KEY)!
+const { mdAndUp } = useBreakpoints()
 </script>
 
 <template>
-  <c-col :cols="display.mdAndUp.value ? 6 : 12">
-    Adaptive column
-  </c-col>
+  <CRow>
+    <CCol :cols="mdAndUp ? 6 : 12">Adaptive column</CCol>
+  </CRow>
 </template>
 ```
 
-## npm
+## Part of the Vueland platform
 
-https://www.npmjs.com/package/@vueland/ui
+`@vueland/ui` is one part of the Vueland platform. The platform also includes:
+
+- [`@vueland/utils-jit`](https://www.npmjs.com/package/@vueland/utils-jit) — JIT utility class generation for Vite
+- More plugins and adapters coming over time
+
+See the [platform overview](https://github.com/vueland/vueland) for the full picture.
+
+## ⭐ Support the project
+
+If this package is useful to you, a star on GitHub goes a long way.
+
+**[Star on GitHub →](https://github.com/vueland/vueland)**
 
 ## License
 

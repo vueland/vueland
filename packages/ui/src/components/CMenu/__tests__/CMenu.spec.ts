@@ -672,8 +672,8 @@ describe('CMenu', () => {
         expect(parseFloat(menu.style.left)).toBe(200)
     })
 
-    it('позиционируется под activator при bottom=true', async () => {
-        const { open } = await createWrapper({ bottom: true })
+    it('позиционируется под activator при align=bottom', async () => {
+        const { open } = await createWrapper({ align: 'bottom' })
 
         await open()
 
@@ -683,8 +683,8 @@ describe('CMenu', () => {
         expect(parseFloat(menu.style.left)).toBe(200)
     })
 
-    it('позиционируется над activator при top=true', async () => {
-        const { prepareMenuSize, open } = await createWrapper({ top: true })
+    it('позиционируется над activator при align=top', async () => {
+        const { prepareMenuSize, open } = await createWrapper({ align: 'top' })
 
         prepareMenuSize(120, 80)
 
@@ -698,7 +698,7 @@ describe('CMenu', () => {
 
     it('учитывает offsetX и offsetY', async () => {
         const { open } = await createWrapper({
-            bottom: true,
+            align: 'bottom',
             offsetX: 16,
             offsetY: 12,
         })
@@ -775,7 +775,7 @@ describe('CMenu', () => {
             prepareMenuSize,
             open,
         } = await createWrapper({
-            bottom: true,
+            align: 'bottom',
             strategy: 'reverse',
         })
 
@@ -904,5 +904,93 @@ describe('CMenu', () => {
         await flush()
 
         expect(getMenuOrFail().style.top).not.toBe(firstTop)
+    })
+
+    it('отменяет openDelay если close вызван до истечения задержки', async () => {
+        const { menuRef } = await createWrapper({ openDelay: 200 })
+
+        // запускаем открытие
+        menuRef.value.open()
+        await vi.advanceTimersByTimeAsync(100) // половина задержки
+
+        // закрываем до того как openDelay сработал
+        menuRef.value.close()
+        await vi.advanceTimersByTimeAsync(200) // openDelay бы уже сработал без fix-а
+        await flush()
+
+        // меню не должно открыться
+        expectMenuClosed()
+    })
+
+    it('close отменяет pending openDelay — меню не открывается после быстрого hover/leave', async () => {
+        const { menuRef } = await createWrapper({
+            openOnHover: true,
+            closeOnLeave: true,
+            openDelay: 150,
+        })
+
+        // hover — запускает openDelay
+        menuRef.value.open()
+        await vi.advanceTimersByTimeAsync(80) // ещё не истёк
+
+        // leave — должен отменить openDelay
+        menuRef.value.close()
+        await vi.advanceTimersByTimeAsync(150) // openDelay бы уже сработал
+        await flush()
+
+        // меню НЕ должно открыться
+        expectMenuClosed()
+    })
+
+    it('open отменяет pending closeDelay — меню остаётся открытым при быстром повторном hover', async () => {
+        const { menuRef, syncMenuSize } = await createWrapper({
+            openOnHover: true,
+            closeOnLeave: true,
+            closeDelay: 200,
+        })
+
+        // открываем
+        menuRef.value.open()
+        await flush()
+        syncMenuSize()
+        await flush()
+        expectMenuOpened()
+
+        // уходим — запускает closeDelay
+        menuRef.value.close()
+        await vi.advanceTimersByTimeAsync(100) // closeDelay не истёк
+
+        // возвращаемся — должен отменить closeDelay
+        menuRef.value.open()
+        await vi.advanceTimersByTimeAsync(200) // closeDelay бы уже сработал
+        await flush()
+
+        // меню должно оставаться открытым
+        expectMenuOpened()
+    })
+
+    it('openDelay отменяет предыдущий openDelay при повторном вызове open', async () => {
+        const { menuRef, syncMenuSize } = await createWrapper({
+            openDelay: 100,
+        })
+
+        menuRef.value.open()
+        await vi.advanceTimersByTimeAsync(50)
+
+        // второй вызов open сбрасывает таймер
+        menuRef.value.open()
+        await vi.advanceTimersByTimeAsync(50) // первый бы уже сработал, но он отменён
+        await nextTick()
+
+        // ещё не открылось — второй таймер ещё тикает
+        expectMenuClosed()
+
+        await vi.advanceTimersByTimeAsync(50)
+        await flush()
+        syncMenuSize()
+        await flush()
+
+        // теперь открылось (второй таймер отработал)
+        expectMenuOpened()
     })
 })

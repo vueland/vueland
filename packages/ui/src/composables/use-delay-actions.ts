@@ -6,12 +6,19 @@ export type DelayProps = {
 }
 
 export function useDelayedActions(props: Partial<DelayProps> & Record<string, any>) {
+    let openTimer: ReturnType<typeof setTimeout> | undefined
+    let closeTimer: ReturnType<typeof setTimeout> | undefined
+
     const openDelay = (fn: (...args: any) => any) => {
-        setTimeout(fn, isDef(props.openDelay) ? +props.openDelay! : 0)
+        clearTimeout(closeTimer)
+        clearTimeout(openTimer)
+        openTimer = setTimeout(fn, isDef(props.openDelay) ? +props.openDelay! : 0)
     }
 
     const closeDelay = (fn: (...args: any) => any) => {
-        setTimeout(fn, isDef(props.closeDelay) ? +props.closeDelay! : 0)
+        clearTimeout(openTimer)
+        clearTimeout(closeTimer)
+        closeTimer = setTimeout(fn, isDef(props.closeDelay) ? +props.closeDelay! : 0)
     }
 
     return {

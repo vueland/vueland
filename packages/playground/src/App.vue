@@ -34,15 +34,17 @@
                         </c-card-body>
                         <c-card-footer>
                             <c-tooltip
-                                open-on-hover
-                                close-on-leave
-                                top
-                                class="bg-blue pa-2"
+                                open-on-click
+                                close-on-click-outside
+                                class=""
+                                offset-y="4"
+                                strategy="reverse"
+                                align="top-center"
                             >
                                 <template #activator="{ on, activator }">
                                     <c-btn v-on="on" v-bind="activator" class="bg-primary text-white elevation-2 hover:bg-blue">APPROVE</c-btn>
                                 </template>
-                                <span>ooops</span>
+                                <span>ooops some tooltip text here</span>
                             </c-tooltip>
                         </c-card-footer>
                     </c-card>

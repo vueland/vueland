@@ -17,6 +17,8 @@
         v-bind="$attrs"
         :id="tooltipId"
         :width
+        class="c-tooltip"
+        role="tooltip"
     >
         <template #activator="{ on, activator }">
             <slot
@@ -26,13 +28,7 @@
             ></slot>
         </template>
         <template #default>
-            <div
-                :id="tooltipId"
-                class="c-tooltip"
-                role="tooltip"
-            >
-                <slot></slot>
-            </div>
+            <slot></slot>
         </template>
     </c-menu>
 </template>
