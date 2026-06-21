@@ -1,4 +1,4 @@
-import type { PresetProps } from '../../composables'
+import type { PresetProps } from '@/composables'
 
 export type CBtnProps = PresetProps & {
     variant?: 'flat' | 'outlined'

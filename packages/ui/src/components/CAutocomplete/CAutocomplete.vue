@@ -6,11 +6,13 @@
         watch
     } from 'vue'
 
-    import { useAutocomplete, useKeyboard } from '../../composables'
-    import { IconAliases } from '../../enums'
-    import { CField } from '../CField'
-    import { CInput } from '../CInput'
-    import { CMenu } from '../CMenu'
+    import {
+        CField,
+        CInput,
+        CMenu
+    } from '@/components'
+    import { useAutocomplete, useKeyboard } from '@/composables'
+    import { IconAliases } from '@/enums'
 
     import type { CAutocompleteProps, CAutocompleteSlots } from './types'
 

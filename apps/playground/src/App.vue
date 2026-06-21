@@ -1,30 +1,4 @@
 <script setup lang="ts">
-    import { useBreakpoints } from '@vueland/ui/composables'
-    import {
-        computed,
-        onMounted,
-        shallowRef,
-        unref,
-        watchEffect
-    } from 'vue'
-
-    const bp = useBreakpoints()
-
-    const m = shallowRef()
-
-    const varia = 'chek'
-
-    const fullName = computed(() => unref(m))
-
-    watchEffect(() => {
-
-    })
-
-    onMounted(() => {
-
-    })
-
-
 </script>
 
 <template>

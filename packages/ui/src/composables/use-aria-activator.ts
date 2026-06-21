@@ -1,7 +1,7 @@
 import { computed } from 'vue'
 
-import type { AriaHaspopup } from '../constants'
-import { ariaExpandable } from '../utils'
+import type { AriaHaspopup } from '@/constants'
+import { ariaExpandable } from '@/utils'
 
 export interface AriaActivatorState {
     expanded: boolean

@@ -1,5 +1,5 @@
-import { createNav, createSidebar } from './links'
 import { getMessages } from './i18n'
+import { createNav, createSidebar } from './links'
 import { githubLink } from './shared'
 
 const t = getMessages('en')
@@ -17,7 +17,7 @@ export const enConfig = {
         sidebar: createSidebar('en'),
         outline: {
             label: t.theme.outline,
-            level: 'deep' as const
+            level: 'deep' as const,
         },
         docFooter: {
             prev: t.theme.docFooterPrev,
@@ -31,10 +31,10 @@ export const enConfig = {
         langMenuLabel: t.theme.langMenuLabel,
         socialLinks: [{
             icon: 'github' as const,
-            link: githubLink
+            link: githubLink,
         }],
         search: {
-            provider: 'local' as const
+            provider: 'local' as const,
         },
     },
 }

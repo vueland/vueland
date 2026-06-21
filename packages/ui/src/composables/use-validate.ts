@@ -7,8 +7,8 @@ import {
     watch,
 } from 'vue'
 
-import type { InputState } from '../components/CInput'
-import type { Maybe } from '../types'
+import type { InputState } from '@/components/CInput'
+import type { Maybe } from '@/types'
 
 export type ValidateResult = { valid: boolean;
     message: string }

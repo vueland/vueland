@@ -6,8 +6,8 @@ import {
     type VNode,
 } from 'vue'
 
-import { BREAKPOINTS } from '../../constants'
-import { isDef, toCamelCase } from '../../helpers'
+import { BREAKPOINTS } from '@/constants'
+import { isDef, toCamelCase } from '@/helpers'
 
 const positions = ['start', 'center', 'end'] as const
 const justifyValues = [...positions, 'space-between', 'space-around'] as const

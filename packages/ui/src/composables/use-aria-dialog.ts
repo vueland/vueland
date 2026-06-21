@@ -4,7 +4,7 @@ import {
     ariaDescribedBy,
     ariaLabelledBy,
     ariaModal,
-} from '../utils'
+} from '@/utils'
 
 export interface AriaDialogState {
     labelledBy?: string

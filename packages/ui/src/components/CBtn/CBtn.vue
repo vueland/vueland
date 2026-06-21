@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { computed, unref } from 'vue'
 
-    import { useButtonPresets } from '../../composables'
+    import { useButtonPresets } from '@/composables'
 
     import type { CBtnProps } from './types'
 

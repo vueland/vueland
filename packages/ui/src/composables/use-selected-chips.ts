@@ -1,6 +1,6 @@
 import { computed, getCurrentInstance } from 'vue'
 
-import { isNotEmpty } from '../helpers'
+import { isNotEmpty } from '@/helpers'
 
 import type { IterableItemsProps } from './use-normalized-items'
 

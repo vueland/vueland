@@ -5,8 +5,8 @@
         useAttrs
     } from 'vue'
 
-    import { useIcon } from '../../composables'
-    import { convertToUnit } from '../../utils'
+    import { useIcon } from '@/composables'
+    import { convertToUnit } from '@/utils'
 
     import type { CIconProps } from './types'
 

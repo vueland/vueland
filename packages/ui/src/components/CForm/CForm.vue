@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { provide } from 'vue'
 
-    import { $FORM_API_KEY } from '../../constants'
+    import { $FORM_API_KEY } from '@/constants'
 
     import type {
         CFormEmits,

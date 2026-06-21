@@ -1,7 +1,7 @@
 import { computed, unref } from 'vue'
 
-import type { CInputProps, InputState } from '../components/CInput'
-import type { CFieldPreset, CInputPreset } from '../types'
+import type { CInputProps, InputState } from '@/components/CInput'
+import type { CFieldPreset, CInputPreset } from '@/types'
 
 import { useCore } from './use-core'
 import { usePresets } from './use-presets'

@@ -1,4 +1,4 @@
-import type { IconResolver } from '../types'
+import type { IconResolver } from '@/types'
 
 type IconDefinition = {
     icon: [

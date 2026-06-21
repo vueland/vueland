@@ -1,10 +1,14 @@
 import type { DefaultTheme } from 'vitepress'
-import type { Locale } from './i18n'
-import { getMessages, localePrefix } from './i18n'
+
 // Locales
 import * as components from './components'
-import * as utilities from './utilities'
+import {
+    getMessages,
+    type Locale,
+    localePrefix,
+} from './i18n'
 import * as plugins from './plugins'
+import * as utilities from './utilities'
 
 function link(locale: Locale, path: string): string {
     return `${localePrefix(locale)}${path}`
@@ -27,7 +31,7 @@ export function createNav(locale: Locale): DefaultTheme.NavItem[] {
         { text: t.nav.settings, link: link(locale, '/settings/') },
         {
             text: t.nav.plugins,
-            link: link(locale, '/plugins/')
+            link: link(locale, '/plugins/'),
         },
     ]
 }

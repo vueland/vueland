@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T">
-    import { CSelectControl } from '../CSelectControl'
+    import { CSelectControl } from '@/components/CSelectControl'
 
     import CheckboxElement from './CheckboxElement.vue'
     import type { CCheckboxProps, CCheckboxSlots } from './types'

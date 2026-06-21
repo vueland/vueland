@@ -43,6 +43,7 @@ export default defineConfig({
             ? {}
             : {
                 '@vueland/ui': path.resolve(__dirname, '../../packages/ui/src/'),
+                '@': path.resolve(__dirname, '../../packages/ui/src/'),
             },
     },
 

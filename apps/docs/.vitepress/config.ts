@@ -1,7 +1,8 @@
 import { defineConfig } from 'vitepress'
-import { sharedConfig } from './config/shared'
+
 import { enConfig } from './config/en'
 import { ruConfig } from './config/ru'
+import { sharedConfig } from './config/shared'
 
 export default defineConfig({
     ...sharedConfig,

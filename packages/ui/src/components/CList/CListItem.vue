@@ -7,8 +7,8 @@
         unref
     } from 'vue'
 
-    import { useList } from '../../composables/use-list'
-    import { isDef } from '../../helpers'
+    import { useList } from '@/composables/use-list'
+    import { isDef } from '@/helpers'
 
     defineOptions({name: 'CListItem',})
 

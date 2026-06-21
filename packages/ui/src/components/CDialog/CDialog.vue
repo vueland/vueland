@@ -1,9 +1,9 @@
 <script setup lang="ts">
     import { watch } from 'vue'
 
-    import { useApplication } from '../../composables'
-    import { vClickOutside } from '../../directives'
-    import { COverlay } from '../COverlay'
+    import { COverlay } from '@/components/COverlay'
+    import { useApplication } from '@/composables'
+    import { vClickOutside } from '@/directives'
 
     import type { CDialogProps, CDialogSlots } from './types'
 

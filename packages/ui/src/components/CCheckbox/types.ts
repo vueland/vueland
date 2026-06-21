@@ -1,7 +1,7 @@
 import type { VNode } from 'vue'
 
-import type { CInputProps } from '../CInput'
-import type { CSelectControlProps } from '../CSelectControl'
+import type { CInputProps } from '@/components/CInput'
+import type { CSelectControlProps } from '@/components/CSelectControl'
 
 export type CCheckboxModel<T> = T | T[] | boolean
 

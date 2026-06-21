@@ -4,9 +4,9 @@ import {
     unref,
 } from 'vue'
 
-import type { CFieldProps, CFieldSlots } from '../components'
-import { getPresetIf } from '../helpers'
-import type { CFieldPreset, CFieldZone } from '../types'
+import type { CFieldProps, CFieldSlots } from '@/components'
+import { getPresetIf } from '@/helpers'
+import type { CFieldPreset, CFieldZone } from '@/types'
 
 import { usePresets } from './use-presets'
 

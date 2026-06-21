@@ -1,4 +1,4 @@
-import { BreakpointLabels } from '../enums'
+import { BreakpointLabels } from '@/enums'
 
 export const BREAKPOINTS = [
     BreakpointLabels.XS,

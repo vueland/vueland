@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T">
     import { computed, unref } from 'vue'
 
-    import { IconAliases } from '../../enums'
+    import { IconAliases } from '@/enums'
 
     defineOptions({name: 'CRadio',})
 

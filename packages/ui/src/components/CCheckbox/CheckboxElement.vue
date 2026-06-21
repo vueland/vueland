@@ -1,9 +1,9 @@
 <script setup lang="ts" generic="T">
     import { computed, unref } from 'vue'
 
-    import { IconAliases } from '../../enums'
-    import { CIcon } from '../CIcon'
-    import { CLabel } from '../CLabel'
+    import { CIcon } from '@/components/CIcon'
+    import { CLabel } from '@/components/CLabel'
+    import { IconAliases } from '@/enums'
 
     defineOptions({inheritAttrs: false})
 

@@ -5,7 +5,7 @@ import {
     unref,
 } from 'vue'
 
-import { convertToUnit, IN_BROWSER } from '../utils'
+import { convertToUnit, IN_BROWSER } from '@/utils'
 
 export function useApplicationScroll() {
     const state = shallowReactive({ blockScroll: false })

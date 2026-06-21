@@ -1,4 +1,4 @@
-import { createFunctionalComponent } from '../../utils'
+import { createFunctionalComponent } from '@/utils'
 
 export const CCard = createFunctionalComponent('c-card')
 export const CCardHeader = createFunctionalComponent('c-card-header')

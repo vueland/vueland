@@ -1,40 +1,51 @@
-<template>
-  <div class="d-flex flex-wrap gap-4 pa-8 justify-center">
-    <CTooltip
-      v-for="item in delays"
-      :key="item.label"
-      width="auto"
-      open-on-hover
-      close-on-leave
-      align="bottom-center"
-      :offset-y="10"
-      :open-delay="item.open"
-      :close-delay="item.close"
-    >
-      <template #activator="{ on, activator }">
-        <CCard class="delay-card elevation-2 radius-12 pa-5 d-flex flex-col align-center gap-3" v-bind="activator" v-on="on">
-          <div class="icon-bg radius-10" :class="item.bg">
-            <CIcon :name="item.icon" source="fa" :size="18" />
-          </div>
-          <div class="d-flex flex-col align-center gap-1">
-            <span class="card-label">{{ item.label }}</span>
-            <span class="card-sub">{{ item.sub }}</span>
-          </div>
-        </CCard>
-      </template>
-      <span>{{ item.tip }}</span>
-    </CTooltip>
-  </div>
-</template>
-
 <script setup lang="ts">
-const delays = [
-  { icon: 'fas:check',     label: 'Instant',      sub: 'No delay',         tip: 'Opens immediately on hover', bg: 'bg-indigo',      open: 0,   close: 0 },
-  { icon: 'fas:eye',       label: 'Open delay',   sub: 'open: 400ms',      tip: 'Waits 400ms before showing', bg: 'bg-light-blue',  open: 400, close: 0 },
-  { icon: 'fas:eye-slash', label: 'Close delay',  sub: 'close: 600ms',     tip: 'Lingers 600ms before hiding', bg: 'bg-teal',       open: 0,   close: 600 },
-  { icon: 'fas:cog',       label: 'Both',         sub: '300ms · 400ms',    tip: 'Open: 300ms · Close: 400ms', bg: 'bg-deep-purple', open: 300, close: 400 },
-]
+    const delays = [
+        { icon: 'fas:check',     label: 'Instant',      sub: 'No delay',         tip: 'Opens immediately on hover', bg: 'bg-indigo',      open: 0,   close: 0 },
+        { icon: 'fas:eye',       label: 'Open delay',   sub: 'open: 400ms',      tip: 'Waits 400ms before showing', bg: 'bg-light-blue',  open: 400, close: 0 },
+        { icon: 'fas:eye-slash', label: 'Close delay',  sub: 'close: 600ms',     tip: 'Lingers 600ms before hiding', bg: 'bg-teal',       open: 0,   close: 600 },
+        { icon: 'fas:cog',       label: 'Both',         sub: '300ms · 400ms',    tip: 'Open: 300ms · Close: 400ms', bg: 'bg-deep-purple', open: 300, close: 400 },
+    ]
 </script>
+
+<template>
+    <div class="d-flex flex-wrap gap-4 pa-8 justify-center">
+        <c-tooltip
+            v-for="item in delays"
+            :key="item.label"
+            width="auto"
+            open-on-hover
+            close-on-leave
+            align="bottom-center"
+            :offset-y="10"
+            :open-delay="item.open"
+            :close-delay="item.close"
+        >
+            <template #activator="{ on, activator }">
+                <c-card
+                    class="delay-card elevation-2 radius-12 pa-5 d-flex flex-col align-center gap-3"
+                    v-bind="activator"
+                    v-on="on"
+                >
+                    <div
+                        class="icon-bg radius-10"
+                        :class="item.bg"
+                    >
+                        <c-icon
+                            :name="item.icon"
+                            source="fa"
+                            :size="18"
+                        />
+                    </div>
+                    <div class="d-flex flex-col align-center gap-1">
+                        <span class="card-label">{{ item.label }}</span>
+                        <span class="card-sub">{{ item.sub }}</span>
+                    </div>
+                </c-card>
+            </template>
+            <span>{{ item.tip }}</span>
+        </c-tooltip>
+    </div>
+</template>
 
 <style scoped>
 .delay-card {

@@ -5,11 +5,11 @@
     "baseUrl": ".",
     "paths": {
       "@vueland/ui/*": [
-        "../ui/src/*"
+        "../../packages/ui/src/*"
       ]
     },
     "types": [
-      "../ui/src/components/global-components.d.ts"
+      "../../packages/ui/src/components/global-components.d.ts"
     ]
   },
   "include": [

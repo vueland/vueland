@@ -1,149 +1,186 @@
-<template>
-  <div class="ex-grid">
-
-    <!-- OTP input -->
-    <CInput
-      v-model="otp"
-      kind="input"
-      :rules="otpRules"
-      validate-on="blur"
-    >
-      <template #field="field">
-        <div class="otp-wrap" :class="{ 'otp-wrap--error': field.hasError }">
-          <span class="otp-label">Verification code</span>
-          <div class="otp-cells">
-            <input
-              v-for="(_, i) in 6"
-              :key="i"
-              :ref="el => { if (el) cellRefs[i] = el as HTMLInputElement }"
-              class="otp-cell"
-              :class="{ 'otp-cell--filled': otp[i], 'otp-cell--error': field.hasError }"
-              type="text"
-              inputmode="numeric"
-              maxlength="1"
-              :value="otp[i] ?? ''"
-              @focus="field.focus"
-              @blur="field.blur"
-              @keydown="(e) => onKeydown(e, i)"
-              @input="(e) => onCellInput(e, i, field)"
-              @paste="(e) => onPaste(e, field)"
-            />
-          </div>
-          <span class="otp-hint" :style="{ color: field.hasError ? 'var(--c-app-error-color)' : '' }">
-            {{ field.hasError ? 'Invalid code' : 'Enter the 6-digit code from your email' }}
-          </span>
-        </div>
-      </template>
-    </CInput>
-
-    <!-- Search bar -->
-    <CInput v-model="search" kind="input">
-      <template #field="field">
-        <div class="search-bar" :class="{ 'search-bar--focused': field.focused }">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.35-4.35" />
-          </svg>
-          <input
-            v-bind="field.attrs"
-            class="search-input"
-            placeholder="Search anything…"
-            :value="search"
-            @input="(e: any) => { search = e.target.value; field.input(e.target.value) }"
-            @focus="field.focus"
-            @blur="field.blur"
-          />
-          <kbd v-if="!search" class="search-kbd">⌘K</kbd>
-          <button v-else class="search-clear" @click="search = ''">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14">
-              <path d="M18 6 6 18M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-      </template>
-    </CInput>
-
-    <!-- Textarea with counter -->
-    <CInput
-      v-model="bio"
-      kind="area"
-      :rules="bioRules"
-      validate-on="input"
-    >
-      <template #field="field">
-        <div class="rich-textarea" :class="{ 'rich-textarea--focused': field.focused, 'rich-textarea--error': field.hasError }">
-          <div class="rich-textarea__header">
-            <span class="rich-textarea__label">About me</span>
-            <span
-              class="rich-textarea__counter"
-              :class="{ 'rich-textarea__counter--warn': bio.length > 180, 'rich-textarea__counter--error': field.hasError }"
-            >
-              {{ bio.length }}/200
-            </span>
-          </div>
-          <textarea
-            v-bind="field.attrs"
-            class="rich-textarea__input"
-            placeholder="Tell the world something about yourself…"
-            rows="4"
-            :value="bio"
-            @input="(e: any) => { bio = e.target.value; field.input(e.target.value) }"
-            @focus="field.focus"
-            @blur="field.blur"
-          />
-          <div class="rich-textarea__footer">
-            <span
-              class="rich-textarea__hint"
-              :style="{ color: field.hasError ? 'var(--c-app-error-color)' : '' }"
-            >
-              {{ field.hasError ? 'Maximum 200 characters' : 'Markdown supported' }}
-            </span>
-          </div>
-        </div>
-      </template>
-    </CInput>
-
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref } from 'vue'
+    import { ref } from 'vue'
 
-const otp = ref('')
-const search = ref('')
-const bio = ref('')
-const cellRefs = ref<HTMLInputElement[]>([])
+    const otp = ref('')
+    const search = ref('')
+    const bio = ref('')
+    const cellRefs = ref<HTMLInputElement[]>([])
 
-const otpRules = [
-  (v: string) => ({ valid: /^\d{6}$/.test(v), message: 'Invalid code' }),
-]
-const bioRules = [
-  (v: string) => ({ valid: v.length <= 200, message: 'Maximum 200 characters' }),
-]
+    const otpRules = [
+        (v: string) => ({ valid: /^\d{6}$/.test(v), message: 'Invalid code' }),
+    ]
+    const bioRules = [
+        (v: string) => ({ valid: v.length <= 200, message: 'Maximum 200 characters' }),
+    ]
 
-function onCellInput(e: Event, index: number, field: any) {
-  const val = (e.target as HTMLInputElement).value.replace(/\D/g, '').slice(-1)
-  const chars = otp.value.split('')
-  chars[index] = val
-  otp.value = chars.join('').slice(0, 6)
-  field.input(otp.value)
-  if (val && index < 5) cellRefs.value[index + 1]?.focus()
-}
+    function onCellInput(e: Event, index: number, field: any) {
+        const val = (e.target as HTMLInputElement).value.replace(/\D/g, '').slice(-1)
+        const chars = otp.value.split('')
+        chars[index] = val
+        otp.value = chars.join('').slice(0, 6)
+        field.input(otp.value)
+        if (val && index < 5) cellRefs.value[index + 1]?.focus()
+    }
 
-function onKeydown(e: KeyboardEvent, index: number) {
-  if (e.key === 'Backspace' && !otp.value[index] && index > 0) {
-    cellRefs.value[index - 1]?.focus()
-  }
-}
+    function onKeydown(e: KeyboardEvent, index: number) {
+        if (e.key === 'Backspace' && !otp.value[index] && index > 0) {
+            cellRefs.value[index - 1]?.focus()
+        }
+    }
 
-function onPaste(e: ClipboardEvent, field: any) {
-  e.preventDefault()
-  const digits = (e.clipboardData?.getData('text') ?? '').replace(/\D/g, '').slice(0, 6)
-  otp.value = digits
-  field.input(digits)
-  cellRefs.value[Math.min(digits.length, 5)]?.focus()
-}
+    function onPaste(e: ClipboardEvent, field: any) {
+        e.preventDefault()
+        const digits = (e.clipboardData?.getData('text') ?? '').replace(/\D/g, '').slice(0, 6)
+        otp.value = digits
+        field.input(digits)
+        cellRefs.value[Math.min(digits.length, 5)]?.focus()
+    }
 </script>
+
+<template>
+    <div class="ex-grid">
+        <!-- OTP input -->
+        <c-input
+            v-model="otp"
+            kind="input"
+            :rules="otpRules"
+            validate-on="blur"
+        >
+            <template #field="field">
+                <div
+                    class="otp-wrap"
+                    :class="{ 'otp-wrap--error': field.hasError }"
+                >
+                    <span class="otp-label">Verification code</span>
+                    <div class="otp-cells">
+                        <input
+                            v-for="(_, i) in 6"
+                            :key="i"
+                            :ref="el => { if (el) cellRefs[i] = el as HTMLInputElement }"
+                            class="otp-cell"
+                            :class="{ 'otp-cell--filled': otp[i], 'otp-cell--error': field.hasError }"
+                            type="text"
+                            inputmode="numeric"
+                            maxlength="1"
+                            :value="otp[i] ?? ''"
+                            @focus="field.focus"
+                            @blur="field.blur"
+                            @keydown="(e) => onKeydown(e, i)"
+                            @input="(e) => onCellInput(e, i, field)"
+                            @paste="(e) => onPaste(e, field)"
+                        />
+                    </div>
+                    <span
+                        class="otp-hint"
+                        :style="{ color: field.hasError ? 'var(--c-app-error-color)' : '' }"
+                    >
+                        {{ field.hasError ? 'Invalid code' : 'Enter the 6-digit code from your email' }}
+                    </span>
+                </div>
+            </template>
+        </c-input>
+
+        <!-- Search bar -->
+        <c-input
+            v-model="search"
+            kind="input"
+        >
+            <template #field="field">
+                <div
+                    class="search-bar"
+                    :class="{ 'search-bar--focused': field.focused }"
+                >
+                    <svg
+                        class="search-icon"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <circle
+                            cx="11"
+                            cy="11"
+                            r="8"
+                        />
+                        <path d="m21 21-4.35-4.35" />
+                    </svg>
+                    <input
+                        v-bind="field.attrs"
+                        class="search-input"
+                        placeholder="Search anything…"
+                        :value="search"
+                        @input="(e: any) => { search = e.target.value; field.input(e.target.value) }"
+                        @focus="field.focus"
+                        @blur="field.blur"
+                    />
+                    <kbd
+                        v-if="!search"
+                        class="search-kbd"
+                    >⌘K</kbd>
+                    <button
+                        v-else
+                        class="search-clear"
+                        @click="search = ''"
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                            width="14"
+                            height="14"
+                        >
+                            <path d="M18 6 6 18M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </template>
+        </c-input>
+
+        <!-- Textarea with counter -->
+        <c-input
+            v-model="bio"
+            kind="area"
+            :rules="bioRules"
+            validate-on="input"
+        >
+            <template #field="field">
+                <div
+                    class="rich-textarea"
+                    :class="{ 'rich-textarea--focused': field.focused, 'rich-textarea--error': field.hasError }"
+                >
+                    <div class="rich-textarea__header">
+                        <span class="rich-textarea__label">About me</span>
+                        <span
+                            class="rich-textarea__counter"
+                            :class="{ 'rich-textarea__counter--warn': bio.length > 180, 'rich-textarea__counter--error': field.hasError }"
+                        >
+                            {{ bio.length }}/200
+                        </span>
+                    </div>
+                    <textarea
+                        v-bind="field.attrs"
+                        class="rich-textarea__input"
+                        placeholder="Tell the world something about yourself…"
+                        rows="4"
+                        :value="bio"
+                        @input="(e: any) => { bio = e.target.value; field.input(e.target.value) }"
+                        @focus="field.focus"
+                        @blur="field.blur"
+                    />
+                    <div class="rich-textarea__footer">
+                        <span
+                            class="rich-textarea__hint"
+                            :style="{ color: field.hasError ? 'var(--c-app-error-color)' : '' }"
+                        >
+                            {{ field.hasError ? 'Maximum 200 characters' : 'Markdown supported' }}
+                        </span>
+                    </div>
+                </div>
+            </template>
+        </c-input>
+    </div>
+</template>
 
 <style scoped>
 .ex-grid {

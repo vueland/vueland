@@ -5,8 +5,8 @@
         unref
     } from 'vue'
 
-    import { $SELECT_CONTROL_API_KEY } from '../../constants'
-    import { isDef } from '../../helpers'
+    import { $SELECT_CONTROL_API_KEY } from '@/constants'
+    import { isDef } from '@/helpers'
 
     import type { CSelectControlProps, CSelectControlSlots } from './types'
 

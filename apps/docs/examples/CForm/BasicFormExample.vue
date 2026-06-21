@@ -1,100 +1,137 @@
-<template>
-  <div class="d-flex justify-center pa-6">
-    <CCard class="elevation-2 form-card">
-      <div class="form-header d-flex align-center gap-3 px-6 py-5">
-        <div class="header-icon d-flex align-center justify-center">
-          <CIcon name="fas:lock" :size="18" source="fa" />
-        </div>
-        <div>
-          <div class="fs-lg fw-bold">Sign In</div>
-          <div class="fs-sm" style="opacity:.5">Welcome back</div>
-        </div>
-      </div>
-
-      <CCardBody class="px-6 pb-6 pt-5">
-        <CForm ref="formRef" @submit.prevent>
-          <template #default="{ validate }">
-            <div class="d-flex flex-col gap-4">
-              <CTextField
-                v-model="form.email"
-                label="Email"
-                type="email"
-                :rules="emailRules"
-                validate-on="blur"
-                preset="input.blue"
-              >
-                <template #prepend>
-                  <CIcon name="fas:envelope" :size="14" source="fa" />
-                </template>
-              </CTextField>
-
-              <CTextField
-                v-model="form.password"
-                :type="showPwd ? 'text' : 'password'"
-                label="Password"
-                :rules="passwordRules"
-                validate-on="blur"
-                preset="input.blue"
-              >
-                <template #prepend>
-                  <CIcon name="fas:lock" :size="14" source="fa" />
-                </template>
-                <template #append>
-                  <CIcon
-                    :name="showPwd ? 'fas:eye-slash' : 'fas:eye'"
-                    :size="14"
-                    source="fa"
-                    class="cursor-pointer"
-                    @click="showPwd = !showPwd"
-                  />
-                </template>
-              </CTextField>
-
-              <div class="d-flex align-center gap-3 mt-2">
-                <CBtn class="btn-primary" @click="() => handleSubmit(validate)">
-                  Sign in
-                </CBtn>
-                <CBtn class="btn-ghost" @click="handleReset">Reset</CBtn>
-              </div>
-
-              <div v-if="success" class="d-flex align-center gap-2 text-green fw-semi-bold fs-sm">
-                <CIcon name="fas:check" :size="13" source="fa" />
-                Logged in as {{ form.email }}
-              </div>
-            </div>
-          </template>
-        </CForm>
-      </CCardBody>
-    </CCard>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref } from 'vue'
+    import { ref } from 'vue'
 
-const formRef = ref()
-const success = ref(false)
-const showPwd = ref(false)
-const form = ref({ email: '', password: '' })
+    const formRef = ref()
+    const success = ref(false)
+    const showPwd = ref(false)
+    const form = ref({ email: '', password: '' })
 
-const emailRules = [
-  (v: string) => ({ valid: !!v, message: 'Email is required' }),
-  (v: string) => ({ valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), message: 'Invalid email address' }),
-]
-const passwordRules = [
-  (v: string) => ({ valid: !!v, message: 'Password is required' }),
-  (v: string) => ({ valid: v.length >= 6, message: 'Minimum 6 characters' }),
-]
+    const emailRules = [
+        (v: string) => ({ valid: !!v, message: 'Email is required' }),
+        (v: string) => ({ valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), message: 'Invalid email address' }),
+    ]
+    const passwordRules = [
+        (v: string) => ({ valid: !!v, message: 'Password is required' }),
+        (v: string) => ({ valid: v.length >= 6, message: 'Minimum 6 characters' }),
+    ]
 
-async function handleSubmit(validate: () => Promise<boolean>) {
-  if (await validate()) success.value = true
-}
-function handleReset() {
-  form.value = { email: '', password: '' }
-  success.value = false
-  formRef.value?.reset?.()
-}
+    async function handleSubmit(validate: () => Promise<boolean>) {
+        if (await validate()) success.value = true
+    }
+    function handleReset() {
+        form.value = { email: '', password: '' }
+        success.value = false
+        formRef.value?.reset?.()
+    }
 </script>
+
+<template>
+    <div class="d-flex justify-center pa-6">
+        <c-card class="elevation-2 form-card">
+            <div class="form-header d-flex align-center gap-3 px-6 py-5">
+                <div class="header-icon d-flex align-center justify-center">
+                    <c-icon
+                        name="fas:lock"
+                        :size="18"
+                        source="fa"
+                    />
+                </div>
+                <div>
+                    <div class="fs-lg fw-bold">
+                        Sign In
+                    </div>
+                    <div
+                        class="fs-sm"
+                        style="opacity:.5"
+                    >
+                        Welcome back
+                    </div>
+                </div>
+            </div>
+
+            <c-card-body class="px-6 pb-6 pt-5">
+                <c-form
+                    ref="formRef"
+                    @submit.prevent
+                >
+                    <template #default="{ validate }">
+                        <div class="d-flex flex-col gap-4">
+                            <c-text-field
+                                v-model="form.email"
+                                label="Email"
+                                type="email"
+                                :rules="emailRules"
+                                validate-on="blur"
+                                preset="input.blue"
+                            >
+                                <template #prepend>
+                                    <c-icon
+                                        name="fas:envelope"
+                                        :size="14"
+                                        source="fa"
+                                    />
+                                </template>
+                            </c-text-field>
+
+                            <c-text-field
+                                v-model="form.password"
+                                :type="showPwd ? 'text' : 'password'"
+                                label="Password"
+                                :rules="passwordRules"
+                                validate-on="blur"
+                                preset="input.blue"
+                            >
+                                <template #prepend>
+                                    <c-icon
+                                        name="fas:lock"
+                                        :size="14"
+                                        source="fa"
+                                    />
+                                </template>
+                                <template #append>
+                                    <c-icon
+                                        :name="showPwd ? 'fas:eye-slash' : 'fas:eye'"
+                                        :size="14"
+                                        source="fa"
+                                        class="cursor-pointer"
+                                        @click="showPwd = !showPwd"
+                                    />
+                                </template>
+                            </c-text-field>
+
+                            <div class="d-flex align-center gap-3 mt-2">
+                                <c-btn
+                                    class="btn-primary"
+                                    @click="() => handleSubmit(validate)"
+                                >
+                                    Sign in
+                                </c-btn>
+                                <c-btn
+                                    class="btn-ghost"
+                                    @click="handleReset"
+                                >
+                                    Reset
+                                </c-btn>
+                            </div>
+
+                            <div
+                                v-if="success"
+                                class="d-flex align-center gap-2 text-green fw-semi-bold fs-sm"
+                            >
+                                <c-icon
+                                    name="fas:check"
+                                    :size="13"
+                                    source="fa"
+                                />
+                                Logged in as {{ form.email }}
+                            </div>
+                        </div>
+                    </template>
+                </c-form>
+            </c-card-body>
+        </c-card>
+    </div>
+</template>
 
 <style scoped>
 .form-card { max-width: 400px; width: 100%; }

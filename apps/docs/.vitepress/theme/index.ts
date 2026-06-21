@@ -1,31 +1,76 @@
-import DefaultTheme from 'vitepress/theme'
-import type { Theme } from 'vitepress'
-import VuelandLayout from './VuelandLayout.vue'
-import { inBrowser, useData } from 'vitepress'
-import { watch } from 'vue'
+import {
+    faGithub,
+    faGoogle,
+    faTwitter,
+} from '@fortawesome/free-brands-svg-icons'
+import {
+    faAt,
+    faBell,
+    faBox,
+    faBriefcase,
+    faCalendarAlt,
+    faCheck,
+    faChevronDown,
+    faCode,
+    faCog,
+    faCopy,
+    faCreditCard,
+    faCut,
+    faDollarSign,
+    faEllipsisV,
+    faEnvelope,
+    faExpand,
+    faEye,
+    faEyeSlash,
+    faFile,
+    faFolder,
+    faGlobe,
+    faHashtag,
+    faHeart,
+    faHome,
+    faImage,
+    faKey,
+    faLink,
+    faListUl,
+    faLock,
+    faMapMarkerAlt,
+    faPaste,
+    faPen,
+    faPercent,
+    faPhone,
+    faPlus,
+    faRedo,
+    faSave,
+    faSearch,
+    faShareAlt,
+    faShieldAlt,
+    faSignOutAlt,
+    faStar,
+    faTimes,
+    faTrash,
+    faUndo,
+    faUser,
+    faUserCircle,
+} from '@fortawesome/free-solid-svg-icons'
 import { createVuelandUI } from '@vueland/ui'
 import * as components from '@vueland/ui/components'
+import { ALIASES } from '@vueland/ui/constants'
+import { createFontAwesomeResolver } from '@vueland/ui/resolvers'
+import type { CInputPreset } from '@vueland/ui/types'
+import {
+    inBrowser,
+    type Theme,
+    useData,
+} from 'vitepress'
+import DefaultTheme from 'vitepress/theme'
+import { watch } from 'vue'
+
+import VuelandLayout from './VuelandLayout.vue'
+
 import '@vueland/ui/styles.css'
 import '@vueland/ui/css/lib.css'
 import './utils-jit.css'
 import './style.scss'
-import { ALIASES } from '@vueland/ui/constants'
-import type { CInputPreset } from '@vueland/ui/types'
-import { createFontAwesomeResolver } from '@vueland/ui/resolvers'
-
-import {
-    faUser, faEnvelope, faLock, faPhone, faSearch,
-    faHome, faMapMarkerAlt, faLink, faDollarSign, faGlobe,
-    faEye, faEyeSlash, faCalendarAlt, faTrash, faPen,
-    faKey, faAt, faHashtag, faCode, faBriefcase,
-    faShieldAlt, faStar, faHeart, faBell, faCreditCard,
-    faPercent, faUserCircle, faCheck, faTimes, faImage,
-    faFolder, faFile, faSave, faPlus, faUndo, faRedo,
-    faCopy, faCut, faPaste, faExpand, faCog, faShareAlt,
-    faSignOutAlt, faBox, faChevronDown, faListUl, faEllipsisV,
-} from '@fortawesome/free-solid-svg-icons'
-
-import { faGithub, faGoogle, faTwitter } from '@fortawesome/free-brands-svg-icons'
 
 const fa = createFontAwesomeResolver({
     defaultPrefix: 'fas',
@@ -88,7 +133,7 @@ function makeInputPreset(color: string): CInputPreset {
         root: [color],
         focused: {
             label: [color],
-            root: [color]
+            root: [color],
         },
         filled: { label: [color] },
         input: [],
@@ -100,7 +145,7 @@ function makeInputPreset(color: string): CInputPreset {
             },
             focused: {
                 label: ['text-red'],
-            }
+            },
         },
     }
 }
@@ -126,14 +171,14 @@ export default {
             },
             presets: {
                 input: {
-                    blue:        makeInputPreset('text-blue'),
-                    teal:        makeInputPreset('text-teal'),
-                    green:       makeInputPreset('text-green'),
-                    deepPurple:  makeInputPreset('text-deep-purple'),
-                    indigo:      makeInputPreset('text-indigo'),
-                    orange:      makeInputPreset('text-orange'),
-                    pink:        makeInputPreset('text-pink'),
-                    cyan:        makeInputPreset('text-cyan'),
+                    blue: makeInputPreset('text-blue'),
+                    teal: makeInputPreset('text-teal'),
+                    green: makeInputPreset('text-green'),
+                    deepPurple: makeInputPreset('text-deep-purple'),
+                    indigo: makeInputPreset('text-indigo'),
+                    orange: makeInputPreset('text-orange'),
+                    pink: makeInputPreset('text-pink'),
+                    cyan: makeInputPreset('text-cyan'),
                     // for compound-state demo
                     noCompound: {
                         root: ['text-blue'],

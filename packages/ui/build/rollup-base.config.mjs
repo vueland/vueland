@@ -1,10 +1,14 @@
+import alias from '@rollup/plugin-alias'
 import commonjs from '@rollup/plugin-commonjs'
 import json from '@rollup/plugin-json'
 import { nodeResolve } from '@rollup/plugin-node-resolve'
 import replace from '@rollup/plugin-replace'
-import path from 'node:path'
+import path, { dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import esbuild from 'rollup-plugin-esbuild'
 import peerDepsExternal from 'rollup-plugin-peer-deps-external'
+
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
 export default {
     external: ['vue'],
@@ -14,6 +18,11 @@ export default {
         tryCatchDeoptimization: false,
     },
     plugins: [
+        alias({
+            entries: [
+                { find: '@', replacement: path.resolve(__dirname, '../src') },
+            ],
+        }),
         peerDepsExternal({ includeDependencies: true }),
         nodeResolve({
             extensions: ['.mjs', '.js', '.json', '.ts', 'tsx', '.vue'],

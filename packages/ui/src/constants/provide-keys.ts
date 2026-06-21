@@ -4,8 +4,8 @@ import type {
     ApplicationApi,
     FormAPI,
     ListAPI,
-} from '../components'
-import type { DialogsStackAPI, Display } from '../composables'
+} from '@/components'
+import type { DialogsStackAPI, Display } from '@/composables'
 
 export const $FORM_API_KEY: InjectionKey<FormAPI> = Symbol()
 export const $LIST_API_KEY: InjectionKey<ListAPI> = Symbol()

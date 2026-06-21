@@ -1,4 +1,4 @@
-import { createFunctionalComponent } from '../../utils'
+import { createFunctionalComponent } from '@/utils'
 
 export { default as CList } from './CList.vue'
 export { default as CListItem } from './CListItem.vue'

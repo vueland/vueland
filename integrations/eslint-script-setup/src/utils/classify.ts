@@ -1,4 +1,4 @@
-import { MACRO_APIS, type NodeCategory  } from './types'
+import { MACRO_APIS, type NodeCategory  } from '@/utils/types'
 
 type AnyNode = { type: string; [key: string]: unknown }
 
