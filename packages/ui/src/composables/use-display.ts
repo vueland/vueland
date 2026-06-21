@@ -1,6 +1,7 @@
 import {
-    type MaybeRef,
-    reactive,
+    type Ref,
+    type ShallowReactive,
+    shallowReactive,
     shallowRef,
     toRefs,
     unref,
@@ -19,25 +20,33 @@ export const breakpoints = {
     [BreakpointLabels.XXL]: 2560,
 } as const
 
-export interface AppBreakpoints {
-    xxl: MaybeRef<boolean>
-    xl: MaybeRef<boolean>
-    lg: MaybeRef<boolean>
-    md: MaybeRef<boolean>
-    sm: MaybeRef<boolean>
-    xs: MaybeRef<boolean>
-    xlAndLess: MaybeRef<boolean>
-    lgAndLess: MaybeRef<boolean>
-    mdAndLess: MaybeRef<boolean>
-    smAndLess: MaybeRef<boolean>
-    xlAndUp: MaybeRef<boolean>
-    lgAndUp: MaybeRef<boolean>
-    mdAndUp: MaybeRef<boolean>
-    smAndUp: MaybeRef<boolean>
+export interface Breakpoints {
+    xxl: boolean
+    xl: boolean
+    lg: boolean
+    md: boolean
+    sm: boolean
+    xs: boolean
+    xlAndLess: boolean
+    lgAndLess: boolean
+    mdAndLess: boolean
+    smAndLess: boolean
+    xlAndUp: boolean
+    lgAndUp: boolean
+    mdAndUp: boolean
+    smAndUp: boolean
 }
 
-export function useDisplay() {
-    const state = reactive<AppBreakpoints>({
+export type Display = {
+    [k in keyof Breakpoints]: Ref<boolean>
+}
+
+export function useDisplay(): {
+    state: ShallowReactive<Breakpoints>,
+    createDisplay(points?: Record<BreakpointLabels, number>): Display
+    update(): void
+    } {
+    const state = shallowReactive<Breakpoints>({
         xxl: false,
         xl: false,
         lg: false,
@@ -104,12 +113,12 @@ export function useDisplay() {
 
         return {
             ...toRefs(state),
-            update,
         }
     }
 
     return {
         state,
+        update,
         createDisplay,
     }
 }

@@ -4,7 +4,6 @@ import {
     type ComputedRef,
     nextTick,
     onBeforeUnmount,
-    type PropType,
     ref,
     shallowRef,
     unref,
@@ -13,7 +12,7 @@ import {
 
 import { isDef } from '../helpers'
 import type { DimensionsProps } from '../types'
-import { IN_BROWSER, propsFactory } from '../utils'
+import { IN_BROWSER } from '../utils'
 
 import { useApplication } from './use-application'
 
@@ -42,22 +41,7 @@ type ResolvedElement = HTMLElement | undefined
 
 type AutoPositionInputProps = DimensionsProps & AutoPositionProps
 
-export const makeAutoPositionProps = propsFactory({
-    strategy: {
-        type: String as PropType<AutoPositionProps['strategy']>,
-        default: 'bounce',
-    },
-    positionX: Number,
-    positionY: Number,
-    offsetX: [Number, String],
-    offsetY: [Number, String],
-    left: Boolean,
-    right: Boolean,
-    top: Boolean,
-    bottom: Boolean,
-})
-
-const SCREEN_EDGE_OFFSET = 20
+const SCREEN_EDGE_OFFSET = 10
 
 function resolveElement(value: MaybeElement): ResolvedElement {
     if (!value) {
@@ -72,7 +56,7 @@ function getElementRect(element: HTMLElement): Dimensions {
         top,
         left,
         width,
-        height, 
+        height,
     } = element.getBoundingClientRect()
 
     return {
@@ -128,6 +112,7 @@ export function useAutoPosition(
     const isReverseStrategy = computed(() => props.strategy === 'reverse')
 
     let frameId = 0
+    let updateInFlight = false
 
     const getActivatorElement = () => {
         return resolveElement(unref(activatorEl))
@@ -273,7 +258,7 @@ export function useAutoPosition(
             topEdge,
             bottomEdge,
             isBeyondTop,
-            isBeyondBottom, 
+            isBeyondBottom,
         } = getViewportYBounds(top)
 
         if (!isBeyondTop && !isBeyondBottom) {
@@ -290,7 +275,7 @@ export function useAutoPosition(
             leftEdge,
             rightEdge,
             isBeyondLeft,
-            isBeyondRight, 
+            isBeyondRight,
         } = getViewportXBounds(left)
 
         if (!isBeyondLeft && !isBeyondRight) {
@@ -370,17 +355,22 @@ export function useAutoPosition(
     }
 
     const update = async () => {
+        updateInFlight = true
+        cancelScheduledUpdate()
+
         setActivatorDimensions()
 
         await nextTick()
 
         if (!setContentDimensions()) {
+            updateInFlight = false
             return
         }
 
         await nextTick()
 
         applyPosition()
+        updateInFlight = false
     }
 
     if (IN_BROWSER) {
@@ -401,7 +391,9 @@ export function useAutoPosition(
             current.width = width
             current.height = height
 
-            scheduleUpdate()
+            if (!updateInFlight) {
+                scheduleUpdate()
+            }
         })
 
         watch(

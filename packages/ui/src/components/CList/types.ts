@@ -26,9 +26,11 @@ export type ListItemControls = {
 
 export type ListAPI<T = any> = {
     role: ComputedRef<CListRole>
-    register(controls: ListItemControls): void
+    listId: string
+    register(controls: ListItemControls): number
     unregister(controls: ListItemControls): void
     select(value: T): void
     unselect(value: T): void
     isActive(value: T): boolean
+    setDescendant(id: string | undefined): void
 }

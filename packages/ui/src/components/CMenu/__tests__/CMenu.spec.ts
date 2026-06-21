@@ -735,8 +735,8 @@ describe('CMenu', () => {
 
         const menu = getMenuOrFail()
 
-        expect(parseFloat(menu.style.left)).toBe(20)
-        expect(parseFloat(menu.style.top)).toBe(20)
+        expect(parseFloat(menu.style.left)).toBe(10)
+        expect(parseFloat(menu.style.top)).toBe(10)
     })
 
     it('не вылезает за правый край viewport при strategy=bounce', async () => {
@@ -761,7 +761,7 @@ describe('CMenu', () => {
 
         await open()
 
-        expect(parseFloat(getMenuOrFail().style.left)).toBe(360)
+        expect(parseFloat(getMenuOrFail().style.left)).toBe(370)
     })
 
     it('strategy=reverse открывает сверху, если снизу не хватает места', async () => {

@@ -40,7 +40,6 @@
         ref="inputRef"
         :model-value="model"
         v-bind="$attrs"
-        kind="input"
     >
         <template #field="{focus, blur, focused, preset, attrs, uid, label, clearable, readonly, disabled, hasError}">
             <div class="c-text-field">

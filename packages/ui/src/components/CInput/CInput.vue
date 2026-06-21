@@ -9,10 +9,12 @@
     } from 'vue'
 
     import {
+        useAriaActivator,
+        useAriaField,
         useForm,
         useId,
         useInputPresets,
-        useValidate
+        useValidate,
     } from '../../composables'
     import { FIELD_ATTRS } from '../../constants'
 
@@ -59,10 +61,10 @@
         errors
     })
 
-    const fieldId = useId(props.id, { prefix: props.kind })
-    const isLisBox = props.kind === 'listbox'
-    const isCheckBox = props.kind === 'checkbox'
-    const isRadio = props.kind === 'radio'
+    const fieldId = useId(props.id, { prefix: props.role })
+    const isCombobox = props.role === 'combobox'
+    const isCheckBox = props.role === 'checkbox'
+    const isRadio = props.role === 'radio'
 
     const hasDetails = computed(() => !props.noDetails && (
         !!props.details ||
@@ -83,16 +85,25 @@
         return acc
     }, {}))
 
+    const ariaField = useAriaField(() => ({
+        fieldId,
+        label: props.label || isCheckBox || isRadio,
+        hasDetails: unref(hasDetails),
+        hasError: errors.hasError,
+        errorMessage: errors.errorMessage,
+        readonly: props.readonly,
+        disabled: props.disabled,
+    }))
+
+    const ariaActivator = useAriaActivator(() => ({
+        expanded: state.focused,
+        haspopup: 'listbox',
+        controls: `${fieldId}-menu`,
+    }))
+
     const fieldAttrs = computed(() => ({
-        ...(props.label || isCheckBox || isRadio ? { 'aria-labelledby': `${fieldId}-label` } : {}),
-        ...(unref(hasDetails) ? { 'aria-describedby': `${fieldId}-details` } : {}),
-        ...(errors.hasError ? { 'aria-invalid': 'true' } : {}),
-        ...(errors.errorMessage && unref(hasDetails) ? { 'aria-errormessage': `${fieldId}-details` } : {}),
-        ...(props.readonly ? { 'aria-readonly': 'true' } : {}),
-        ...(props.disabled ? { 'aria-disabled': 'true' } : {}),
-        ...(isLisBox ? { 'aria-haspopup': 'listbox' } : {}),
-        ...(isLisBox ? { 'aria-controls': `${fieldId}-menu` } : {}),
-        ...(isLisBox ? { 'aria-expanded': `${state.focused}` } : {}),
+        ...unref(ariaField),
+        ...(isCombobox ? { role: 'combobox', ...unref(ariaActivator) } : {}),
         ...unref(normalizedAttrsMap),
     }))
 

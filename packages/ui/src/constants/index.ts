@@ -1,3 +1,4 @@
+export * from './aria'
 export * from './attrs'
 export * from './breakpoints'
 export * from './icons'

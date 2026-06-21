@@ -374,8 +374,8 @@ describe('useAutoPosition', () => {
 
         await update()
 
-        expect(api.content.value.left).toBe(20)
-        expect(api.content.value.top).toBe(20)
+        expect(api.content.value.left).toBe(10)
+        expect(api.content.value.top).toBe(10)
     })
 
     it('добавляет offset к positionX и positionY', async () => {
@@ -433,7 +433,7 @@ describe('useAutoPosition', () => {
 
         await update()
 
-        expect(api.content.value.left).toBe(360)
+        expect(api.content.value.left).toBe(370)
     })
 
     it('bounce ограничивает content по левому краю viewport', async () => {
@@ -461,7 +461,7 @@ describe('useAutoPosition', () => {
 
         await update()
 
-        expect(api.content.value.left).toBe(20)
+        expect(api.content.value.left).toBe(10)
     })
 
     it('bounce ограничивает content по нижнему краю viewport', async () => {
@@ -494,7 +494,7 @@ describe('useAutoPosition', () => {
 
         await update()
 
-        expect(api.content.value.top).toBe(200)
+        expect(api.content.value.top).toBe(210)
     })
 
     it('bounce ограничивает content по верхнему краю viewport', async () => {
@@ -522,7 +522,7 @@ describe('useAutoPosition', () => {
 
         await update()
 
-        expect(api.content.value.top).toBe(20)
+        expect(api.content.value.top).toBe(10)
     })
 
     it('reverse открывает снизу, если сверху не хватает места', async () => {
@@ -772,7 +772,7 @@ describe('useAutoPosition', () => {
 
         await flushRaf()
 
-        expect(api.content.value.top).toBe(180)
+        expect(api.content.value.top).toBe(190)
     })
 
     it('батчит несколько scheduled updates в один requestAnimationFrame', async () => {

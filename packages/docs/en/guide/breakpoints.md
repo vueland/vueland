@@ -105,8 +105,8 @@ import { createApp } from 'vue'
 import { createVuelandUI } from '@vueland/ui'
 import * as components from '@vueland/ui/components'
 
-import '@vueland/ui/src/styles/styles.scss'
-import '@vueland/ui/src/styles/lib.scss'
+import '@vueland/ui/styles/styles.scss'
+import '@vueland/ui/styles/lib.scss'
 import 'src/.generated/utils-jit.css'
 
 import App from './App.vue'
@@ -165,17 +165,17 @@ Row-level alignment also responds to breakpoints:
 **`useDisplay`** — reactive booleans in JS/Vue, synced to the same values:
 
 ```vue
-<script setup lang="ts">
-import { inject } from 'vue'
-import { $BREAKPOINTS_KEY } from '@vueland/ui/constants'
 
-const display = inject($BREAKPOINTS_KEY)!
+<script setup lang="ts">
+  import { useBreakpoints } from '@vueland/ui/composables'
+
+  const { mdAndUp } = useBreakpoints()
 </script>
 
 <template>
   <c-row>
-    <c-col :cols="display.mdAndUp.value ? 6 : 12">
-      Adaptive column via JS
+    <c-col :cols="mdAndUp ? 6 : 12">
+      Адаптивная колонка через JS
     </c-col>
   </c-row>
 </template>

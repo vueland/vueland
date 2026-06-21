@@ -95,7 +95,7 @@ export class VuelandUI {
             }
         }
 
-        const { createDisplay } = useDisplay()
+        const { createDisplay, update } = useDisplay()
 
         const display = createDisplay(resolvedBreakpoints)
         const dialogsStack = createDialogsStack()
@@ -111,20 +111,20 @@ export class VuelandUI {
                 this.applyTheme(initialTheme)
             }
 
-            window.addEventListener('resize', display.update)
+            window.addEventListener('resize', update)
         }
 
         const unmount = app.unmount
 
         app.unmount = (...args) => {
-            window.removeEventListener('resize', display.update)
+            window.removeEventListener('resize', update)
             unmount(...args)
         }
 
         if (options.ssr && (app as any).$nuxt) {
             ;(app as any).$nuxt.hook('app:suspense:resolve', () => {
                 if (IN_BROWSER) {
-                    display.update()
+                    update()
                 }
             })
         }

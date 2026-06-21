@@ -7,7 +7,7 @@ import {
 
 import { convertToUnit, IN_BROWSER } from '../utils'
 
-export function useAppScroll() {
+export function useApplicationScroll() {
     const state = shallowReactive({ blockScroll: false })
 
     const appRef = shallowRef<HTMLElement>()

@@ -1,1 +1,10 @@
-export { default as CTooltip } from './CTooltip.vue'
+import type { CMenuProps, CMenuSlots } from '../CMenu'
+
+import CTooltipImpl from './CTooltip.vue'
+
+type CTooltipComponent = new () => {
+    $props: CMenuProps
+    $slots: CMenuSlots
+}
+
+export const CTooltip = CTooltipImpl as unknown as CTooltipComponent

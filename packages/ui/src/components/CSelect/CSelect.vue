@@ -1,5 +1,9 @@
 <script setup lang="ts" generic="T">
-    import { shallowRef, unref } from 'vue'
+    import {
+        computed,
+        shallowRef,
+        unref
+    } from 'vue'
 
     import {
         useKeyboard,
@@ -25,6 +29,10 @@
 
     const inputRef = shallowRef()
     const menuRef = shallowRef()
+    const menuListRef = shallowRef()
+
+    const ariaControls = computed(() => unref(menuListRef)?.listId)
+    const ariaActiveDescendant = computed(() => unref(menuListRef)?.activeDescendant)
 
     const normalizedItems = useNormalizedItems(props)
     const {
@@ -37,8 +45,10 @@
         Tab: () => {
             unref(inputRef).blur()
             unref(menuRef).close()
-        }
-    })
+        },
+        ArrowDown: () => unref(menuListRef)?.navigateDown(),
+        ArrowUp: () => unref(menuListRef)?.navigateUp(),
+    }, { prevent: ['ArrowDown', 'ArrowUp'] })
 
     function onBlur() {
         unref(inputRef).blur()
@@ -59,7 +69,9 @@
         ref="inputRef"
         :model-value="model"
         validate-on="blur"
-        kind="listbox"
+        role="combobox"
+        :aria-controls="ariaControls"
+        :aria-activedescendant="ariaActiveDescendant"
     >
         <template #field="field">
             <c-menu
