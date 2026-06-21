@@ -42,6 +42,17 @@ export function classifyNode(node: AnyNode, config: ClassifyConfig): NodeCategor
         return 'type'
     }
 
+    if (node.type === 'ExportNamedDeclaration') {
+        const decl = node.declaration as AnyNode | undefined
+        if (
+            decl?.type === 'TSTypeAliasDeclaration'
+            || decl?.type === 'TSInterfaceDeclaration'
+            || decl?.type === 'TSEnumDeclaration'
+        ) {
+            return 'type'
+        }
+    }
+
     if (node.type === 'ExpressionStatement') {
         const expr = node.expression as AnyNode
         const name = getCallName(expr)

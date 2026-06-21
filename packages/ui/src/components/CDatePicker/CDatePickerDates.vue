@@ -34,22 +34,22 @@
         date?(props: DatePickerDate & { isSelected: boolean, isToday: boolean }): any
     }>()
 
-    export type EnrichedDate = {
-        dateObj: DatePickerDate | null
-        empty: boolean
-        disabled: boolean
-        highlighted: boolean
-        isSelected: boolean
-        isToday: boolean
-    }
+    defineExpose({
+        onNext: () => updateMonth(true),
+        onPrev: () => updateMonth(false),
+    })
+
+    const dates = shallowRef<(DatePickerDate | null)[]>([])
+
+    const transitionName = shallowRef('c-date-slide-left')
 
     const FIRST_MONTH = 0
+
     const LAST_MONTH = 11
+
     const DAYS = [0, 1, 2, 3, 4, 5, 6]
 
     const today = parseDate(new Date())
-    const dates = shallowRef<(DatePickerDate | null)[]>([])
-    const transitionName = shallowRef('c-date-slide-left')
 
     const days = computed(() => {
         let days = DAYS
@@ -66,8 +66,61 @@
 
     const weekDays = computed(() => unref(days).map((d) => ({
         day: d,
-        label: props.locale?.[d] 
+        label: props.locale?.[d]
     })))
+
+    const parsedFromTo = computed(() => {
+        const { from, to } = props.disabledDates ?? {}
+        if (!from || !to) return null
+        return {
+            f: parseDate(new Date(from)).mls ?? 0,
+            t: parseDate(new Date(to)).mls ?? 0
+        }
+    })
+
+    const parsedRanges = computed(() =>
+        props.disabledDates?.ranges?.map((r) => ({
+            f: parseDate(new Date(r.from)).mls ?? 0,
+            t: parseDate(new Date(r.to)).mls ?? 0,
+        })) ?? [],
+    )
+
+    const parsedHighlighted = computed(() =>
+        props.highlightedDates?.map((d) => parseDate(new Date(d))) ?? [],
+    )
+
+    const enrichedDates = computed<EnrichedDate[]>(() =>
+        dates.value.map((dateObj) => {
+            if (!dateObj || !dateObj.date) return {
+                dateObj,
+                empty: true,
+                disabled: false,
+                highlighted: false,
+                isSelected: false,
+                isToday: false
+            }
+            const disabled = isDisabled(dateObj)
+            const highlighted = isHighlighted(dateObj)
+            dateObj.isHoliday = disabled
+            dateObj.isHighlighted = highlighted
+            return {
+                dateObj,
+                empty: false,
+                disabled,
+                highlighted,
+                isSelected: isEqualDates(dateObj, props.value),
+                isToday: isEqualDates(dateObj, today),
+            }
+        }),
+    )
+
+    const rows = computed(() => {
+        const result: EnrichedDate[][] = []
+        for (let i = 0; i < enrichedDates.value.length; i += 7) {
+            result.push(enrichedDates.value.slice(i, i + 7))
+        }
+        return result
+    })
 
     function updateMonth(isNext: boolean) {
         transitionName.value = isNext ? 'c-date-slide-left' : 'c-date-slide-right'
@@ -77,7 +130,7 @@
         if (isNext && month > LAST_MONTH) { month = FIRST_MONTH; year = props.year + 1 }
         emit('update:month', {
             month,
-            year 
+            year
         })
     }
 
@@ -101,26 +154,6 @@
         if (!b) return false
         return a.date === b.date && a.month === b.month && a.year === b.year
     }
-
-    const parsedFromTo = computed(() => {
-        const { from, to } = props.disabledDates ?? {}
-        if (!from || !to) return null
-        return {
-            f: parseDate(new Date(from)).mls ?? 0,
-            t: parseDate(new Date(to)).mls ?? 0 
-        }
-    })
-
-    const parsedRanges = computed(() =>
-        props.disabledDates?.ranges?.map((r) => ({
-            f: parseDate(new Date(r.from)).mls ?? 0,
-            t: parseDate(new Date(r.to)).mls ?? 0,
-        })) ?? [],
-    )
-
-    const parsedHighlighted = computed(() =>
-        props.highlightedDates?.map((d) => parseDate(new Date(d))) ?? [],
-    )
 
     function isDisabled(date: DatePickerDate): boolean {
         if (!date.date) return false
@@ -146,45 +179,16 @@
         return parsedHighlighted.value.some((d) => isEqualDates(date, d))
     }
 
-    const enrichedDates = computed<EnrichedDate[]>(() =>
-        dates.value.map((dateObj) => {
-            if (!dateObj || !dateObj.date) return {
-                dateObj,
-                empty: true,
-                disabled: false,
-                highlighted: false,
-                isSelected: false,
-                isToday: false 
-            }
-            const disabled = isDisabled(dateObj)
-            const highlighted = isHighlighted(dateObj)
-            dateObj.isHoliday = disabled
-            dateObj.isHighlighted = highlighted
-            return {
-                dateObj,
-                empty: false,
-                disabled,
-                highlighted,
-                isSelected: isEqualDates(dateObj, props.value),
-                isToday: isEqualDates(dateObj, today),
-            }
-        }),
-    )
-
-    const rows = computed(() => {
-        const result: EnrichedDate[][] = []
-        for (let i = 0; i < enrichedDates.value.length; i += 7) {
-            result.push(enrichedDates.value.slice(i, i + 7))
-        }
-        return result
-    })
-
     watch(() => props.month, buildDates, { immediate: true })
 
-    defineExpose({
-        onNext: () => updateMonth(true),
-        onPrev: () => updateMonth(false),
-    })
+    export type EnrichedDate = {
+        dateObj: DatePickerDate | null
+        empty: boolean
+        disabled: boolean
+        highlighted: boolean
+        isSelected: boolean
+        isToday: boolean
+    }
 </script>
 
 <template>

@@ -26,22 +26,21 @@
     }>()
 
     const value = defineModel<string | number | undefined | null>()
-    const inputRef = shallowRef<HTMLElement>()
+
     const slots = useSlots()
 
-    const hasValue = computed(() => props.filled || !!unref(value))
-    const presets = useFieldPresets({
-        slots,
-        props,
-        hasValue
-    })
+    const presets = useFieldPresets({ slots, props })
 
-    const clearable = computed(() => props.clearable && props.focused && unref(hasValue))
+    const inputRef = shallowRef<HTMLElement>()
+
+    const hasValue = computed(() => props.filled || !!unref(value))
+
+    const clearable = computed(() => props.clearable && props.focused && hasValue.value)
 
     const classes = computed(() => [
         {
             'c-field--focused': props.focused,
-            'c-field--filled': unref(hasValue),
+            'c-field--filled': hasValue.value,
             'c-field--has-prepend': !!slots.prepend,
             'c-field--disabled': props.disabled,
             'c-field--readonly': props.readonly,

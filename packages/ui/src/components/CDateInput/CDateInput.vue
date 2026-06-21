@@ -21,6 +21,25 @@
     import type { PresetProps, ValidateProps } from '@/composables'
     import { IconAliases } from '@/enums'
 
+    export type CDateInputProps = ValidateProps & PresetProps & {
+        modelValue?: Date | null
+        label?: string
+        details?: string
+        noDetails?: boolean
+        clearable?: boolean
+        disabled?: boolean
+        readonly?: boolean
+        typeable?: boolean
+        placeholder?: string
+        lang?: string
+        format?: string
+        mondayFirst?: boolean
+        disabledDates?: DisabledDates
+        highlightedDates?: (Date | string)[]
+        minDate?: Date | string
+        maxDate?: Date | string
+    }
+
     defineOptions({
         name: 'CDateInput',
         inheritAttrs: false
@@ -49,27 +68,10 @@
 
     const model = defineModel<Date | null>()
 
-    export type CDateInputProps = ValidateProps & PresetProps & {
-        modelValue?: Date | null
-        label?: string
-        details?: string
-        noDetails?: boolean
-        clearable?: boolean
-        disabled?: boolean
-        readonly?: boolean
-        typeable?: boolean
-        placeholder?: string
-        lang?: string
-        format?: string
-        mondayFirst?: boolean
-        disabledDates?: DisabledDates
-        highlightedDates?: (Date | string)[]
-        minDate?: Date | string
-        maxDate?: Date | string
-    }
-
     const menuOpen = ref(false)
+
     const inputRef = ref()
+
     const fieldRef = ref()
 
     const displayValue = computed(() =>
@@ -103,6 +105,7 @@
             emit('update:modelValue', parsed)
         }
     }
+
 </script>
 
 <template>

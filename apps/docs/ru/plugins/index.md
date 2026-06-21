@@ -8,6 +8,7 @@ Vueland — это не просто библиотека компонентов
 
 | Плагин | Пакет | Описание |
 |--------|-------|----------|
+| [ESLint Script Setup](./eslint-script-setup/getting-started) | `@vueland/eslint-script-setup` | ESLint плагин, обеспечивающий единообразный порядок объявлений внутри блоков `<script setup>` с поддержкой автофикса |
 | [Utils JIT](./utils-jit/getting-started) | `@vueland/utils-jit` | Vite-плагин, генерирующий произвольные CSS-утилиты по требованию — в бандл попадают только те классы, которые реально используются |
 
 ## Скоро

@@ -10,8 +10,8 @@ const CHILD_KEYS: Partial<Record<string, string[]>> = {
     Literal: [],
     VariableDeclaration: ['declarations'],
     VariableDeclarator: ['id', 'init'],
-    ArrowFunctionExpression: ['params', 'body'],
-    FunctionExpression: ['params', 'body'],
+    ArrowFunctionExpression: [],
+    FunctionExpression: [],
     FunctionDeclaration: ['params', 'body'],
     BlockStatement: ['body'],
     ReturnStatement: ['argument'],
@@ -80,6 +80,13 @@ function getDeclaredName(node: AnyNode): string | null {
         return (node.id as AnyNode)?.name as string ?? null
     }
 
+    if (node.type === 'ExportNamedDeclaration') {
+        const decl = node.declaration as AnyNode | undefined
+        if (decl?.type === 'TSTypeAliasDeclaration' || decl?.type === 'TSInterfaceDeclaration') {
+            return (decl.id as AnyNode)?.name as string ?? null
+        }
+    }
+
     return null
 }
 
@@ -141,6 +148,7 @@ export function detectOrderConflicts(
             if (entries[depOriginalIdx].node.type === 'FunctionDeclaration') {
                 continue
             }
+
 
             const depNewPos = sortedIndices.indexOf(depOriginalIdx)
 

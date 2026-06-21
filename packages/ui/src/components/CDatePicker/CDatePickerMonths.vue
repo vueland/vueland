@@ -23,31 +23,18 @@
         month?(props: EnrichedMonth): any
     }>()
 
-    export type EnrichedMonth = {
-        month: number
-        label: string
-        disabled: boolean
-        isSelected: boolean
-        isCurrent: boolean
-        onSelect: () => void
-    }
+    defineExpose({
+        onNext: () => emit('update:year', props.year + 1),
+        onPrev: () => emit('update:year', props.year - 1),
+    })
 
     const MONTHS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-    const CELLS_IN_ROW = 3
-    const CURRENT_YEAR = new Date().getFullYear()
-    const CURRENT_MONTH = new Date().getMonth()
 
-    function isDisabled(m: number): boolean {
-        if (props.minDate) {
-            if (props.year < props.minDate.year) return true
-            if (props.year === props.minDate.year && m < props.minDate.month) return true
-        }
-        if (props.maxDate) {
-            if (props.year > props.maxDate.year) return true
-            if (props.year === props.maxDate.year && m > props.maxDate.month) return true
-        }
-        return false
-    }
+    const CELLS_IN_ROW = 3
+
+    const CURRENT_YEAR = new Date().getFullYear()
+
+    const CURRENT_MONTH = new Date().getMonth()
 
     const enrichedMonths = computed<EnrichedMonth[]>(() =>
         MONTHS.map((m) => ({
@@ -68,10 +55,26 @@
         return result
     })
 
-    defineExpose({
-        onNext: () => emit('update:year', props.year + 1),
-        onPrev: () => emit('update:year', props.year - 1),
-    })
+    function isDisabled(m: number): boolean {
+        if (props.minDate) {
+            if (props.year < props.minDate.year) return true
+            if (props.year === props.minDate.year && m < props.minDate.month) return true
+        }
+        if (props.maxDate) {
+            if (props.year > props.maxDate.year) return true
+            if (props.year === props.maxDate.year && m > props.maxDate.month) return true
+        }
+        return false
+    }
+
+    export type EnrichedMonth = {
+        month: number
+        label: string
+        disabled: boolean
+        isSelected: boolean
+        isCurrent: boolean
+        onSelect: () => void
+    }
 </script>
 
 <template>

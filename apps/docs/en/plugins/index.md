@@ -8,6 +8,7 @@ Each plugin lives in its own package, is installed independently, and integrates
 
 | Plugin | Package | Description |
 |--------|---------|-------------|
+| [ESLint Script Setup](./eslint-script-setup/getting-started) | `@vueland/eslint-script-setup` | ESLint plugin that enforces a consistent declaration order inside `<script setup>` blocks and provides autofix |
 | [Utils JIT](./utils-jit/getting-started) | `@vueland/utils-jit` | Vite plugin that generates arbitrary-value CSS utility classes on demand — only classes you actually use end up in the bundle |
 
 ## Coming soon

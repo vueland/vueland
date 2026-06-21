@@ -19,7 +19,10 @@
 
     defineSlots<CFormSlots>()
 
+    defineExpose({ validate, reset })
+
     let validators: ValidatorFn[] = []
+
     let resetFns: ResetFn[] = []
 
     function add(fn: ValidatorFn) {
@@ -50,8 +53,6 @@
     function onSubmit(event: Event) {
         emit('submit', event)
     }
-
-    defineExpose({ validate, reset })
 
     provide($FORM_API_KEY, {
         add,
