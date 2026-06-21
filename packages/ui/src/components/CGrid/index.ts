@@ -1,4 +1,4 @@
-import { createFunctionalComponent } from '../../utils'
+import { createFunctionalComponent } from '@/utils'
 
 export { CCol } from './CCol'
 export { CRow } from './CRow'

@@ -3,7 +3,7 @@ import {
     type AriaCurrent,
     type AriaHaspopup,
     type AriaLive,
-} from '../constants'
+} from '@/constants'
 
 type AriaAttrs = Partial<Record<string, string>>
 

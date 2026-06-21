@@ -6,8 +6,8 @@ import {
     type VNode,
 } from 'vue'
 
-import { BREAKPOINTS } from '../../constants'
-import { isDef, toCamelCase } from '../../helpers'
+import { BREAKPOINTS } from '@/constants'
+import { isDef, toCamelCase } from '@/helpers'
 
 export const CCol = defineComponent({
     name: 'CCol',

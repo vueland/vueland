@@ -6,14 +6,16 @@
     } from 'vue'
 
     import {
+        CField,
+        CInput,
+        CMenu
+    } from '@/components'
+    import {
         useKeyboard,
         useNormalizedItems,
         useSelectedChips
-    } from '../../composables'
-    import { IconAliases } from '../../enums'
-    import { CField } from '../CField'
-    import { CInput } from '../CInput'
-    import { CMenu } from '../CMenu'
+    } from '@/composables'
+    import { IconAliases } from '@/enums'
 
     import type { CSelectProps, CSelectSlots } from './types'
 

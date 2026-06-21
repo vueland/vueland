@@ -1,4 +1,4 @@
-import { createFunctionalComponent } from '../../utils'
+import { createFunctionalComponent } from '@/utils'
 
 export { default as CToolbar } from './CToolbar.vue'
 

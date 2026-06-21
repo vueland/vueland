@@ -1,6 +1,6 @@
 import { computed } from 'vue'
 
-import { ariaActiveDescendant, ariaMultiselectable } from '../utils'
+import { ariaActiveDescendant, ariaMultiselectable } from '@/utils'
 
 export interface AriaListboxState {
     multiple?: boolean

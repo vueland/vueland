@@ -1,3 +1,3 @@
-import { createFunctionalComponent } from '../../utils'
+import { createFunctionalComponent } from '@/utils'
 
 export const CMain = createFunctionalComponent('c-main')

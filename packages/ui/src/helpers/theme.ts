@@ -1,4 +1,4 @@
-import type { ThemeDefinition } from '../types'
+import type { ThemeDefinition } from '@/types'
 
 const SEMANTIC_VAR_MAP: Record<string, string> = {
     primary: '--c-app-primary-color',

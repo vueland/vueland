@@ -7,7 +7,7 @@
         watchEffect
     } from 'vue'
 
-    import { useOverlayStack } from '../../composables/use-overlay-stack'
+    import { useOverlayStack } from '@/composables/use-overlay-stack'
 
     import type { COverlayProps, COverlaySlots } from './tyoes'
 

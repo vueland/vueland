@@ -4,7 +4,7 @@ import type {
     PresetProps,
     ValidateProps,
     ValidateState,
-} from '../../composables'
+} from '@/composables'
 
 export interface InputState {
     focused: boolean

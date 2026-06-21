@@ -1,4 +1,4 @@
-import { isDef } from '../helpers'
+import { isDef } from '@/helpers'
 
 export type DelayProps = {
     openDelay?: number | string

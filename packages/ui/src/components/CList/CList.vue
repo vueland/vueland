@@ -9,8 +9,8 @@
         useAttrs
     } from 'vue'
 
-    import { useId, useKeyboard } from '../../composables'
-    import { $LIST_API_KEY } from '../../constants'
+    import { useId, useKeyboard } from '@/composables'
+    import { $LIST_API_KEY } from '@/constants'
 
     import type {
         CListProps,

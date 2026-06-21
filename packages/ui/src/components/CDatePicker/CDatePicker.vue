@@ -7,7 +7,7 @@
         type VNodeChild
     } from 'vue'
 
-    import { isDef } from '../../helpers'
+    import { isDef } from '@/helpers'
 
     import CDatePickerDates, { type EnrichedDate } from './CDatePickerDates.vue'
     import CDatePickerHeader from './CDatePickerHeader.vue'

@@ -1,4 +1,4 @@
-import { IconAliases, IconName } from '../enums'
+import { IconAliases, IconName } from '@/enums'
 
 export const ICONS = {
     [IconName.CHEVRON_LEFT]: {

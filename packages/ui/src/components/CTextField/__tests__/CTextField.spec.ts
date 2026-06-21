@@ -12,8 +12,9 @@ import {
     ref,
 } from 'vue'
 
+import { CTextField } from '@/components/index'
+
 import { $VUELAND_UI_KEY } from '../../../constants'
-import { CTextField } from '../index'
 
 function createWrapper(
     props: any = {},

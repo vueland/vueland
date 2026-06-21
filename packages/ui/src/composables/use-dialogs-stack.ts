@@ -7,8 +7,8 @@ import {
     shallowRef,
 } from 'vue'
 
-import { $DIALOGS_STACK_API_KEY } from '../constants'
-import { isDef } from '../helpers'
+import { $DIALOGS_STACK_API_KEY } from '@/constants'
+import { isDef } from '@/helpers'
 
 export type DialogStackItem = {
     id: number

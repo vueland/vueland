@@ -8,8 +8,8 @@ import {
     watchEffect,
 } from 'vue'
 
-import { BreakpointLabels } from '../enums'
-import { IN_BROWSER } from '../utils'
+import { BreakpointLabels } from '@/enums'
+import { IN_BROWSER } from '@/utils'
 
 export const breakpoints = {
     [BreakpointLabels.XS]: 0,

@@ -7,10 +7,10 @@
         useSlots
     } from 'vue'
 
-    import { useFieldPresets } from '../../composables/use-field-presets'
-    import { IconAliases } from '../../enums'
-    import { CIcon } from '../CIcon'
-    import { CLabel } from '../CLabel'
+    import { CIcon } from '@/components/CIcon'
+    import { CLabel } from '@/components/CLabel'
+    import { useFieldPresets } from '@/composables/use-field-presets'
+    import { IconAliases } from '@/enums'
 
     import type { CFieldProps } from './types'
 

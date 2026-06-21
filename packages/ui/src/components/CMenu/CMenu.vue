@@ -10,22 +10,22 @@
         watch
     } from 'vue'
 
+    import { COverlay } from '@/components'
     import {
         useActivator,
         useAutoPosition,
         useDelayedActions,
         useId,
         useKeyboard,
-    } from '../../composables'
-    import { $MENU_API_KEY } from '../../constants'
-    import { vClickOutside } from '../../directives'
-    import { isDef } from '../../helpers'
+    } from '@/composables'
+    import { $MENU_API_KEY } from '@/constants'
+    import { vClickOutside } from '@/directives'
+    import { isDef } from '@/helpers'
     import {
         convertToUnit,
         IN_BROWSER,
         throttle
-    } from '../../utils'
-    import { COverlay } from '../COverlay'
+    } from '@/utils'
 
     import type { CMenuEvents, CMenuProps } from './types'
 

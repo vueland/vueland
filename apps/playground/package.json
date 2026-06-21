@@ -1,0 +1,41 @@
+{
+  "name": "playground",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev:play": "vite",
+    "build-play": "vite build",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx,.vue .",
+    "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx,.vue ."
+  },
+  "dependencies": {
+    "@fortawesome/free-brands-svg-icons": "^7.2.0",
+    "@fortawesome/free-solid-svg-icons": "^7.2.0",
+    "@vueland/ui": "workspace:*",
+    "@vueland/utils-jit": "workspace:*",
+    "vue": "^3.5.27"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vueland/eslint-script-setup": "workspace:*",
+    "eslint": "^9.39.2",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-import-newlines": "^2.0.0",
+    "eslint-plugin-newline-destructuring": "^1.2.2",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
+    "eslint-plugin-vue": "^10.7.0",
+    "globals": "^17.3.0",
+    "typescript-eslint": "^8.54.0",
+    "vue-eslint-parser": "^10.2.0",
+    "@vitejs/plugin-vue": "^6.0.3",
+    "@vitejs/plugin-vue-jsx": "^5.1.5",
+    "sass": "^1.97.3",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.5",
+    "vue-tsc": "^2.2.0"
+  }
+}

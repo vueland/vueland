@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { computed, shallowRef } from 'vue'
 
-    import { isDef } from '../../helpers'
+    import { isDef } from '@/helpers'
 
     defineOptions({ name: 'CDatePickerYears' })
 

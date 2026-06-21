@@ -15,8 +15,8 @@
         useId,
         useInputPresets,
         useValidate,
-    } from '../../composables'
-    import { FIELD_ATTRS } from '../../constants'
+    } from '@/composables'
+    import { FIELD_ATTRS } from '@/constants'
 
     import type {
         CInputEmits,

@@ -1,6 +1,6 @@
 import type { VNode } from 'vue'
 
-import type { CInputProps } from '../CInput'
+import type { CInputProps } from '@/components/CInput'
 
 export type CTextFieldProps = Omit<CInputProps, 'modelValue' | 'role'>
 

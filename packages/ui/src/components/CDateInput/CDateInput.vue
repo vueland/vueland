@@ -5,25 +5,25 @@
         unref
     } from 'vue'
 
-    import type { PresetProps, ValidateProps } from '../../composables'
-    import { IconAliases } from '../../enums'
     import {
         CDatePicker,
+        CField,
+        CIcon,
+        CInput,
+        CMenu,
         type DatePickerDate,
         type DatePickerEnrichedDate,
         type DatePickerSlotApi,
         datePickerValueToString,
         type DatePickerWeekDay,
         type DisabledDates
-    } from '../CDatePicker'
-    import { CField } from '../CField'
-    import { CIcon } from '../CIcon'
-    import { CInput } from '../CInput'
-    import { CMenu } from '../CMenu'
+    } from '@/components'
+    import type { PresetProps, ValidateProps } from '@/composables'
+    import { IconAliases } from '@/enums'
 
     defineOptions({
         name: 'CDateInput',
-        inheritAttrs: false 
+        inheritAttrs: false
     })
 
     const props = defineProps<CDateInputProps>()

@@ -1,4 +1,4 @@
-import type { CInputProps, CInputSlots } from '../CInput'
+import type { CInputProps, CInputSlots } from '@/components/CInput'
 
 import CSelectImpl from './CSelect.vue'
 import type { CSelectProps, CSelectSlots } from './types'

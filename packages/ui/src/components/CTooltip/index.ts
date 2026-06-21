@@ -1,4 +1,4 @@
-import type { CMenuProps, CMenuSlots } from '../CMenu'
+import type { CMenuProps, CMenuSlots } from '@/components/CMenu'
 
 import CTooltipImpl from './CTooltip.vue'
 

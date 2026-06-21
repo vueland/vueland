@@ -5,7 +5,7 @@ import {
     ariaDisabled,
     ariaPressed,
     ariaRequired,
-} from '../utils'
+} from '@/utils'
 
 export type AriaToggleMode = 'checkbox' | 'switch' | 'button'
 

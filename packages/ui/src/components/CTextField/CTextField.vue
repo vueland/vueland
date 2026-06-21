@@ -1,8 +1,7 @@
 <script setup lang="ts" generic="T">
     import { shallowRef } from 'vue'
 
-    import { CField } from '../CField'
-    import { CInput } from '../CInput'
+    import { CField, CInput } from '@/components'
 
     import type { CTextFieldEmits, CTextFieldSlots } from './types'
 
