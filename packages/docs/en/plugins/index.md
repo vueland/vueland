@@ -8,7 +8,7 @@ Each plugin lives in its own package, is installed independently, and integrates
 
 | Plugin | Package | Description |
 |--------|---------|-------------|
-| [Utils JIT](./plugins/utils-jit/getting-started) | `@vueland/utils-jit` | Vite plugin that generates arbitrary-value CSS utility classes on demand — only classes you actually use end up in the bundle |
+| [Utils JIT](./utils-jit/getting-started) | `@vueland/utils-jit` | Vite plugin that generates arbitrary-value CSS utility classes on demand — only classes you actually use end up in the bundle |
 
 ## Coming soon
 
