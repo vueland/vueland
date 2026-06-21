@@ -61,7 +61,9 @@
     })
 
     function select(listItem: T) {
-        if (props.readonly) return
+        if (props.readonly) {
+            return
+        }
 
         if (props.multiple) {
             model.value = [...unref(model) as T[], listItem]
@@ -71,18 +73,21 @@
     }
 
     function unselect(listItem: T) {
-        if (props.readonly) return
+        if (props.readonly) {
+            return
+        }
 
-        if (props.multiple) {
-            const current = unref(model) as T[]
+        if(!props.multiple && props.mandatory) {
+            return
+        }
 
-            if (props.mandatory && current?.length <= 1) {
-                return
-            }
+        const current = unref(model) as T[]
 
+        if (props.multiple && current.length <= 1) {
+            return
+        } else if (props.multiple) {
             model.value = current?.filter(item => toRaw(item) !== toRaw(listItem))
         } else {
-            if (props.mandatory) return
             model.value = null
         }
     }
@@ -98,6 +103,7 @@
     function register(itemControls: ListItemControls): number {
         const idx = handlers.length
         handlers.push(itemControls)
+
         return idx
     }
 
@@ -116,7 +122,9 @@
     }
 
     function navigateDown() {
-        if (!handlers.length) return
+        if (!handlers.length) {
+            return
+        }
         const next = Math.min(handlers.length - 1, currentIndex + 1)
         handlers[currentIndex]?.blur()
         handlers[next].focus()
@@ -124,7 +132,9 @@
     }
 
     function navigateUp() {
-        if (!handlers.length || currentIndex <= 0) return
+        if (!handlers.length || currentIndex <= 0) {
+            return
+        }
         const prev = currentIndex - 1
         handlers[currentIndex]?.blur()
         handlers[prev].focus()

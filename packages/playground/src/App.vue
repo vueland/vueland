@@ -1,7 +1,10 @@
 <script setup lang="ts">
     import { useBreakpoints } from '@vueland/ui/composables'
+    import { shallowRef } from 'vue'
 
     const bp = useBreakpoints()
+
+    const value = shallowRef()
 
     console.log(bp)
 </script>
@@ -27,7 +30,10 @@
                         </c-card-header>
                         <c-card-body>
                             <c-select
+                                v-model="value"
                                 label="test title"
+                                mandatory
+                                clearable
                                 :rules="[(val) => ({valid: !!val, message: 'Required'})]"
                                 :items="['one', 'two', 'three']"
                             />
