@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'packages/docs/**'
+      - 'apps/docs/**'
       - 'packages/ui/**'
       - 'packages/utils-jit/**'
       - 'package.json'
@@ -51,7 +51,7 @@ jobs:
           pnpm --filter @vueland/ui build-lib
 
       - name: Build docs
-        working-directory: packages/docs
+        working-directory: apps/docs
         run: pnpm exec vitepress build
 
       - name: Setup GitHub Pages
@@ -60,7 +60,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: packages/docs/.vitepress/dist
+          path: apps/docs/.vitepress/dist
 
   deploy:
     name: Deploy docs
