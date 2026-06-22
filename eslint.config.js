@@ -1,4 +1,5 @@
 import js from '@eslint/js'
+import vueScriptSetup from '@vueland/eslint-script-setup'
 import importPlugin from 'eslint-plugin-import'
 import importNewlines from 'eslint-plugin-import-newlines'
 import newlineDestructuring from 'eslint-plugin-newline-destructuring'
@@ -85,24 +86,36 @@ export default [
 
             // Пробелы
             'object-curly-spacing': ['error', 'always'],
-            'space-before-function-paren': ['error', {
-                anonymous: 'never',
-                named: 'never',
-                asyncArrow: 'always', 
-            }],
+            'space-before-function-paren': [
+                'error',
+                {
+                    anonymous: 'never',
+                    named: 'never',
+                    asyncArrow: 'always',
+                },
+            ],
             'space-infix-ops': 'error',
-            'key-spacing': ['error', {
-                beforeColon: false,
-                afterColon: true, 
-            }],
-            'comma-spacing': ['error', {
-                before: false,
-                after: true, 
-            }],
-            'arrow-spacing': ['error', {
-                before: true,
-                after: true, 
-            }],
+            'key-spacing': [
+                'error',
+                {
+                    beforeColon: false,
+                    afterColon: true,
+                },
+            ],
+            'comma-spacing': [
+                'error',
+                {
+                    before: false,
+                    after: true,
+                },
+            ],
+            'arrow-spacing': [
+                'error',
+                {
+                    before: true,
+                    after: true,
+                },
+            ],
             'space-before-blocks': 'error',
 
             // Объекты — перенос при multiline
@@ -119,10 +132,7 @@ export default [
                     },
                 },
             ],
-            'object-property-newline': [
-                'error',
-                { allowAllPropertiesOnSameLine: true },
-            ],
+            'object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
 
             // TypeScript
             '@typescript-eslint/no-explicit-any': 'off',
@@ -141,6 +151,7 @@ export default [
     // ── Vue SFC ───────────────────────────────────────────────────────────
     {
         files: ['**/*.vue'],
+        plugins: { '@vueland': vueScriptSetup },
         languageOptions: {
             parser: vueParser,
             parserOptions: {
@@ -156,12 +167,16 @@ export default [
         },
         rules: {
             // Vue форматирование (4 пробела, как в проекте)
+
             'vue/html-indent': ['error', 4],
             'vue/script-indent': ['error', 4, { baseIndent: 1 }],
-            'vue/max-attributes-per-line': ['error', {
-                singleline: 1,
-                multiline: 1, 
-            }],
+            'vue/max-attributes-per-line': [
+                'error',
+                {
+                    singleline: 1,
+                    multiline: 1,
+                },
+            ],
             'vue/html-self-closing': [
                 'error',
                 {
@@ -225,6 +240,12 @@ export default [
 
             // Пустая строка между блоками SFC
             'vue/padding-line-between-blocks': ['error', 'always'],
+            '@vueland/script-setup-order': [
+                'error',
+                {
+                    order: ['import', 'type', 'macros'],
+                },
+            ],
 
             // Объекты — перенос при multiline
             'object-curly-newline': [
@@ -234,10 +255,7 @@ export default [
                     ObjectPattern: { multiline: true, consistent: true },
                 },
             ],
-            'object-property-newline': [
-                'error',
-                { allowAllPropertiesOnSameLine: true },
-            ],
+            'object-property-newline': ['error', { allowAllPropertiesOnSameLine: true }],
 
             // TS в Vue
             '@typescript-eslint/no-explicit-any': 'off',

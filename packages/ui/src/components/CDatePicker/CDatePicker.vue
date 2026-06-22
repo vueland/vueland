@@ -26,6 +26,40 @@
 
     type PickerRef = InstanceType<typeof CDatePickerDates> | InstanceType<typeof CDatePickerMonths> | InstanceType<typeof CDatePickerYears> | null
 
+    export type DatePickerSlotApi = {
+        view: ViewMode
+        value: string
+        selected: DatePickerDate
+        disablePrev: boolean
+        disableNext: boolean
+        onNext: () => void
+        onPrev: () => void
+        onTable: () => void
+        onToday: () => void
+    }
+
+    export type DatePickerWeekDay = {
+        day: number
+        label: string | undefined
+    }
+
+    export type DatePickerEnrichedDate = EnrichedDate
+
+    export type DatePickerEnrichedMonth = EnrichedMonth
+
+    export type DatePickerEnrichedYear = EnrichedYear
+
+    export type CDatePickerProps = {
+        modelValue?: Date | string | null
+        lang?: string
+        format?: string
+        mondayFirst?: boolean
+        disabledDates?: DisabledDates
+        highlightedDates?: (Date | string)[]
+        minDate?: Date | string
+        maxDate?: Date | string
+    }
+
     defineOptions({ name: 'CDatePicker' })
 
     const props = withDefaults(defineProps<CDatePickerProps>(), {
@@ -205,40 +239,6 @@
         state.tableMonth = val.month
         state.tableYear = val.year
     }, { immediate: true })
-
-    export type DatePickerSlotApi = {
-        view: ViewMode
-        value: string
-        selected: DatePickerDate
-        disablePrev: boolean
-        disableNext: boolean
-        onNext: () => void
-        onPrev: () => void
-        onTable: () => void
-        onToday: () => void
-    }
-
-    export type DatePickerWeekDay = {
-        day: number
-        label: string | undefined
-    }
-
-    export type DatePickerEnrichedDate = EnrichedDate
-
-    export type DatePickerEnrichedMonth = EnrichedMonth
-
-    export type DatePickerEnrichedYear = EnrichedYear
-
-    export type CDatePickerProps = {
-        modelValue?: Date | string | null
-        lang?: string
-        format?: string
-        mondayFirst?: boolean
-        disabledDates?: DisabledDates
-        highlightedDates?: (Date | string)[]
-        minDate?: Date | string
-        maxDate?: Date | string
-    }
 </script>
 
 <template>

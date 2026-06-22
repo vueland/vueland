@@ -30,6 +30,7 @@
   "sideEffects": false,
   "scripts": {
     "build-jit": "tsdown",
+    "prepack": "tsdown",
     "dev": "tsdown --watch",
     "clean": "rm -rf dist",
     "test:deploy": "vitest run -c vitest.config.ts",

@@ -9,12 +9,22 @@
     import { parseDate, toDateString } from './helpers'
     import type { DatePickerDate, DisabledDates } from './types'
 
+    export type EnrichedDate = {
+        dateObj: DatePickerDate | null
+        empty: boolean
+        disabled: boolean
+        highlighted: boolean
+        isSelected: boolean
+        isToday: boolean
+    }
+
     defineOptions({ name: 'CDatePickerDates' })
 
     const props = defineProps<{
         locale?: string[]
         year: number
         month: number
+
         value?: DatePickerDate | null
         mondayFirst?: boolean
         disabledDates?: DisabledDates
@@ -180,15 +190,6 @@
     }
 
     watch(() => props.month, buildDates, { immediate: true })
-
-    export type EnrichedDate = {
-        dateObj: DatePickerDate | null
-        empty: boolean
-        disabled: boolean
-        highlighted: boolean
-        isSelected: boolean
-        isToday: boolean
-    }
 </script>
 
 <template>

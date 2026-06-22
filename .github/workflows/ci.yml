@@ -2,43 +2,91 @@ name: CI
 
 on:
   pull_request:
-    branches:
-      - master
   push:
     branches:
       - master
 
+# Cancel superseded runs on a PR; never cancel runs on master.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
 jobs:
-  checks:
-    name: Checks
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-
+    timeout-minutes: 15
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.32.0
+      # eslint.config.js imports @vueland/eslint-script-setup.
+      # In a fresh CI checkout its package.json exports ./dist/index.mjs,
+      # so the plugin must be built before ESLint starts.
+      - name: Build ESLint workspace plugin
+        run: pnpm run build:eslint
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: 24.13.0
-          cache: pnpm
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Lint
+      - name: ESLint
         run: pnpm run lint
 
-      - name: Typecheck
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - name: vue-tsc
         run: pnpm run typecheck
 
-      - name: Test
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - name: Vitest
         run: pnpm run test
 
-      - name: Build packages
-        run: pnpm run build:jit && pnpm run build:lib
+  build:
+    name: Build packages
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - name: Build publishable packages
+        run: pnpm run build:packages
+
+#  changeset:
+#    name: Changeset
+#    # Only meaningful on PRs — a release-affecting change must ship a changeset.
+#    if: github.event_name == 'pull_request'
+#    runs-on: ubuntu-latest
+#    timeout-minutes: 10
+#    steps:
+#      - uses: actions/checkout@v5
+#        with:
+#          # changeset status diffs against the base branch — needs full history.
+#          fetch-depth: 0
+#      - uses: ./.github/actions/setup
+#      - name: Require a changeset (run `pnpm changeset` — or `changeset add --empty`)
+#        run: pnpm exec changeset status --since=origin/${{ github.base_ref }}
+
+  commit-lint:
+    name: Commit lint
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - name: Lint PR title (conventional commits)
+        # Pass the title through an env var to avoid shell injection.
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: echo "$PR_TITLE" | pnpm exec commitlint --verbose

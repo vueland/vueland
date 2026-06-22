@@ -6,8 +6,8 @@ export type DelayProps = {
 }
 
 export function useDelayedActions(props: Partial<DelayProps> & Record<string, any>) {
-    let openTimer: ReturnType<typeof setTimeout> | undefined
-    let closeTimer: ReturnType<typeof setTimeout> | undefined
+    let openTimer: number | undefined
+    let closeTimer: number | undefined
 
     const openDelay = (fn: (...args: any) => any) => {
         clearTimeout(closeTimer)

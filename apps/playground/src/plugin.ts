@@ -1,14 +1,13 @@
 import { faGithub } from '@fortawesome/free-brands-svg-icons'
-// Icons
+// Иконки
 import { faTrash, faUser } from '@fortawesome/free-solid-svg-icons'
 import { createVuelandUI } from '@vueland/ui'
 import * as components from '@vueland/ui/components'
 import { ALIASES } from '@vueland/ui/constants/icons'
 import { createFontAwesomeResolver } from '@vueland/ui/resolvers'
 
-// Presets
+// Пресеты
 import * as buttonPresets from './presets/button-presets'
-import * as fieldPresets from './presets/field-presets'
 import * as inputPresets from './presets/input-presets'
 import * as menuPresets from './presets/menu-presets'
 
@@ -98,6 +97,5 @@ export const ui = createVuelandUI({
         button: buttonPresets,
         input: inputPresets,
         menu: menuPresets,
-        field: fieldPresets,
     },
 })

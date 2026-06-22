@@ -34,7 +34,8 @@ function mountUseInputPresets({
     let result!: ReturnType<typeof useInputPresets>
 
     const props = reactive({
-        modelValue: '',
+        // null → по умолчанию поле не «filled» (isDef(null) === false)
+        modelValue: null,
         ...initialProps,
     }) as Reactive<TestInputProps>
 
@@ -77,390 +78,134 @@ function mountUseInputPresets({
     }
 }
 
+// Набор: base + состояния. Каждое состояние — плоский пресет, целиком
+// подменяющий зоны base (зона, которую состояние не описывает — из base).
+const inputSet = {
+    base: {
+        root: ['base-root'],
+        details: ['base-details'],
+        field: ['base-field'],
+    },
+    focused: { root: ['focused-root'] },
+    error: {
+        root: ['error-root'],
+        details: ['error-details'],
+    },
+    disabled: { root: ['disabled-root'] },
+    readonly: { root: ['readonly-root'] },
+    filled: { root: ['filled-root'] },
+}
+
 describe('useInputPresets', () => {
     it('возвращает пустые значения, если preset не передан', () => {
         const { result } = mountUseInputPresets({
-            presets: {
-                input: {
-                    base: {
-                        root: ['root'],
-                        label: ['label'],
-                        details: ['details'],
-                    },
-                },
-            },
+            presets: { myInput: inputSet },
         })
 
         expect(result.value).toEqual({
             root: [],
-            field: undefined,
             details: [],
+            field: undefined,
         })
     })
 
-    it('возвращает root и details, field — сгенерированный ключ', () => {
+    it('резолвит зоны base, когда нет активного состояния', () => {
         const { result } = mountUseInputPresets({
-            props: { preset: 'input.base' },
-            presets: {
-                input: {
-                    base: {
-                        root: ['root'],
-                        label: ['label'],
-                        details: ['details'],
-                    },
-                },
-            },
+            props: { preset: 'myInput' },
+            presets: { myInput: inputSet },
         })
 
-        expect(result.value.root).toEqual(['root'])
-        expect(result.value.details).toEqual(['details'])
-        expect(result.value.field).toBe('__field.input.base')
+        expect(result.value.root).toEqual(['base-root'])
+        expect(result.value.details).toEqual(['base-details'])
     })
 
-    it('регистрирует сгенерированный CFieldPreset в core.presets', () => {
-        const { corePresets } = mountUseInputPresets({
-            props: { preset: 'input.base' },
-            presets: {
-                input: {
-                    base: {
-                        root: ['root'],
-                        label: ['label'],
-                        input: ['input'],
-                        focused: { label: ['focused-label'] },
-                        filled: { label: ['filled-label'] },
-                        error: { root: ['text-red'] },
-                    },
-                },
-            },
+    it('отдаёт в field весь набор (для inject в CField)', () => {
+        const { result } = mountUseInputPresets({
+            props: { preset: 'myInput' },
+            presets: { myInput: inputSet },
         })
 
-        const fieldPreset = corePresets.__field?.input?.base
-        expect(fieldPreset).toBeDefined()
-        expect(fieldPreset.label).toEqual(['label'])
-        expect(fieldPreset.input).toEqual(['input'])
-        expect(fieldPreset.focused?.label).toEqual(['focused-label'])
-        expect(fieldPreset.filled?.label).toEqual(['filled-label'])
-        expect(fieldPreset.error?.input).toBeUndefined()
+        expect(result.value.field).toEqual(inputSet)
     })
 
     it('поддерживает вложенный путь preset через точку', () => {
         const { result } = mountUseInputPresets({
             props: { preset: 'forms.text.primary' },
             presets: {
-                forms: {
-                    text: {
-                        primary: {
-                            root: ['primary-root'],
-                            label: ['primary-label'],
-                            details: ['primary-details'],
-                        },
-                    },
-                },
+                forms: { text: { primary: { base: { root: ['primary-root'] } } } },
             },
         })
 
         expect(result.value.root).toEqual(['primary-root'])
-        expect(result.value.details).toEqual(['primary-details'])
-        expect(result.value.field).toBe('__field.forms.text.primary')
     })
 
-    it('заменяет root активным focused состоянием', () => {
+    it('состояние focused целиком подменяет зону root', () => {
         const { result } = mountUseInputPresets({
-            props: { preset: 'input.base' },
+            props: { preset: 'myInput' },
             state: { focused: true },
-            presets: {
-                input: {
-                    base: {
-                        root: ['base-root'],
-                        focused: { root: ['focused-root'] },
-                    },
-                },
-            },
+            presets: { myInput: inputSet },
         })
 
         expect(result.value.root).toEqual(['focused-root'])
     })
 
-    it('не применяет focused, если поле disabled', () => {
+    it('зона без описания в состоянии берётся из base', () => {
+        const { result } = mountUseInputPresets({
+            props: { preset: 'myInput' },
+            state: { focused: true },
+            presets: { myInput: inputSet },
+        })
+
+        // focused не описывает details → остаётся base
+        expect(result.value.details).toEqual(['base-details'])
+    })
+
+    it('не применяет focused, если поле disabled (disabled приоритетнее)', () => {
         const { result } = mountUseInputPresets({
             props: {
-                preset: 'input.base',
-                disabled: true, 
+                preset: 'myInput',
+                disabled: true,
             },
             state: { focused: true },
-            presets: {
-                input: {
-                    base: {
-                        root: ['base-root'],
-                        disabled: { root: ['disabled-root'] },
-                        focused: { root: ['focused-root'] },
-                    },
-                },
-            },
+            presets: { myInput: inputSet },
         })
 
         expect(result.value.root).toEqual(['disabled-root'])
     })
 
-    it('не применяет focused, если поле readonly', () => {
+    it('применяет filled, когда modelValue задан', () => {
         const { result } = mountUseInputPresets({
             props: {
-                preset: 'input.base',
-                readonly: true, 
+                preset: 'myInput',
+                modelValue: 'hello',
             },
-            state: { focused: true },
-            presets: {
-                input: {
-                    base: {
-                        root: ['base-root'],
-                        readonly: { root: ['readonly-root'] },
-                        focused: { root: ['focused-root'] },
-                    },
-                },
-            },
+            presets: { myInput: inputSet },
         })
 
-        expect(result.value.root).toEqual(['readonly-root'])
+        expect(result.value.root).toEqual(['filled-root'])
     })
 
-    it('возвращает error root и details при ошибке с сообщением', () => {
+    it('error приоритетнее focused при одновременной активности', () => {
         const { result } = mountUseInputPresets({
-            props: { preset: 'input.base' },
-            errors: {
-                hasError: true,
-                errorMessage: 'Required', 
-            },
-            presets: {
-                input: {
-                    base: {
-                        root: ['base-root'],
-                        details: ['base-details'],
-                        error: {
-                            root: ['error-root'],
-                            details: ['error-details'],
-                        },
-                    },
-                },
-            },
+            props: { preset: 'myInput' },
+            state: { focused: true },
+            errors: { hasError: true },
+            presets: { myInput: inputSet },
         })
 
         expect(result.value.root).toEqual(['error-root'])
         expect(result.value.details).toEqual(['error-details'])
     })
 
-    it('для details применяет error.details только если есть errorMessage', () => {
+    it('откатывается на base, если для состояния нет пресета', () => {
         const { result } = mountUseInputPresets({
-            props: { preset: 'input.base' },
-            errors: {
-                hasError: true,
-                errorMessage: undefined, 
-            },
+            props: { preset: 'myInput' },
+            errors: { hasError: true },
             presets: {
-                input: {
-                    base: {
-                        details: ['base-details'],
-                        error: { details: ['error-details'] },
-                    },
-                },
-            },
-        })
-
-        expect(result.value.details).toEqual(['base-details'])
-    })
-
-    it('соблюдает приоритет: disabled > readonly > error > focused', () => {
-        const { result } = mountUseInputPresets({
-            props: {
-                preset: 'input.base',
-                disabled: true,
-                readonly: true, 
-            },
-            state: { focused: true },
-            errors: {
-                hasError: true,
-                errorMessage: 'Required', 
-            },
-            presets: {
-                input: {
-                    base: {
-                        root: ['base-root'],
-                        disabled: { root: ['disabled-root'] },
-                        readonly: { root: ['readonly-root'] },
-                        error: { root: ['error-root'] },
-                        focused: { root: ['focused-root'] },
-                    },
-                },
-            },
-        })
-
-        expect(result.value.root).toEqual(['disabled-root'])
-    })
-
-    it('соблюдает приоритет: error важнее focused', () => {
-        const { result } = mountUseInputPresets({
-            props: { preset: 'input.base' },
-            state: { focused: true },
-            errors: {
-                hasError: true,
-                errorMessage: 'Required', 
-            },
-            presets: {
-                input: {
-                    base: {
-                        error: { root: ['error-root'] },
-                        focused: { root: ['focused-root'] },
-                    },
-                },
-            },
-        })
-
-        expect(result.value.root).toEqual(['error-root'])
-    })
-
-    it('реактивно обновляет preset при изменении состояния', () => {
-        const {
-            result,
-            state,
-            errors,
-            props,
-        } = mountUseInputPresets({
-            props: { preset: 'input.base' },
-            presets: {
-                input: {
-                    base: {
-                        root: ['base-root'],
-                        details: ['base-details'],
-                        focused: { root: ['focused-root'] },
-                        error: {
-                            root: ['error-root'],
-                            details: ['error-details'], 
-                        },
-                        disabled: { root: ['disabled-root'] },
-                    },
-                },
+                myInput: { base: { root: ['base-root'] } }, // error не описан
             },
         })
 
         expect(result.value.root).toEqual(['base-root'])
-        expect(result.value.details).toEqual(['base-details'])
-
-        state.focused = true
-        expect(result.value.root).toEqual(['focused-root'])
-
-        errors.hasError = true
-        errors.errorMessage = 'Required'
-        expect(result.value.root).toEqual(['error-root'])
-        expect(result.value.details).toEqual(['error-details'])
-
-        props.disabled = true
-        expect(result.value.root).toEqual(['disabled-root'])
-    })
-
-    it('сгенерированный field preset включает все состояния для CField', () => {
-        const { corePresets } = mountUseInputPresets({
-            props: { preset: 'input.base' },
-            presets: {
-                input: {
-                    base: {
-                        label: ['base-label'],
-                        input: ['base-input'],
-                        focused: {
-                            label: ['focused-label'],
-                            input: ['focused-input'], 
-                        },
-                        filled: { label: ['filled-label'] },
-                        error: { label: ['error-label'] },
-                        disabled: { input: ['disabled-input'] },
-                        readonly: { label: ['readonly-label'] },
-                        prepended: { label: ['prepended-label'] },
-                        appended: { label: ['appended-label'] },
-                    },
-                },
-            },
-        })
-
-        const fp = corePresets.__field?.input?.base
-        expect(fp.label).toEqual(['base-label'])
-        expect(fp.input).toEqual(['base-input'])
-        expect(fp.focused?.label).toEqual(['focused-label'])
-        expect(fp.focused?.input).toEqual(['focused-input'])
-        expect(fp.filled?.label).toEqual(['filled-label'])
-        expect(fp.error?.label).toEqual(['error-label'])
-        expect(fp.disabled?.input).toEqual(['disabled-input'])
-        expect(fp.readonly?.label).toEqual(['readonly-label'])
-        expect(fp.prepended?.label).toEqual(['prepended-label'])
-        expect(fp.appended?.label).toEqual(['appended-label'])
-    })
-
-    it('применяет error.focused.root при error + focused', () => {
-        const { result } = mountUseInputPresets({
-            props: { preset: 'input.base' },
-            state: { focused: true },
-            errors: {
-                hasError: true,
-                errorMessage: 'Required', 
-            },
-            presets: {
-                input: {
-                    base: {
-                        error: {
-                            root: ['error-root'],
-                            focused: { root: ['error-focused-root'] },
-                        },
-                        focused: { root: ['focused-root'] },
-                    },
-                },
-            },
-        })
-
-        expect(result.value.root).toContain('error-root')
-        expect(result.value.root).toContain('error-focused-root')
-        expect(result.value.root).not.toContain('focused-root')
-    })
-
-    it('сохраняет compound sub-состояния в сгенерированном CFieldPreset', () => {
-        const { corePresets } = mountUseInputPresets({
-            props: { preset: 'input.base' },
-            presets: {
-                input: {
-                    base: {
-                        error: {
-                            label: ['error-label'],
-                            focused: { label: ['error-focused-label'] },
-                            filled: { label: ['error-filled-label'] },
-                        },
-                        disabled: {
-                            input: ['disabled-input'],
-                            focused: { input: ['disabled-focused-input'] },
-                        },
-                    },
-                },
-            },
-        })
-
-        const fp = corePresets.__field?.input?.base
-        expect(fp.error?.label).toEqual(['error-label'])
-        expect(fp.error?.focused?.label).toEqual(['error-focused-label'])
-        expect(fp.error?.filled?.label).toEqual(['error-filled-label'])
-        expect(fp.disabled?.input).toEqual(['disabled-input'])
-        expect(fp.disabled?.focused?.input).toEqual(['disabled-focused-input'])
-    })
-
-    it('не включает root из CInputPreset в сгенерированный CFieldPreset', () => {
-        const { corePresets } = mountUseInputPresets({
-            props: { preset: 'input.base' },
-            presets: {
-                input: {
-                    base: {
-                        root: ['text-blue'],
-                        error: { root: ['text-red'] },
-                    },
-                },
-            },
-        })
-
-        const fp = corePresets.__field?.input?.base
-        expect(fp.root).toBeUndefined()
-        expect(fp.error?.root).toBeUndefined()
     })
 })

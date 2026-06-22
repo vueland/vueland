@@ -3,6 +3,15 @@
 
     import type { DatePickerDate } from './types'
 
+    export type EnrichedMonth = {
+        month: number
+        label: string
+        disabled: boolean
+        isSelected: boolean
+        isCurrent: boolean
+        onSelect: () => void
+    }
+
     defineOptions({ name: 'CDatePickerMonths' })
 
     const props = defineProps<{
@@ -67,14 +76,6 @@
         return false
     }
 
-    export type EnrichedMonth = {
-        month: number
-        label: string
-        disabled: boolean
-        isSelected: boolean
-        isCurrent: boolean
-        onSelect: () => void
-    }
 </script>
 
 <template>

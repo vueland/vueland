@@ -130,7 +130,6 @@
                                 :disabled="field.disabled"
                                 :focused="field.focused"
                                 :readonly="field.readonly"
-                                :preset="field.preset"
                                 :filled="hasValue"
                                 :error="field.hasError"
                                 v-on="on"

@@ -349,7 +349,7 @@ describe('CTextField', () => {
         expect(wrapper.find('.c-text-field__details').text()).toBe('')
     })
 
-    it('применяет preset-классы к root и details и передает field preset в CField', () => {
+    it('применяет base к root/details и прокидывает field-зону в CField через inject', () => {
         const wrapper = mount(CTextField, {
             props: {
                 modelValue: '',
@@ -363,9 +363,11 @@ describe('CTextField', () => {
                     [$VUELAND_UI_KEY as symbol]: {
                         presets: {
                             textField: {
-                                root: ['preset-root'],
-                                field: 'preset-field',
-                                details: ['preset-details'],
+                                base: {
+                                    root: ['preset-root'],
+                                    field: ['preset-field'],
+                                    details: ['preset-details'],
+                                },
                             },
                         },
                     },
@@ -373,14 +375,13 @@ describe('CTextField', () => {
             },
         })
 
-        const field = wrapper.getComponent({ name: 'CField' })
-
         expect(wrapper.classes()).toContain('preset-root')
-        expect(field.props('preset')).toBe('__field.textField')
+        // CField получает набор из контекста (provide/inject), а не пропом
+        expect(wrapper.get('.c-field').classes()).toContain('preset-field')
         expect(wrapper.get('.c-input__details').classes()).toContain('preset-details')
     })
 
-    it('применяет error preset при ошибке валидации', async () => {
+    it('error целиком подменяет зоны (root и field) при ошибке валидации', async () => {
         const wrapper = createVModelHost({
             initialValue: 'John',
             props: {
@@ -399,12 +400,14 @@ describe('CTextField', () => {
                     [$VUELAND_UI_KEY as symbol]: {
                         presets: {
                             textField: {
-                                root: ['preset-root'],
-                                field: 'preset-field',
-                                details: ['preset-details'],
+                                base: {
+                                    root: ['preset-root'],
+                                    field: ['preset-field'],
+                                    details: ['preset-details'],
+                                },
                                 error: {
                                     root: ['preset-error-root'],
-                                    field: 'preset-error-field',
+                                    field: ['preset-error-field'],
                                     details: ['preset-error-details'],
                                 },
                             },
@@ -417,10 +420,11 @@ describe('CTextField', () => {
         await wrapper.get('input.c-field-input').setValue('')
         await nextTick()
 
-        const field = wrapper.getComponent({ name: 'CField' })
-
         expect(wrapper.getComponent(CTextField).classes()).toContain('preset-error-root')
-        expect(field.props('preset')).toBe('__field.textField')
+        expect(wrapper.getComponent(CTextField).classes()).not.toContain('preset-root')
+        // field-зона тоже приходит из контекста и подменяется состоянием
+        expect(wrapper.get('.c-field').classes()).toContain('preset-error-field')
+        expect(wrapper.get('.c-field').classes()).not.toContain('preset-field')
         expect(wrapper.get('.c-input__details').classes()).toContain('preset-error-details')
     })
 

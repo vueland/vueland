@@ -41,8 +41,12 @@
     const INTERNAL_HANDLERS = new Set(['onUpdate:modelValue', 'onUpdate:focused'])
 
     const state = shallowReactive<InputState>({
-        get focused() { return focusedModel.value },
-        set focused(v: boolean) { focusedModel.value = v },
+        get focused() {
+            return focusedModel.value
+        },
+        set focused(v: boolean) {
+            focusedModel.value = v
+        },
         isDirty: false,
     })
 

@@ -1,57 +1,59 @@
-export type CButtonPreset = {
-    root?: string[]
-    label?: string[]
-}
+// ---------------------------------------------------------------------------
+// Ядро пресетов
+// ---------------------------------------------------------------------------
 
-export type CMenuPreset = {
-    root?: string[]
-    opened?: {
-        root?: string[]
-    }
-    closed?: {
-        root?: string[]
-    }
-}
+/** Плоский пресет: карта зон → utility-классы. Внутри НЕТ состояний. */
+export type ZonePreset<Zone extends string> = Partial<Record<Zone, string[]>>
 
-export type CFieldZone = {
-    root?: string[]
-    input?: string[]
-    label?: string[]
-}
+/**
+ * Набор пресетов по состояниям.
+ *
+ * Всё опционально: и `base` («спокойный» вид), и каждое состояние. Состояние
+ * адресуется как `Name.[State]`; его зоны подменяют зоны `base`. Если пресета
+ * на текущее состояние нет — берётся `base`; если и его нет — не применяется
+ * ничего. На зону всегда один комплект классов, без склеек — поэтому
+ * `!important` ничего не ломает.
+ */
+export type StatePresets<Zone extends string, State extends string> =
+    Partial<Record<'base' | State, ZonePreset<Zone>>>
 
-type CFieldCompoundState = CFieldZone & {
-    focused?: CFieldZone
-    filled?: CFieldZone
-}
+// ---------------------------------------------------------------------------
+// Input / Field (один общий набор, читают CInput и CField)
+// ---------------------------------------------------------------------------
 
-export type CFieldPreset = CFieldZone & {
-    focused?: CFieldZone
-    filled?: CFieldZone
-    error?: CFieldCompoundState
-    disabled?: CFieldCompoundState
-    readonly?: CFieldCompoundState
-    prepended?: CFieldZone
-    appended?: CFieldZone
-}
+/** Визуальные зоны инпута, маппятся 1:1 на отрисованный DOM. */
+export type CInputZone =
+    | 'root'
+    | 'field'
+    | 'input'
+    | 'label'
+    | 'details'
+    | 'prepend'
+    | 'append'
 
-type CInputZone = {
-    root?: string[]
-    label?: string[]
-    input?: string[]
-    details?: string[]
-}
+/** Визуальные состояния инпута (взаимоисключающие в моменте). */
+export type CInputState = 'focused' | 'filled' | 'error' | 'disabled' | 'readonly'
 
-type CInputCompoundState = CInputZone & {
-    focused?: CInputZone
-    filled?: CInputZone
-}
+/** Один плоский «снимок» инпута/поля. */
+export type CFieldPreset = ZonePreset<CInputZone>
 
-export type CInputPreset = CInputZone & {
-    focused?: CInputZone
-    filled?: CInputZone
-    error?: CInputCompoundState
-    disabled?: CInputCompoundState
-    readonly?: CInputCompoundState
-    prepended?: CInputZone
-    appended?: CInputZone
-}
+/** Набор пресета инпута по состояниям — то, что кладут в реестр. */
+export type CInputPreset = StatePresets<CInputZone, CInputState>
+
+// ---------------------------------------------------------------------------
+// Button
+// ---------------------------------------------------------------------------
+
+export type CButtonZone = 'root' | 'label'
+export type CButtonState = 'disabled'
+
+export type CButtonPreset = StatePresets<CButtonZone, CButtonState>
+
+// ---------------------------------------------------------------------------
+// Menu
+// ---------------------------------------------------------------------------
+
+export type CMenuZone = 'root'
+export type CMenuState = 'opened' | 'closed'
+
+export type CMenuPreset = StatePresets<CMenuZone, CMenuState>

@@ -40,14 +40,13 @@
         :model-value="model"
         v-bind="$attrs"
     >
-        <template #field="{focus, blur, focused, preset, attrs, uid, label, clearable, readonly, disabled, hasError}">
+        <template #field="{focus, blur, focused, attrs, uid, label, clearable, readonly, disabled, hasError}">
             <div class="c-text-field">
                 <c-field
                     :id="uid"
                     v-model="model"
                     :focused
                     :label
-                    :preset
                     :readonly
                     :disabled
                     :clearable

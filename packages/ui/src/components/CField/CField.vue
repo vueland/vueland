@@ -90,6 +90,7 @@
         <div
             v-if="$slots.prepend"
             class="c-field__prepend"
+            :class="presets.prepend"
         >
             <slot name="prepend"></slot>
         </div>
@@ -140,6 +141,7 @@
         <div
             v-if="$slots.append"
             class="c-field__append"
+            :class="presets.append"
         >
             <slot name="append" />
         </div>

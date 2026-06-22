@@ -1,57 +1,38 @@
-export type PresetRecord = Record<string, any>
+import type {
+    CInputState,
+    StatePresets,
+    ZonePreset,
+} from '@/types'
 
-export type PresetCondition<State extends string> = [state: State, active: boolean]
+/** Порядок схлопывания состояний инпута/поля: кто выше — тот текущий статус. */
+export const CINPUT_STATE_PRECEDENCE: readonly CInputState[] = [
+    'disabled',
+    'readonly',
+    'error',
+    'focused',
+    'filled',
+]
 
-export function normalizePresetClasses(value?: string[] | null | false): string[] {
-    if (!value) {
-        return []
+/**
+ * Схлопывает набор пресетов по состояниям в один плоский пресет.
+ *
+ * Берётся первое активное состояние по порядку приоритета; его зоны подменяют
+ * зоны `base`. Зона, которую состояние не описывает, остаётся из `base`. На
+ * выходе у каждой зоны ровно один комплект классов — без склеек.
+ */
+export function resolveStatePreset<State extends string>(
+    set: StatePresets<string, string> | undefined,
+    active: Partial<Record<State, boolean>>,
+    order: readonly State[],
+): ZonePreset<string> {
+    if (!set) {
+        return {}
     }
 
-    return value.filter(Boolean)
-}
+    const current = order.find((state) => active[state])
+    const statePreset = current
+        ? (set as Record<string, ZonePreset<string>>)[current]
+        : undefined
 
-export function getPresetValueWithFallback<T, State extends string>(
-    preset: PresetRecord | undefined,
-    zone: string,
-    conditions: PresetCondition<State>[],
-): T | undefined {
-    const state = conditions.find(([, active]) => active)?.[0]
-
-    if (!state) {
-        return preset?.[zone] as T | undefined
-    }
-
-    return (preset?.[state]?.[zone] ?? preset?.[zone]) as T | undefined
-}
-
-export function getPresetOnly<State extends string>(
-    preset: PresetRecord | undefined,
-    zone: string,
-    conditions: PresetCondition<State>[],
-): string[] {
-    const state = conditions.find(([, active]) => active)?.[0]
-
-    if (!state) {
-        return normalizePresetClasses(preset?.[zone] as string[])
-    }
-
-    return normalizePresetClasses((preset?.[state]?.[zone] ?? preset?.[zone]) as string[])
-}
-
-export function getPresetIf(condition: boolean, classes: string[] = []): string[] {
-    return condition ? normalizePresetClasses(classes) : []
-}
-
-export function getPresetValueOnly<T, State extends string>(
-    preset: PresetRecord | undefined,
-    zone: string,
-    conditions: PresetCondition<State>[],
-): T | undefined {
-    const state = conditions.find(([, active]) => active)?.[0]
-
-    if (!state) {
-        return preset?.[zone] as T | undefined
-    }
-
-    return preset?.[state]?.[zone] as T | undefined
+    return { ...set.base, ...statePreset }
 }
