@@ -20,57 +20,19 @@ $self: '.c-field';
   background-color: var(--c-app-surface-color);
   transition: color .2s $primary-transition, opacity .2s $primary-transition;
 
+  // Аутлайн — одна коробка с border-radius: inherit. Он наследует радиус
+  // самого .c-field, поэтому любая утилита радиуса (radius-12, radius-[25px]),
+  // навешенная на поле снаружи, скругляет ОБА угла одинаково — без завязки на
+  // ширину сегментов.
   &__outline {
     position: absolute;
     z-index: -1;
     inset: 0;
-    display: flex;
-    align-items: stretch;
     pointer-events: none;
+    border: thin solid var(--c-field-border-color);
     border-radius: inherit;
-  }
-
-  &__outline-start,
-  &__outline-notch,
-  &__outline-end {
-    border: 0 solid var(--c-field-border-color);
-    transition: border-color .2s $primary-transition;
-  }
-
-  &__outline-start {
-    flex: 0 0 var(--c-app-border-radius);
-    border-left-width: thin;
-    border-top-width: thin;
-    border-bottom-width: thin;
-    border-top-left-radius: inherit;
-    border-bottom-left-radius: inherit;
-    //border-radius: inherit;
-  }
-
-  &__outline-notch {
-    flex: 0 1 auto;
-    border-top-width: thin;
-    border-bottom-width: thin;
-
-    span {
-      display: block;
-      overflow: hidden;
-      white-space: nowrap;
-      visibility: hidden;
-      max-width: 0.01px;
-      padding: 0 3px;
-      transform-origin: left center;
-      transition: max-width .15s ease;
-    }
-  }
-
-  &__outline-end {
-    flex: 1 1 auto;
-    border-right-width: thin;
-    border-top-width: thin;
-    border-bottom-width: thin;
-    border-top-right-radius: inherit;
-    border-bottom-right-radius: inherit;
+    transition: border-color .2s $primary-transition,
+                background-color .2s $primary-transition;
   }
 
   &__core {
@@ -112,12 +74,14 @@ $self: '.c-field';
   &-label {
     position: absolute;
     top: 50%;
-    left: var(--c-app-border-radius);
-    padding: 0 3px;
+    left: 8px;
+    padding: 0 4px;
     line-height: .9;
+    background-color: transparent;
     transform: translate(0, -50%);
     transition: top .2s $primary-transition,
                 left .2s $primary-transition,
+                background-color .2s $primary-transition,
                 transform .2s $primary-transition;
   }
 
@@ -139,27 +103,18 @@ $self: '.c-field';
       opacity: 1;
     }
 
-    > #{$self}__outline > #{$self}__outline-start,
-    > #{$self}__outline > #{$self}__outline-notch,
-    > #{$self}__outline > #{$self}__outline-end {
+    > #{$self}__outline {
       border-color: currentColor;
-
     }
   }
 
-  &--focused > &__outline > &__outline-notch,
-  &--filled > &__outline > &__outline-notch {
-    border-top-width: 0;
-
-    span {
-      max-width: 100%;
-    }
-  }
-
+  // Поднятый лейбл маскирует верхнюю границу (эффект насечки); фон совпадает с
+  // поверхностью поля.
   &--focused > &__core > &-label,
   &--filled > &__core > &-label {
     top: 0;
-    left: var(--c-app-border-radius);
+    left: 8px;
+    background-color: var(--c-app-surface-color);
     transform: translate(0, -50%) scale(.8);
   }
 
@@ -167,12 +122,8 @@ $self: '.c-field';
     opacity: 0;
   }
 
-  &--error {
-    > #{$self}__outline > #{$self}__outline-start,
-    > #{$self}__outline > #{$self}__outline-notch,
-    > #{$self}__outline > #{$self}__outline-end {
-      border-color: currentColor;
-    }
+  &--error > &__outline {
+    border-color: currentColor;
   }
 
   &--disabled {
@@ -181,12 +132,8 @@ $self: '.c-field';
     cursor: not-allowed;
   }
 
-  &--readonly {
-    > #{$self}__outline > #{$self}__outline-start,
-    > #{$self}__outline > #{$self}__outline-notch,
-    > #{$self}__outline > #{$self}__outline-end {
-      background-color: var(--c-field-readonly-bg-color);
-    }
+  &--readonly > &__outline {
+    background-color: var(--c-field-readonly-bg-color);
   }
 
   &--has-prepend {
@@ -204,7 +151,8 @@ $self: '.c-field';
   &--has-prepend#{$self}--focused > &__core > &-label,
   &--has-prepend#{$self}--filled > &__core > &-label {
     top: 0;
-    left: var(--c-app-border-radius);
+    left: 8px;
+    background-color: var(--c-app-surface-color);
     transform: translate(0, -50%) scale(.8);
   }
 }
