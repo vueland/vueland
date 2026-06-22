@@ -17,6 +17,9 @@
     defineSlots<CTextFieldSlots>()
 
     const model = defineModel<string | number | undefined | null>()
+
+    defineExpose({ validate, reset })
+
     const inputRef = shallowRef<CInputExpose>()
 
     function validate() {
@@ -30,8 +33,6 @@
     function onClear() {
         model.value = undefined
     }
-
-    defineExpose({ validate, reset })
 </script>
 
 <template>
@@ -56,17 +57,20 @@
                     @blur="blur"
                     @clear="onClear"
                 >
+                    <template #before>
+                        <slot name="before" />
+                    </template>
                     <template
                         v-if="$slots.prepend"
                         #prepend
                     >
-                        <slot name="prepend"></slot>
+                        <slot name="prepend" />
                     </template>
                     <template
                         v-if="$slots.append"
                         #append
                     >
-                        <slot name="append"></slot>
+                        <slot name="append" />
                     </template>
                 </c-field>
             </div>
@@ -79,7 +83,7 @@
                 :has-error
             >
                 <span
-                    :key="errorMessage || details"
+                    v-if="errorMessage || details"
                     class="c-text-field__details"
                 >
                     {{ errorMessage || details }}

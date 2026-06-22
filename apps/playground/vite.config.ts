@@ -21,11 +21,11 @@ export default defineConfig({
             },
             rules: [
                 defineRule({
-                    name: 'translate',
-                    matcher: /^translate-\[(.+)\]$/,
+                    name: 'field-radius',
+                    matcher: /^field-radius-\[(.+)\]$/,
                     validate: v => !!v,
                     declaration: value => ({
-                        transform: `translate(${value})`,
+                        '--c-field-border-radius': `${value}`,
                     }),
                 }),
             ],

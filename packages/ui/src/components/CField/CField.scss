@@ -4,6 +4,7 @@ $self: '.c-field';
 
 #{$self} {
   --c-field-border-color: var(--c-app-border-color);
+  --c-field-border-radius: var(--c-app-border-radius);
   --c-field-disabled-opacity: var(--c-app-disabled-opacity);
   --c-field-readonly-bg-color: var(--c-app-readonly-bg-color);
   --c-field-prepend-min-width: 40px;
@@ -14,63 +15,50 @@ $self: '.c-field';
   isolation: isolate;
   display: flex;
   align-items: center;
+  background: var(--c-app-surface-color);
   min-height: var(--c-field-min-height);
   padding: 1px 8px;
-  border-radius: var(--c-app-border-radius);
-  background-color: var(--c-app-surface-color);
+  border-radius: var(--c-field-border-radius) !important;
+  border: thin solid;
   transition: color .2s $primary-transition, opacity .2s $primary-transition;
 
   &__outline {
     position: absolute;
+    top: -1px;
     z-index: -1;
-    inset: 0;
-    display: flex;
-    align-items: stretch;
-    pointer-events: none;
-    border-radius: inherit;
-  }
+    bottom: 0;
+    left: var(--c-field-border-radius);
+    border-top: 1px solid transparent;
 
-  &__outline-start,
-  &__outline-notch,
-  &__outline-end {
-    border: 0 solid var(--c-field-border-color);
-    transition: border-color .2s $primary-transition;
-  }
+    &::after {
+      position: absolute;
+      content: '';
+      width: 100%;
+      top: -1px;
+      left: 0;
+      height: 1px;
+      z-index: -2;
+      background-color: inherit;
+      transition: transform .2s $primary-transition, background-color .2s $primary-transition;
+      transform: scaleX(0);
+      transform-origin: left;
+    }
 
-  &__outline-start {
-    flex: 0 0 var(--c-app-border-radius);
-    border-left-width: thin;
-    border-top-width: thin;
-    border-bottom-width: thin;
-    border-top-left-radius: inherit;
-    border-bottom-left-radius: inherit;
-    //border-radius: inherit;
-  }
-
-  &__outline-notch {
-    flex: 0 1 auto;
-    border-top-width: thin;
-    border-bottom-width: thin;
-
-    span {
-      display: block;
-      overflow: hidden;
-      white-space: nowrap;
+    & > span {
+      opacity: 0;
       visibility: hidden;
-      max-width: 0.01px;
-      padding: 0 3px;
-      transform-origin: left center;
-      transition: max-width .15s ease;
     }
   }
 
-  &__outline-end {
-    flex: 1 1 auto;
-    border-right-width: thin;
-    border-top-width: thin;
-    border-bottom-width: thin;
-    border-top-right-radius: inherit;
-    border-bottom-right-radius: inherit;
+  &-label {
+    position: absolute;
+    top: 50%;
+    left: var(--c-field-border-radius);
+    line-height: .9;
+    transform: translate(0, -50%);
+    transition: top .2s $primary-transition,
+    left .2s $primary-transition,
+    transform .2s $primary-transition;
   }
 
   &__core {
@@ -109,18 +97,6 @@ $self: '.c-field';
     min-height: var(--c-field-min-height);
   }
 
-  &-label {
-    position: absolute;
-    top: 50%;
-    left: var(--c-app-border-radius);
-    padding: 0 3px;
-    line-height: .9;
-    transform: translate(0, -50%);
-    transition: top .2s $primary-transition,
-                left .2s $primary-transition,
-                transform .2s $primary-transition;
-  }
-
   &-input {
     flex: 1 1;
     width: 100%;
@@ -134,32 +110,28 @@ $self: '.c-field';
     }
   }
 
+  &--default {
+    border-color: currentColor;
+  }
+
   &--focused {
     #{$self}-input::placeholder {
       opacity: 1;
     }
 
-    > #{$self}__outline > #{$self}__outline-start,
-    > #{$self}__outline > #{$self}__outline-notch,
-    > #{$self}__outline > #{$self}__outline-end {
-      border-color: currentColor;
+    & > #{$self}__outline {
+      background: inherit;
 
-    }
-  }
-
-  &--focused > &__outline > &__outline-notch,
-  &--filled > &__outline > &__outline-notch {
-    border-top-width: 0;
-
-    span {
-      max-width: 100%;
+      &:after {
+        transform: scaleX(1);
+      }
     }
   }
 
   &--focused > &__core > &-label,
   &--filled > &__core > &-label {
     top: 0;
-    left: var(--c-app-border-radius);
+    left: var(--c-field-border-radius);
     transform: translate(0, -50%) scale(.8);
   }
 
@@ -167,12 +139,18 @@ $self: '.c-field';
     opacity: 0;
   }
 
-  &--error {
-    > #{$self}__outline > #{$self}__outline-start,
-    > #{$self}__outline > #{$self}__outline-notch,
-    > #{$self}__outline > #{$self}__outline-end {
-      border-color: currentColor;
+  &--filled {
+    & > #{$self}__outline {
+      background: inherit;
+
+      &:after {
+        transform: scaleX(1);
+      }
     }
+  }
+
+  &--error {
+
   }
 
   &--disabled {
@@ -182,11 +160,7 @@ $self: '.c-field';
   }
 
   &--readonly {
-    > #{$self}__outline > #{$self}__outline-start,
-    > #{$self}__outline > #{$self}__outline-notch,
-    > #{$self}__outline > #{$self}__outline-end {
-      background-color: var(--c-field-readonly-bg-color);
-    }
+
   }
 
   &--has-prepend {
@@ -204,7 +178,7 @@ $self: '.c-field';
   &--has-prepend#{$self}--focused > &__core > &-label,
   &--has-prepend#{$self}--filled > &__core > &-label {
     top: 0;
-    left: var(--c-app-border-radius);
+    left: var(--c-field-border-radius);
     transform: translate(0, -50%) scale(.8);
   }
 }

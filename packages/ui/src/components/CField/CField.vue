@@ -26,21 +26,23 @@
     }>()
 
     const value = defineModel<string | number | undefined | null>()
-
+    const inputRef = shallowRef<HTMLElement>()
     const slots = useSlots()
 
-    const presets = useFieldPresets({ slots, props })
+    const presets = useFieldPresets({
+        slots,
+        props,
+    })
 
-    const inputRef = shallowRef<HTMLElement>()
-
-    const hasValue = computed(() => props.filled || !!unref(value))
-
-    const clearable = computed(() => props.clearable && props.focused && hasValue.value)
+    const clearable = computed(() => props.clearable
+        && props.focused
+        && (props.filled || !!unref(value))
+    )
 
     const classes = computed(() => [
         {
             'c-field--focused': props.focused,
-            'c-field--filled': hasValue.value,
+            'c-field--filled': props.filled || !!unref(value),
             'c-field--has-prepend': !!slots.prepend,
             'c-field--disabled': props.disabled,
             'c-field--readonly': props.readonly,
@@ -80,17 +82,12 @@
             aria-hidden="true"
             class="c-field__outline"
         >
-            <div class="c-field__outline-start"></div>
-            <div class="c-field__outline-notch">
-                <span :class="presets.label">{{ label }}</span>
-            </div>
-            <div class="c-field__outline-end"></div>
+            <span :class="presets.label">{{ label }}</span>
         </div>
 
         <div
             v-if="$slots.prepend"
             class="c-field__prepend"
-            :class="presets.prepend"
         >
             <slot name="prepend"></slot>
         </div>
@@ -141,7 +138,6 @@
         <div
             v-if="$slots.append"
             class="c-field__append"
-            :class="presets.append"
         >
             <slot name="append" />
         </div>

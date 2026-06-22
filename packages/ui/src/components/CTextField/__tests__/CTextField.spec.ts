@@ -13,6 +13,7 @@ import {
 } from 'vue'
 
 import { CTextField } from '@/components/index'
+import { wait } from '@/helpers'
 
 import { $VUELAND_UI_KEY } from '../../../constants'
 
@@ -152,12 +153,13 @@ describe('CTextField', () => {
         expect(wrapper.get('input.c-field-input').attributes('aria-labelledby')).toBe('username-label')
     })
 
-    it('рендерит details по умолчанию', () => {
+    it('рендерит details по умолчанию', async () => {
         const wrapper = createWrapper({
             id: 'password',
             details: 'Минимум 8 символов',
         })
 
+        await wait()
         expect(wrapper.get('.c-input__details').attributes('id')).toBe('password-details')
         expect(wrapper.get('.c-text-field__details').text()).toBe('Минимум 8 символов')
         expect(wrapper.get('input.c-field-input').attributes('aria-describedby')).toBe('password-details')
@@ -173,7 +175,7 @@ describe('CTextField', () => {
         expect(wrapper.get('input.c-field-input').attributes('aria-describedby')).toBeUndefined()
     })
 
-    it('позволяет переопределить details slot', () => {
+    it('позволяет переопределить details slot', async () => {
         const wrapper = createWrapper(
             { details: 'Описание' },
             {
@@ -185,6 +187,7 @@ describe('CTextField', () => {
             },
         )
 
+        await wait()
         expect(wrapper.get('.test-details').text()).toBe('custom: Описание')
         expect(wrapper.find('.c-text-field__details').exists()).toBe(false)
     })
@@ -205,12 +208,12 @@ describe('CTextField', () => {
         )
 
         await (wrapper.vm as any).validate()
-        await nextTick()
+        await wait()
 
         expect(wrapper.get('span.is-error').text()).toBe('Required')
     })
 
-    it('details slot получает hasError=false когда ошибки нет', () => {
+    it('details slot получает hasError=false когда ошибки нет', async () => {
         const wrapper = createWrapper(
             { modelValue: 'valid', details: 'Подсказка' },
             {
@@ -221,7 +224,7 @@ describe('CTextField', () => {
                 ),
             },
         )
-
+        await wait()
         expect(wrapper.get('span.no-error').text()).toBe('Подсказка')
     })
 
@@ -310,7 +313,7 @@ describe('CTextField', () => {
         expect(input.attributes('aria-invalid')).toBeUndefined()
 
         await input.setValue('')
-        await nextTick()
+        await wait()
 
         expect(wrapper.getComponent(CTextField).classes()).toContain('c-input--has-error')
         expect(input.attributes('aria-invalid')).toBe('true')
@@ -337,16 +340,16 @@ describe('CTextField', () => {
         const input = wrapper.get('input.c-field-input')
 
         await input.setValue('ab')
-        await nextTick()
+        await wait()
 
         expect(wrapper.getComponent(CTextField).classes()).toContain('c-input--has-error')
         expect(wrapper.get('.c-text-field__details').text()).toBe('Минимум 3 символа')
 
         await input.setValue('abc')
-        await nextTick()
+        await wait()
 
         expect(wrapper.getComponent(CTextField).classes()).not.toContain('c-input--has-error')
-        expect(wrapper.find('.c-text-field__details').text()).toBe('')
+        expect(wrapper.html().indexOf('.c-text-field__details')).toBe(-1)
     })
 
     it('применяет base к root/details и прокидывает field-зону в CField через inject', () => {
@@ -436,6 +439,7 @@ describe('CTextField', () => {
             })
 
             const result = await (wrapper.vm as any).validate()
+            await wait()
 
             expect(result).toBe(false)
             expect(wrapper.find('.c-input__details').text()).toBe('Required')

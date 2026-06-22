@@ -5,13 +5,14 @@ import type { CInputProps } from '@/components/CInput'
 export type CTextFieldProps = Omit<CInputProps, 'modelValue' | 'role'>
 
 export type CTextFieldSlots = {
-    prepend(): VNode
-    append(): VNode
+    prepend?(): VNode
+    append?(): VNode
     details(props: {
         errorMessage?: string
         details?: string
         hasError: boolean
     }): VNode
+    before?(): VNode
 }
 
 export type CTextFieldEmits<T = any> = {

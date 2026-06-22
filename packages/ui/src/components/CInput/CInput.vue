@@ -1,11 +1,15 @@
 <script setup lang="ts" generic="T">
     import {
         computed,
+        h,
         onBeforeMount,
         onBeforeUnmount,
         shallowReactive,
+        shallowRef,
+        Transition,
         unref,
         useAttrs,
+        watch
     } from 'vue'
 
     import {
@@ -65,6 +69,7 @@
         errors
     })
 
+    const messageNode = shallowRef()
     const fieldId = useId(props.id, { prefix: props.role })
     const isCombobox = props.role === 'combobox'
     const isCheckBox = props.role === 'checkbox'
@@ -153,6 +158,23 @@
         formApi?.removeReset(reset)
     })
 
+    const DetailsMessage = () => h(Transition, {
+        name: "fade-in-down",
+        mode: "out-in",
+    }, {
+        default: () => unref(messageNode),
+    })
+
+    watch(() => [errors.errorMessage, props.details] , () => {
+        messageNode.value = null
+
+        setTimeout(() => messageNode.value = slots.details?.({
+            details: props.details,
+            ...errors,
+            uid: fieldId
+        }))
+    }, {immediate: true})
+
     defineExpose({
         validate,
         focus,
@@ -190,17 +212,7 @@
             class="c-input__details"
             :class="preset.details"
         >
-            <transition
-                name="fade-in-down"
-                mode="out-in"
-            >
-                <slot
-                    name="details"
-                    v-bind="errors"
-                    :details
-                    :uid="fieldId"
-                ></slot>
-            </transition>
+            <details-message />
         </div>
     </div>
 </template>
