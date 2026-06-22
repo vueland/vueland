@@ -44,6 +44,7 @@ $self: '.c-field';
     border-bottom-width: thin;
     border-top-left-radius: inherit;
     border-bottom-left-radius: inherit;
+    //border-radius: inherit;
   }
 
   &__outline-notch {
@@ -142,6 +143,7 @@ $self: '.c-field';
     > #{$self}__outline > #{$self}__outline-notch,
     > #{$self}__outline > #{$self}__outline-end {
       border-color: currentColor;
+
     }
   }
 
