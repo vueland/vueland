@@ -1,83 +1,85 @@
 {
-  "name": "core",
-  "private": false,
-  "license": "MIT",
-  "type": "module",
-  "packageManager": "pnpm@10.32.0",
-  "author": {
-    "name": "Anar Allakhverdiev",
-    "url": "https://github.com/wiseadme"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/vueland/vueland.git",
-    "directory": "/"
-  },
-  "workspaces": [
-    "packages/*",
-    "integrations/*",
-    "apps/*"
-  ],
-  "scripts": {
-    "build:all": "npm run build:jit && npm run build:lib && npm run build:docs && npm run build:eslint",
-    "build:eslint": "pnpm --filter @vueland/eslint-script-setup run build",
-    "build:lib": "pnpm run -r build-lib",
-    "build:jit": "pnpm run -r build-jit",
-    "build:docs": "pnpm run -r build:docs",
-    "build:play": "pnpm run -r build-play",
-    "dev:play": "pnpm run -r dev:play",
-    "dev": "pnpm run -r dev:play & pnpm run -r dev:docs",
-    "dev:docs": "pnpm run -r dev:docs",
-    "test:lib": "pnpm run -r test:lib",
-    "test:jit": "pnpm run -r test:jit",
-    "test": "pnpm run test:lib && pnpm run test:jit",
-    "preview:docs": "pnpm run -r preview:docs",
-    "lint:lib": "pnpm run -r lint:lib",
-    "lint:jit": "pnpm run -r lint:jit",
-    "typecheck": "pnpm --filter @vueland/ui --filter @vueland/utils-jit run typecheck",
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx,.vue .",
-    "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx,.vue .",
-    "format": "prettier --write \"packages/**/*.{ts,tsx,vue,js}\"",
-    "format:check": "prettier --check \"packages/**/*.{ts,tsx,vue,js}\"",
-    "changeset": "changeset",
-    "version-packages": "changeset version",
-    "release": "pnpm run build:jit && pnpm run build:lib && changeset publish",
-    "pre:alpha": "changeset pre enter alpha",
-    "pre:beta": "changeset pre enter beta",
-    "pre:rc": "changeset pre enter rc",
-    "pre:exit": "changeset pre exit",
-    "prepare": "husky"
-  },
-  "devDependencies": {
-    "@changesets/changelog-github": "^0.7.0",
-    "@changesets/cli": "^2.31.0",
-    "@commitlint/cli": "^21.0.2",
-    "@commitlint/config-conventional": "^21.0.2",
-    "@eslint/js": "^9.39.2",
-    "eslint": "^9.39.2",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-import-newlines": "^2.0.0",
-    "eslint-plugin-newline-destructuring": "^1.2.2",
-    "eslint-plugin-simple-import-sort": "^13.0.0",
-    "eslint-plugin-vue": "^10.7.0",
-    "globals": "^17.3.0",
-    "husky": "^9.1.7",
-    "json": "^11.0.0",
-    "lerna": "^9.0.7",
-    "lint-staged": "^17.0.7",
-    "prettier": "^3.8.4",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.54.0",
-    "vue-eslint-parser": "^10.2.0"
-  },
-  "engines": {
-    "node": ">=20.19.0"
-  },
-  "lint-staged": {
-    "packages/**/*.{ts,tsx,vue,js}": [
-      "prettier --write",
-      "eslint --fix"
-    ]
-  }
+    "name": "vueland",
+    "private": true,
+    "license": "MIT",
+    "type": "module",
+    "packageManager": "pnpm@10.32.0",
+    "author": {
+        "name": "Anar Allakhverdiev",
+        "url": "https://github.com/wiseadme"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/vueland/vueland.git",
+        "directory": "/"
+    },
+    "workspaces": [
+        "packages/*",
+        "integrations/*",
+        "apps/*"
+    ],
+    "scripts": {
+        "build:all": "npm run build:jit && npm run build:lib && npm run build:docs && npm run build:eslint",
+        "build:packages": "pnpm run build:jit && pnpm run build:lib && pnpm run build:eslint",
+        "build:eslint": "pnpm --filter @vueland/eslint-script-setup run build",
+        "build:lib": "pnpm run -r build-lib",
+        "build:jit": "pnpm run -r build-jit",
+        "build:docs": "pnpm run -r build:docs",
+        "build:play": "pnpm run -r build-play",
+        "dev:play": "pnpm run -r dev:play",
+        "dev": "pnpm run -r dev:play & pnpm run -r dev:docs",
+        "dev:docs": "pnpm run -r dev:docs",
+        "test:lib": "pnpm run -r test:lib",
+        "test:jit": "pnpm run -r test:jit",
+        "test": "pnpm run test:lib && pnpm run test:jit",
+        "preview:docs": "pnpm run -r preview:docs",
+        "lint:lib": "pnpm run -r lint:lib",
+        "lint:jit": "pnpm run -r lint:jit",
+        "typecheck": "pnpm --filter @vueland/ui --filter @vueland/utils-jit run typecheck",
+        "lint": "eslint --ext .js,.jsx,.ts,.tsx,.vue .",
+        "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx,.vue .",
+        "format": "prettier --write \"packages/**/*.{ts,tsx,vue,js}\"",
+        "format:check": "prettier --check \"packages/**/*.{ts,tsx,vue,js}\"",
+        "changeset": "changeset",
+        "version-packages": "changeset version",
+        "release": "pnpm run build:packages && changeset publish",
+        "pre:alpha": "changeset pre enter alpha",
+        "pre:beta": "changeset pre enter beta",
+        "pre:rc": "changeset pre enter rc",
+        "pre:exit": "changeset pre exit",
+        "prepare": "husky"
+    },
+    "devDependencies": {
+        "@changesets/changelog-github": "^0.7.0",
+        "@changesets/cli": "^2.31.0",
+        "@commitlint/cli": "^21.0.2",
+        "@commitlint/config-conventional": "^21.0.2",
+        "@eslint/js": "^9.39.2",
+        "@vueland/eslint-script-setup": "workspace:*",
+        "eslint": "^9.39.2",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-import": "^2.32.0",
+        "eslint-plugin-import-newlines": "^2.0.0",
+        "eslint-plugin-newline-destructuring": "^1.2.2",
+        "eslint-plugin-simple-import-sort": "^13.0.0",
+        "eslint-plugin-vue": "^10.7.0",
+        "globals": "^17.3.0",
+        "husky": "^9.1.7",
+        "json": "^11.0.0",
+        "lerna": "^9.0.7",
+        "lint-staged": "^17.0.7",
+        "prettier": "^3.8.4",
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.54.0",
+        "vue-eslint-parser": "^10.2.0"
+    },
+    "engines": {
+        "node": ">=20.19.0"
+    },
+    "lint-staged": {
+        "packages/**/*.{ts,tsx,vue,js}": [
+            "prettier --write",
+            "eslint --fix"
+        ]
+    }
 }

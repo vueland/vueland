@@ -1,8 +1,8 @@
 ---
-"@vueland/eslint-script-setup": minor
+"@vueland/eslint-script-setup": patch
 ---
 
-Initial release of `@vueland/eslint-script-setup` — an ESLint plugin that enforces consistent code ordering in Vue 3 `<script setup>` blocks.
+Republish with the built `dist/` bundle — the previous `0.1.0` was published without it, so the package was unusable. First working release of `@vueland/eslint-script-setup` — an ESLint plugin that enforces consistent code ordering in Vue 3 `<script setup>` blocks.
 
 Rules:
 - `script-setup-order` — enforces `import → type → macros → composable → reactive → variable → computed → function → watchEffect → watch → lifecycle` order with autofix

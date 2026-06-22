@@ -5,6 +5,7 @@ import type {
     ValidateProps,
     ValidateState,
 } from '@/composables'
+import type { CInputPreset } from '@/types'
 
 export interface InputState {
     focused: boolean
@@ -49,7 +50,7 @@ export type CInputFieldSlotProps = {
     clearable?: boolean
     readonly?: boolean
     disabled?: boolean
-    preset?: string
+    preset?: CInputPreset
     errorMessage: ValidateState['errorMessage']
     hasError: ValidateState['hasError']
     validating: ValidateState['validating']

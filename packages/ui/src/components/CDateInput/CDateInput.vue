@@ -146,7 +146,6 @@
                             ref="fieldRef"
                             :model-value="displayValue"
                             :label="field.label"
-                            :preset="field.preset"
                             :focused="field.focused"
                             :error="field.hasError"
                             :clearable="field.clearable"

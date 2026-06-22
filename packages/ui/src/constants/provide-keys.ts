@@ -1,4 +1,4 @@
-import type { InjectionKey } from 'vue'
+import type { ComputedRef, InjectionKey } from 'vue'
 
 import type {
     ApplicationApi,
@@ -15,3 +15,4 @@ export const $SELECT_CONTROL_API_KEY: InjectionKey<any> = Symbol()
 export const $BREAKPOINTS_KEY: InjectionKey<Display> = Symbol()
 export const $VUELAND_UI_KEY: InjectionKey<any> = Symbol()
 export const $DIALOGS_STACK_API_KEY: InjectionKey<DialogsStackAPI> = Symbol()
+export const $PRESET_KEY: InjectionKey<ComputedRef<any>> = Symbol()

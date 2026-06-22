@@ -1,15 +1,28 @@
-import { computed, unref } from 'vue'
+import { computed } from 'vue'
 
 import type { CBtnProps } from '@/components/CBtn'
-import type { CInputPreset } from '@/types'
+import type { CButtonState } from '@/types'
 
-import { usePresets } from './use-presets'
+import { usePresetZones, useReadPreset } from './use-presets'
+
+const BUTTON_STATE_PRECEDENCE: readonly CButtonState[] = ['disabled']
 
 export function useButtonPresets({ props }: { props: CBtnProps }) {
-    const presets = usePresets<CInputPreset>(props)
+    const raw = useReadPreset(props)
+
+    const active = (): Partial<Record<CButtonState, boolean>> => ({
+        disabled: !!props.disabled,
+    })
+
+    const zones = usePresetZones<'root' | 'label', CButtonState>(
+        raw,
+        ['root', 'label'],
+        active,
+        BUTTON_STATE_PRECEDENCE,
+    )
 
     return computed(() => ({
-        root: props.preset ? [...(unref(presets)?.root ?? [])] : [],
-        label: props.preset ? [] : [],
+        root: zones.value.root,
+        label: zones.value.label,
     }))
 }

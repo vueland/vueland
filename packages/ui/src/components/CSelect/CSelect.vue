@@ -105,7 +105,6 @@
                                 :label="field.label"
                                 :clearable="field.clearable"
                                 :filled="hasValue"
-                                :preset="field.preset"
                                 :error="field.hasError"
                                 no-input
                                 v-on="on"

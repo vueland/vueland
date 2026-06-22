@@ -7,6 +7,14 @@
 
     import { isDef } from '@/helpers'
 
+    export type EnrichedYear = {
+        year: number
+        disabled: boolean
+        isSelected: boolean
+        isCurrent: boolean
+        onSelect: () => void
+    }
+
     defineOptions({ name: 'CDatePickerYears' })
 
     const props = defineProps<{
@@ -25,14 +33,6 @@
     }>()
 
     defineExpose({ onNext, onPrev })
-
-    export type EnrichedYear = {
-        year: number
-        disabled: boolean
-        isSelected: boolean
-        isCurrent: boolean
-        onSelect: () => void
-    }
 
     const pageIndex = shallowRef(0)
 

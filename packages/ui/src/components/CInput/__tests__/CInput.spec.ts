@@ -15,21 +15,22 @@ const basePresets = {
     input: {
         base: {
             root: ['base-root'],
-            field: 'field.base',
+            field: ['base-field'],
+            input: ['base-input'],
+            label: ['base-label'],
             details: ['base-details'],
-
-            focused: { root: ['focused-root'] },
-
-            error: {
-                root: ['error-root'],
-                field: 'field.error',
-                details: ['error-details'],
-            },
-
-            disabled: { root: ['disabled-root'] },
-
-            readonly: { root: ['readonly-root'] },
         },
+
+        focused: { root: ['focused-root'] },
+
+        error: {
+            root: ['error-root'],
+            details: ['error-details'],
+        },
+
+        disabled: { root: ['disabled-root'] },
+
+        readonly: { root: ['readonly-root'] },
     },
 }
 
@@ -72,7 +73,7 @@ function createWrapper({
             'data-disabled': `${!!disabled}`,
             'data-readonly': `${!!readonly}`,
             'data-clearable': `${!!clearable}`,
-            'data-preset': preset,
+            'data-preset': preset ? JSON.stringify(preset) : '',
             'data-has-error': `${hasError}`,
             'data-error-message': errorMessage ?? '',
             onFocus: focus,
@@ -388,16 +389,16 @@ describe('CInput', () => {
     })
 
     describe('presets', () => {
-        it('применяет root preset на root', () => {
-            const wrapper = createWrapper({ props: { preset: 'input.base' } })
+        it('применяет base root на root', () => {
+            const wrapper = createWrapper({ props: { preset: 'input' } })
 
             expect(wrapper.classes()).toContain('base-root')
         })
 
-        it('применяет details preset на details', () => {
+        it('применяет base details на details', () => {
             const wrapper = createWrapper({
                 props: {
-                    preset: 'input.base',
+                    preset: 'input',
                     details: 'Подсказка',
                 },
             })
@@ -405,28 +406,28 @@ describe('CInput', () => {
             expect(wrapper.get('.c-input__details').classes()).toContain('base-details')
         })
 
-        it('передаёт field preset в field slot и не применяет его как class на .c-input__field', () => {
-            const wrapper = createWrapper({ props: { preset: 'input.base' } })
+        it('отдаёт в field slot весь набор и не применяет его как class на .c-input__field', () => {
+            const wrapper = createWrapper({ props: { preset: 'input' } })
 
-            expect(field(wrapper).attributes('data-preset')).toBe('__field.input.base')
-            expect(wrapper.get('.c-input__field').classes()).not.toContain('__field.input.base')
+            const passed = JSON.parse(field(wrapper).attributes('data-preset') as string)
+            expect(passed).toEqual(basePresets.input)
+            expect(wrapper.get('.c-input__field').classes()).not.toContain('base-field')
         })
 
-        it('заменяет root focused-состоянием, но сохраняет базовый field preset', async () => {
-            const wrapper = createWrapper({ props: { preset: 'input.base' } })
+        it('focused целиком подменяет root (база на этой зоне уходит)', async () => {
+            const wrapper = createWrapper({ props: { preset: 'input' } })
 
             await field(wrapper).trigger('focus')
             await nextTick()
 
             expect(wrapper.classes()).toContain('focused-root')
             expect(wrapper.classes()).not.toContain('base-root')
-            expect(field(wrapper).attributes('data-preset')).toBe('__field.input.base')
         })
 
-        it('переопределяет field preset активным error-состоянием', async () => {
+        it('error подменяет root и details', async () => {
             const wrapper = createWrapper({
                 props: {
-                    preset: 'input.base',
+                    preset: 'input',
                     modelValue: '',
                     rules: [
                         () => ({
@@ -442,34 +443,31 @@ describe('CInput', () => {
 
             expect(wrapper.classes()).toContain('error-root')
             expect(wrapper.classes()).not.toContain('base-root')
-            expect(field(wrapper).attributes('data-preset')).toBe('__field.input.base')
             expect(wrapper.get('.c-input__details').classes()).toContain('error-details')
         })
 
-        it('заменяет root disabled-состоянием и сохраняет базовый field, если disabled.field не задан', () => {
+        it('disabled подменяет root', () => {
             const wrapper = createWrapper({
                 props: {
-                    preset: 'input.base',
+                    preset: 'input',
                     disabled: true,
                 },
             })
 
             expect(wrapper.classes()).toContain('disabled-root')
             expect(wrapper.classes()).not.toContain('base-root')
-            expect(field(wrapper).attributes('data-preset')).toBe('__field.input.base')
         })
 
-        it('заменяет root readonly-состоянием и сохраняет базовый field, если readonly.field не задан', () => {
+        it('readonly подменяет root', () => {
             const wrapper = createWrapper({
                 props: {
-                    preset: 'input.base',
+                    preset: 'input',
                     readonly: true,
                 },
             })
 
             expect(wrapper.classes()).toContain('readonly-root')
             expect(wrapper.classes()).not.toContain('base-root')
-            expect(field(wrapper).attributes('data-preset')).toBe('__field.input.base')
         })
     })
 
