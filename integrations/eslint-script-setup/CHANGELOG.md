@@ -1,5 +1,11 @@
 # @vueland/eslint-script-setup
 
+## 0.1.1
+
+### Patch Changes
+
+- [#49](https://github.com/vueland/vueland/pull/49) [`0cc2ab1`](https://github.com/vueland/vueland/commit/0cc2ab15c5505fd8f3041f10c5a7812e7e92aa6b) Thanks [@wiseadme](https://github.com/wiseadme)! - sorry for false start)
+
 ## 0.1.0
 
 ### Minor Changes
