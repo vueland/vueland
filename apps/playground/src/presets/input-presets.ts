@@ -51,21 +51,21 @@ export const soft: CInputPreset = {
 export const outline: CInputPreset = {
     base: {
         root: ['mb-2'],
-        field: ['bg-indigo-lighten-5', 'radius-[25px]'],
-        label: ['text-indigo-darken-1'],
-        input: ['text-indigo-darken-2'],
+        field: ['field-radius-[25px]'],
+        // label: ['text-indigo-darken-1'],
+        // input: ['text-indigo-darken-2'],
     },
     focused: {
         root: ['mb-2'],
-        field: ['bg-indigo-lighten-4', 'radius-[25px]'],
-        label: ['text-indigo-darken-3'],
-        input: ['text-indigo-darken-2'],
+        field: ['field-radius-[25px]'],
+        // label: ['text-indigo-darken-3'],
+        // input: ['text-indigo-darken-2'],
     },
     filled: {
         root: ['mb-2'],
-        field: ['bg-indigo-lighten-5', 'radius-12'],
-        label: ['text-indigo-darken-2'],
-        input: ['text-indigo-darken-2'],
+        // field: ['bg-indigo-lighten-5', 'radius-12'],
+        // label: ['text-indigo-darken-2'],
+        // input: ['text-indigo-darken-2'],
     },
     error: {
         root: ['mb-2'],

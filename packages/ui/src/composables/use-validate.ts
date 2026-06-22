@@ -59,11 +59,11 @@ export function useValidate(
 
     function applyResult(result: ValidateResult) {
         errors.hasError = !result.valid
-        errors.errorMessage = !result.valid ? result.message : undefined
+        errors.errorMessage = result.message
     }
 
     async function validate(): Promise<boolean> {
-        if (!unref(hasRules) || props.readonly || props.disabled) return true
+        if (!unref(hasRules) || props.disabled || props.readonly) return true
 
         errors.validating = true
 
@@ -71,14 +71,16 @@ export function useValidate(
             for (const rule of props.rules!) {
                 const result = await rule(props.modelValue)
 
-                applyResult(result)
-
-                if (!result.valid) return false
+                if (!result.valid) {
+                    applyResult(result)
+                    return false
+                }
             }
         } finally {
             errors.validating = false
         }
 
+        resetValidate()
         return true
     }
 

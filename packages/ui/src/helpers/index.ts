@@ -19,3 +19,5 @@ export const unique = (length: number): string => {
     }
     return result
 }
+
+export const wait = (mls: number = 0) => new Promise(resolve => setTimeout(resolve, mls))

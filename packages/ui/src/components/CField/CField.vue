@@ -82,11 +82,7 @@
             aria-hidden="true"
             class="c-field__outline"
         >
-            <div class="c-field__outline-start"></div>
-            <div class="c-field__outline-notch">
-                <span :class="presets.label">{{ label }}</span>
-            </div>
-            <div class="c-field__outline-end"></div>
+            <span :class="presets.label">{{ label }}</span>
         </div>
 
         <div

@@ -8,7 +8,9 @@ import {
 } from 'vitest'
 import { h, nextTick } from 'vue'
 
-import { $FORM_API_KEY, $VUELAND_UI_KEY } from '../../../constants'
+import { $FORM_API_KEY, $VUELAND_UI_KEY } from '@/constants'
+import { wait } from '@/helpers'
+
 import CInput from '../CInput.vue'
 
 const basePresets = {
@@ -139,19 +141,21 @@ describe('CInput', () => {
             expect(wrapper.find('.c-input__details').exists()).toBe(false)
         })
 
-        it('рендерит details из props.details', () => {
+        it('рендерит details из props.details', async () => {
             const wrapper = createWrapper({ props: { details: 'Подсказка' } })
 
+            await wait()
             expect(wrapper.find('.c-input__details').exists()).toBe(true)
             expect(wrapper.find('.test-details').text()).toBe('Подсказка')
         })
 
-        it('рендерит details slot', () => {
+        it('рендерит details slot', async () => {
             const wrapper = createWrapper({
                 slots: { details: ({ details }: any) => h('div', { class: 'custom-details' }, details) },
                 props: { details: 'Текст' },
             })
 
+            await wait()
             expect(wrapper.get('.custom-details').text()).toBe('Текст')
         })
 
@@ -281,7 +285,7 @@ describe('CInput', () => {
             })
 
             expect(await (wrapper.vm as any).validate()).toBe(false)
-            await nextTick()
+            await wait()
 
             expect(field(wrapper).attributes('aria-invalid')).toBe('true')
             expect(field(wrapper).attributes('aria-describedby')).toBe('email-details')
@@ -676,7 +680,7 @@ describe('CInput', () => {
             })
 
             await (wrapper.vm as any).validate()
-            await nextTick()
+            await wait()
 
             expect(wrapper.get('.test-details').text()).toBe('Обязательное поле')
             expect(field(wrapper).attributes('aria-invalid')).toBe('true')
