@@ -6,8 +6,8 @@ import {
 } from 'vitest'
 import { nextTick } from 'vue'
 
-import { BreakpointLabels } from '../../enums'
-import { breakpoints, useDisplay } from '../use-display'
+import { breakpoints, useDisplay } from '@/composables'
+import { BreakpointLabels } from '@/enums'
 
 const DEFAULT_BPS = breakpoints
 

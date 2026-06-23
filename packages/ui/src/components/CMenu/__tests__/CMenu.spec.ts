@@ -15,8 +15,7 @@ import {
 } from 'vue'
 
 import { CMenu } from '@/components/index'
-
-import { $APP_API_KEY } from '../../../constants'
+import { $APP_API_KEY } from '@/constants'
 
 type Rect = {
     top?: number

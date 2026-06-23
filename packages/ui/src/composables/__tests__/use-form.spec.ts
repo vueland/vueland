@@ -7,8 +7,9 @@ import {
 } from 'vitest'
 import { defineComponent, h } from 'vue'
 
-import { $FORM_API_KEY } from '../../constants'
-import { useForm } from '../use-form'
+import { useForm } from '@/composables'
+import { $FORM_API_KEY } from '@/constants'
+
 
 function mountUseForm(formApi?: unknown) {
     let result: ReturnType<typeof useForm>

@@ -5,8 +5,8 @@ import {
     it,
 } from 'vitest'
 
-import { BREAKPOINTS } from '../../../constants'
-import { CCol } from '../CCol'
+import { CCol } from '@/components'
+import { BREAKPOINTS } from '@/constants'
 
 describe('CCol', () => {
     it('рендерится как div', () => {

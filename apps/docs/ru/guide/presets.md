@@ -24,23 +24,26 @@ export const vueland = createVuelandUI({
 
 ## Пример: пресет для CTextField
 
+Пресет — это **набор плоских пресетов по состояниям**: `base` — спокойный вид, а каждое состояние (`focused`, `filled`, `error`, `disabled`, `readonly`) — отдельный полный плоский пресет. В каждый момент применяется ровно одно состояние; его зоны подменяют `base` пер-зонно.
+
 ```ts
 // src/presets/input-presets.ts
 import type { CInputPreset } from '@vueland/ui/types'
 
 export const outline: CInputPreset = {
-  root: ['text-blue'],
+  base: {
+    label: ['text-blue'],
+  },
   focused: {
-    root: ['text-cyan-darken-2'],
+    label: ['text-cyan-darken-2'],
+    field: ['text-cyan-darken-2'],
   },
   error: {
-    root: ['text-red'],
-    focused: {
-      root: ['text-red-darken-2'],
-    },
+    label: ['text-red'],
+    details: ['text-red'],
   },
-  disabled: {
-    root: ['text-grey'],
+  readonly: {
+    label: ['text-grey'],
   },
 }
 ```

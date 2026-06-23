@@ -9,7 +9,6 @@
 <script setup>
 import CustomFieldExample from '../../examples/CInput/CustomFieldExample.vue'
 import PresetStatesExample from '../../examples/CInput/PresetStatesExample.vue'
-import PresetCompoundExample from '../../examples/CInput/PresetCompoundExample.vue'
 </script>
 
 ## Пример: кастомное поле
@@ -23,7 +22,6 @@ import PresetCompoundExample from '../../examples/CInput/PresetCompoundExample.v
     v-model="pin"
     id="custom-pin"
     label="PIN-код"
-    kind="input"
     :rules="pinRules"
     validate-on="blur"
   >
@@ -66,78 +64,51 @@ const pinRules = [
 
 ## Система пресетов
 
-Пресеты — основной способ стилизации компонентов на основе `CInput`. Вместо того чтобы писать условные CSS-классы в каждом шаблоне, вы один раз описываете **объект пресета** и ссылаетесь на него по имени. Компонент сам вычисляет нужные классы в зависимости от активного состояния.
+Пресеты — основной способ стилизации компонентов на основе `CInput`. Вместо условных CSS-классов в каждом шаблоне вы один раз описываете **пресет** и ссылаетесь на него по имени. Компонент сам применяет нужные классы под текущее состояние.
 
-Пресеты работают в связке с утилитарными классами — каждое значение в пресете это массив имён утилитарных классов. Это делает пресеты независимыми от конкретного CSS-движка: они работают с любым utility-first инструментом, который вы используете.
+Каждое значение — массив имён утилитарных классов, поэтому пресеты работают с любым utility-first движком, который вы используете.
+
+### Зоны
+
+Плоский пресет (`ZonePreset`) — это карта **зон** в списки классов. Зоны маппятся 1:1 на отрисованный DOM:
+
+| Зона | Элемент |
+|---|---|
+| `root` | обёртка `.c-input` |
+| `field` | коробка `.c-field` (рамка / фон) |
+| `input` | нативный `<input>` |
+| `label` | плавающий лейбл |
+| `details` | строка подсказки / ошибки |
+| `prepend` | обёртка prepend-слота |
+| `append` | обёртка append-слота |
 
 ### Тип CInputPreset
 
+Пресет — это **набор плоских пресетов по состояниям**. `base` — спокойный вид, каждое состояние — отдельный полный плоский пресет:
+
 ```ts
-type CInputZone = {
-  root?: string[]     // классы на корневом элементе CInput
-  label?: string[]    // классы на плавающем лейбле
-  input?: string[]    // классы на нативном <input>
-  details?: string[]  // классы на строке подсказки/ошибки
-}
+type CInputZone = 'root' | 'field' | 'input' | 'label' | 'details' | 'prepend' | 'append'
+type CInputState = 'focused' | 'filled' | 'error' | 'disabled' | 'readonly'
 
-type CInputCompoundState = CInputZone & {
-  focused?: CInputZone  // составное: основное состояние + фокус одновременно
-  filled?: CInputZone   // составное: основное состояние + заполненность одновременно
-}
+type ZonePreset = Partial<Record<CInputZone, string[]>>
 
-type CInputPreset = CInputZone & {
-  // состояния взаимодействия
-  focused?: CInputZone
-  filled?: CInputZone
-  error?: CInputCompoundState
-  disabled?: CInputCompoundState
-  readonly?: CInputCompoundState
-
-  // структурные модификаторы (всегда аддитивны)
-  prepended?: CInputZone
-  appended?: CInputZone
-}
+// base + опциональные плоские пресеты по состояниям — всё опционально
+type CInputPreset = Partial<Record<'base' | CInputState, ZonePreset>>
 ```
 
-### Приоритет состояний
+**Составных состояний нет** и нет вложенности — состояние это просто ещё один плоский пресет.
 
-В каждый момент времени активно только **одно состояние взаимодействия**. Если одновременно истинны несколько условий, побеждает состояние с наибольшим приоритетом:
+### Одно состояние за раз
 
-```
-disabled  >  readonly  >  error  >  focused  >  filled
-```
+Компонент всегда находится в одном текущем состоянии, и применяется пресет именно этого состояния — ничего не складывается и нет никаких приоритетов. Вы просто описываете плоский пресет на каждое состояние, активное применяется (или `base`, когда поле в покое). Зоны активного состояния подменяют зоны `base` **пер-зонно**; зона, которую состояние не описывает, берётся из `base`.
 
-Например, если у поля есть ошибка и оно при этом в фокусе, побеждает `error` — если только не определено составное состояние `error.focused`, которое в этом случае применяется вместо него.
-
-### Составные состояния (compound states)
-
-Составные состояния позволяют задать уникальную стилизацию для комбинации двух условий. Они определяются **внутри** основного состояния и замещают его, когда дополнительное условие тоже истинно:
-
-| Ключ | Когда активен |
-|------|--------------|
-| `error.focused` | есть ошибка **и** поле в фокусе |
-| `error.filled` | есть ошибка **и** поле заполнено |
-| `disabled.focused` | поле disabled **и** в фокусе |
-| `disabled.filled` | поле disabled **и** заполнено |
-| `readonly.focused` | поле readonly **и** в фокусе |
-| `readonly.filled` | поле readonly **и** заполнено |
-
-:::warning Нет фолбэка на базовый пресет
-Когда активно любое состояние взаимодействия, базовые зоны (`root`, `label` и т.д. на верхнем уровне) **не применяются**. Если в зоне состояния отсутствует конкретный ключ (например, не задан `error.label`), этот ключ вернёт `[]`, а не базовое значение.
-
-Это намеренное поведение — оно предотвращает «просачивание» цветов базового состояния при активном состоянии ошибки или другом.
+:::tip Почему одно состояние, а не стек?
+Утилитарные классы — это `!important` с одинаковой специфичностью, поэтому при стэке конфликтующих классов (например двух `bg-*`) побеждает порядок в стайлшите, а не намерение. Ровно один комплект классов на зону делает результат предсказуемым.
 :::
 
-### Структурные модификаторы
+### Адресация состояния напрямую
 
-`prepended` и `appended` — единственные **всегда аддитивные** модификаторы: они добавляются поверх любого активного состояния. Используйте их для сдвига лейбла или отступов при наличии иконки в слоте:
-
-```ts
-prepended: {
-  label: ['pl-10'],  // сдвинуть лейбл вправо, чтобы не перекрывать иконку
-  input: ['pl-10'],
-}
-```
+Каждое состояние — самостоятельный плоский пресет, адресуемый как `name.state`. `input.blue` — это весь набор; `input.blue.focused` — только плоский пресет состояния focused.
 
 ### Регистрация пресетов
 
@@ -149,33 +120,12 @@ import type { CInputPreset } from '@vueland/ui/types'
 
 function makePreset(color: string): CInputPreset {
   return {
-    root: [color],
-    focused: {
-      root: [color],
-      label: [color],
-    },
-    filled: {
-      label: [color],
-    },
-    error: {
-      root: ['text-red'],
-      label: ['text-red'],
-      focused: {
-        // исправляем ошибку — лейбл переключается на основной цвет
-        root: [color],
-        label: [color],
-      },
-      filled: {
-        label: ['text-red'],
-      },
-    },
-    disabled: {
-      root: ['opacity-50'],
-    },
-    readonly: {
-      root: ['text-grey'],
-      label: ['text-grey'],
-    },
+    base:     { label: [color] },
+    focused:  { label: [color], field: [color] },
+    filled:   { label: [color] },
+    error:    { label: ['text-red'], field: ['text-red'], details: ['text-red'] },
+    readonly: { label: ['text-grey'] },
+    // `disabled` притеняется компонентом; зона нужна только для оверрайда
   }
 }
 
@@ -196,64 +146,21 @@ const vueland = createVuelandUI({
 <CTextField preset="input.teal" ... />
 ```
 
-### Автогенерация CFieldPreset
+### Распределение CInput → CField
 
-При регистрации `CInputPreset` компонент `CInput` автоматически выводит из него `CFieldPreset` и регистрирует его внутренне под именем `__field.<имя-пресета>`. Компонент `CField` (который отрисовывает рамку, лейбл и слоты) подхватывает его прозрачно — вам не нужно писать `CFieldPreset` вручную.
-
-Производный `CFieldPreset` содержит только зоны `label` и `input` (зоны `root` и `details` принадлежат `CInput`, а не `CField`) и сохраняет все составные подсостояния.
+Вы пишете **один** пресет. `CInput` его резолвит, применяет свои зоны (`root`, `details`) и раздаёт набор в поддерево поля через `provide`/`inject`. `CField` его инжектит и применяет `field`, `input`, `label`, `prepend`, `append`. Отдельный пресет для поля писать не нужно, и ничего не мутируется глобально.
 
 ### Все состояния наглядно
 
 <PresetStatesExample />
 
-Пример выше использует `preset="input.blue"` в шести состояниях. Обратите внимание:
-- **Default** — применяются базовые классы
-- **Focused** — `focused.label` и `focused.root` заменяют базовые
-- **Filled** — `filled.label` заменяет базовые (лейбл поднимается, цвет сохраняется)
-- **Error** — `error.root` и `error.label` заменяют всё
-- **Disabled** — применяется зона `disabled`; взаимодействие заблокировано
-- **Readonly** — применяется зона `readonly`; значение видно, но редактировать нельзя
-
-### Составные состояния в действии
-
-<PresetCompoundExample />
-
-В левой колонке `error.focused` не определён — при фокусе на поле с ошибкой лейбл остаётся красным. В правой колонке `error.focused.label` задан с основным цветом, сигнализируя пользователю, что он активно исправляет ошибку.
-
-::: details Показать определение пресета
-```ts
-// Без составных состояний
-const noCompound: CInputPreset = {
-  root: ['text-blue'],
-  focused: { label: ['text-blue'], root: ['text-blue'] },
-  filled:  { label: ['text-blue'] },
-  error: {
-    root:  ['text-red'],
-    label: ['text-red'],
-    // error.focused не задан — при error+focused остаётся красным
-  },
-}
-
-// С составными состояниями
-const withCompound: CInputPreset = {
-  root: ['text-blue'],
-  focused: { label: ['text-blue'], root: ['text-blue'] },
-  filled:  { label: ['text-blue'] },
-  error: {
-    root:  ['text-red'],
-    label: ['text-red'],
-    focused: {
-      // error + focused → лейбл переключается на основной цвет
-      label: ['text-blue'],
-      root:  ['text-blue'],
-    },
-    filled: {
-      label: ['text-red'],  // error + filled → остаётся красным
-    },
-  },
-}
-```
-:::
+Пример выше использует `preset="input.blue"` в шести состояниях:
+- **Default** — зоны `base`
+- **Focused** — `focused` подменяет `base` пер-зонно
+- **Filled** — `filled` подменяет `base` (лейбл поднимается, цвет сохраняется)
+- **Error** — `error` подменяет `base` (красный)
+- **Disabled** — взаимодействие заблокировано; компонент притеняет поле
+- **Readonly** — значение видно, но редактировать нельзя
 
 ---
 
@@ -261,35 +168,34 @@ const withCompound: CInputPreset = {
 
 ### Props
 
-| Prop | Тип | По умолчанию | Описание |
-|------|-----|-------------|----------|
+| Prop         | Тип | По умолчанию | Описание |
+|--------------|-----|-------------|----------|
 | `modelValue` | `any` | `undefined` | Значение (v-model) |
-| `id` | `string` | auto | Базовый ID для генерации `uid`, `uid-label`, `uid-details` |
-| `label` | `string` | — | Текст лейбла (передаётся в слот `field`) |
-| `details` | `string` | — | Подсказка под полем |
-| `noDetails` | `boolean` | `false` | Скрыть блок details |
-| `clearable` | `boolean` | `false` | Передать `clearable` в слот `field` |
-| `disabled` | `boolean` | `false` | Блокирует фокус, добавляет `aria-disabled` |
-| `readonly` | `boolean` | `false` | Добавляет `aria-readonly`, блокирует ввод |
-| `focused` | `boolean` | `false` | Начальное состояние фокуса |
-| `kind` | `CInputKind` | — | Тип поля. Влияет на aria-атрибуты и генерацию uid |
-| `rules` | `ValidateFn[]` | `[]` | Функции валидации |
+| `id`         | `string` | auto | Базовый ID для генерации `uid`, `uid-label`, `uid-details` |
+| `label`      | `string` | — | Текст лейбла (передаётся в слот `field`) |
+| `details`    | `string` | — | Подсказка под полем |
+| `noDetails`  | `boolean` | `false` | Скрыть блок details |
+| `clearable`  | `boolean` | `false` | Передать `clearable` в слот `field` |
+| `disabled`   | `boolean` | `false` | Блокирует фокус, добавляет `aria-disabled` |
+| `readonly`   | `boolean` | `false` | Добавляет `aria-readonly`, блокирует ввод |
+| `focused`    | `boolean` | `false` | Начальное состояние фокуса |
+| `role`       | `CInputRole` | — | Семантическая роль. Управляет aria-разметкой и префиксом `uid` |
+| `rules`      | `ValidateFn[]` | `[]` | Функции валидации |
 | `validateOn` | `'input' \| 'blur'` | `'input'` | Момент запуска валидации |
-| `preset` | `string` | — | Имя пресета (dot-путь в объекте `presets`, переданном в `createVuelandUI`) |
+| `preset`     | `string` | — | Имя пресета (dot-путь в объекте `presets`, переданном в `createVuelandUI`) |
 
-#### Тип CInputKind
+#### Тип CInputRole
 
 ```ts
-type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
+type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 ```
 
 | Значение | Поведение |
 |----------|-----------|
-| `'input'` | Стандартный текстовый ввод |
-| `'area'` | Многострочный ввод |
-| `'checkbox'` | Добавляет `aria-labelledby` автоматически |
-| `'radio'` | Добавляет `aria-labelledby` автоматически |
-| `'listbox'` | Добавляет `aria-haspopup`, `aria-controls`, `aria-expanded` |
+| `'combobox'` | Добавляет `role="combobox"`, `aria-haspopup="listbox"`, `aria-controls`, `aria-expanded` — для активаторов select / autocomplete |
+| `'checkbox'` | Привязывает `aria-labelledby` к лейблу |
+| `'radio'` | Привязывает `aria-labelledby` к лейблу |
+| `'listbox'` | Для контролов на основе listbox (aria + префикс `uid`) |
 
 ### Слоты
 
@@ -309,7 +215,7 @@ type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
 | `clearable` | `boolean \| undefined` | Значение prop `clearable` |
 | `disabled` | `boolean \| undefined` | Значение prop `disabled` |
 | `readonly` | `boolean \| undefined` | Значение prop `readonly` |
-| `preset` | `string \| undefined` | Вычисленный пресет для поля |
+| `preset` | `CInputPreset \| undefined` | Резолвнутый набор пресета (также провайдится в поддерево поля) |
 | `hasError` | `boolean` | Есть ли активная ошибка |
 | `errorMessage` | `string \| undefined` | Текущее сообщение об ошибке |
 | `validating` | `boolean` | Идёт ли async-валидация |
@@ -354,7 +260,7 @@ type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
 <template>
   <CForm>
     <template #default="{ validate }">
-      <CInput v-model="pin" :rules="rules" kind="input">
+      <CInput v-model="pin" :rules="rules">
         <template #field="field">
           <input
             :id="field.uid"

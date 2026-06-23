@@ -75,12 +75,13 @@
                 </c-field>
             </div>
         </template>
-        <template #details="{errorMessage, details, hasError}">
+        <template #details="{errorMessage, details, validating, hasError}">
             <slot
                 name="details"
                 :error-message
                 :details
                 :has-error
+                :validating
             >
                 <span
                     v-if="errorMessage || details"

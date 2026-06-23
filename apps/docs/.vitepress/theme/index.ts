@@ -67,8 +67,9 @@ import { watch } from 'vue'
 
 import VuelandLayout from './VuelandLayout.vue'
 
-import '@vueland/ui/styles.css'
-import '@vueland/ui/css/lib.css'
+import '@vueland/ui/styles/styles.scss'
+import '@vueland/ui/styles/lib.scss'
+import '@vueland/ui/styles/utils.scss'
 import './utils-jit.css'
 import './style.scss'
 
@@ -129,24 +130,17 @@ const fa = createFontAwesomeResolver({
 })
 
 function makeInputPreset(color: string): CInputPreset {
+    // `field` colors the .c-field border (currentColor), `label` the floating label.
     return {
-        root: [color],
-        focused: {
-            label: [color],
-            root: [color],
-        },
-        filled: { label: [color] },
-        input: [],
+        base: { field: [color], label: [color] },
+        focused: { field: [color], label: [color] },
+        filled: { field: [color], label: [color] },
         error: {
-            root: ['text-red'],
+            field: ['text-red'],
             label: ['text-red'],
-            filled: {
-                label: ['text-red'],
-            },
-            focused: {
-                label: ['text-red'],
-            },
+            details: ['text-red'],
         },
+        readonly: { field: ['text-grey'], label: ['text-grey'] },
     }
 }
 
@@ -179,27 +173,6 @@ export default {
                     orange: makeInputPreset('text-orange'),
                     pink: makeInputPreset('text-pink'),
                     cyan: makeInputPreset('text-cyan'),
-                    // for compound-state demo
-                    noCompound: {
-                        root: ['text-blue'],
-                        focused: { label: ['text-blue'], root: ['text-blue'] },
-                        filled: { label: ['text-blue'] },
-                        error: {
-                            root: ['text-red'],
-                            label: ['text-red'],
-                        },
-                    },
-                    withCompound: {
-                        root: ['text-blue'],
-                        focused: { label: ['text-blue'], root: ['text-blue'] },
-                        filled: { label: ['text-blue'] },
-                        error: {
-                            root: ['text-red'],
-                            label: ['text-red'],
-                            focused: { label: ['text-blue'], root: ['text-blue'] },
-                            filled: { label: ['text-red'] },
-                        },
-                    },
                 },
             },
         })

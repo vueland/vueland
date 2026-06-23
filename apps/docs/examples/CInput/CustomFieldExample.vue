@@ -42,7 +42,6 @@
         <!-- OTP input -->
         <c-input
             v-model="otp"
-            kind="input"
             :rules="otpRules"
             validate-on="blur"
         >
@@ -83,7 +82,6 @@
         <!-- Search bar -->
         <c-input
             v-model="search"
-            kind="input"
         >
             <template #field="field">
                 <div
@@ -140,7 +138,6 @@
         <!-- Textarea with counter -->
         <c-input
             v-model="bio"
-            kind="area"
             :rules="bioRules"
             validate-on="input"
         >

@@ -105,6 +105,18 @@ export default defineConfig([
             ...base.plugins,
         ],
     },
+    {
+        input: 'src/styles/utils.scss',
+        output: {
+            dir: 'dist/css',
+            sourcemap: false,
+        },
+        ...base,
+        plugins: [
+            makeCssPlugin('utils.css'),
+            ...base.plugins,
+        ],
+    },
     ...scssUtils.map((file) => {
         const [name] = file.split('.')
         return {

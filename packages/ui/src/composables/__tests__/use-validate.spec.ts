@@ -13,13 +13,13 @@ import {
     reactive,
 } from 'vue'
 
-import type { InputState } from '../../components'
+import type { InputState } from '@/components'
 import {
     useValidate,
     type ValidateFn,
     type ValidateProps,
     type ValidateResult,
-} from '../use-validate'
+} from '@/composables'
 
 type TestProps = ValidateProps & {
     modelValue: any
@@ -30,14 +30,14 @@ type TestProps = ValidateProps & {
 function createRule(valid: boolean, message = 'Error'): ValidateFn {
     return () => ({
         valid,
-        message, 
+        message,
     })
 }
 
 function createAsyncRule(valid: boolean, message = 'Error', delay = 10): ValidateFn {
     return () => new Promise((resolve) => setTimeout(() => resolve({
         valid,
-        message, 
+        message,
     }), delay))
 }
 
@@ -45,7 +45,7 @@ function mountUseValidate(
     initialProps: TestProps,
     initialState: InputState = {
         focused: false,
-        isDirty: false, 
+        isDirty: false,
     },
 ) {
     let api!: ReturnType<typeof useValidate>
@@ -67,7 +67,7 @@ function mountUseValidate(
         wrapper,
         props,
         state,
-        api, 
+        api,
     }
 }
 
@@ -107,11 +107,11 @@ describe('useValidate', () => {
     it('останавливается на первой ошибке', async () => {
         const firstRule = vi.fn(() => ({
             valid: false,
-            message: 'First error', 
+            message: 'First error',
         }))
         const secondRule = vi.fn(() => ({
             valid: false,
-            message: 'Second error', 
+            message: 'Second error',
         }))
 
         const { api } = mountUseValidate({
@@ -133,7 +133,7 @@ describe('useValidate', () => {
 
         const { api, props } = mountUseValidate({
             modelValue: 'invalid',
-            rules: [rule], 
+            rules: [rule],
         })
 
         expect(await api.validate()).toBe(false)
@@ -167,7 +167,7 @@ describe('useValidate', () => {
             modelValue: '',
             rules: [(value: string) => ({
                 valid: !!value,
-                message: 'Required field', 
+                message: 'Required field',
             })],
         })
 
@@ -187,7 +187,7 @@ describe('useValidate', () => {
             validateOn: 'input',
             rules: [(value: string) => ({
                 valid: value.length >= 3,
-                message: 'Минимум 3 символа', 
+                message: 'Минимум 3 символа',
             })],
         })
 
@@ -212,7 +212,7 @@ describe('useValidate', () => {
             modelValue: 'hello',
             rules: [(value: string) => ({
                 valid: value.length >= 3,
-                message: 'Минимум 3 символа', 
+                message: 'Минимум 3 символа',
             })],
         })
 
@@ -232,7 +232,7 @@ describe('useValidate', () => {
             },
             {
                 focused: true,
-                isDirty: false, 
+                isDirty: false,
             },
         )
 
@@ -249,7 +249,7 @@ describe('useValidate', () => {
     it('при validateOn=blur не валидирует truthy modelValue на input-change', async () => {
         const rule = vi.fn((value: string) => ({
             valid: value.length >= 3,
-            message: 'Минимум 3 символа', 
+            message: 'Минимум 3 символа',
         }))
 
         const { props } = mountUseValidate({
@@ -267,7 +267,7 @@ describe('useValidate', () => {
     it('при validateOn=blur валидирует empty modelValue на input-change', async () => {
         const rule = vi.fn((value: string) => ({
             valid: !!value,
-            message: 'Required field', 
+            message: 'Required field',
         }))
 
         const { api, props } = mountUseValidate({
@@ -288,7 +288,7 @@ describe('useValidate', () => {
         it('возвращает true и не запускает rules если readonly=true', async () => {
             const rule = vi.fn(() => ({
                 valid: false,
-                message: 'Error', 
+                message: 'Error',
             }))
 
             const { api, props } = mountUseValidate({
@@ -306,7 +306,7 @@ describe('useValidate', () => {
         it('возвращает true и не запускает rules если disabled=true', async () => {
             const rule = vi.fn(() => ({
                 valid: false,
-                message: 'Error', 
+                message: 'Error',
             }))
 
             const { api, props } = mountUseValidate({
@@ -324,7 +324,7 @@ describe('useValidate', () => {
         it('не запускает watcher при изменении modelValue если readonly=true', async () => {
             const rule = vi.fn((v: string) => ({
                 valid: !!v,
-                message: 'Required', 
+                message: 'Required',
             }))
 
             const { props } = mountUseValidate({
@@ -372,17 +372,17 @@ describe('useValidate', () => {
         it('валидирует при blur независимо от validateOn', async () => {
             const rule = vi.fn(() => ({
                 valid: false,
-                message: 'Required', 
+                message: 'Required',
             }))
 
             const { state } = mountUseValidate(
                 {
                     modelValue: '',
-                    rules: [rule], 
+                    rules: [rule],
                 },
                 {
                     focused: true,
-                    isDirty: false, 
+                    isDirty: false,
                 },
             )
 
@@ -396,18 +396,18 @@ describe('useValidate', () => {
         it('не валидирует при переходе focused: false → true', async () => {
             const rule = vi.fn(() => ({
                 valid: true,
-                message: '', 
+                message: '',
             }))
 
             const { state } = mountUseValidate(
                 {
                     modelValue: '',
                     validateOn: 'blur',
-                    rules: [rule], 
+                    rules: [rule],
                 },
                 {
                     focused: false,
-                    isDirty: false, 
+                    isDirty: false,
                 },
             )
 
@@ -458,12 +458,12 @@ describe('useValidate', () => {
                 rules: [
                     () => { calls.push('sync'); return {
                         valid: true,
-                        message: '', 
+                        message: '',
                     } },
                     createAsyncRule(true, '', 5),
                     () => { calls.push('sync2'); return {
                         valid: true,
-                        message: '', 
+                        message: '',
                     } },
                 ],
             })

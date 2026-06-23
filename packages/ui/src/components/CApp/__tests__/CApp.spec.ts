@@ -14,8 +14,8 @@ import {
     nextTick,
 } from 'vue'
 
-import { $APP_API_KEY } from '../../../constants'
-import { CApp, CBtn } from '../../index'
+import { CApp, CBtn } from '@/components'
+import { $APP_API_KEY } from '@/constants'
 
 describe('CApp', () => {
     const scrollToMock = vi.fn()

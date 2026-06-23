@@ -13,9 +13,8 @@ import {
     nextTick,
 } from 'vue'
 
-import { CTooltip } from '@/components/index'
-
-import { $APP_API_KEY } from '../../../constants'
+import { CTooltip } from '@/components'
+import { $APP_API_KEY } from '@/constants'
 
 const wrappers: ReturnType<typeof mount>[] = []
 const containers: HTMLElement[] = []

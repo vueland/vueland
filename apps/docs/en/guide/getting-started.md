@@ -29,8 +29,9 @@ pnpm add @vueland/ui
 // src/plugins/vueland.ts
 import * as components from '@vueland/ui/components'
 import { createVuelandUI } from '@vueland/ui'
-import '@vueland/ui/styles.css'     // utilities + variables
+import '@vueland/ui/styles.css'     // reset and ui themes variables
 import '@vueland/ui/css/lib.css'    // component styles
+import '@vueland/ui/css/utils.css'    // utils css classes
 
 export const vueland = createVuelandUI({
   components,
@@ -99,11 +100,16 @@ export default defineConfig({
 ```scss
 /* src/styles/main.scss */
 
-/* 1. Utilities, CSS variables, reset */
-@use '@vueland/ui/src/styles/styles.scss';
+/* 1. CSS variables, reset */
+@use '@vueland/ui/styles/styles.scss';
 
 /* 2. Component styles */
-@use '@vueland/ui/src/styles/lib.scss';
+@use '@vueland/ui/styles/lib.scss';
+
+/* 3. Utilities */
+@use '@vueland/ui/styles/utils.scss';
+
+
 
 /* 3. Your own styles */
 @use './variables';

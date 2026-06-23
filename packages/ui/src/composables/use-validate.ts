@@ -10,8 +10,10 @@ import {
 import type { InputState } from '@/components/CInput'
 import type { Maybe } from '@/types'
 
-export type ValidateResult = { valid: boolean;
-    message: string }
+export type ValidateResult = {
+    valid: boolean;
+    message: string
+}
 
 export type ValidateFn = (value: any) => ValidateResult | Promise<ValidateResult>
 
