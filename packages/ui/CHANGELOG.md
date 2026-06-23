@@ -1,5 +1,11 @@
 # @vueland/ui
 
+## 0.0.4
+
+### Patch Changes
+
+- [#52](https://github.com/vueland/vueland/pull/52) [`dd62251`](https://github.com/vueland/vueland/commit/dd62251823e7d7f6b51c70f0e2467fa021892fdb) Thanks [@wiseadme](https://github.com/wiseadme)! - fix scss file imports
+
 ## 0.0.3
 
 ### Patch Changes
