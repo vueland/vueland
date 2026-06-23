@@ -16,8 +16,8 @@ import {
     shallowRef,
 } from 'vue'
 
-import { $APP_API_KEY } from '../../constants'
-import { useAutoPosition } from '../use-auto-position'
+import { useAutoPosition } from '@/composables'
+import { $APP_API_KEY } from '@/constants'
 
 type Rect = {
     top?: number

@@ -203,10 +203,10 @@ createVuelandUI({
   presets: {
     input: {
       blue: {
-        root:    ['text-blue'],
-        focused: { label: ['text-blue'] },
+        base:    { label: ['text-blue'] },
+        focused: { label: ['text-blue'], field: ['text-blue'] },
         filled:  { label: ['text-blue'] },
-        error:   { root: ['text-red'] },
+        error:   { label: ['text-red'], details: ['text-red'] },
       } satisfies CInputPreset,
     },
   },
@@ -215,41 +215,19 @@ createVuelandUI({
 
 ### CInputPreset structure
 
-```ts
-type Zone = { root?: string[]; label?: string[]; input?: string[]; details?: string[] }
-
-// error / disabled / readonly support nested compound states
-type CompoundState = Zone & {
-  focused?: Zone   // active when primary state + focused simultaneously
-  filled?:  Zone   // active when primary state + filled simultaneously
-}
-
-type CInputPreset = Zone & {
-  focused?:   Zone
-  filled?:    Zone
-  error?:     CompoundState
-  disabled?:  CompoundState
-  readonly?:  CompoundState
-  prepended?: Zone
-  appended?:  Zone
-}
-```
-
-Internally the preset is split automatically: `root` and `details` are applied at the `CInput` level, while `label` and `input` are forwarded to `CField`.
-
-**Compound states** let you style combinations of two simultaneous states. For example, to change the label color when a field has both an error _and_ focus:
+A preset is a set of **flat presets keyed by state** — `base` plus optional per-state overrides. No compound states, no nesting:
 
 ```ts
-const myPreset: CInputPreset = {
-  label: ['text-blue'],
-  error: {
-    label: ['text-red'],
-    focused: {
-      label: ['text-red', 'font-bold'],  // error + focused at the same time
-    },
-  },
-}
+type CInputZone = 'root' | 'field' | 'input' | 'label' | 'details' | 'prepend' | 'append'
+type CInputState = 'focused' | 'filled' | 'error' | 'disabled' | 'readonly'
+
+type ZonePreset = Partial<Record<CInputZone, string[]>>
+type CInputPreset = Partial<Record<'base' | CInputState, ZonePreset>>
 ```
+
+The component is in a single current state, and that state's preset is applied — its zones replace `base` per-zone, no stacking and no priorities. See [CInput → Preset system](/en/components/CInput#preset-system) for the full model.
+
+The preset is distributed automatically: `CInput` applies `root` and `details`, and shares the set with `CField` via provide/inject, which applies `field`, `input`, `label`, `prepend`, `append`.
 
 ---
 

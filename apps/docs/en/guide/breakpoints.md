@@ -4,7 +4,7 @@ Vueland uses a **single breakpoint system** shared across four layers:
 
 - **CSS utility classes** — predefined responsive classes like `sm:d-flex`, `md:pa-4`
 - **JIT classes** — arbitrary responsive classes like `sm:bg-[#fff]`, `lg:w-[960px]`
-- **`useDisplay`** — reactive JS composable that exposes the current screen state
+- **`useBreakpoints`** — reactive JS composable that exposes the current screen state
 - **Grid components** — `CRow` and `CCol` use the same breakpoints for responsive column widths and alignment props (e.g. `md="6"`, `align-lg="'center'"`)
 
 See [Grid system](/en/components/CRow) for the component API.
@@ -24,7 +24,7 @@ By default each layer comes with sensible defaults. When you configure custom br
 
 ## Full setup step by step
 
-This section shows how to wire up the complete stack — custom breakpoints, SCSS utilities, grid components, and `useDisplay` — all from a single config.
+This section shows how to wire up the complete stack — custom breakpoints, SCSS utilities, grid components, and `useBreakpoints` — all from a single config.
 
 ### Step 1 — install packages
 
@@ -86,9 +86,10 @@ In your app entry file, import both SCSS source files:
 // src/main.ts
 import '@vueland/ui/styles/styles.scss'  // utilities + CSS variables
 import '@vueland/ui/styles/lib.scss'      // component styles
+import '@vueland/ui/styles/utils.scss'    // utilities
 ```
 
-This triggers Vite's SCSS preprocessor, which is where the plugin intercepts the compilation and rewrites the `$grid-breakpoints` map with your values. All four layers — predefined utilities (`sm:d-flex`), JIT classes, grid component media queries, and `useDisplay` — share the same values as a result.
+This triggers Vite's SCSS preprocessor, which is where the plugin intercepts the compilation and rewrites the `$grid-breakpoints` map with your values. All four layers — predefined utilities (`sm:d-flex`), JIT classes, grid component media queries, and `useBreakpoints` — share the same values as a result.
 
 Also import the generated JIT CSS file:
 
@@ -107,6 +108,7 @@ import * as components from '@vueland/ui/components'
 
 import '@vueland/ui/styles/styles.scss'
 import '@vueland/ui/styles/lib.scss'
+import '@vueland/ui/styles/utils.scss'
 import 'src/.generated/utils-jit.css'
 
 import App from './App.vue'
@@ -122,11 +124,11 @@ app.use(vueland)
 app.mount('#app')
 ```
 
-If you pass `breakpoints` explicitly to `createVuelandUI`, those values take priority over the ones from `utils-jit` for `useDisplay`. The SCSS compilation has already finished by then, so utility class breakpoints always come from the Vite plugin.
+If you pass `breakpoints` explicitly to `createVuelandUI`, those values take priority over the ones from `utils-jit` for `useBreakpoints`. The SCSS compilation has already finished by then, so utility class breakpoints always come from the Vite plugin.
 
 ### Step 5 — use it
 
-Everything is now wired up. Responsive utility classes, grid component props, and `useDisplay` all react to the same breakpoints.
+Everything is now wired up. Responsive utility classes, grid component props, and `useBreakpoints` all react to the same breakpoints.
 
 **Responsive utility classes** — apply from a breakpoint upward (mobile-first):
 
@@ -162,7 +164,7 @@ Row-level alignment also responds to breakpoints:
 </c-row>
 ```
 
-**`useDisplay`** — reactive booleans in JS/Vue, synced to the same values:
+**`useBreakpoints`** — reactive booleans in JS/Vue, synced to the same values:
 
 ```vue
 
@@ -189,7 +191,7 @@ Configure breakpoints once in `vite.config.ts` — the plugin syncs all four lay
 
 ### Without `@vueland/utils-jit`
 
-Pass breakpoints directly to `createVuelandUI`. This controls `useDisplay` and SCSS utilities (only if you import SCSS source and build it yourself).
+Pass breakpoints directly to `createVuelandUI`. This controls `useBreakpoints` and SCSS utilities (only if you import SCSS source and build it yourself).
 
 ```ts
 const vueland = createVuelandUI({
@@ -211,8 +213,8 @@ Grid component column breakpoints (`sm="6"`, `md="4"`) come from the SCSS compil
 
 | Source | Priority |
 |--------|----------|
-| `createVuelandUI({ breakpoints })` | **highest** — controls `useDisplay` only |
-| `utilsJIT({ breakpoints })` | controls SCSS utilities, grid components, `useDisplay`, and JIT classes |
+| `createVuelandUI({ breakpoints })` | **highest** — controls `useBreakpoints` only |
+| `utilsJIT({ breakpoints })` | controls SCSS utilities, grid components, `useBreakpoints`, and JIT classes |
 | Built-in defaults | fallback |
 
 ## CSS utility responsive classes
@@ -230,9 +232,9 @@ Predefined utility classes follow the pattern `{bp}:{class}` and apply from the 
 <div class="d-flex flex-col md:flex-row gap-4">...</div>
 ```
 
-## `useDisplay` composable
+## `useBreakpoints` composable
 
-`useDisplay` exposes reactive boolean refs for the current screen state in JS/Vue code.
+`useBreakpoints` exposes reactive boolean refs for the current screen state in JS/Vue code.
 
 ```vue
 <template>

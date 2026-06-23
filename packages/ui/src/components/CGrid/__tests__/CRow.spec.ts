@@ -5,8 +5,8 @@ import {
     it,
 } from 'vitest'
 
-import { BREAKPOINTS } from '../../../constants'
-import { CRow } from '../CRow'
+import { CRow } from '@/components'
+import { BREAKPOINTS } from '@/constants'
 
 describe('CRow', () => {
     it('рендерится как div с классом c-row', () => {

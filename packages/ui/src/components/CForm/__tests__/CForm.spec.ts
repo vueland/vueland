@@ -14,8 +14,8 @@ import {
     ref,
 } from 'vue'
 
-import { $FORM_API_KEY } from '../../../constants'
-import { CForm } from '../../index'
+import { CForm } from '@/components'
+import { $FORM_API_KEY } from '@/constants'
 
 type FormAPI = {
     add: (fn: () => boolean) => void
@@ -81,7 +81,7 @@ describe('CForm', () => {
 
         mount(CForm, {
             slots: {
-                default: ({ validate }: { validate: () => Promise<boolean> }) => {
+                default: ({ validate }: any) => {
                     slotValidateSpy(validate)
 
                     return h(
@@ -317,7 +317,7 @@ describe('CForm', () => {
 
         const wrapper = mount(CForm, {
             slots: {
-                default: ({ validate }: { validate: () => Promise<boolean> }) => [
+                default: ({ validate }: any) => [
                     h(RegisteringField, { validateFn: validateMock }),
                     h(
                         'button',

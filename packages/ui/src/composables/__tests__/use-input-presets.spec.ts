@@ -11,10 +11,9 @@ import {
     reactive,
 } from 'vue'
 
-import type { CInputProps, InputState } from '../../components'
-import { $VUELAND_UI_KEY } from '../../constants'
-import { useInputPresets } from '../use-input-presets'
-import type { ValidateState } from '../use-validate'
+import type { CInputProps, InputState } from '@/components'
+import { useInputPresets, type ValidateState  } from '@/composables'
+import { $VUELAND_UI_KEY } from '@/constants'
 
 type TestInputProps = CInputProps & {
     modelValue?: any

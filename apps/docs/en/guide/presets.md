@@ -24,23 +24,26 @@ export const vueland = createVuelandUI({
 
 ## Example: CTextField preset
 
+A preset is a set of **flat presets keyed by state** — `base` is the resting look, and each state (`focused`, `filled`, `error`, `disabled`, `readonly`) is its own complete flat preset. At any moment exactly one state applies; its zones replace `base` per-zone.
+
 ```ts
 // src/presets/input-presets.ts
 import type { CInputPreset } from '@vueland/ui/types'
 
 export const outline: CInputPreset = {
-  root: ['text-blue'],
+  base: {
+    label: ['text-blue'],
+  },
   focused: {
-    root: ['text-cyan-darken-2'],
+    label: ['text-cyan-darken-2'],
+    field: ['text-cyan-darken-2'],
   },
   error: {
-    root: ['text-red'],
-    focused: {
-      root: ['text-red-darken-2'],
-    },
+    label: ['text-red'],
+    details: ['text-red'],
   },
-  disabled: {
-    root: ['text-grey'],
+  readonly: {
+    label: ['text-grey'],
   },
 }
 ```

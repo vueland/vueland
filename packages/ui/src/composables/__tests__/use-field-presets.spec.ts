@@ -12,8 +12,9 @@ import {
     reactive,
 } from 'vue'
 
-import { type CFieldProps, type CFieldSlots } from '../../components/CField'
-import { $PRESET_KEY, $VUELAND_UI_KEY } from '../../constants'
+import { type CFieldProps, type CFieldSlots } from '@/components'
+import { $PRESET_KEY, $VUELAND_UI_KEY } from '@/constants'
+
 import { useFieldPresets } from '../use-field-presets'
 
 type TestFieldProps = CFieldProps

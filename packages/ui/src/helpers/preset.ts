@@ -1,17 +1,4 @@
-import type {
-    CInputState,
-    StatePresets,
-    ZonePreset,
-} from '@/types'
-
-/** Порядок схлопывания состояний инпута/поля: кто выше — тот текущий статус. */
-export const CINPUT_STATE_PRECEDENCE: readonly CInputState[] = [
-    'disabled',
-    'readonly',
-    'error',
-    'focused',
-    'filled',
-]
+import type { StatePresets, ZonePreset } from '@/types'
 
 /**
  * Схлопывает набор пресетов по состояниям в один плоский пресет.
@@ -30,6 +17,7 @@ export function resolveStatePreset<State extends string>(
     }
 
     const current = order.find((state) => active[state])
+
     const statePreset = current
         ? (set as Record<string, ZonePreset<string>>)[current]
         : undefined

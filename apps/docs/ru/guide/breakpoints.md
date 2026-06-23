@@ -4,7 +4,7 @@ Vueland использует **единую систему брейкпоинт�
 
 - **CSS-утилиты** — предопределённые отзывчивые классы вида `sm:d-flex`, `md:pa-4`
 - **JIT-классы** — произвольные отзывчивые классы вида `sm:bg-[#fff]`, `lg:w-[960px]`
-- **`useDisplay`** — реактивный JS-composable, отдающий текущее состояние экрана
+- **`useBreakpoints`** — реактивный JS-composable, отдающий текущее состояние экрана
 - **Компоненты сетки** — `CRow` и `CCol` используют те же брейкпоинты для адаптивной ширины колонок и пропов выравнивания (например, `md="6"`, `align-lg="center"`)
 
 Подробнее про компоненты — в разделе [Сетка](/ru/components/CRow).
@@ -24,7 +24,7 @@ Vueland использует **единую систему брейкпоинт�
 
 ## Полная настройка шаг за шагом
 
-Этот раздел показывает как подключить весь стек — кастомные брейкпоинты, SCSS-утилиты, компоненты сетки и `useDisplay` — из единой конфигурации.
+Этот раздел показывает как подключить весь стек — кастомные брейкпоинты, SCSS-утилиты, компоненты сетки и `useBreakpoints` — из единой конфигурации.
 
 ### Шаг 1 — установите пакеты
 
@@ -84,11 +84,12 @@ export default defineConfig({
 
 ```ts
 // src/main.ts
-import '@vueland/ui/styles/styles.scss'  // утилиты + CSS-переменные
-import '@vueland/ui/styles/lib.scss'      // стили компонентов
+import '@vueland/ui/styles/styles.scss'  // CSS-переменные
+import '@vueland/ui/styles/lib.scss'     // стили компонентов
+import '@vueland/ui/styles/utils.scss'   // утилиты
 ```
 
-Это запускает SCSS-препроцессор Vite, в ходе которого плагин перехватывает компиляцию и подставляет ваши значения в переменную `$grid-breakpoints`. В результате все четыре слоя — предопределённые утилиты (`sm:d-flex`), JIT-классы, media-запросы компонентов сетки и `useDisplay` — работают с одними и теми же числами.
+Это запускает SCSS-препроцессор Vite, в ходе которого плагин перехватывает компиляцию и подставляет ваши значения в переменную `$grid-breakpoints`. В результате все четыре слоя — предопределённые утилиты (`sm:d-flex`), JIT-классы, media-запросы компонентов сетки и `useBreakpoints` — работают с одними и теми же числами.
 
 Также импортируйте сгенерированный JIT CSS:
 
@@ -107,6 +108,7 @@ import * as components from '@vueland/ui/components'
 
 import '@vueland/ui/styles/styles.scss'
 import '@vueland/ui/styles/lib.scss'
+import '@vueland/ui/styles/utils.scss'
 import 'src/.generated/utils-jit.css'
 
 import App from './App.vue'
@@ -122,11 +124,11 @@ app.use(vueland)
 app.mount('#app')
 ```
 
-Если вы передадите `breakpoints` явно в `createVuelandUI`, эти значения перекроют значения из `utils-jit` только для `useDisplay`. Компиляция SCSS к тому моменту уже завершена, поэтому брейкпоинты утилитарных классов всегда берутся из Vite-плагина.
+Если вы передадите `breakpoints` явно в `createVuelandUI`, эти значения перекроют значения из `utils-jit` только для `useBreakpoints`. Компиляция SCSS к тому моменту уже завершена, поэтому брейкпоинты утилитарных классов всегда берутся из Vite-плагина.
 
 ### Шаг 5 — используйте
 
-Всё подключено. Отзывчивые утилиты, пропы компонентов сетки и `useDisplay` реагируют на одни и те же брейкпоинты.
+Всё подключено. Отзывчивые утилиты, пропы компонентов сетки и `useBreakpoints` реагируют на одни и те же брейкпоинты.
 
 **Утилитарные классы** — применяются начиная с указанного брейкпоинта вверх (mobile-first):
 
@@ -162,7 +164,7 @@ app.mount('#app')
 </c-row>
 ```
 
-**`useDisplay`** — реактивные булевые значения в JS/Vue, синхронизированные с теми же числами:
+**`useBreakpoints`** — реактивные булевые значения в JS/Vue, синхронизированные с теми же числами:
 
 ```vue
 
@@ -189,7 +191,7 @@ app.mount('#app')
 
 ### Без `@vueland/utils-jit`
 
-Передайте брейкпоинты напрямую в `createVuelandUI`. Это управляет `useDisplay` и SCSS-утилитами (только если вы сами собираете SCSS из исходников).
+Передайте брейкпоинты напрямую в `createVuelandUI`. Это управляет `useBreakpoints` и SCSS-утилитами (только если вы сами собираете SCSS из исходников).
 
 ```ts
 const vueland = createVuelandUI({
@@ -209,11 +211,11 @@ const vueland = createVuelandUI({
 
 ### Приоритет
 
-| Источник | Приоритет |
-|----------|-----------|
-| `createVuelandUI({ breakpoints })` | **высший** — управляет только `useDisplay` |
-| `utilsJIT({ breakpoints })` | управляет SCSS-утилитами, компонентами сетки, `useDisplay` и JIT-классами |
-| Встроенные значения | запасной вариант |
+| Источник | Приоритет                                                                     |
+|----------|-------------------------------------------------------------------------------|
+| `createVuelandUI({ breakpoints })` | **высший** — управляет только `useBreakpoints`                                |
+| `utilsJIT({ breakpoints })` | управляет SCSS-утилитами, компонентами сетки, `useBreakpoints` и JIT-классами |
+| Встроенные значения | запасной вариант                                                              |
 
 ## Отзывчивые CSS-утилиты
 
@@ -230,16 +232,16 @@ const vueland = createVuelandUI({
 <div class="d-flex flex-col md:flex-row gap-4">...</div>
 ```
 
-## Composable `useDisplay`
+## Composable `useBreakpoints`
 
-`useDisplay` возвращает реактивные boolean-рефы для текущего состояния экрана в JS/Vue-коде.
+`useBreakpoints` возвращает реактивные boolean-рефы для текущего состояния экрана в JS/Vue-коде.
 
 ```vue
 <template>
   <div>
-    <p v-if="display.xs.value">Мобильный</p>
-    <p v-if="display.mdAndUp.value">Планшет и выше</p>
-    <p v-if="display.lgAndLess.value">До десктопа</p>
+    <p v-if="display.xs">Мобильный</p>
+    <p v-if="display.mdAndUp">Планшет и выше</p>
+    <p v-if="display.lgAndLess">До десктопа</p>
   </div>
 </template>
 

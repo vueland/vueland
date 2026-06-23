@@ -2,18 +2,27 @@
     import { ref } from 'vue'
 
     const name = ref('')
+
     const email = ref('')
+
     const city = ref('Баку')
+
     const login = ref('admin')
+
     const blocked = ref('—')
 
     const altName = ref('')
 
-    const required = (v: string) => ({ valid: !!v, message: 'Обязательное поле' })
-    const isEmail = (v: string) => ({
-        valid: /.+@.+\..+/.test(v),
-        message: 'Некорректный email',
-    })
+    const takenEmails = ['test@taken.com', 'admin@example.com']
+
+    const emailRules = [
+        (v: string) => ({ valid: !!v, message: 'Обязательное поле' }),
+        (v: string) => ({ valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), message: 'Invalid email format' }),
+        async (v: string) => {
+            await new Promise(r => setTimeout(r, 2000))
+            return { valid: !takenEmails.includes(v.toLowerCase()), message: 'This email is already registered' }
+        },
+    ]
 </script>
 
 <template>
@@ -55,9 +64,28 @@
                             v-model="email"
                             label="Email"
                             preset="input.soft"
-                            :rules="[required, isEmail]"
+                            :rules="emailRules"
                             details="Проверь пустым — станет красным"
-                        />
+                        >
+                            <template #details="{ errorMessage, hasError, validating }">
+                                <span
+                                    v-if="validating"
+                                    style="color:var(--c-app-primary-color)"
+                                >
+                                    Verifying email…
+                                </span>
+                                <span
+                                    v-else-if="hasError"
+                                    style="color:var(--c-app-error-color)"
+                                >
+                                    {{ errorMessage }}
+                                </span>
+                                <span
+                                    v-else
+                                    style="opacity:.6"
+                                >We'll send a verification link</span>
+                            </template>
+                        </c-text-field>
                     </c-col>
 
                     <c-col

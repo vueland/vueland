@@ -1,11 +1,20 @@
 import { computed } from 'vue'
 
 import type { CInputProps, InputState } from '@/components/CInput'
-import { CINPUT_STATE_PRECEDENCE, isDef } from '@/helpers'
+import { isDef } from '@/helpers'
 import type { CInputState } from '@/types'
 
 import { usePresetZones, useProvidePreset } from './use-presets'
 import type { ValidateState } from './use-validate'
+
+/** Порядок схлопывания состояний инпута/поля: кто выше — тот текущий статус. */
+export const C_INPUT_STATE_PRECEDENCE: readonly CInputState[] = [
+    'disabled',
+    'readonly',
+    'error',
+    'focused',
+    'filled',
+]
 
 export function useInputPresets({
     props,
@@ -37,7 +46,7 @@ export function useInputPresets({
         raw,
         ['root', 'details'],
         active,
-        CINPUT_STATE_PRECEDENCE,
+        C_INPUT_STATE_PRECEDENCE,
     )
 
     return computed(() => ({

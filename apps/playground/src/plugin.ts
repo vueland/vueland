@@ -13,6 +13,7 @@ import * as menuPresets from './presets/menu-presets'
 
 import '@vueland/ui/styles/styles.scss'
 import '@vueland/ui/styles/lib.scss'
+import '@vueland/ui/styles/utils.scss'
 
 const fa = createFontAwesomeResolver({
     defaultPrefix: 'fas',

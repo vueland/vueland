@@ -25,7 +25,7 @@ export default defineConfig({
                     matcher: /^field-radius-\[(.+)\]$/,
                     validate: v => !!v,
                     declaration: value => ({
-                        '--c-field-border-radius': `${value}`,
+                        '--c-app-border-radius': `${value}`,
                     }),
                 }),
             ],

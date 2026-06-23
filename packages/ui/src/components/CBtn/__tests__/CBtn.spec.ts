@@ -5,7 +5,7 @@ import {
     it,
 } from 'vitest'
 
-import { CBtn } from '../../index'
+import { CBtn } from '@/components'
 
 describe('CBtn', () => {
     it('маунтит дефолтный компонент', () => {

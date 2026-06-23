@@ -1,7 +1,8 @@
 import { computed } from 'vue'
 
 import type { CFieldProps, CFieldSlots } from '@/components'
-import { CINPUT_STATE_PRECEDENCE, isDef } from '@/helpers'
+import { C_INPUT_STATE_PRECEDENCE } from '@/composables'
+import { isDef } from '@/helpers'
 import type { CInputState } from '@/types'
 
 import { useInjectPreset, usePresetZones } from './use-presets'
@@ -29,7 +30,7 @@ export function useFieldPresets({
         raw,
         ['field', 'input', 'label', 'prepend', 'append'],
         active,
-        CINPUT_STATE_PRECEDENCE,
+        C_INPUT_STATE_PRECEDENCE,
     )
 
     return computed(() => ({

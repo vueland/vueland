@@ -5,11 +5,9 @@
         onBeforeMount,
         onBeforeUnmount,
         shallowReactive,
-        shallowRef,
         Transition,
         unref,
         useAttrs,
-        watch
     } from 'vue'
 
     import {
@@ -69,7 +67,6 @@
         errors
     })
 
-    const messageNode = shallowRef()
     const fieldId = useId(props.id, { prefix: props.role })
     const isCombobox = props.role === 'combobox'
     const isCheckBox = props.role === 'checkbox'
@@ -158,22 +155,28 @@
         formApi?.removeReset(reset)
     })
 
+    const internalDetailsKey = computed(() => [
+        errors.errorMessage,
+        props.details,
+        errors.hasError,
+    ].join('|'))
+
     const DetailsMessage = () => h(Transition, {
         name: "fade-in-down",
         mode: "out-in",
     }, {
-        default: () => unref(messageNode),
+        default: () => h('div', {
+            key: unref(internalDetailsKey),
+            id: `${unref(fieldId)}-details`,
+            class: ['c-input__details', ...unref(preset).details],
+        }, {
+            default: () => slots.details?.({
+                details: props.details,
+                ...errors,
+                uid: fieldId
+            }),
+        })
     })
-
-    watch(() => [errors.errorMessage, props.details] , () => {
-        messageNode.value = null
-
-        setTimeout(() => messageNode.value = slots.details?.({
-            details: props.details,
-            ...errors,
-            uid: fieldId
-        }))
-    }, {immediate: true})
 
     defineExpose({
         validate,
@@ -206,13 +209,6 @@
                 :attrs="fieldAttrs"
             ></slot>
         </div>
-        <div
-            v-if="hasDetails"
-            :id="`${fieldId}-details`"
-            class="c-input__details"
-            :class="preset.details"
-        >
-            <details-message />
-        </div>
+        <details-message v-if="hasDetails" />
     </div>
 </template>

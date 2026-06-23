@@ -8,10 +8,9 @@ import {
 } from 'vitest'
 import { h, nextTick } from 'vue'
 
+import { CInput } from '@/components'
 import { $FORM_API_KEY, $VUELAND_UI_KEY } from '@/constants'
 import { wait } from '@/helpers'
-
-import CInput from '../CInput.vue'
 
 const basePresets = {
     input: {

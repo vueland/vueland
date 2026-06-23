@@ -203,10 +203,10 @@ createVuelandUI({
   presets: {
     input: {
       blue: {
-        root:    ['text-blue'],
-        focused: { label: ['text-blue'] },
+        base:    { label: ['text-blue'] },
+        focused: { label: ['text-blue'], field: ['text-blue'] },
         filled:  { label: ['text-blue'] },
-        error:   { root: ['text-red'] },
+        error:   { label: ['text-red'], details: ['text-red'] },
       } satisfies CInputPreset,
     },
   },
@@ -215,41 +215,19 @@ createVuelandUI({
 
 ### Структура CInputPreset
 
-```ts
-type Zone = { root?: string[]; label?: string[]; input?: string[]; details?: string[] }
-
-// error / disabled / readonly поддерживают вложенные составные состояния
-type CompoundState = Zone & {
-  focused?: Zone   // активно когда основное состояние + focused одновременно
-  filled?:  Zone   // активно когда основное состояние + filled одновременно
-}
-
-type CInputPreset = Zone & {
-  focused?:   Zone
-  filled?:    Zone
-  error?:     CompoundState
-  disabled?:  CompoundState
-  readonly?:  CompoundState
-  prepended?: Zone
-  appended?:  Zone
-}
-```
-
-Пресет автоматически разбивается под капотом: `root` и `details` применяются на уровне `CInput`, а `label` и `input` — на уровне `CField`.
-
-**Составные состояния** позволяют стилизовать комбинации двух одновременно активных состояний. Например, чтобы изменить цвет лейбла когда поле одновременно в ошибке _и_ в фокусе:
+Пресет — это **набор плоских пресетов по состояниям**: `base` плюс опциональные оверрайды по состояниям. Без составных состояний и вложенности:
 
 ```ts
-const myPreset: CInputPreset = {
-  label: ['text-blue'],
-  error: {
-    label: ['text-red'],
-    focused: {
-      label: ['text-red', 'font-bold'],  // error + focused одновременно
-    },
-  },
-}
+type CInputZone = 'root' | 'field' | 'input' | 'label' | 'details' | 'prepend' | 'append'
+type CInputState = 'focused' | 'filled' | 'error' | 'disabled' | 'readonly'
+
+type ZonePreset = Partial<Record<CInputZone, string[]>>
+type CInputPreset = Partial<Record<'base' | CInputState, ZonePreset>>
 ```
+
+Компонент всегда в одном текущем состоянии — применяется пресет этого состояния, его зоны подменяют `base` пер-зонно, без стека и без приоритетов. Полная модель — в разделе [CInput → Система пресетов](/ru/components/CInput#система-пресетов).
+
+Пресет распределяется автоматически: `CInput` применяет `root` и `details` и раздаёт набор в `CField` через provide/inject, а тот применяет `field`, `input`, `label`, `prepend`, `append`.
 
 ---
 

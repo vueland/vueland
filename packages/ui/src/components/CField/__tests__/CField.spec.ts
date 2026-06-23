@@ -13,7 +13,7 @@ import {
     ref,
 } from 'vue'
 
-import { CField } from '../../index'
+import { CField } from '@/components'
 
 describe('CField', () => {
     beforeEach(() => {

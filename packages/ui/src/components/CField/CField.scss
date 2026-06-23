@@ -18,7 +18,7 @@ $self: '.c-field';
   background: var(--c-app-surface-color);
   min-height: var(--c-field-min-height);
   padding: 1px 8px;
-  border-radius: var(--c-field-border-radius) !important;
+  border-radius: var(--c-app-border-radius) !important;
   border: thin solid;
   transition: color .2s $primary-transition, opacity .2s $primary-transition;
 
@@ -27,7 +27,7 @@ $self: '.c-field';
     top: -1px;
     z-index: -1;
     bottom: 0;
-    left: var(--c-field-border-radius);
+    left: var(--c-app-border-radius);
     border-top: 1px solid transparent;
 
     &::after {
@@ -53,7 +53,7 @@ $self: '.c-field';
   &-label {
     position: absolute;
     top: 50%;
-    left: var(--c-field-border-radius);
+    left: var(--c-app-border-radius);
     line-height: .9;
     transform: translate(0, -50%);
     transition: top .2s $primary-transition,
@@ -131,7 +131,7 @@ $self: '.c-field';
   &--focused > &__core > &-label,
   &--filled > &__core > &-label {
     top: 0;
-    left: var(--c-field-border-radius);
+    left: var(--c-app-border-radius);
     transform: translate(0, -50%) scale(.8);
   }
 
@@ -178,7 +178,7 @@ $self: '.c-field';
   &--has-prepend#{$self}--focused > &__core > &-label,
   &--has-prepend#{$self}--filled > &__core > &-label {
     top: 0;
-    left: var(--c-field-border-radius);
+    left: var(--c-app-border-radius);
     transform: translate(0, -50%) scale(.8);
   }
 }

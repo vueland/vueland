@@ -6,8 +6,6 @@ $input-details-height: 24px;
 .c-input {
   --c-input-field-border-radius: var(--c-app-border-radius);
   --c-input-details-height: #{$input-details-height};
-  --c-input-clear-action-min-width: 24px;
-  --c-input-field-text-color: var(--c-app-text-color);
   --c-input-error-color: var(--c-app-error-color);
   --c-input-primary-color: var(--c-app-primary-color);
   --c-input-background-color: var(--c-app-surface-color);
@@ -54,5 +52,10 @@ $input-details-height: 24px;
     display: flex;
     justify-content: start;
     align-items: center;
+    position: relative;
+
+    & > * {
+      position: absolute;
+    }
   }
 }

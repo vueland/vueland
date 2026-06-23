@@ -11,6 +11,7 @@ export type CTextFieldSlots = {
         errorMessage?: string
         details?: string
         hasError: boolean
+        validating?: boolean
     }): VNode
     before?(): VNode
 }

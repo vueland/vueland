@@ -9,7 +9,6 @@ For most use cases, prefer [`CTextField`](/en/components/CTextField). Use `CInpu
 <script setup>
 import CustomFieldExample from '../../examples/CInput/CustomFieldExample.vue'
 import PresetStatesExample from '../../examples/CInput/PresetStatesExample.vue'
-import PresetCompoundExample from '../../examples/CInput/PresetCompoundExample.vue'
 </script>
 
 ## Example: custom field
@@ -23,7 +22,6 @@ import PresetCompoundExample from '../../examples/CInput/PresetCompoundExample.v
     v-model="pin"
     id="custom-pin"
     label="PIN code"
-    kind="input"
     :rules="pinRules"
     validate-on="blur"
   >
@@ -66,78 +64,51 @@ const pinRules = [
 
 ## Preset system
 
-The preset system is the primary way to style `CInput`-based components. Instead of writing conditional CSS classes in every template, you define a **preset object** once and reference it by name. The component resolves the correct classes automatically based on the active state.
+The preset system is the primary way to style `CInput`-based components. Instead of writing conditional CSS classes in every template, you define a **preset** once and reference it by name. The component resolves the right classes automatically for the current state.
 
-Presets work hand in hand with utility classes — every value in a preset is an array of utility class names. This makes presets completely framework-agnostic: they work with any utility-first CSS engine you have configured.
+Every value is an array of utility class names, so presets work with any utility-first CSS engine you have configured.
+
+### Zones
+
+A flat preset (`ZonePreset`) maps **zones** to class lists. Zones map 1:1 to the rendered DOM:
+
+| Zone | Element |
+|---|---|
+| `root` | the `.c-input` wrapper |
+| `field` | the `.c-field` box (border / background) |
+| `input` | the native `<input>` |
+| `label` | the floating label |
+| `details` | the hint / error row |
+| `prepend` | the prepend-slot wrapper |
+| `append` | the append-slot wrapper |
 
 ### The CInputPreset type
 
+A preset is a set of **flat presets keyed by state**. `base` is the resting look; each state is its own complete flat preset:
+
 ```ts
-type CInputZone = {
-  root?: string[]    // classes on the CInput root element
-  label?: string[]   // classes on the floating label
-  input?: string[]   // classes on the native <input>
-  details?: string[] // classes on the hint/error row
-}
+type CInputZone = 'root' | 'field' | 'input' | 'label' | 'details' | 'prepend' | 'append'
+type CInputState = 'focused' | 'filled' | 'error' | 'disabled' | 'readonly'
 
-type CInputCompoundState = CInputZone & {
-  focused?: CInputZone  // compound: primary state + focused simultaneously
-  filled?: CInputZone   // compound: primary state + filled simultaneously
-}
+type ZonePreset = Partial<Record<CInputZone, string[]>>
 
-type CInputPreset = CInputZone & {
-  // interaction states
-  focused?: CInputZone
-  filled?: CInputZone
-  error?: CInputCompoundState
-  disabled?: CInputCompoundState
-  readonly?: CInputCompoundState
-
-  // structural modifiers (always additive)
-  prepended?: CInputZone
-  appended?: CInputZone
-}
+// base + optional per-state flat presets — everything optional
+type CInputPreset = Partial<Record<'base' | CInputState, ZonePreset>>
 ```
 
-### State priority chain
+There are **no compound states** and no nesting — a state is just another flat preset.
 
-Only **one interaction state** is active at a time. When multiple conditions are true simultaneously, the highest-priority state wins and the others are ignored:
+### One state at a time
 
-```
-disabled  >  readonly  >  error  >  focused  >  filled
-```
+The component is always in a single current state, and that state's preset is applied (or `base` when the field is at rest). The active state's zones replace the base zones **per-zone**; a zone the state doesn't define falls back to `base`. There's nothing to stack and no priorities to reason about — you just define a flat preset per state.
 
-For example, if the field has an error and is also focused, the `error` state wins — unless you have defined the `error.focused` compound state, in which case that takes over instead.
-
-### Compound states
-
-Compound states let you define unique styling for combinations of two conditions. They live **inside** a primary state and override it when the secondary condition is also true:
-
-| Compound key | Active when |
-|---|---|
-| `error.focused` | field has error **and** is focused |
-| `error.filled` | field has error **and** has a value |
-| `disabled.focused` | field is disabled **and** is focused |
-| `disabled.filled` | field is disabled **and** has a value |
-| `readonly.focused` | field is readonly **and** is focused |
-| `readonly.filled` | field is readonly **and** has a value |
-
-:::warning No fallback to base
-When any interaction state is active, the base zone (`root`, `label`, etc. defined at the top level) is **not** applied. If a state zone is defined but doesn't contain a specific key (e.g. `error.label` is missing), that key returns `[]` rather than falling back to the base value.
-
-This is intentional — it prevents base-state colors from leaking through when a state is active.
+:::tip Why one state, not stacked?
+Utility classes are `!important` with equal specificity, so stacking conflicting classes (say two `bg-*`) is resolved by stylesheet order, not by intent. Applying exactly one set of classes per zone keeps the result predictable.
 :::
 
-### Structural modifiers
+### Addressing a state directly
 
-`prepended` and `appended` are the only **always-additive** modifiers — they are merged on top of whichever interaction state is currently active. Use them to shift the label position or adjust padding when an icon slot is used:
-
-```ts
-prepended: {
-  label: ['pl-10'],   // shift label right to clear the icon
-  input: ['pl-10'],
-}
-```
+Each state is itself a flat preset, addressable by `name.state`. `input.blue` is the whole set; `input.blue.focused` is just the focused flat preset.
 
 ### Registering presets
 
@@ -149,33 +120,12 @@ import type { CInputPreset } from '@vueland/ui/types'
 
 function makePreset(color: string): CInputPreset {
   return {
-    root: [color],
-    focused: {
-      root: [color],
-      label: [color],
-    },
-    filled: {
-      label: [color],
-    },
-    error: {
-      root: ['text-red'],
-      label: ['text-red'],
-      focused: {
-        // while fixing the error — show primary color on label
-        root: [color],
-        label: [color],
-      },
-      filled: {
-        label: ['text-red'],
-      },
-    },
-    disabled: {
-      root: ['opacity-50'],
-    },
-    readonly: {
-      root: ['text-grey'],
-      label: ['text-grey'],
-    },
+    base:     { label: [color] },
+    focused:  { label: [color], field: [color] },
+    filled:   { label: [color] },
+    error:    { label: ['text-red'], field: ['text-red'], details: ['text-red'] },
+    readonly: { label: ['text-grey'] },
+    // `disabled` is dimmed by the component; add a zone only to override
   }
 }
 
@@ -196,64 +146,21 @@ Then use the preset by name on any `CInput`-based component:
 <CTextField preset="input.teal" ... />
 ```
 
-### CField preset auto-generation
+### CInput → CField distribution
 
-When you register a `CInputPreset`, `CInput` automatically derives a `CFieldPreset` from it and registers it internally as `__field.<preset-name>`. The `CField` component (which renders the outline, label, and slots) picks this up transparently — you never need to write `CFieldPreset` manually.
-
-The derived `CFieldPreset` contains only the `label` and `input` zones (the `root` and `details` zones belong to `CInput`, not `CField`), and preserves all compound sub-states.
+You write a **single** preset. `CInput` resolves it, applies its own zones (`root`, `details`), and shares the set with the field subtree through `provide`/`inject`. `CField` injects it and applies `field`, `input`, `label`, `prepend`, `append`. You never write a separate field preset, and nothing is mutated globally.
 
 ### All states at a glance
 
 <PresetStatesExample />
 
-The example above uses `preset="input.blue"` across six states. Notice:
-- **Default** — base classes applied
-- **Focused** — `focused.label` and `focused.root` replace the base
-- **Filled** — `filled.label` replaces the base (label floats up, keeps color)
-- **Error** — `error.root` and `error.label` replace everything
-- **Disabled** — `disabled` zone applied; interaction is blocked
-- **Readonly** — `readonly` zone applied; value visible but not editable
-
-### Compound states in action
-
-<PresetCompoundExample />
-
-The left column has no `error.focused` defined — when you focus a field with an error, the label stays error-colored. The right column defines `error.focused.label` with the primary color, signaling to the user that they are actively fixing the problem.
-
-::: details Show preset definition
-```ts
-// Without compound states
-const noCompound: CInputPreset = {
-  root: ['text-blue'],
-  focused: { label: ['text-blue'], root: ['text-blue'] },
-  filled:  { label: ['text-blue'] },
-  error: {
-    root:  ['text-red'],
-    label: ['text-red'],
-    // no error.focused — when error+focused, stays red
-  },
-}
-
-// With compound states
-const withCompound: CInputPreset = {
-  root: ['text-blue'],
-  focused: { label: ['text-blue'], root: ['text-blue'] },
-  filled:  { label: ['text-blue'] },
-  error: {
-    root:  ['text-red'],
-    label: ['text-red'],
-    focused: {
-      // error + focused → switch label back to primary color
-      label: ['text-blue'],
-      root:  ['text-blue'],
-    },
-    filled: {
-      label: ['text-red'],  // error + filled → keep red
-    },
-  },
-}
-```
-:::
+The example above uses `preset="input.blue"` across six states:
+- **Default** — `base` zones
+- **Focused** — `focused` replaces base per-zone
+- **Filled** — `filled` replaces base (label floats up, keeps color)
+- **Error** — `error` replaces base (red)
+- **Disabled** — interaction blocked; the component dims the field
+- **Readonly** — value visible but not editable
 
 ---
 
@@ -272,24 +179,23 @@ const withCompound: CInputPreset = {
 | `disabled` | `boolean` | `false` | Blocks focus, adds `aria-disabled` |
 | `readonly` | `boolean` | `false` | Adds `aria-readonly`, blocks editing |
 | `focused` | `boolean` | `false` | Initial focused state |
-| `kind` | `CInputKind` | — | Control type. Affects aria attributes and uid generation |
+| `role` | `CInputRole` | — | Semantic role. Drives the aria wiring and the `uid` prefix |
 | `rules` | `ValidateFn[]` | `[]` | Validation functions |
 | `validateOn` | `'input' \| 'blur'` | `'input'` | When to trigger automatic validation |
 | `preset` | `string` | — | Preset name (dot-path into the `presets` object passed to `createVuelandUI`) |
 
-#### CInputKind type
+#### CInputRole type
 
 ```ts
-type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
+type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 ```
 
 | Value | Behavior |
 |-------|----------|
-| `'input'` | Standard text input |
-| `'area'` | Multi-line input |
-| `'checkbox'` | Adds `aria-labelledby` automatically |
-| `'radio'` | Adds `aria-labelledby` automatically |
-| `'listbox'` | Adds `aria-haspopup`, `aria-controls`, `aria-expanded` |
+| `'combobox'` | Adds `role="combobox"`, `aria-haspopup="listbox"`, `aria-controls`, `aria-expanded` — for select / autocomplete activators |
+| `'checkbox'` | Wires `aria-labelledby` to the label |
+| `'radio'` | Wires `aria-labelledby` to the label |
+| `'listbox'` | For listbox-based controls (aria wiring + `uid` prefix) |
 
 ### Slots
 
@@ -309,7 +215,7 @@ type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
 | `clearable` | `boolean \| undefined` | Value of the `clearable` prop |
 | `disabled` | `boolean \| undefined` | Value of the `disabled` prop |
 | `readonly` | `boolean \| undefined` | Value of the `readonly` prop |
-| `preset` | `string \| undefined` | Resolved preset name |
+| `preset` | `CInputPreset \| undefined` | Resolved preset set (also provided to the field subtree) |
 | `hasError` | `boolean` | Whether there is an active validation error |
 | `errorMessage` | `string \| undefined` | Current error message |
 | `validating` | `boolean` | Whether async validation is running |
@@ -354,7 +260,7 @@ type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
 <template>
   <CForm>
     <template #default="{ validate }">
-      <CInput v-model="pin" :rules="rules" kind="input">
+      <CInput v-model="pin" :rules="rules">
         <template #field="field">
           <input
             :id="field.uid"
@@ -402,8 +308,6 @@ type CInputKind = 'input' | 'area' | 'checkbox' | 'radio' | 'listbox'
 | `--c-input-error-color` | `var(--c-app-error-color)` | Text color on error |
 | `--c-input-disabled-color` | `var(--c-app-disabled-color)` | Text color when disabled |
 | `--c-input-readonly-color` | `var(--c-app-primary-color)` | Text color when readonly |
-| `--c-input-readonly-bg-color` | `grey lighten-4` | Field background when readonly |
-| `--c-input-field-border-radius` | `var(--c-app-border-radius)` | Field border radius |
 | `--c-input-details-height` | `24px` | Height of the details area |
 
 ---
