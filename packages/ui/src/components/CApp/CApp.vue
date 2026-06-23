@@ -15,15 +15,15 @@
         classes,
         getScrollTop,
         getScrollLeft,
-        blockScroll,
-        unblockScroll
+        lockScroll,
+        unlockScroll
     } = useApplicationScroll()
 
     provide($APP_API_KEY, {
         getScrollTop,
         getScrollLeft,
-        blockScroll,
-        unblockScroll,
+        lockScroll,
+        unlockScroll,
     })
 </script>
 

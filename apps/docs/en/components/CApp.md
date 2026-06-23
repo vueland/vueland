@@ -23,8 +23,8 @@ import { useApplication } from '@vueland/ui/composables'
 
 const app = useApplication()
 
-app?.blockScroll()    // lock scroll
-app?.unblockScroll()  // restore scroll
+app?.lockScroll()    // lock scroll
+app?.unlockScroll()  // restore scroll
 app?.getScrollTop()   // current scroll Y
 app?.getScrollLeft()  // current scroll X
 ```

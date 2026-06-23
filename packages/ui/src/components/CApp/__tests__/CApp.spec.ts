@@ -82,8 +82,8 @@ describe('CApp', () => {
         expect(api).toBeTruthy()
         expect(api.getScrollTop).toBeTypeOf('function')
         expect(api.getScrollLeft).toBeTypeOf('function')
-        expect(api.blockScroll).toBeTypeOf('function')
-        expect(api.unblockScroll).toBeTypeOf('function')
+        expect(api.lockScroll).toBeTypeOf('function')
+        expect(api.unlockScroll).toBeTypeOf('function')
     })
 
     it('getScrollTop / getScrollLeft возвращают значения window', () => {
@@ -92,6 +92,7 @@ describe('CApp', () => {
         const Consumer = defineComponent({
             setup() {
                 api = inject($APP_API_KEY)
+                console.log(api)
                 return () => h('div')
             },
         })
@@ -115,7 +116,7 @@ describe('CApp', () => {
         expect(api.getScrollLeft()).toBe(35)
     })
 
-    it('blockScroll сохраняет позицию и добавляет класс', async () => {
+    it('lockScroll сохраняет позицию и добавляет класс', async () => {
         let api: any
 
         const Consumer = defineComponent({
@@ -147,7 +148,7 @@ describe('CApp', () => {
 
         const wrapper = mount(CApp, { slots: { default: () => h(Consumer) } })
 
-        api.blockScroll()
+        api.lockScroll()
         await nextTick()
 
         expect(rafSpy).toHaveBeenCalled()
@@ -158,7 +159,7 @@ describe('CApp', () => {
         expect(wrapper.element.style.getPropertyValue('--c-scroll-left')).toBe('-15px')
     })
 
-    it('unblockScroll снимает блокировку и восстанавливает scroll', async () => {
+    it('unlockScroll снимает блокировку и восстанавливает scroll', async () => {
         let api: any
 
         const Consumer = defineComponent({
@@ -189,13 +190,13 @@ describe('CApp', () => {
         const wrapper = mount(CApp, { slots: { default: () => h(Consumer) } })
 
         // Блокируем скролл
-        api.blockScroll()
+        api.lockScroll()
         await nextTick()
 
         expect(wrapper.classes()).toContain('c-app--block-scroll')
 
         // Разблокируем
-        api.unblockScroll()
+        api.unlockScroll()
         await nextTick()
 
         expect(wrapper.classes()).not.toContain('c-app--block-scroll')
@@ -229,7 +230,7 @@ describe('CApp', () => {
 
         mount(CApp, { slots: { default: () => h(Consumer) } })
 
-        api.unblockScroll()
+        api.unlockScroll()
         await nextTick()
 
         expect(scrollToMock).toHaveBeenCalledWith({
