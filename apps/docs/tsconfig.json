@@ -1,17 +1,17 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "allowJs": true,
-    "skipLibCheck": true,
-    "paths": {
-      "@vueland/ui/*": ["../../packages/ui/src/*"],
-      "@/*": ["../../packages/ui/src/*"]
-    }
-  },
-  "include": [
-    ".vitepress/**/*.ts",
-    ".vitepress/**/*.vue",
-    "examples/**/*.vue",
-    "../../packages/ui/src/components/global-components.d.ts"
-  ]
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "allowJs": true,
+        "skipLibCheck": true,
+        "paths": {
+            "@vueland/ui/*": ["../../packages/ui/src/*"],
+            "@/*": ["../../packages/ui/src/*"]
+        }
+    },
+    "include": [
+        ".vitepress/**/*.ts",
+        ".vitepress/**/*.vue",
+        "examples/**/*.vue",
+        "../../packages/ui/src/components/global-components.d.ts"
+    ]
 }

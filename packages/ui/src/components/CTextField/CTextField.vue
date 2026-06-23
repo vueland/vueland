@@ -1,7 +1,8 @@
 <script setup lang="ts" generic="T">
     import { shallowRef } from 'vue'
 
-    import { CField, CInput } from '@/components'
+    import { CField } from '@/components/CField'
+    import { CInput } from '@/components/CInput'
 
     import type { CTextFieldEmits, CTextFieldSlots } from './types'
 
@@ -18,8 +19,6 @@
 
     const model = defineModel<string | number | undefined | null>()
 
-    defineExpose({ validate, reset })
-
     const inputRef = shallowRef<CInputExpose>()
 
     function validate() {
@@ -33,6 +32,8 @@
     function onClear() {
         model.value = undefined
     }
+
+    defineExpose({ validate, reset })
 </script>
 
 <template>

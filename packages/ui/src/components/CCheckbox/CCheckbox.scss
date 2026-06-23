@@ -10,9 +10,12 @@ $self: '.c-checkbox';
   align-items: center;
   outline: none;
 
-  &--default, &--readonly, &--focused, &--checked {
+  &--default,
+  &--readonly,
+  &--focused,
+  &--checked {
     & > #{$self}__label {
-      color: var(--c-app-text-color)
+      color: var(--c-app-text-color);
     }
   }
 
@@ -25,7 +28,7 @@ $self: '.c-checkbox';
   &--focused {
     & > #{$self}__icon {
       &::before {
-        opacity: .2;
+        opacity: 0.2;
       }
     }
   }
@@ -43,7 +46,7 @@ $self: '.c-checkbox';
       background-color: currentColor;
       border-radius: 8px;
       opacity: 0;
-      transform: scale(.7);
+      transform: scale(0.7);
     }
   }
 

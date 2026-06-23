@@ -13,7 +13,7 @@ Vueland UI предоставляет набор готовых компонен
 
 ## Сетка
 
-12-колоночная адаптивная сетка на flexbox. Брейкпоинты соответствуют стандарту Material Design и разделяются с утилитарными классами и `useDisplay`. Подробнее — в разделе [Брейкпоинты](/ru/guide/breakpoints).
+12-колоночная адаптивная сетка на flexbox. Брейкпоинты соответствуют стандарту Material Design и разделяются с утилитарными классами и `useBreakpoints`. Подробнее — в разделе [Брейкпоинты](/ru/guide/breakpoints).
 
 | Компонент | Статус | Описание |
 |---|---|---|
@@ -31,7 +31,6 @@ Vueland UI предоставляет набор готовых компонен
 | [CField](/ru/components/CField) | — | Базовая оболочка поля: лейбл, подсказка, ошибка, слот для любого контрола |
 | [CCheckbox](/ru/components/CCheckbox) | — | Чекбокс с неопределённым состоянием и лейблом |
 | [CRadio](/ru/components/CRadio) | — | Радиокнопка, обычно используется внутри группы |
-| [CSwitch](/ru/components/CSwitch) | — | Переключатель |
 | [CSelect](/ru/components/CSelect) | — | Выпадающий список на основе `CMenu` |
 | [CAutocomplete](/ru/components/CAutocomplete) | — | Поле с автодополнением и фильтрацией |
 
@@ -48,7 +47,6 @@ Vueland UI предоставляет набор готовых компонен
 | [CCard](/ru/components/CCard) | **Stable** | Карточка с шапкой, телом и подвалом. Включает `CCardHeader`, `CCardBody`, `CCardFooter` |
 | [CList](/ru/components/CList) | — | Список и элементы списка. Поддерживает выбор, навигацию с клавиатуры и ARIA |
 | [CIcon](/ru/components/CIcon) | — | Рендерер иконок. Поддерживает кастомные резолверы и Font Awesome |
-| [CImg](/ru/components/CImg) | — | Изображение с ленивой загрузкой и слотом для заглушки |
 | [CLabel](/ru/components/CLabel) | — | Доступный элемент лейбла |
 
 ## Оверлеи

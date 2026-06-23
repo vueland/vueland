@@ -1,5 +1,5 @@
-@use "sass:map";
-@use "../../styles/maps/colors-map" as *;
+@use 'sass:map';
+@use '../../styles/maps/colors-map' as *;
 
 .c-btn {
   --btn-text-color: #ffffff;
@@ -34,8 +34,8 @@
   }
 
   &:disabled {
-    background-color: map.get($grey, "lighten-1") !important;
-    color: map.get($grey, "lighten-3") !important;
+    background-color: map.get($grey, 'lighten-1') !important;
+    color: map.get($grey, 'lighten-3') !important;
     cursor: not-allowed;
     pointer-events: none;
   }

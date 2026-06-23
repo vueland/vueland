@@ -1,40 +1,40 @@
 [
-  {
-    "title": "ESLint Script Setup",
-    "items": [
-      {
-        "title": "Быстрый старт",
-        "file": "eslint-script-setup/getting-started"
-      },
-      {
-        "title": "Правила",
-        "file": "eslint-script-setup/rules"
-      }
-    ]
-  },
-  {
-    "title": "Utils JIT",
-    "items": [
-      {
-        "title": "Быстрый старт",
-        "file": "utils-jit/getting-started"
-      } ,
-      {
-        "title": "Конфигурация",
-        "file": "utils-jit/configuration"
-      } ,
-      {
-        "title": "Пользовательские правила",
-        "file": "utils-jit/custom-rules"
-      },
-      {
-        "title": "Утилитарные классы",
-        "file": "utils-jit/utilities"
-      },
-      {
-        "title": "Вариативность",
-        "file": "utils-jit/variants"
-      }
-    ]
-  }
+    {
+        "title": "ESLint Script Setup",
+        "items": [
+            {
+                "title": "Быстрый старт",
+                "file": "eslint-script-setup/getting-started"
+            },
+            {
+                "title": "Правила",
+                "file": "eslint-script-setup/rules"
+            }
+        ]
+    },
+    {
+        "title": "Utils JIT",
+        "items": [
+            {
+                "title": "Быстрый старт",
+                "file": "utils-jit/getting-started"
+            },
+            {
+                "title": "Конфигурация",
+                "file": "utils-jit/configuration"
+            },
+            {
+                "title": "Пользовательские правила",
+                "file": "utils-jit/custom-rules"
+            },
+            {
+                "title": "Утилитарные классы",
+                "file": "utils-jit/utilities"
+            },
+            {
+                "title": "Вариативность",
+                "file": "utils-jit/variants"
+            }
+        ]
+    }
 ]

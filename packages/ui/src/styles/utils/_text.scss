@@ -1,5 +1,5 @@
-@use "../maps/grids" as *;
-@use "sass:map";
+@use '../maps/grids' as *;
+@use 'sass:map';
 
 .text-left {
   text-align: left !important;
@@ -46,7 +46,6 @@
 @each $size, $breakpoint in $grid-breakpoints {
   @if $breakpoint != 0 {
     @media (min-width: $breakpoint) {
-
       .#{$size}\:text-left {
         text-align: left !important;
       }
@@ -70,7 +69,6 @@
       .#{$size}\:text-nowrap {
         white-space: nowrap !important;
       }
-
     }
   }
 }

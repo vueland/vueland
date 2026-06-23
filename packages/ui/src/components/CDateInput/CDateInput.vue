@@ -7,18 +7,19 @@
 
     import {
         CDatePicker,
-        CField,
-        CIcon,
-        CInput,
-        CMenu,
         type DatePickerDate,
         type DatePickerEnrichedDate,
         type DatePickerSlotApi,
         datePickerValueToString,
         type DatePickerWeekDay,
         type DisabledDates
-    } from '@/components'
-    import type { PresetProps, ValidateProps } from '@/composables'
+    } from '@/components/CDatePicker'
+    import { CField } from '@/components/CField'
+    import { CIcon } from '@/components/CIcon'
+    import { CInput } from '@/components/CInput'
+    import { CMenu } from '@/components/CMenu'
+    import type { PresetProps } from '@/composables/use-presets'
+    import type { ValidateProps } from '@/composables/use-validate'
     import { IconAliases } from '@/enums'
 
     export type CDateInputProps = ValidateProps & PresetProps & {

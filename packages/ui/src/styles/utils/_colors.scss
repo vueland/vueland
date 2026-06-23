@@ -1,5 +1,5 @@
-@use "sass:map";
-@use "../maps/colors-map" as *;
+@use 'sass:map';
+@use '../maps/colors-map' as *;
 
 @mixin background-color($color_value) {
   background-color: $color_value !important;
@@ -16,8 +16,8 @@
     &:active {
       &:before {
         background: $color !important;
-        opacity: .3;
-        transition: background .1s;
+        opacity: 0.3;
+        transition: background 0.1s;
       }
     }
   }
@@ -26,14 +26,14 @@
 @mixin bg-active($color) {
   &:active {
     background: $color !important;
-    transition: background .1s;
+    transition: background 0.1s;
   }
 }
 
 @mixin bg-hover($color) {
   &:hover {
     background: $color !important;
-    transition: background .1s;
+    transition: background 0.1s;
   }
 }
 
@@ -52,7 +52,7 @@
         @include bg-active($color_value);
       }
 
-      [class*="hover\:bg-"][class*="active\:bg-#{$color_name}"] {
+      [class*='hover\:bg-'][class*='active\:bg-#{$color_name}'] {
         @include bg-active($color_value);
       }
 
@@ -74,7 +74,7 @@
       @include bg-active($color_value);
     }
 
-    [class*="hover\:bg-"][class*="active\:bg-#{$color_name}-#{$color_type}"] {
+    [class*='hover\:bg-'][class*='active\:bg-#{$color_name}-#{$color_type}'] {
       @include bg-active($color_value);
     }
 

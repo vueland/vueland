@@ -3,7 +3,28 @@
   align-items: center;
   padding: 4px 8px;
   border-radius: var(--c-app-border-radius);
-  color: var(--c-app-text-color);
-  background-color: var(--c-app-surface-color);
+  color: #ffffff;
+  background-color: var(--c-app-primary-color);
   overflow: hidden;
+  min-width: 60px;
+  min-height: 24px;
+
+  cursor: pointer;
+
+  &__content {
+    flex: 1 0;
+    text-align: center;
+    line-height: 1;
+    padding-bottom: 1.5px;
+  }
+
+  &__close {
+    flex: 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 0 0 5px;
+    min-width: 24px;
+    color: currentColor;
+  }
 }

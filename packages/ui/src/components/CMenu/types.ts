@@ -1,12 +1,9 @@
 import type { VNode } from 'vue'
 
 import type { COverlayProps } from '@/components/COverlay'
-import type {
-    ActivatorListeners,
-    ActivatorProps,
-    AutoPositionProps,
-    DelayProps,
-} from '@/composables'
+import type { ActivatorListeners, ActivatorProps } from '@/composables/use-activator'
+import type { AutoPositionProps } from '@/composables/use-auto-position'
+import type { DelayProps } from '@/composables/use-delay-actions'
 import type { DimensionsProps } from '@/types'
 
 export type CMenuProps =

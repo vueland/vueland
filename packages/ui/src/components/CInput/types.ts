@@ -1,10 +1,7 @@
 import type { VNode } from 'vue'
 
-import type {
-    PresetProps,
-    ValidateProps,
-    ValidateState,
-} from '@/composables'
+import type { PresetProps } from '@/composables/use-presets'
+import type { ValidateProps, ValidateState } from '@/composables/use-validate'
 import type { CInputPreset } from '@/types'
 
 export interface InputState {

@@ -7,24 +7,36 @@
         unref
     } from 'vue'
 
+    import { isAriaListRole, useAriaListboxItem } from '@/composables/use-aria-listbox'
     import { useList } from '@/composables/use-list'
     import { isDef } from '@/helpers'
 
-    defineOptions({name: 'CListItem',})
+    defineOptions({name: 'CListItem' })
 
     const props = defineProps<{
         value?: T
     }>()
 
-    const list = useList<T>()
+    const index = shallowRef(-1)
 
-    const myIndex = shallowRef(-1)
     const focused = shallowRef(false)
 
-    const isInActiveList = computed(() => unref(list?.role) === 'listbox' || unref(list?.role) === 'menu')
+    const itemRef = shallowRef()
 
-    const myId = computed(() => isInActiveList.value && list?.listId && myIndex.value >= 0
-        ? `${list.listId}-option-${myIndex.value}`
+    const list = useList<T>()
+
+    const attrs = useAriaListboxItem(() => ({
+        role: unref(list?.role),
+        id: unref(itemId),
+        selected: unref(isSelected),
+    }))
+
+    const handlers = { focus, blur }
+
+    const isInActiveList = computed(() => isAriaListRole(unref(list?.role)))
+
+    const itemId = computed(() => unref(isInActiveList) && index.value >= 0
+        ? list?.getItemId(index.value)
         : undefined
     )
 
@@ -38,32 +50,26 @@
         'c-list-item--focused': unref(focused),
     }))
 
-    const attrs = computed(() => ({
-        ...(unref(myId) ? { id: unref(myId) } : {}),
-        ...(isInActiveList.value ? { role: 'option' } : {}),
-        'aria-selected': unref(isSelected),
-    }))
-
-    function onClick() {
+    function toggle() {
         const handler = unref(isSelected) ? list.unselect : list.select
         handler?.(props.value!)
     }
 
     function focus() {
-        list?.setDescendant?.(unref(myId))
+        list?.setActiveItem?.(index.value)
         focused.value = true
+        itemRef.value.focus()
     }
 
     function blur() {
-        list?.setDescendant?.(undefined)
+        list?.setActiveItem?.(undefined)
         focused.value = false
+        itemRef.value.blur()
     }
-
-    const handlers = { focus, blur }
 
     onMounted(() => {
         if (unref(isInActiveList)) {
-            myIndex.value = list.register(handlers)
+            index.value = list.register(handlers)
         }
     })
 
@@ -76,10 +82,11 @@
 
 <template>
     <li
+        ref="itemRef"
         class="c-list-item"
         :class="classes"
         v-bind="attrs"
-        @click="onClick"
+        @click="toggle"
     >
         <slot>{{ value }}</slot>
     </li>

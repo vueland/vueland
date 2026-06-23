@@ -1,42 +1,98 @@
-@use "../maps/grids" as *;
+@use '../maps/grids' as *;
 
 // Position
-.static   { position: static !important; }
-.relative { position: relative !important; }
-.absolute { position: absolute !important; }
-.fixed    { position: fixed !important; }
-.sticky   { position: sticky !important; }
+.static {
+  position: static !important;
+}
+.relative {
+  position: relative !important;
+}
+.absolute {
+  position: absolute !important;
+}
+.fixed {
+  position: fixed !important;
+}
+.sticky {
+  position: sticky !important;
+}
 
 // Inset
-.inset-0   { top: 0 !important; right: 0 !important; bottom: 0 !important; left: 0 !important; }
-.inset-auto { top: auto !important; right: auto !important; bottom: auto !important; left: auto !important; }
+.inset-0 {
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+}
+.inset-auto {
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+}
 
 // Top / Bottom / Left / Right
-.top-0    { top: 0 !important; }
-.top-auto { top: auto !important; }
-.top-50   { top: 50% !important; }
-.top-100  { top: 100% !important; }
+.top-0 {
+  top: 0 !important;
+}
+.top-auto {
+  top: auto !important;
+}
+.top-50 {
+  top: 50% !important;
+}
+.top-100 {
+  top: 100% !important;
+}
 
-.bottom-0    { bottom: 0 !important; }
-.bottom-auto { bottom: auto !important; }
-.bottom-50   { bottom: 50% !important; }
-.bottom-100  { bottom: 100% !important; }
+.bottom-0 {
+  bottom: 0 !important;
+}
+.bottom-auto {
+  bottom: auto !important;
+}
+.bottom-50 {
+  bottom: 50% !important;
+}
+.bottom-100 {
+  bottom: 100% !important;
+}
 
-.left-0    { left: 0 !important; }
-.left-auto { left: auto !important; }
-.left-50   { left: 50% !important; }
-.left-100  { left: 100% !important; }
+.left-0 {
+  left: 0 !important;
+}
+.left-auto {
+  left: auto !important;
+}
+.left-50 {
+  left: 50% !important;
+}
+.left-100 {
+  left: 100% !important;
+}
 
-.right-0    { right: 0 !important; }
-.right-auto { right: auto !important; }
-.right-50   { right: 50% !important; }
-.right-100  { right: 100% !important; }
+.right-0 {
+  right: 0 !important;
+}
+.right-auto {
+  right: auto !important;
+}
+.right-50 {
+  right: 50% !important;
+}
+.right-100 {
+  right: 100% !important;
+}
 
 // Z-index — произвольные значения через JIT: z-[100]
 $z-levels: 0, 1, 2, 3, 4, 5, 10, 50;
 
 @each $z in $z-levels {
-  .z-#{$z} { z-index: $z !important; }
+  .z-#{$z} {
+    z-index: $z !important;
+  }
 }
 
-.z-auto { z-index: auto !important; }
+.z-auto {
+  z-index: auto !important;
+}

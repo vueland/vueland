@@ -1,10 +1,10 @@
 import { computed } from 'vue'
 
-import type { CFieldProps, CFieldSlots } from '@/components'
-import { C_INPUT_STATE_PRECEDENCE } from '@/composables'
+import type { CFieldProps, CFieldSlots } from '@/components/CField/types'
 import { isDef } from '@/helpers'
 import type { CInputState } from '@/types'
 
+import { C_INPUT_STATE_PRECEDENCE } from './use-input-presets'
 import { useInjectPreset, usePresetZones } from './use-presets'
 
 export function useFieldPresets({

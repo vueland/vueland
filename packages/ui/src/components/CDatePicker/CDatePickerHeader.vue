@@ -1,5 +1,6 @@
 <script setup lang="ts">
-    import { CBtn, CIcon } from '@/components'
+    import { CBtn } from '@/components/CBtn'
+    import { CIcon } from '@/components/CIcon'
     import { IconAliases } from '@/enums'
 
     defineOptions({ name: 'CDatePickerHeader' })

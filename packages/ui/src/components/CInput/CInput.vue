@@ -10,14 +10,12 @@
         useAttrs,
     } from 'vue'
 
-    import {
-        useAriaActivator,
-        useAriaField,
-        useForm,
-        useId,
-        useInputPresets,
-        useValidate,
-    } from '@/composables'
+    import { useAriaActivator } from '@/composables/use-aria-activator'
+    import { useAriaField } from '@/composables/use-aria-field'
+    import { useForm } from '@/composables/use-form'
+    import { useId } from '@/composables/use-id'
+    import { useInputPresets } from '@/composables/use-input-presets'
+    import { useValidate } from '@/composables/use-validate'
     import { FIELD_ATTRS } from '@/constants'
 
     import type {
@@ -40,8 +38,6 @@
 
     const focusedModel = defineModel<boolean>('focused', { default: false })
 
-    const INTERNAL_HANDLERS = new Set(['onUpdate:modelValue', 'onUpdate:focused'])
-
     const state = shallowReactive<InputState>({
         get focused() {
             return focusedModel.value
@@ -59,6 +55,7 @@
     } = useValidate(props, state)
 
     const formApi = useForm()
+
     const attrs = useAttrs()
 
     const preset = useInputPresets({
@@ -68,8 +65,29 @@
     })
 
     const fieldId = useId(props.id, { prefix: props.role })
+
+    const ariaField = useAriaField(() => ({
+        fieldId,
+        label: props.label || isCheckBox || isRadio,
+        hasDetails: unref(hasDetails),
+        hasError: errors.hasError,
+        errorMessage: errors.errorMessage,
+        readonly: props.readonly,
+        disabled: props.disabled,
+    }))
+
+    const ariaActivator = useAriaActivator(() => ({
+        expanded: state.focused,
+        haspopup: 'listbox',
+        controls: `${fieldId}-menu`,
+    }))
+
+    const INTERNAL_HANDLERS = new Set(['onUpdate:modelValue', 'onUpdate:focused'])
+
     const isCombobox = props.role === 'combobox'
+
     const isCheckBox = props.role === 'checkbox'
+
     const isRadio = props.role === 'radio'
 
     const hasDetails = computed(() => !props.noDetails && (
@@ -91,22 +109,6 @@
         return acc
     }, {}))
 
-    const ariaField = useAriaField(() => ({
-        fieldId,
-        label: props.label || isCheckBox || isRadio,
-        hasDetails: unref(hasDetails),
-        hasError: errors.hasError,
-        errorMessage: errors.errorMessage,
-        readonly: props.readonly,
-        disabled: props.disabled,
-    }))
-
-    const ariaActivator = useAriaActivator(() => ({
-        expanded: state.focused,
-        haspopup: 'listbox',
-        controls: `${fieldId}-menu`,
-    }))
-
     const fieldAttrs = computed(() => ({
         ...unref(ariaField),
         ...(isCombobox ? { role: 'combobox', ...unref(ariaActivator) } : {}),
@@ -125,6 +127,12 @@
         attrs.class,
         ...unref(preset).root
     ])
+
+    const internalDetailsKey = computed(() => [
+        errors.errorMessage,
+        props.details,
+        errors.hasError,
+    ].join('|'))
 
     function focus() {
         if (props.disabled || props.readonly) {
@@ -145,22 +153,6 @@
         resetValidate()
     }
 
-    onBeforeMount(() => {
-        formApi?.add(validate)
-        formApi?.addReset(reset)
-    })
-
-    onBeforeUnmount(() => {
-        formApi?.remove(validate)
-        formApi?.removeReset(reset)
-    })
-
-    const internalDetailsKey = computed(() => [
-        errors.errorMessage,
-        props.details,
-        errors.hasError,
-    ].join('|'))
-
     const DetailsMessage = () => h(Transition, {
         name: "fade-in-down",
         mode: "out-in",
@@ -176,6 +168,16 @@
                 uid: fieldId
             }),
         })
+    })
+
+    onBeforeMount(() => {
+        formApi?.add(validate)
+        formApi?.addReset(reset)
+    })
+
+    onBeforeUnmount(() => {
+        formApi?.remove(validate)
+        formApi?.removeReset(reset)
     })
 
     defineExpose({

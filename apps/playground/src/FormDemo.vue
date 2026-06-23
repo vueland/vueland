@@ -13,7 +13,15 @@
 
     const altName = ref('')
 
-    const takenEmails = ['test@taken.com', 'admin@example.com']
+    const value = ref([])
+
+    const takenEmails = [
+        'test@taken.com',
+        'admin@example.com',
+        'aaa@example.com',
+        'sss@example.com',
+        'ddd@example.com',
+    ]
 
     const emailRules = [
         (v: string) => ({ valid: !!v, message: 'Обязательное поле' }),
@@ -42,6 +50,14 @@
         </c-card-header>
 
         <c-card-body class="pt-4">
+            <c-chip
+                v-for="it in 3"
+                :key="it"
+                closable
+                class="mr-2 mb-2 elevation-2"
+            >
+                some {{ it }}
+            </c-chip>
             <c-form v-slot="{ validate, reset }">
                 <c-row>
                     <c-col
@@ -133,6 +149,19 @@
                             label="Другой пресет (outline)"
                             preset="input.outline"
                             details="Тот же компонент — индиго-палитра"
+                        />
+                    </c-col>
+                    <c-col
+                        xl="6"
+                        lg="6"
+                        md="12"
+                    >
+                        <c-autocomplete
+                            v-model="value"
+                            label="Check value"
+                            :items="takenEmails"
+                            multiple
+                            clearable
                         />
                     </c-col>
                 </c-row>

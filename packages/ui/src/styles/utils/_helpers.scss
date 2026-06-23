@@ -12,29 +12,59 @@
 }
 
 // Visibility
-.visible   { visibility: visible !important; }
-.invisible { visibility: hidden !important; }
+.visible {
+  visibility: visible !important;
+}
+.invisible {
+  visibility: hidden !important;
+}
 
 // Pointer events
-.pointer-events-none { pointer-events: none !important; }
-.pointer-events-auto { pointer-events: auto !important; }
+.pointer-events-none {
+  pointer-events: none !important;
+}
+.pointer-events-auto {
+  pointer-events: auto !important;
+}
 
 // User select
-.select-none { user-select: none !important; }
-.select-text { user-select: text !important; }
-.select-all  { user-select: all !important; }
-.select-auto { user-select: auto !important; }
+.select-none {
+  user-select: none !important;
+}
+.select-text {
+  user-select: text !important;
+}
+.select-all {
+  user-select: all !important;
+}
+.select-auto {
+  user-select: auto !important;
+}
 
 // Object fit
-.object-contain { object-fit: contain !important; }
-.object-cover   { object-fit: cover !important; }
-.object-fill    { object-fit: fill !important; }
-.object-none    { object-fit: none !important; }
+.object-contain {
+  object-fit: contain !important;
+}
+.object-cover {
+  object-fit: cover !important;
+}
+.object-fill {
+  object-fit: fill !important;
+}
+.object-none {
+  object-fit: none !important;
+}
 
 // Aspect ratio
-.aspect-square { aspect-ratio: 1 / 1 !important; }
-.aspect-video  { aspect-ratio: 16 / 9 !important; }
-.aspect-auto   { aspect-ratio: auto !important; }
+.aspect-square {
+  aspect-ratio: 1 / 1 !important;
+}
+.aspect-video {
+  aspect-ratio: 16 / 9 !important;
+}
+.aspect-auto {
+  aspect-ratio: auto !important;
+}
 
 // Truncate multi-line
 @for $i from 1 through 5 {

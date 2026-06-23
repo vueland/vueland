@@ -24,10 +24,14 @@
   }
 
   & > .c-field > .c-field__append {
-    transition: transform .1s linear;
+    transition: transform 0.1s linear;
   }
 
   & > .c-field--focused > .c-field__append {
     transform: rotate(180deg);
+  }
+
+  &__chip {
+    margin: 2px 2px 2px 0;
   }
 }

@@ -62,20 +62,20 @@ jobs:
       - name: Build publishable packages
         run: pnpm run build:packages
 
-#  changeset:
-#    name: Changeset
-#    # Only meaningful on PRs — a release-affecting change must ship a changeset.
-#    if: github.event_name == 'pull_request'
-#    runs-on: ubuntu-latest
-#    timeout-minutes: 10
-#    steps:
-#      - uses: actions/checkout@v5
-#        with:
-#          # changeset status diffs against the base branch — needs full history.
-#          fetch-depth: 0
-#      - uses: ./.github/actions/setup
-#      - name: Require a changeset (run `pnpm changeset` — or `changeset add --empty`)
-#        run: pnpm exec changeset status --since=origin/${{ github.base_ref }}
+  #  changeset:
+  #    name: Changeset
+  #    # Only meaningful on PRs — a release-affecting change must ship a changeset.
+  #    if: github.event_name == 'pull_request'
+  #    runs-on: ubuntu-latest
+  #    timeout-minutes: 10
+  #    steps:
+  #      - uses: actions/checkout@v5
+  #        with:
+  #          # changeset status diffs against the base branch — needs full history.
+  #          fetch-depth: 0
+  #      - uses: ./.github/actions/setup
+  #      - name: Require a changeset (run `pnpm changeset` — or `changeset add --empty`)
+  #        run: pnpm exec changeset status --since=origin/${{ github.base_ref }}
 
   commit-lint:
     name: Commit lint

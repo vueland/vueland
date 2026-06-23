@@ -1,17 +1,17 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "include": ["src", "env.d.ts", "jsx.d.ts", "tests", "vitest.config.ts"],
-  "compilerOptions": {
-    "paths": { "@/*": ["./src/*"] },
-    "lib": ["ES2022", "DOM"],
-    "composite": true,
-    "skipLibCheck": true,
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "types": ["vitest/globals"]
-  },
-  "vueCompilerOptions": {
-    "strictTemplates": false
-  }
+    "extends": "../../tsconfig.base.json",
+    "include": ["src", "env.d.ts", "jsx.d.ts", "tests", "vitest.config.ts"],
+    "compilerOptions": {
+        "paths": { "@/*": ["./src/*"] },
+        "lib": ["ES2022", "DOM"],
+        "composite": true,
+        "skipLibCheck": true,
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "types": ["vitest/globals"]
+    },
+    "vueCompilerOptions": {
+        "strictTemplates": false
+    }
 }

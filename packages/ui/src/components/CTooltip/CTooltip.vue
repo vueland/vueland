@@ -1,8 +1,8 @@
 <script setup lang="ts">
     import { computed, useAttrs } from 'vue'
 
-    import { CMenu } from '@/components'
-    import { useId } from '@/composables'
+    import { CMenu } from '@/components/CMenu'
+    import { useId } from '@/composables/use-id'
 
     defineOptions({name: 'CTooltip'})
 
