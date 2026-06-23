@@ -2,7 +2,7 @@
     import { watch } from 'vue'
 
     import { COverlay } from '@/components/COverlay'
-    import { useApplication } from '@/composables'
+    import { useApplication } from '@/composables/use-application'
     import { vClickOutside } from '@/directives'
 
     import type { CDialogProps, CDialogSlots } from './types'

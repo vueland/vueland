@@ -10,10 +10,11 @@ import {
     watch,
 } from 'vue'
 
-import { useApplication } from '@/composables'
 import { isDef } from '@/helpers'
 import type { DimensionsProps } from '@/types'
 import { IN_BROWSER } from '@/utils'
+
+import { useApplication } from './use-application'
 
 export interface Dimensions {
     top: number

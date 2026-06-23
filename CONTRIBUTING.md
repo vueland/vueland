@@ -58,7 +58,7 @@ docs: add tooltip usage examples
 
 ## Перед коммитом
 
-`lint-staged` автоматически прогонит ESLint по изменённым файлам. Убедись что:
+`lint-staged` автоматически прогонит ESLint по коду и Prettier по JSON/YAML/Markdown/SCSS/CSS. Убедись что:
 
 ```bash
 pnpm typecheck   # нет TypeScript ошибок

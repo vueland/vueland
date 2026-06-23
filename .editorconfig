@@ -12,5 +12,8 @@ indent_size = 4
 [*.md]
 trim_trailing_whitespace = false
 
-[{*.yaml,*.yml,*.json,*.scss,*.conf,*.md}]
+[{package.json,**/package.json}]
+indent_size = 2
+
+[{*.yaml,*.yml,*.scss,*.css,*.conf,*.md}]
 indent_size = 2

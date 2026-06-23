@@ -92,7 +92,6 @@ describe('CApp', () => {
         const Consumer = defineComponent({
             setup() {
                 api = inject($APP_API_KEY)
-                console.log(api)
                 return () => h('div')
             },
         })

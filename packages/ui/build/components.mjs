@@ -20,7 +20,6 @@ export const components = [
     ['CSpacer', './CGrid'],
     ['CIcon', './CIcon'],
     ['CInput', './CInput'],
-    ['CItems', './CItems'],
     ['CLabel', './CLabel'],
     ['CList', './CList'],
     ['CListItem', './CList'],

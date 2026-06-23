@@ -1,12 +1,21 @@
 dist
 node_modules
+.claude
+.idea
+**/.generated/**
 packages/playground
 packages/docs
 **/.vitepress/cache
 **/.vitepress/dist
 pnpm-lock.yaml
 
-# TS/TSX/Vue форматируется через ESLint + @stylistic
+# Code is formatted by ESLint.
 **/*.ts
 **/*.tsx
+**/*.js
+**/*.jsx
+**/*.mjs
+**/*.cjs
+**/*.mts
+**/*.cts
 **/*.vue

@@ -1,4 +1,4 @@
-@use "../../styles/modules/global-vars" as *;
+@use '../../styles/modules/global-vars' as *;
 
 $self: '.c-input';
 $input-details-height: 24px;
@@ -14,7 +14,7 @@ $input-details-height: 24px;
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
-  transition: .2s color $primary-transition;
+  transition: 0.2s color $primary-transition;
   color: currentColor;
   position: relative;
   border-radius: var(--c-app-border-radius);

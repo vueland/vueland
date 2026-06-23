@@ -23,7 +23,6 @@ declare module 'vue' {
         CSpacer: typeof import('./CGrid').CSpacer
         CIcon: typeof import('./CIcon').CIcon
         CInput: typeof import('./CInput').CInput
-        CItems: typeof import('./CItems').CItems
         CLabel: typeof import('./CLabel').CLabel
         CList: typeof import('./CList').CList
         CListItem: typeof import('./CList').CListItem

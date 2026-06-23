@@ -1,11 +1,8 @@
 import type { VNode } from 'vue'
 
 import type { CInputProps, CInputSlots } from '@/components/CInput'
-import type {
-    IterableItemsProps,
-    NormalizedItem,
-    SelectableProps,
-} from '@/composables'
+import type { IterableItemsProps, NormalizedItem } from '@/composables/use-normalized-items'
+import type { SelectableProps } from '@/composables/use-selected-chips'
 
 export type CAutocompleteProps<T> =
     IterableItemsProps<T>

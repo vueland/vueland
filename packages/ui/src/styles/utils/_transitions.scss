@@ -1,48 +1,55 @@
-@use "../modules/global-vars" as *;
+@use '../modules/global-vars' as *;
 
 @mixin transition-default() {
   &-enter-active,
   &-leave-active {
-    transition: .4s all $primary-transition;
+    transition: 0.4s all $primary-transition;
   }
 
   &-move {
-    transition: transform .4s;
+    transition: transform 0.4s;
   }
 }
 
 .fade {
-  &-enter-from, &-leave-to {
+  &-enter-from,
+  &-leave-to {
     opacity: 0;
   }
 
   &-enter-active,
   &-leave-active {
-    transition: .2s opacity $primary-transition;
+    transition: 0.2s opacity $primary-transition;
   }
 }
 
 .scale-in {
-  &-enter-from, &-leave-to {
+  &-enter-from,
+  &-leave-to {
     opacity: 0;
     transform: scale(0);
   }
 
   &-enter-active,
   &-leave-active {
-    transition: .2s opacity $primary-transition, transform .2s $primary-transition;
+    transition:
+      0.2s opacity $primary-transition,
+      transform 0.2s $primary-transition;
   }
 }
 
 .scale-in-out {
-  &-enter-from, &-leave-to {
+  &-enter-from,
+  &-leave-to {
     opacity: 0;
-    transform: scale(.9);
+    transform: scale(0.9);
   }
 
   &-enter-active,
   &-leave-active {
-    transition: .15s opacity $primary-transition, transform .15s $primary-transition;
+    transition:
+      0.15s opacity $primary-transition,
+      transform 0.15s $primary-transition;
   }
 
   &-leave-active {
@@ -51,14 +58,17 @@
 }
 
 .fade-in-down {
-  &-enter-from, &-leave-to {
+  &-enter-from,
+  &-leave-to {
     opacity: 0;
     transform: translateY(-15px);
   }
 
   &-enter-active,
   &-leave-active {
-    transition: .15s opacity $primary-transition, transform .15s $primary-transition;
+    transition:
+      0.15s opacity $primary-transition,
+      transform 0.15s $primary-transition;
   }
 
   &-leave-active {
@@ -67,14 +77,17 @@
 }
 
 .fade-in-up {
-  &-enter-from, &-leave-to {
+  &-enter-from,
+  &-leave-to {
     opacity: 0;
     transform: translateY(15px);
   }
 
   &-enter-active,
   &-leave-active {
-    transition: .15s opacity $primary-transition, transform .15s $primary-transition;
+    transition:
+      0.15s opacity $primary-transition,
+      transform 0.15s $primary-transition;
   }
 
   &-leave-active {
@@ -83,13 +96,16 @@
 }
 
 .slide-in-left {
-  &-enter-from, &-leave-to {
+  &-enter-from,
+  &-leave-to {
     transform: translateX(-100%);
   }
 
   &-enter-active,
   &-leave-active {
-    transition: .2s opacity $primary-transition, transform .2s $primary-transition;
+    transition:
+      0.2s opacity $primary-transition,
+      transform 0.2s $primary-transition;
   }
 
   &-leave-active {

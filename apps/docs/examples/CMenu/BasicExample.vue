@@ -2,12 +2,8 @@
     import { ref } from 'vue'
 
     const msg = ref('')
+
     let t: ReturnType<typeof setTimeout>
-    function notify(text: string) {
-        msg.value = text
-        clearTimeout(t)
-        t = setTimeout(() => { msg.value = '' }, 2000)
-    }
 
     const menus = [
         {
@@ -45,6 +41,12 @@
             ],
         },
     ]
+
+    function notify(text: string) {
+        msg.value = text
+        clearTimeout(t)
+        t = setTimeout(() => { msg.value = '' }, 2000)
+    }
 </script>
 
 <template>

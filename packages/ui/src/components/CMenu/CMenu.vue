@@ -10,14 +10,12 @@
         watch
     } from 'vue'
 
-    import { COverlay } from '@/components'
-    import {
-        useActivator,
-        useAutoPosition,
-        useDelayedActions,
-        useId,
-        useKeyboard,
-    } from '@/composables'
+    import { COverlay } from '@/components/COverlay'
+    import { useActivator } from '@/composables/use-activator'
+    import { useAutoPosition } from '@/composables/use-auto-position'
+    import { useDelayedActions } from '@/composables/use-delay-actions'
+    import { useId } from '@/composables/use-id'
+    import { useKeyboard } from '@/composables/use-keyboard'
     import { $MENU_API_KEY } from '@/constants'
     import { vClickOutside } from '@/directives'
     import { isDef } from '@/helpers'
@@ -40,9 +38,7 @@
 
     const model = defineModel<boolean>({ default: false })
 
-
-    const { transition = 'fade' } = props
-    const THROTTLE_DELAY = 50
+    const mounted = shallowRef(props.ssr || props.modelValue)
 
     const attrs = useAttrs()
 
@@ -61,9 +57,26 @@
 
     const { openDelay, closeDelay } = useDelayedActions(props)
 
-    const mounted = shallowRef(props.ssr || props.modelValue)
-
     const _generatedId = useId(undefined, { prefix: 'c-menu' })
+
+    const { onKeydown } = useKeyboard({
+        Escape: () => close(),
+    })
+
+    const { transition = 'fade' } = props
+
+    const THROTTLE_DELAY = 50
+
+    const listeners = genListeners({
+        open,
+        close,
+        toggle
+    })
+
+    const handler = throttle(() => {
+        update()
+    }, THROTTLE_DELAY)
+
     const menuId = computed(() => attrs.id as string ?? _generatedId)
 
     const detached = computed(() => isDef(props.positionX) || isDef(props.positionY))
@@ -85,7 +98,7 @@
 
     const classes = computed(() => ({ 'c-menu--visible': unref(model) }))
 
-    const open = () => {
+    function open() {
         mounted.value = true
 
         openDelay(() => {
@@ -99,7 +112,7 @@
         })
     }
 
-    const close = () => {
+    function close() {
         closeDelay(() => {
             emit('close')
 
@@ -108,7 +121,7 @@
         })
     }
 
-    const toggle = () => unref(model) ? close() : open()
+    function toggle() { return unref(model) ? close() : open() }
 
     const onClickOutside = (e: Event) => {
         const { closeOnClickOutside } = props
@@ -128,19 +141,11 @@
         }
     }
 
-    const { onKeydown } = useKeyboard({
-        Escape: () => close(),
+    onBeforeUnmount(() => {
+        window.removeEventListener('resize', handler)
+        window.removeEventListener('scroll', handler)
+        window.removeEventListener('keydown', onKeydown)
     })
-
-    const listeners = genListeners({
-        open,
-        close,
-        toggle
-    })
-
-    const handler = throttle(() => {
-        update()
-    }, THROTTLE_DELAY)
 
     defineExpose({
         open,
@@ -175,12 +180,6 @@
             if (unref(model)) open()
         })
     }
-
-    onBeforeUnmount(() => {
-        window.removeEventListener('resize', handler)
-        window.removeEventListener('scroll', handler)
-        window.removeEventListener('keydown', onKeydown)
-    })
 </script>
 
 <template>

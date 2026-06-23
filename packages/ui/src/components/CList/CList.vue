@@ -9,7 +9,9 @@
         useAttrs
     } from 'vue'
 
-    import { useId, useKeyboard } from '@/composables'
+    import { useAriaListbox } from '@/composables/use-aria-listbox'
+    import { useId } from '@/composables/use-id'
+    import { useKeyboard } from '@/composables/use-keyboard'
     import { $LIST_API_KEY } from '@/constants'
 
     import type {
@@ -28,14 +30,30 @@
     defineSlots<CListSlots<T>>()
 
     const model = defineModel<T | T[] | null>({ default: null })
-    const attrs = useAttrs()
 
     const focused = shallowRef(false)
+
     const listEl = shallowRef()
-    const activeDescendant = shallowRef<string | undefined>()
+
+    const descendant = shallowRef<string | undefined>()
+
+    const attrs = useAttrs()
+
     const listId = useId(undefined, { prefix: 'c-list' })
 
+    const rootAttrs = useAriaListbox(() => ({
+        role: unref(role),
+        multiple: props.multiple,
+        descendant: unref(descendant),
+    }))
+
+    const { onKeydown } = useKeyboard({
+        ArrowDown: navigateDown,
+        ArrowUp: navigateUp,
+    })
+
     let handlers: any[] = []
+
     let currentIndex = -1
 
     const classes = computed(() => ({
@@ -73,11 +91,7 @@
     }
 
     function unselect(listItem: T) {
-        if (props.readonly) {
-            return
-        }
-
-        if(!props.multiple && props.mandatory) {
+        if(props.readonly || !props.multiple && props.mandatory) {
             return
         }
 
@@ -111,8 +125,12 @@
         handlers = handlers.filter(it => it !== itemControls)
     }
 
-    function setDescendant(id: string | undefined) {
-        activeDescendant.value = id
+    function getItemId(index: number) {
+        return `${listId}-option-${index}`
+    }
+
+    function setActiveItem(index: number | undefined) {
+        descendant.value = index === undefined ? undefined : getItemId(index)
     }
 
     async function focus() {
@@ -141,22 +159,23 @@
         currentIndex = prev
     }
 
-    const { onKeydown } = useKeyboard({
-        ArrowDown: navigateDown,
-        ArrowUp: navigateUp,
+    defineExpose({
+        focus,
+        listId,
+        descendant,
+        navigateDown,
+        navigateUp
     })
-
-    defineExpose({ focus, listId, activeDescendant, navigateDown, navigateUp })
 
     provide($LIST_API_KEY, {
         role,
-        listId,
         register,
         unregister,
+        getItemId,
+        setActiveItem,
         select,
         unselect,
         isActive,
-        setDescendant,
     })
 </script>
 
@@ -165,10 +184,8 @@
         ref="listEl"
         class="c-list"
         :class="classes"
-        :role
         :tabindex
-        :aria-multiselectable="multiple"
-        :aria-activedescendant="activeDescendant"
+        v-bind="rootAttrs"
         @keydown="onKeydown"
     >
         <slot

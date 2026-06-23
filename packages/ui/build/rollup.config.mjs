@@ -3,10 +3,10 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import * as fs from 'node:fs'
 import path from 'path'
 import { defineConfig } from 'rollup'
-import { dts } from 'rollup-plugin-dts'
 import postcss from 'rollup-plugin-postcss'
 import { fileURLToPath } from 'url'
 
+import modernSassLoader from './modern-sass-loader.mjs'
 import base from './rollup-base.config.mjs'
 
 const cmpMap = {}
@@ -25,6 +25,7 @@ const vuePlugin = vue({
 const makeCssPlugin = (fileName) =>
     postcss({
         extract: fileName,
+        loaders: [modernSassLoader],
         minimize: true,
         sourceMap: false,
         use: ['sass'],
@@ -132,86 +133,4 @@ export default defineConfig([
             ],
         }
     }),
-    // DTS
-    {
-        input: ['dist/temp-types/src/index.d.ts'],
-        output: [{
-            file: 'dist/types.d.ts',
-            format: 'es',
-        }],
-        plugins: [dts()],
-        external: [/\.scss$/, /\.css$/, 'vue'],
-    },
-    {
-        input: ['dist/temp-types/src/components/index.d.ts'],
-        output: [{
-            file: 'dist/components/index.d.ts',
-            format: 'es',
-        }],
-        plugins: [dts()],
-        external: [/\.scss$/, /\.css$/, 'vue'],
-    },
-    {
-        input: ['dist/temp-types/src/composables/index.d.ts'],
-        output: [{
-            file: 'dist/composables/index.d.ts',
-            format: 'es',
-        }],
-        plugins: [dts()],
-        external: [/\.scss$/, /\.css$/, 'vue'],
-    },
-    {
-        input: ['dist/temp-types/src/directives/index.d.ts'],
-        output: [{
-            file: 'dist/directives/index.d.ts',
-            format: 'es',
-        }],
-        plugins: [dts()],
-        external: [/\.scss$/, /\.css$/, 'vue'],
-    },
-    {
-        input: ['dist/temp-types/src/resolvers/index.d.ts'],
-        output: [{
-            file: 'dist/resolvers/index.d.ts',
-            format: 'es',
-        }],
-        plugins: [dts()],
-        external: [/\.scss$/, /\.css$/, 'vue'],
-    },
-    {
-        input: ['dist/temp-types/src/types/index.d.ts'],
-        output: [{
-            file: 'dist/types/index.d.ts',
-            format: 'es',
-        }],
-        plugins: [dts()],
-        external: [/\.scss$/, /\.css$/, 'vue'],
-    },
-    {
-        input: ['dist/temp-types/src/utils/index.d.ts'],
-        output: [{
-            file: 'dist/utils/index.d.ts',
-            format: 'es',
-        }],
-        plugins: [dts()],
-        external: [/\.scss$/, /\.css$/, 'vue'],
-    },
-    {
-        input: ['dist/temp-types/src/constants/index.d.ts'],
-        output: [{
-            file: 'dist/constants/index.d.ts',
-            format: 'es',
-        }],
-        plugins: [dts()],
-        external: [/\.scss$/, /\.css$/, 'vue'],
-    },
-    {
-        input: ['dist/temp-types/src/enums/index.d.ts'],
-        output: [{
-            file: 'dist/enums/index.d.ts',
-            format: 'es',
-        }],
-        plugins: [dts()],
-        external: [/\.scss$/, /\.css$/, 'vue'],
-    },
 ])

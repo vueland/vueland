@@ -1,10 +1,10 @@
 import type { VNode } from 'vue'
 
 export type COverlayProps = {
-    modelValue: boolean,
+    modelValue?: boolean,
     to?: string
 }
 
 export type COverlaySlots = {
-    default?(props: { zIndex: number }): VNode
+    default?(props: { zIndex?: number }): VNode
 }

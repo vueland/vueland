@@ -1,4 +1,4 @@
-@use "variables" as *;
+@use 'variables' as *;
 
 .c-list {
   --list-bg-color: #{$list-bg-color};

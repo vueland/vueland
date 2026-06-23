@@ -1,4 +1,4 @@
-@use "../../styles/modules/global-vars" as *;
+@use '../../styles/modules/global-vars' as *;
 
 $self: '.c-field';
 
@@ -20,7 +20,9 @@ $self: '.c-field';
   padding: 1px 8px;
   border-radius: var(--c-app-border-radius) !important;
   border: thin solid;
-  transition: color .2s $primary-transition, opacity .2s $primary-transition;
+  transition:
+    color 0.2s $primary-transition,
+    opacity 0.2s $primary-transition;
 
   &__outline {
     position: absolute;
@@ -39,7 +41,9 @@ $self: '.c-field';
       height: 1px;
       z-index: -2;
       background-color: inherit;
-      transition: transform .2s $primary-transition, background-color .2s $primary-transition;
+      transition:
+        transform 0.2s $primary-transition,
+        background-color 0.2s $primary-transition;
       transform: scaleX(0);
       transform-origin: left;
     }
@@ -54,11 +58,12 @@ $self: '.c-field';
     position: absolute;
     top: 50%;
     left: var(--c-app-border-radius);
-    line-height: .9;
+    line-height: 0.9;
     transform: translate(0, -50%);
-    transition: top .2s $primary-transition,
-    left .2s $primary-transition,
-    transform .2s $primary-transition;
+    transition:
+      top 0.2s $primary-transition,
+      left 0.2s $primary-transition,
+      transform 0.2s $primary-transition;
   }
 
   &__core {
@@ -132,7 +137,7 @@ $self: '.c-field';
   &--filled > &__core > &-label {
     top: 0;
     left: var(--c-app-border-radius);
-    transform: translate(0, -50%) scale(.8);
+    transform: translate(0, -50%) scale(0.8);
   }
 
   &--filled #{$self}-input::placeholder {
@@ -150,7 +155,6 @@ $self: '.c-field';
   }
 
   &--error {
-
   }
 
   &--disabled {
@@ -160,7 +164,6 @@ $self: '.c-field';
   }
 
   &--readonly {
-
   }
 
   &--has-prepend {
@@ -179,6 +182,6 @@ $self: '.c-field';
   &--has-prepend#{$self}--filled > &__core > &-label {
     top: 0;
     left: var(--c-app-border-radius);
-    transform: translate(0, -50%) scale(.8);
+    transform: translate(0, -50%) scale(0.8);
   }
 }

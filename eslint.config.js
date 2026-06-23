@@ -224,26 +224,29 @@ export default [
             // Порядок блоков в SFC: <script> → <template> → <style>
             'vue/block-order': ['error', { order: ['script', 'template', 'style'] }],
 
-            // Порядок defineXxx макросов внутри <script setup>
-            'vue/define-macros-order': [
-                'error',
-                {
-                    order: [
-                        'defineOptions',
-                        'defineProps',
-                        'defineEmits',
-                        'defineSlots',
-                        'defineModel',
-                    ],
-                },
-            ],
+            // Общий порядок <script setup> контролирует @vueland/script-setup-order.
+            'vue/define-macros-order': 'off',
 
             // Пустая строка между блоками SFC
             'vue/padding-line-between-blocks': ['error', 'always'],
+            '@vueland/no-multi-declaration': 'error',
+            '@vueland/no-inline-composable': 'error',
             '@vueland/script-setup-order': [
                 'error',
                 {
-                    order: ['import', 'type', 'macros'],
+                    order: [
+                        'import',
+                        'type',
+                        'macros',
+                        'reactive',
+                        'composable',
+                        'variable',
+                        'computed',
+                        'function',
+                        'watchEffect',
+                        'watch',
+                        'lifecycle',
+                    ],
                 },
             ],
 

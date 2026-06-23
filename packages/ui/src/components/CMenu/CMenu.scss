@@ -1,5 +1,5 @@
-@use "sass:map";
-@use "../../styles/maps/elevations-map" as *;
+@use 'sass:map';
+@use '../../styles/maps/elevations-map' as *;
 
 $self: '.c-menu';
 
@@ -17,7 +17,8 @@ $self: '.c-menu';
   color: var(--menu-text-color);
   max-height: var(--menu-max-height);
   outline: none;
-  box-shadow: map.get($shadow-key-umbra, 3), map.get($shadow-key-penumbra, 3), map.get($shadow-key-ambient, 3);
+  box-shadow:
+    map.get($shadow-key-umbra, 3), map.get($shadow-key-penumbra, 3), map.get($shadow-key-ambient, 3);
 
   &__content {
     overflow-x: hidden;

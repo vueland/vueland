@@ -1,11 +1,10 @@
 import type { ComputedRef, InjectionKey } from 'vue'
 
-import type {
-    ApplicationApi,
-    FormAPI,
-    ListAPI,
-} from '@/components'
-import type { DialogsStackAPI, Display } from '@/composables'
+import type { ApplicationApi } from '@/components/CApp/types'
+import type { FormAPI } from '@/components/CForm/types'
+import type { ListAPI } from '@/components/CList/types'
+import type { DialogsStackAPI } from '@/composables/use-dialogs-stack'
+import type { Display } from '@/composables/use-display'
 
 export const $FORM_API_KEY: InjectionKey<FormAPI> = Symbol()
 export const $LIST_API_KEY: InjectionKey<ListAPI> = Symbol()

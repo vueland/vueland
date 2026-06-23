@@ -8,37 +8,43 @@
    ────────────────────────────────────────────────────────────── */
 
 :root {
-  --vl-green:          #27d98c;
-  --vl-blue:           #2f8cff;
+  --vl-green: #27d98c;
+  --vl-blue: #2f8cff;
   --vl-brand-gradient: linear-gradient(135deg, #27d98c 0%, #2f8cff 100%);
 
   /* VitePress brand override */
-  --vp-c-brand-1:      #2f8cff;
-  --vp-c-brand-2:      #1a7aed;
-  --vp-c-brand-3:      #27d98c;
-  --vp-c-brand-soft:   rgba(47, 140, 255, 0.10);
+  --vp-c-brand-1: #2f8cff;
+  --vp-c-brand-2: #1a7aed;
+  --vp-c-brand-3: #27d98c;
+  --vp-c-brand-soft: rgba(47, 140, 255, 0.1);
 
   /* Link */
-  --vp-c-text-code:    #2f8cff;
+  --vp-c-text-code: #2f8cff;
 
   /* Custom block tip accent */
-  --vp-custom-block-tip-border:  rgba(39, 217, 140, 0.35);
-  --vp-custom-block-tip-bg:      rgba(39, 217, 140, 0.06);
-  --vp-custom-block-tip-text:    var(--vp-c-text-1);
-  --vp-custom-block-tip-code-bg: rgba(39, 217, 140, 0.10);
+  --vp-custom-block-tip-border: rgba(39, 217, 140, 0.35);
+  --vp-custom-block-tip-bg: rgba(39, 217, 140, 0.06);
+  --vp-custom-block-tip-text: var(--vp-c-text-1);
+  --vp-custom-block-tip-code-bg: rgba(39, 217, 140, 0.1);
 }
 
 .dark {
-  --vp-c-brand-1:      #5aabff;
-  --vp-c-brand-2:      #2f8cff;
-  --vp-c-brand-3:      #27d98c;
-  --vp-c-brand-soft:   rgba(47, 140, 255, 0.14);
-  --vp-c-text-code:    #5aabff;
+  --vp-c-brand-1: #5aabff;
+  --vp-c-brand-2: #2f8cff;
+  --vp-c-brand-3: #27d98c;
+  --vp-c-brand-soft: rgba(47, 140, 255, 0.14);
+  --vp-c-text-code: #5aabff;
 
-  --vp-custom-block-tip-border:  rgba(39, 217, 140, 0.25);
-  --vp-custom-block-tip-bg:      rgba(39, 217, 140, 0.08);
+  /* Единый тон тёмной темы: фон страницы, навбар и сайдбар — #1e1e1e
+     (в цвет фона CApp-обёртки) */
+  --vp-c-bg: #1e1e1e;
+  --vp-c-bg-alt: var(--vp-c-bg);
+  --vp-nav-bg-color: var(--vp-c-bg);
+  --vp-sidebar-bg-color: var(--vp-c-bg);
+
+  --vp-custom-block-tip-border: rgba(39, 217, 140, 0.25);
+  --vp-custom-block-tip-bg: rgba(39, 217, 140, 0.08);
 }
-
 
 /* ─── Navbar ────────────────────────────────────────────────── */
 
@@ -55,8 +61,14 @@
   color: var(--vl-blue) !important;
 }
 
-
 /* ─── Sidebar ───────────────────────────────────────────────── */
+
+/* Брендовая градиентная линия по правой границе сайдбара.
+   border-image на правом бордере → не клипается скроллом и не «уезжает». */
+.VPSidebar {
+  border-right: 2px solid var(--vl-blue);
+  border-image: var(--vl-brand-gradient) 1;
+}
 
 /* Active item — gradient text + left bar */
 .VPSidebarItem.is-active > .item .link {
@@ -85,7 +97,6 @@
 .VPSidebarItem > .item .link:hover .text {
   color: var(--vl-blue);
 }
-
 
 /* ─── Article headings ──────────────────────────────────────── */
 
@@ -123,58 +134,130 @@
   color: var(--vp-c-text-1);
 }
 
-
 /* ─── Tables ────────────────────────────────────────────────── */
 
-/* Таблица — собственный горизонтальный скролл (как у VitePress по умолчанию):
-   контент не переносится, при нехватке ширины скроллится сама таблица, а не
-   страница. */
-.vp-doc table {
-  display: block;
-  width: fit-content;
+/* ─── Таблицы доки на div-ах (markdown-it рендерит .vl-table) ──────────
+   Кастомная вёрстка в фирменном стиле: карточка с тенью, бренд-градиент
+   green→blue под шапкой, hover с акцентной полосой. На всю ширину; при
+   нехватке места скроллится сама таблица, не страница. */
+.vp-doc .vl-table-wrap {
+  width: 100%;
   max-width: 100%;
   overflow-x: auto;
-  border-collapse: collapse;
-  border-radius: 10px;
+  margin: 26px 0;
+  background: var(--vp-c-bg);
   border: 1px solid var(--vp-c-divider);
+  border-radius: 14px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 12px 32px -18px rgba(0, 0, 0, 0.16);
+}
+
+/* ── Dark: «премиум»-карточка — глубина (верхний блик + насыщенная тень),
+   бренд-тинт шапки, тонкие световые разделители, фирменный hover. ── */
+.dark .vp-doc .vl-table-wrap {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0) 88px),
+    var(--vp-c-bg-soft);
+  border-color: rgba(255, 255, 255, 0.09);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    0 18px 44px -22px rgba(0, 0, 0, 0.72);
+}
+
+.dark .vp-doc .vl-table__head .vl-table__row {
+  background: linear-gradient(180deg, rgba(47, 140, 255, 0.09), rgba(39, 217, 140, 0.035));
+}
+
+.dark .vp-doc .vl-table__cell--head {
+  color: var(--vp-c-text-1);
+}
+
+.dark .vp-doc .vl-table__body .vl-table__row:not(:first-child) .vl-table__cell {
+  border-top-color: rgba(255, 255, 255, 0.06);
+}
+
+.dark .vp-doc .vl-table__body .vl-table__row:hover {
+  background: rgba(47, 140, 255, 0.1);
+}
+
+.vp-doc .vl-table {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
   font-size: 14px;
-  margin: 20px 0;
+  line-height: 1.55;
 }
 
-.vp-doc table thead tr {
-  background: var(--vp-c-bg-soft);
-  border-bottom: 1px solid var(--vp-c-divider);
+.vp-doc .vl-table__head {
+  display: table-header-group;
+}
+.vp-doc .vl-table__body {
+  display: table-row-group;
+}
+.vp-doc .vl-table__row {
+  display: table-row;
 }
 
-.vp-doc table thead th {
-  font-weight: 600;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--vp-c-text-2);
-  padding: 10px 14px;
+.vp-doc .vl-table__cell {
+  display: table-cell;
+  padding: 13px 18px;
   text-align: left;
-}
-
-.vp-doc table tbody tr:nth-child(even) {
-  background: rgba(47, 140, 255, 0.025);
-}
-
-.dark .vp-doc table tbody tr:nth-child(even) {
-  background: rgba(47, 140, 255, 0.05);
-}
-
-.vp-doc table tbody td {
-  padding: 9px 14px;
-  border-top: 1px solid var(--vp-c-divider);
   vertical-align: top;
 }
 
-.vp-doc table tbody td:first-child code {
+/* Шапка: заглавные приглушённые подписи + градиентная линия бренда снизу
+   (border-image на строке → одна непрерывная линия на всю ширину). */
+.vp-doc .vl-table__head .vl-table__row {
+  background: var(--vp-c-bg-soft);
+  border-bottom: 2px solid var(--vl-blue);
+  border-image: var(--vl-brand-gradient) 1;
+}
+
+.vp-doc .vl-table__cell--head {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--vp-c-text-2);
+}
+
+/* Тело: тонкие разделители + бренд-hover с акцентной полосой слева. */
+.vp-doc .vl-table__body .vl-table__row {
+  transition: background 0.16s ease;
+}
+
+.vp-doc .vl-table__body .vl-table__row:not(:first-child) .vl-table__cell {
+  border-top: 1px solid var(--vp-c-divider);
+}
+
+.vp-doc .vl-table__body .vl-table__row:hover {
+  background: var(--vp-c-brand-soft);
+}
+
+.vp-doc .vl-table__body .vl-table__row:hover .vl-table__cell:first-child {
+  box-shadow: inset 3px 0 0 0 var(--vl-blue);
+}
+
+/* Первая колонка — акцент: чуть плотнее фон + зелёный код (имя пропа/значение) */
+.vp-doc .vl-table__body .vl-table__cell:first-child {
+  font-weight: 500;
+  color: var(--vp-c-text-1);
+  background: linear-gradient(var(--vp-c-bg-soft), var(--vp-c-bg-soft));
+}
+
+.dark .vp-doc .vl-table__body .vl-table__cell:first-child {
+  background: linear-gradient(rgba(47, 140, 255, 0.05), rgba(47, 140, 255, 0.05));
+}
+
+.vp-doc .vl-table__body .vl-table__cell:first-child code {
   color: var(--vl-green);
   font-weight: 600;
 }
-
 
 /* ─── Inline code ───────────────────────────────────────────── */
 
@@ -194,7 +277,6 @@
   color: #5aabff;
   border-color: rgba(90, 171, 255, 0.2);
 }
-
 
 /* ─── Code blocks ───────────────────────────────────────────── */
 
@@ -267,7 +349,6 @@
   background: rgba(47, 140, 255, 0.08);
 }
 
-
 /* ─── Details / collapsible code block ──────────────────────── */
 
 .vp-doc details {
@@ -298,8 +379,12 @@
   line-height: 1.4;
 }
 
-.vp-doc details summary::-webkit-details-marker { display: none; }
-.vp-doc details summary::marker { display: none; }
+.vp-doc details summary::-webkit-details-marker {
+  display: none;
+}
+.vp-doc details summary::marker {
+  display: none;
+}
 
 .vp-doc details summary::before {
   content: '';
@@ -349,7 +434,6 @@
   display: none;
 }
 
-
 /* ─── Custom blocks (tip / warning / danger) ────────────────── */
 
 .vp-doc .custom-block {
@@ -377,7 +461,6 @@
   letter-spacing: 0.04em;
   margin-bottom: 6px;
 }
-
 
 /* ─── Component example containers ──────────────────────────── */
 
@@ -455,7 +538,7 @@
 .example-output {
   margin-top: 12px;
   font-size: 13px;
-  opacity: .7;
+  opacity: 0.7;
 }
 
 .example-success {
@@ -464,7 +547,6 @@
   font-size: 14px;
   font-weight: 600;
 }
-
 
 /* ─── Landing page ───────────────────────────────────────────── */
 
@@ -612,9 +694,7 @@
   padding: 24px;
   border: 1px solid var(--vp-c-divider);
   border-radius: 22px;
-  background:
-    linear-gradient(180deg, rgba(39, 217, 140, 0.07), transparent),
-    var(--vp-c-bg-soft);
+  background: linear-gradient(180deg, rgba(39, 217, 140, 0.07), transparent), var(--vp-c-bg-soft);
 }
 
 .vueland-feature h2 {
@@ -633,20 +713,30 @@
   line-height: 1.65;
 }
 
-
 /* ─── Responsive ─────────────────────────────────────────────── */
 
 @media (min-width: 768px) {
-  .vueland-home          { padding: 72px 32px 96px; }
-  .vueland-hero__logo img { width: 320px; }
-  .vueland-hero h1       { font-size: 64px; }
-  .vueland-hero__description { font-size: 21px; }
+  .vueland-home {
+    padding: 72px 32px 96px;
+  }
+  .vueland-hero__logo img {
+    width: 320px;
+  }
+  .vueland-hero h1 {
+    font-size: 64px;
+  }
+  .vueland-hero__description {
+    font-size: 21px;
+  }
   .vueland-features {
     max-width: 760px;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 18px;
   }
-  .vueland-feature       { min-height: 168px; padding: 24px; }
+  .vueland-feature {
+    min-height: 168px;
+    padding: 24px;
+  }
 }
 
 @media (min-width: 1120px) {
@@ -665,8 +755,12 @@
     gap: 72px;
     text-align: left;
   }
-  .vueland-hero__logo img  { width: 340px; }
-  .vueland-hero__content   { width: 560px; }
+  .vueland-hero__logo img {
+    width: 340px;
+  }
+  .vueland-hero__content {
+    width: 560px;
+  }
   .vueland-hero h1 {
     min-height: 205px;
     display: flex;
@@ -679,8 +773,13 @@
     margin-right: 0;
     font-size: 22px;
   }
-  .vueland-hero__actions   { justify-content: flex-start; }
-  .vueland-features        { max-width: 1080px; margin-top: 72px; }
+  .vueland-hero__actions {
+    justify-content: flex-start;
+  }
+  .vueland-features {
+    max-width: 1080px;
+    margin-top: 72px;
+  }
 }
 
 @media (min-width: 1440px) {
@@ -689,8 +788,17 @@
     grid-template-columns: 440px 600px;
     gap: 80px;
   }
-  .vueland-hero__logo img  { width: 380px; }
-  .vueland-hero__content   { width: 600px; }
-  .vueland-hero h1         { font-size: 72px; min-height: 220px; }
-  .vueland-features        { max-width: 1160px; }
+  .vueland-hero__logo img {
+    width: 380px;
+  }
+  .vueland-hero__content {
+    width: 600px;
+  }
+  .vueland-hero h1 {
+    font-size: 72px;
+    min-height: 220px;
+  }
+  .vueland-features {
+    max-width: 1160px;
+  }
 }

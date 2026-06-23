@@ -26,7 +26,9 @@
     }>()
 
     const value = defineModel<string | number | undefined | null>()
+
     const inputRef = shallowRef<HTMLElement>()
+
     const slots = useSlots()
 
     const presets = useFieldPresets({

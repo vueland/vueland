@@ -19,7 +19,7 @@ $card-border-radius: 8px;
   display: flex;
   flex-direction: column;
   background-color: var(--card-background-color);
-  color: var( --card-text-color);
+  color: var(--card-text-color);
 
   &-header {
     padding: var(--card-header-padding);

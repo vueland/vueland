@@ -1,6 +1,6 @@
-@use "../../styles/modules/global-vars" as *;
-@use "sass:map";
-@use "../../styles/maps/colors-map" as *;
+@use '../../styles/modules/global-vars' as *;
+@use 'sass:map';
+@use '../../styles/maps/colors-map' as *;
 
 $self: '.c-date-picker';
 
@@ -9,13 +9,13 @@ $self: '.c-date-picker';
   --c-date-picker-display-bg: var(--c-app-primary-color, #1976d2);
   --c-date-picker-display-color: #fff;
   --c-date-picker-cell-size: 36px;
-  --c-date-picker-selected-bg: #{map.get($blue, "lighten-3")};
+  --c-date-picker-selected-bg: #{map.get($blue, 'lighten-3')};
   --c-date-picker-selected-color: var(--c-app-primary-color, #1976d2);
   --c-date-picker-today-color: var(--c-app-primary-color, #1976d2);
-  --c-date-picker-hover-bg: rgba(0, 0, 0, .06);
-  --c-date-picker-hover-color: #{map.get($grey, "darken-1")};
+  --c-date-picker-hover-bg: rgba(0, 0, 0, 0.06);
+  --c-date-picker-hover-color: #{map.get($grey, 'darken-1')};
   --c-date-picker-disabled-color: var(--c-app-disabled-color, #bdbdbd);
-  --c-date-picker-highlighted-bg: rgba(25, 118, 210, .12);
+  --c-date-picker-highlighted-bg: rgba(25, 118, 210, 0.12);
   --c-date-picker-highlighted-color: var(--c-app-primary-color, #1976d2);
 
   width: var(--c-date-picker-width);
@@ -35,7 +35,7 @@ $self: '.c-date-picker';
 
   &__display-year {
     font-size: 13px;
-    opacity: .75;
+    opacity: 0.75;
     cursor: pointer;
   }
 
@@ -68,7 +68,7 @@ $self: '.c-date-picker';
     background: transparent;
     cursor: pointer;
     color: inherit;
-    transition: background .15s;
+    transition: background 0.15s;
 
     &:hover {
       background: var(--c-date-picker-hover-bg);
@@ -76,7 +76,7 @@ $self: '.c-date-picker';
 
     &--disabled,
     &:disabled {
-      opacity: .3;
+      opacity: 0.3;
       cursor: default;
       pointer-events: none;
     }
@@ -88,13 +88,12 @@ $self: '.c-date-picker';
     cursor: pointer;
     padding: 4px 8px;
     border-radius: 4px;
-    transition: background .15s;
+    transition: background 0.15s;
 
     &:hover {
       background: var(--c-date-picker-hover-bg);
     }
   }
-
 
   &__body {
     padding: 4px 8px 8px;
@@ -118,7 +117,7 @@ $self: '.c-date-picker';
     height: 32px;
     font-size: 11px;
     font-weight: 600;
-    opacity: .5;
+    opacity: 0.5;
     text-transform: uppercase;
   }
 
@@ -142,7 +141,7 @@ $self: '.c-date-picker';
     border-radius: 50%;
     font-size: 13px;
     cursor: pointer;
-    transition: background .12s;
+    transition: background 0.12s;
 
     &:hover {
       background: var(--c-date-picker-hover-bg);
@@ -207,7 +206,7 @@ $self: '.c-date-picker';
     border-radius: 6px;
     font-size: 13px;
     cursor: pointer;
-    transition: background .12s;
+    transition: background 0.12s;
     border: 1.5px solid transparent;
 
     &:hover {
@@ -227,7 +226,7 @@ $self: '.c-date-picker';
     &--disabled {
       color: var(--c-date-picker-disabled-color);
       pointer-events: none;
-      opacity: .4;
+      opacity: 0.4;
     }
   }
 }
@@ -257,7 +256,7 @@ $self: '.c-date-picker';
     border-radius: 6px;
     font-size: 13px;
     cursor: pointer;
-    transition: background .12s;
+    transition: background 0.12s;
     border: 1.5px solid transparent;
 
     &:hover {
@@ -279,7 +278,7 @@ $self: '.c-date-picker';
     &--disabled {
       color: var(--c-date-picker-disabled-color);
       pointer-events: none;
-      opacity: .4;
+      opacity: 0.4;
     }
   }
 }
@@ -294,7 +293,7 @@ $self: '.c-date-picker';
 .c-date-slide-up-leave-active,
 .c-date-slide-down-enter-active,
 .c-date-slide-down-leave-active {
-  transition: all .2s $primary-transition;
+  transition: all 0.2s $primary-transition;
   overflow: hidden;
 }
 
@@ -340,7 +339,7 @@ $self: '.c-date-picker';
 
 .c-date-fade-enter-active,
 .c-date-fade-leave-active {
-  transition: opacity .15s;
+  transition: opacity 0.15s;
 }
 
 .c-date-fade-enter-from,
