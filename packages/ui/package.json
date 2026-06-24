@@ -75,7 +75,10 @@
     "./css/utils/*": "./dist/css/utils/*",
     "./styles/styles.scss": "./dist/styles/styles.scss",
     "./styles/lib.scss": "./dist/styles/lib.scss",
-    "./styles/utils.scss": "./dist/styles/utils.scss"
+    "./styles/utils.scss": "./dist/styles/utils.scss",
+    "./styles/tools.scss": "./dist/styles/tools.scss",
+    "./styles/tools/state-layer": "./dist/styles/tools/_state-layer.scss",
+    "./styles/tools/state-layer.scss": "./dist/styles/tools/_state-layer.scss"
   },
   "peerDependencies": {
     "vue": "^3.5.27"

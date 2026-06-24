@@ -1,50 +1,97 @@
 @use 'variables' as *;
+@use '../../styles/tools/state-layer' as state;
 
 $self: '.c-list-item';
 
 .c-list-item {
-  --list-item-height: #{$list-item-height};
+  --c-list-item-min-height: #{$list-item-min-height};
+  --c-list-item-padding-block: #{$list-item-padding-block};
+  --c-list-item-padding-inline: #{$list-item-padding-inline};
+  --c-list-item-gap: #{$list-item-gap};
+  --c-list-item-border-radius: #{$list-item-border-radius};
+  --c-list-item-color: #{$list-item-color};
+  --c-list-item-bg-color: #{$list-item-bg-color};
+  --c-list-item-selected-bg-color: #{$list-item-selected-bg-color};
+  --c-list-item-selected-color: #{$list-item-selected-color};
+  --c-list-item-disabled-opacity: #{$list-item-disabled-opacity};
+  --c-list-item-disabled-color: #{$list-item-disabled-color};
+  --c-list-item-title-font-size: #{$list-item-title-font-size};
+  --c-list-item-title-line-height: #{$list-item-title-line-height};
+  --c-list-item-title-font-weight: #{$list-item-title-font-weight};
+  --c-list-item-subtitle-font-size: #{$list-item-subtitle-font-size};
+  --c-list-item-subtitle-line-height: #{$list-item-subtitle-line-height};
+  --c-list-item-subtitle-color: #{$list-item-subtitle-color};
+  --c-list-item-subtitle-opacity: #{$list-item-subtitle-opacity};
+  --c-list-item-hover-bg-color: #{$list-item-hover-bg-color};
 
   display: flex;
   justify-content: start;
   align-items: center;
-  height: var(--list-item-height);
+  gap: var(--c-list-item-gap);
+  min-height: var(--c-list-item-min-height);
+  padding: var(--c-list-item-padding-block) var(--c-list-item-padding-inline);
+  border-radius: var(--c-list-item-border-radius);
+  background: var(--c-list-item-bg-color);
   cursor: pointer;
   position: relative;
-  color: currentColor;
+  color: var(--c-list-item-color);
+  outline-color: var(--c-list-item-hover-bg-color);
+  outline-width: 2px;
+  outline-offset: -1px;
 
-  &::before {
-    content: '';
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    pointer-events: none;
+  @include state.layer(var(--c-list-item-hover-bg-color));
+
+  &-content {
+    flex: 1 0;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
   }
 
-  &:hover {
-    &::before {
-      opacity: 1;
-    }
+  &-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    min-width: 36px;
+    min-height: var(--c-list-item-min-height);
+    height: 100%;
+  }
+
+  &-title {
+    font-size: var(--c-list-item-title-font-size);
+    font-weight: var(--c-list-item-title-font-weight);
+    line-height: var(--c-list-item-title-line-height);
+  }
+
+  &-subtitle {
+    color: var(--c-list-item-subtitle-color);
+    font-size: var(--c-list-item-subtitle-font-size);
+    line-height: var(--c-list-item-subtitle-line-height);
+    opacity: var(--c-list-item-subtitle-opacity);
   }
 
   &--focused {
     &::before {
-      opacity: 1;
+      opacity: 0.3;
     }
   }
 
-  &--active {
+  &:hover {
     &::before {
-      opacity: 1;
+      opacity: 0.1;
     }
   }
-}
 
-.c-list-item-title {
-  padding: 0 8px;
+  &--disabled {
+    cursor: default;
+    color: var(--c-list-item-disabled-color);
+    opacity: var(--c-list-item-disabled-opacity);
+    pointer-events: none;
+  }
+
+  &--selected {
+    background: var(--c-list-item-selected-bg-color);
+    color: var(--c-list-item-selected-color);
+  }
 }

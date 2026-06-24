@@ -1,15 +1,15 @@
 <script setup lang="ts" generic="T">
     import {
-        computed,
         shallowRef,
         unref,
-        watch
+        watch,
     } from 'vue'
 
     import { CField } from '@/components/CField'
     import { CInput } from '@/components/CInput'
     import { CMenu } from '@/components/CMenu'
     import { useAutocomplete } from '@/composables/use-autocomplete'
+    import { useId } from '@/composables/use-id'
     import { useKeyboard } from '@/composables/use-keyboard'
     import { IconAliases } from '@/enums'
 
@@ -31,19 +31,19 @@
     })
 
     const inputRef = shallowRef()
-
     const fieldRef = shallowRef()
-
     const menuRef = shallowRef()
-
     const menuListRef = shallowRef()
+    const activeDescendant = shallowRef<string>()
+
+    const listId = useId(undefined, { prefix: 'c-autocomplete-list' })
 
     const {
         inputValue,
         searchItems,
         chips,
         hasValue,
-        select
+        select,
     } = useAutocomplete(props)
 
     const { onKeydown } = useKeyboard({
@@ -61,16 +61,13 @@
             unref(menuRef).close()
         },
         Escape: () => {
-            unref(inputRef).blur()
-            unref(fieldRef).$el.blur()
+            unref(menuRef).close()
+            unref(fieldRef).blur()
         },
         ArrowDown: () => unref(menuListRef)?.navigateDown(),
         ArrowUp: () => unref(menuListRef)?.navigateUp(),
-    }, { prevent: ['ArrowDown', 'ArrowUp'] })
-
-    const ariaControls = computed(() => unref(menuListRef)?.listId)
-
-    const descendant = computed(() => unref(menuListRef)?.descendant)
+        Enter: () => {}
+    }, { prevent: ['ArrowDown', 'ArrowUp', 'Enter'] })
 
     function clear() {
         model.value = props.multiple ? [] : undefined
@@ -81,8 +78,18 @@
         unref(inputRef).focus()
     }
 
-    function blur() {
+    function onClose() {
         unref(inputRef).blur()
+    }
+
+    function setActiveDescendant(id: string) {
+        activeDescendant.value = id
+    }
+
+    function clearActiveDescendant(id: string) {
+        if (activeDescendant.value === id) {
+            activeDescendant.value = undefined
+        }
     }
 
     watch(inputValue, () => {
@@ -97,8 +104,8 @@
         :model-value="model"
         v-bind="$attrs"
         role="combobox"
-        :aria-controls="ariaControls"
-        :aria-activedescendant="descendant"
+        :aria-controls="listId"
+        :aria-activedescendant="activeDescendant"
     >
         <template #field="field">
             <c-menu
@@ -111,7 +118,7 @@
                 :offset-y="2"
                 strategy="reverse"
                 :preset="options?.menuPreset"
-                @close="blur"
+                @close="onClose"
             >
                 <template #activator="{on, activator}">
                     <div
@@ -179,10 +186,12 @@
                         :items="searchItems"
                     >
                         <c-list
+                            :id="listId"
                             ref="menuListRef"
                             v-model="model"
-                            role="listbox"
-                            selectable
+                            variant="listbox"
+                            :disabled="field.disabled"
+                            class="c-autocomplete__listbox"
                             :multiple
                             :mandatory
                         >
@@ -190,6 +199,8 @@
                                 v-for="item of searchItems"
                                 :key="item.key"
                                 :value="item.value ?? item.raw"
+                                @active="setActiveDescendant"
+                                @inactive="clearActiveDescendant"
                             >
                                 <c-list-item-title>
                                     {{ item.title }}

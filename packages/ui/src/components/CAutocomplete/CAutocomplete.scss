@@ -5,14 +5,8 @@
   max-height: 100%;
   position: relative;
 
-  &__box {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    flex-wrap: wrap;
-    column-gap: 2px;
-    height: 100%;
-    cursor: text;
+  &__listbox {
+    padding: 5px 0;
   }
 
   &-item {

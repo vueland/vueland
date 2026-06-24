@@ -4,89 +4,199 @@
         onBeforeUnmount,
         onMounted,
         shallowRef,
-        unref
+        unref,
     } from 'vue'
 
-    import { isAriaListRole, useAriaListboxItem } from '@/composables/use-aria-listbox'
+    import { useAriaListboxItem } from '@/composables/use-aria-listbox'
+    import { useId } from '@/composables/use-id'
     import { useList } from '@/composables/use-list'
     import { isDef } from '@/helpers'
 
-    defineOptions({name: 'CListItem' })
+    import type { ListItemController } from './types'
+
+    defineOptions({
+        name: 'CListItem',
+    })
 
     const props = defineProps<{
+        disabled?: boolean
         value?: T
     }>()
 
-    const index = shallowRef(-1)
+    const emit = defineEmits<{
+        active: [id: string]
+        inactive: [id: string]
+    }>()
 
-    const focused = shallowRef(false)
-
-    const itemRef = shallowRef()
+    const isFocused = shallowRef(false)
+    const rootRef = shallowRef<HTMLElement>()
 
     const list = useList<T>()
 
-    const attrs = useAriaListboxItem(() => ({
-        role: unref(list?.role),
-        id: unref(itemId),
+    const itemId = useId(undefined, { prefix: 'c-list-item' })
+
+    const listState = computed(() => {
+        const managed = unref(list?.managed)
+        const listDisabled = unref(list?.disabled)
+        const role = unref(list?.role)
+        const interactive = managed && !listDisabled && !props.disabled
+
+        return {
+            managed,
+            listDisabled,
+            role,
+            interactive,
+            listbox: role === 'listbox',
+            menu: role === 'menu',
+            tabIndex: interactive ? -1 : undefined,
+        }
+    })
+
+    const ariaAttrs = useAriaListboxItem(() => ({
+        role: unref(listState).managed ? unref(listState).role : undefined,
+        id: itemId,
         selected: unref(isSelected),
+        disabled: props.disabled,
     }))
 
-    const handlers = { focus, blur }
+    const itemController: ListItemController<T> = {
+        id: itemId,
+        focus: focusItem,
+        blur: blurItem,
+        activate: activateCurrentItem,
+        getText,
+        getValue,
+        isDisabled,
+    }
 
-    const isInActiveList = computed(() => isAriaListRole(unref(list?.role)))
+    const itemListeners = computed(() => {
+        const state = unref(listState)
 
-    const itemId = computed(() => unref(isInActiveList) && index.value >= 0
-        ? list?.getItemId(index.value)
-        : undefined
-    )
+        if (!state.interactive) {
+            return {}
+        }
 
-    const isSelected = computed(() => isDef(props.value)
-        ? list?.isActive?.(props.value!)
-        : false
-    )
+        return {
+            mouseenter: activateItem,
+            mouseleave: deactivateItem,
+            ...(state.listbox ? { click: toggleSelection } : {}),
+        }
+    })
 
-    const classes = computed(() => ({
-        'c-list-item--active': unref(isSelected),
-        'c-list-item--focused': unref(focused),
+    const isSelected = computed(() => {
+        if (!unref(listState).managed || !isDef(props.value)) {
+            return false
+        }
+
+        return list?.isActive(props.value as T) ?? false
+    })
+
+    const itemClasses = computed(() => ({
+        'c-list-item--disabled': props.disabled,
+        'c-list-item--selected': unref(isSelected),
+        'c-list-item--focused': unref(isFocused) && unref(listState).interactive,
     }))
 
-    function toggle() {
-        const handler = unref(isSelected) ? list.unselect : list.select
-        handler?.(props.value!)
+    function toggleSelection() {
+        const state = unref(listState)
+
+        if (!state.interactive || !state.listbox || !list || !isDef(props.value)) {
+            return
+        }
+
+        const itemValue = props.value as T
+
+        if (unref(isSelected)) {
+            list.unselect(itemValue)
+        } else {
+            list.select(itemValue)
+        }
     }
 
-    function focus() {
-        list?.setActiveItem?.(index.value)
-        focused.value = true
-        itemRef.value.focus()
+    function activateCurrentItem() {
+        const state = unref(listState)
+
+        if (!state.interactive) {
+            return
+        }
+
+        if (state.listbox) {
+            toggleSelection()
+            return
+        }
+
+        if (state.menu) {
+            unref(rootRef)?.click()
+        }
     }
 
-    function blur() {
-        list?.setActiveItem?.(undefined)
-        focused.value = false
-        itemRef.value.blur()
+    function focusItem() {
+        if (!unref(listState).interactive) {
+            return
+        }
+
+        activateItem()
+        isFocused.value = true
+        unref(rootRef)?.focus()
+    }
+
+    function blurItem() {
+        deactivateItem()
+        isFocused.value = false
+        unref(rootRef)?.blur()
+    }
+
+    function activateItem() {
+        if (!unref(listState).interactive) {
+            return
+        }
+
+        list!.setCurrentItem(itemController)
+        emit('active', itemId)
+    }
+
+    function deactivateItem() {
+        if (!unref(listState).interactive) {
+            return
+        }
+
+        list!.unsetCurrentItem(itemController)
+        emit('inactive', itemId)
+    }
+
+    function getText() {
+        return unref(rootRef)?.textContent?.trim() ?? ''
+    }
+
+    function getValue() {
+        return props.value
+    }
+
+    function isDisabled() {
+        return props.disabled
     }
 
     onMounted(() => {
-        if (unref(isInActiveList)) {
-            index.value = list.register(handlers)
+        if (unref(listState).managed) {
+            list!.registerItem(itemController)
         }
     })
 
     onBeforeUnmount(() => {
-        if (unref(isInActiveList)) {
-            list.unregister(handlers)
+        if (unref(listState).managed) {
+            list!.unregisterItem(itemController)
         }
     })
 </script>
 
 <template>
     <li
-        ref="itemRef"
+        ref="rootRef"
         class="c-list-item"
-        :class="classes"
-        v-bind="attrs"
-        @click="toggle"
+        :class="itemClasses"
+        :tabindex="listState.tabIndex"
+        v-bind="ariaAttrs"
+        v-on="itemListeners"
     >
         <slot>{{ value }}</slot>
     </li>

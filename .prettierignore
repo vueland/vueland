@@ -1,6 +1,5 @@
 dist
 node_modules
-.claude
 .idea
 **/.generated/**
 packages/playground

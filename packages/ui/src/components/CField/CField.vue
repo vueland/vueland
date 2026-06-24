@@ -41,6 +41,13 @@
         && (props.filled || !!unref(value))
     )
 
+    const isDefault = computed(() =>
+        !props.focused
+        && !props.error
+        && !props.disabled
+        && !props.readonly
+    )
+
     const classes = computed(() => [
         {
             'c-field--focused': props.focused,
@@ -49,7 +56,7 @@
             'c-field--disabled': props.disabled,
             'c-field--readonly': props.readonly,
             'c-field--error': props.error,
-            'c-field--default': !props.focused && !props.error && !props.disabled,
+            'c-field--default': unref(isDefault),
         },
         ...unref(presets).root,
     ])
@@ -64,10 +71,16 @@
 
     function onMousedown(e: MouseEvent) {
         e.preventDefault()
+
         if (document.activeElement !== unref(inputRef)) {
             unref(inputRef)?.focus()
         }
     }
+
+    defineExpose({
+        blur: () => unref(inputRef)?.blur(),
+        focus: () => unref(inputRef)?.focus()
+    })
 
     onMounted(() => {
         if (props.focused) unref(inputRef)?.focus()

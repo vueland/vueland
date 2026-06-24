@@ -35,7 +35,7 @@
         "title": "Content",
         "items": [
             { "file": "CCard", "title": "CCard ★" },
-            { "file": "CList", "title": "CList" },
+            { "file": "CList", "title": "CList ★" },
             { "file": "CIcon", "title": "CIcon" },
             { "file": "CLabel", "title": "CLabel" }
         ]

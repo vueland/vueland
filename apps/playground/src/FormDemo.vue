@@ -1,5 +1,9 @@
 <script setup lang="ts">
-    import { ref } from 'vue'
+    import {
+        ref,
+        unref,
+        watchEffect
+    } from 'vue'
 
     const name = ref('')
 
@@ -23,6 +27,12 @@
         'ddd@example.com',
     ]
 
+    const typed = [
+        {name: 'Alex', email: 'test@taken.com'},
+        {name: 'Misha', email: 'misha@taken.com'},
+        {name: 'Yura', email: 'yu@taken.com'},
+    ]
+
     const emailRules = [
         (v: string) => ({ valid: !!v, message: 'Обязательное поле' }),
         (v: string) => ({ valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), message: 'Invalid email format' }),
@@ -31,6 +41,10 @@
             return { valid: !takenEmails.includes(v.toLowerCase()), message: 'This email is already registered' }
         },
     ]
+
+    watchEffect(() => {
+        console.log(unref(value))
+    })
 </script>
 
 <template>
@@ -159,7 +173,9 @@
                         <c-autocomplete
                             v-model="value"
                             label="Check value"
-                            :items="takenEmails"
+                            :items="typed"
+                            title-key="name"
+                            value-key="email"
                             multiple
                             clearable
                         />

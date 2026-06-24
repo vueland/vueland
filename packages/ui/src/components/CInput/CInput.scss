@@ -4,12 +4,12 @@ $self: '.c-input';
 $input-details-height: 24px;
 
 .c-input {
-  --c-input-field-border-radius: var(--c-app-border-radius);
   --c-input-details-height: #{$input-details-height};
   --c-input-error-color: var(--c-app-error-color);
   --c-input-primary-color: var(--c-app-primary-color);
   --c-input-background-color: var(--c-app-surface-color);
   --c-input-disabled-color: var(--c-app-disabled-color);
+  --c-input-readonly-color: var(--c-app-disabled-color);
 
   display: flex;
   flex-direction: column;
@@ -40,6 +40,7 @@ $input-details-height: 24px;
   }
 
   &--readonly {
+    color: var(--c-input-primary-color);
   }
 
   &__field {

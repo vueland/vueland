@@ -12,8 +12,8 @@ import {
     ref,
 } from 'vue'
 
-import { $LIST_API_KEY } from '../../../constants'
-import { CList, CListItem } from '../../index'
+import { CList, CListItem } from '@/components/CList'
+import { $LIST_API_KEY } from '@/constants'
 
 type ListApi<T> = {
     select: (item: T) => void
@@ -50,10 +50,22 @@ describe('CList', () => {
         expect(wrapper.classes()).toContain('another-class')
     })
 
+    it('пробрасывает обычные attrs на root список', () => {
+        const wrapper = mount(CList, { attrs: { id: 'external-list' } })
+
+        expect(wrapper.attributes('id')).toBe('external-list')
+    })
+
     it('добавляет класс readonly', () => {
         const wrapper = mount(CList, { props: { readonly: true } })
 
         expect(wrapper.classes()).toContain('c-list--readonly')
+    })
+
+    it('добавляет класс disabled', () => {
+        const wrapper = mount(CList, { props: { disabled: true } })
+
+        expect(wrapper.classes()).toContain('c-list--disabled')
     })
 
     it('single режим: select обновляет modelValue одним значением', async () => {
@@ -270,6 +282,36 @@ describe('CList', () => {
         expect(model.value).toEqual([1, 3])
     })
 
+    it('multiple режим без mandatory: unselect удаляет последний item', async () => {
+        const model = ref<number[]>([1])
+
+        const Host = defineComponent({
+            setup() {
+                return () =>
+                    h(CList<number>, {
+                        multiple: true,
+                        modelValue: model.value,
+                        'onUpdate:modelValue': (v: any) => {
+                            model.value = v
+                        },
+                    }, {
+                        default: (slotProps: any) =>
+                            h('button', {
+                                class: 'unselect-btn',
+                                onClick: () => slotProps.unselect(1),
+                            }, 'unselect'),
+                    })
+            },
+        })
+
+        const wrapper = mount(Host)
+
+        await wrapper.find('.unselect-btn').trigger('click')
+        await nextTick()
+
+        expect(model.value).toEqual([])
+    })
+
     it('multiple режим: isActive корректно определяет активные элементы', async () => {
         const model = ref<number[]>([2, 4])
         let latestIsActive: ((item: number) => boolean) | undefined
@@ -360,6 +402,66 @@ describe('CList', () => {
         expect(model.value).toBe(5)
     })
 
+    it('disabled=true: select не изменяет modelValue', async () => {
+        const model = ref<number | null>(null)
+
+        const Host = defineComponent({
+            setup() {
+                return () =>
+                    h(CList<number>, {
+                        disabled: true,
+                        modelValue: model.value,
+                        'onUpdate:modelValue': (v: any) => {
+                            model.value = v
+                        },
+                    }, {
+                        default: (slotProps: any) =>
+                            h('button', {
+                                class: 'select-btn',
+                                onClick: () => slotProps.select(5),
+                            }, 'select'),
+                    })
+            },
+        })
+
+        const wrapper = mount(Host)
+
+        await wrapper.find('.select-btn').trigger('click')
+        await nextTick()
+
+        expect(model.value).toBe(null)
+    })
+
+    it('disabled=true: unselect не изменяет modelValue', async () => {
+        const model = ref<number | null>(5)
+
+        const Host = defineComponent({
+            setup() {
+                return () =>
+                    h(CList<number>, {
+                        disabled: true,
+                        modelValue: model.value,
+                        'onUpdate:modelValue': (v: any) => {
+                            model.value = v
+                        },
+                    }, {
+                        default: (slotProps: any) =>
+                            h('button', {
+                                class: 'unselect-btn',
+                                onClick: () => slotProps.unselect(5),
+                            }, 'unselect'),
+                    })
+            },
+        })
+
+        const wrapper = mount(Host)
+
+        await wrapper.find('.unselect-btn').trigger('click')
+        await nextTick()
+
+        expect(model.value).toBe(5)
+    })
+
     it('сравнивает reactive объекты через toRaw в single режиме', async () => {
         const sameRaw = { id: 1 }
         const model = ref(sameRaw)
@@ -422,25 +524,164 @@ describe('CList', () => {
         expect(model.value).toEqual([{ id: 999 }, item2])
     })
 
-    describe('role', () => {
-        it('без props role и selectable не устанавливает атрибут role', () => {
+    describe('item-key', () => {
+        it('itemKey как строка: isActive сопоставляет объекты по полю, а не по ссылке', async () => {
+            const model = ref<{ id: number; label: string }>({ id: 1, label: 'a' })
+            let latestIsActive: ((item: { id: number; label: string }) => boolean) | undefined
+
+            const Host = defineComponent({
+                setup() {
+                    return () =>
+                        h(CList<{ id: number; label: string }>, {
+                            itemKey: 'id',
+                            modelValue: model.value,
+                            'onUpdate:modelValue': (v: any) => {
+                                model.value = v
+                            },
+                        }, {
+                            default: (slotProps: any) => {
+                                latestIsActive = slotProps.isActive
+                                return h('div')
+                            },
+                        })
+                },
+            })
+
+            mount(Host)
+            await nextTick()
+
+            expect(latestIsActive?.({ id: 1, label: 'другой объект' })).toBe(true)
+            expect(latestIsActive?.({ id: 2, label: 'a' })).toBe(false)
+        })
+
+        it('itemKey как строка: unselect удаляет элемент по ключу в multiple режиме', async () => {
+            const model = ref([{ id: 1 }, { id: 2 }, { id: 3 }])
+
+            const Host = defineComponent({
+                setup() {
+                    return () =>
+                        h(CList<{ id: number }>, {
+                            multiple: true,
+                            itemKey: 'id',
+                            modelValue: model.value,
+                            'onUpdate:modelValue': (v: any) => {
+                                model.value = v
+                            },
+                        }, {
+                            default: (slotProps: any) =>
+                                h('button', {
+                                    class: 'unselect-btn',
+                                    onClick: () => slotProps.unselect({ id: 2 }),
+                                }, 'unselect'),
+                        })
+                },
+            })
+
+            const wrapper = mount(Host)
+
+            await wrapper.find('.unselect-btn').trigger('click')
+            await nextTick()
+
+            expect(model.value).toEqual([{ id: 1 }, { id: 3 }])
+        })
+
+        it('itemKey как строка: select не добавляет дубликат по ключу', async () => {
+            const model = ref([{ id: 1 }])
+
+            const Host = defineComponent({
+                setup() {
+                    return () =>
+                        h(CList<{ id: number }>, {
+                            multiple: true,
+                            itemKey: 'id',
+                            modelValue: model.value,
+                            'onUpdate:modelValue': (v: any) => {
+                                model.value = v
+                            },
+                        }, {
+                            default: (slotProps: any) =>
+                                h('button', {
+                                    class: 'select-btn',
+                                    onClick: () => slotProps.select({ id: 1 }),
+                                }, 'select'),
+                        })
+                },
+            })
+
+            const wrapper = mount(Host)
+
+            await wrapper.find('.select-btn').trigger('click')
+            await nextTick()
+
+            expect(model.value).toEqual([{ id: 1 }])
+        })
+
+        it('itemKey как функция: сопоставляет значения по результату функции', async () => {
+            const model = ref<{ code: string }>({ code: 'AB' })
+            let latestIsActive: ((item: { code: string }) => boolean) | undefined
+
+            const Host = defineComponent({
+                setup() {
+                    return () =>
+                        h(CList<{ code: string }>, {
+                            itemKey: (item: { code: string }) => item.code.toLowerCase(),
+                            modelValue: model.value,
+                            'onUpdate:modelValue': (v: any) => {
+                                model.value = v
+                            },
+                        }, {
+                            default: (slotProps: any) => {
+                                latestIsActive = slotProps.isActive
+                                return h('div')
+                            },
+                        })
+                },
+            })
+
+            mount(Host)
+            await nextTick()
+
+            expect(latestIsActive?.({ code: 'ab' })).toBe(true)
+            expect(latestIsActive?.({ code: 'cd' })).toBe(false)
+        })
+    })
+
+    describe('variant', () => {
+        it('по умолчанию variant=list не устанавливает явный role', () => {
             const wrapper = mount(CList)
             expect(wrapper.attributes('role')).toBeUndefined()
         })
 
-        it('selectable=true устанавливает role="listbox"', () => {
-            const wrapper = mount(CList, { props: { selectable: true } })
+        it('variant=list явно не устанавливает role', () => {
+            const wrapper = mount(CList, { props: { variant: 'list' } })
+            expect(wrapper.attributes('role')).toBeUndefined()
+        })
+
+        it('variant=listbox устанавливает role="listbox"', () => {
+            const wrapper = mount(CList, { props: { variant: 'listbox' } })
             expect(wrapper.attributes('role')).toBe('listbox')
         })
 
-        it('prop role="menu" устанавливает role="menu"', () => {
-            const wrapper = mount(CList, { props: { role: 'menu' } })
+        it('variant=menu устанавливает role="menu"', () => {
+            const wrapper = mount(CList, { props: { variant: 'menu' } })
             expect(wrapper.attributes('role')).toBe('menu')
         })
 
-        it('prop role имеет приоритет над selectable', () => {
-            const wrapper = mount(CList, { props: { role: 'menu', selectable: true } })
-            expect(wrapper.attributes('role')).toBe('menu')
+        it('disabled listbox устанавливает aria-disabled="true"', () => {
+            const wrapper = mount(CList, {
+                props: {
+                    disabled: true,
+                    variant: 'listbox',
+                },
+            })
+
+            expect(wrapper.attributes('aria-disabled')).toBe('true')
+        })
+
+        it('disabled variant=list не устанавливает aria-disabled', () => {
+            const wrapper = mount(CList, { props: { disabled: true } })
+
+            expect(wrapper.attributes('aria-disabled')).toBeUndefined()
         })
     })
 
@@ -449,7 +690,7 @@ describe('CList', () => {
             const wrapper = mount(CList, {
                 props: {
                     multiple: true,
-                    selectable: true,
+                    variant: 'listbox',
                 },
             })
 
@@ -457,20 +698,20 @@ describe('CList', () => {
         })
 
         it('без multiple в listbox не устанавливает aria-multiselectable', () => {
-            const wrapper = mount(CList, { props: { selectable: true } })
+            const wrapper = mount(CList, { props: { variant: 'listbox' } })
             expect(wrapper.attributes('aria-multiselectable')).toBeUndefined()
         })
 
-        it('без role/listbox не устанавливает aria-multiselectable', () => {
+        it('variant=list не устанавливает aria-multiselectable', () => {
             const wrapper = mount(CList, { props: { multiple: true } })
             expect(wrapper.attributes('aria-multiselectable')).toBeUndefined()
         })
 
-        it('role="menu" не устанавливает aria-multiselectable', () => {
+        it('variant=menu не устанавливает aria-multiselectable', () => {
             const wrapper = mount(CList, {
                 props: {
                     multiple: true,
-                    role: 'menu',
+                    variant: 'menu',
                 },
             })
 
@@ -483,7 +724,7 @@ describe('CList', () => {
             const wrapper = mount(CList<string>, {
                 props: {
                     modelValue: 'second',
-                    selectable: true,
+                    variant: 'listbox',
                 },
                 slots: {
                     default: () => [
@@ -498,10 +739,12 @@ describe('CList', () => {
             const items = wrapper.findAll('.c-list-item')
 
             expect(items[0].attributes('role')).toBe('option')
-            expect(items[0].attributes('id')).toMatch(/^c-list-.+-option-0$/)
+            expect(items[0].attributes('id')).toMatch(/^c-list-item-.+$/)
+            expect(items[0].attributes('tabindex')).toBe('-1')
             expect(items[0].attributes('aria-selected')).toBe('false')
             expect(items[1].attributes('role')).toBe('option')
-            expect(items[1].attributes('id')).toMatch(/^c-list-.+-option-1$/)
+            expect(items[1].attributes('id')).toMatch(/^c-list-item-.+$/)
+            expect(items[1].attributes('id')).not.toBe(items[0].attributes('id'))
             expect(items[1].attributes('aria-selected')).toBe('true')
         })
 
@@ -509,7 +752,7 @@ describe('CList', () => {
             const wrapper = mount(CList<string>, {
                 props: {
                     modelValue: 'action',
-                    role: 'menu',
+                    variant: 'menu',
                 },
                 slots: {
                     default: () => h(CListItem, { value: 'action' }, () => 'action'),
@@ -521,16 +764,191 @@ describe('CList', () => {
             const item = wrapper.find('.c-list-item')
 
             expect(item.attributes('role')).toBe('menuitem')
-            expect(item.attributes('id')).toMatch(/^c-list-.+-option-0$/)
+            expect(item.attributes('id')).toMatch(/^c-list-item-.+$/)
+            expect(item.attributes('tabindex')).toBe('-1')
             expect(item.attributes('aria-selected')).toBeUndefined()
         })
 
-        it('обновляет aria-activedescendant через активный item', async () => {
+        it('вне CList item не получает aria-контракт списка и не падает по click', async () => {
+            const wrapper = mount(CListItem, {
+                props: { value: 'outside' },
+            })
+
+            const item = wrapper.find('.c-list-item')
+
+            expect(item.attributes('role')).toBeUndefined()
+            expect(item.attributes('id')).toBeUndefined()
+
+            await item.trigger('click')
+        })
+
+        it('внутри variant=list item остаётся обычным li', async () => {
+            const model = ref<string | null>(null)
+            let activeId: string | undefined
+
+            const Host = defineComponent({
+                setup() {
+                    return () =>
+                        h(CList<string>, {
+                            modelValue: model.value,
+                            'onUpdate:modelValue': (v: any) => {
+                                model.value = v
+                            },
+                        }, {
+                            default: () => h(CListItem, {
+                                value: 'first',
+                                onActive: (id: string) => {
+                                    activeId = id
+                                },
+                            }, () => 'first'),
+                        })
+                },
+            })
+
+            const wrapper = mount(Host)
+            const item = wrapper.find('.c-list-item')
+
+            expect(item.attributes('role')).toBeUndefined()
+            expect(item.attributes('id')).toBeUndefined()
+            expect(item.attributes('tabindex')).toBeUndefined()
+
+            await item.trigger('mouseenter')
+            await item.trigger('click')
+            await nextTick()
+
+            expect(activeId).toBeUndefined()
+            expect(model.value).toBe(null)
+        })
+
+        it('в disabled listbox item сохраняет aria-контракт, но не становится интерактивным', async () => {
+            let activeId: string | undefined
+
             const wrapper = mount(CList<string>, {
-                props: { selectable: true },
+                props: {
+                    disabled: true,
+                    modelValue: 'first',
+                    variant: 'listbox',
+                },
+                slots: {
+                    default: () => h(CListItem, {
+                        value: 'first',
+                        onActive: (id: string) => {
+                            activeId = id
+                        },
+                    }, () => 'first'),
+                },
+            })
+
+            await nextTick()
+
+            const item = wrapper.find('.c-list-item')
+
+            expect(item.attributes('role')).toBe('option')
+            expect(item.attributes('id')).toMatch(/^c-list-item-.+$/)
+            expect(item.attributes('tabindex')).toBeUndefined()
+            expect(item.attributes('aria-selected')).toBe('true')
+
+            await item.trigger('mouseenter')
+            await nextTick()
+
+            expect(activeId).toBeUndefined()
+        })
+
+        it('disabled item получает aria-disabled и не становится интерактивным', async () => {
+            const model = ref<string | null>(null)
+            let activeId: string | undefined
+
+            const Host = defineComponent({
+                setup() {
+                    return () =>
+                        h(CList<string>, {
+                            variant: 'listbox',
+                            modelValue: model.value,
+                            'onUpdate:modelValue': (v: any) => {
+                                model.value = v
+                            },
+                        }, {
+                            default: () => h(CListItem, {
+                                disabled: true,
+                                value: 'first',
+                                onActive: (id: string) => {
+                                    activeId = id
+                                },
+                            }, () => 'first'),
+                        })
+                },
+            })
+
+            const wrapper = mount(Host)
+
+            await nextTick()
+
+            const item = wrapper.find('.c-list-item')
+
+            expect(item.classes()).toContain('c-list-item--disabled')
+            expect(item.attributes('role')).toBe('option')
+            expect(item.attributes('aria-disabled')).toBe('true')
+            expect(item.attributes('tabindex')).toBeUndefined()
+
+            await item.trigger('mouseenter')
+            await item.trigger('click')
+            await wrapper.trigger('keydown', { key: 'ArrowDown' })
+            await wrapper.trigger('keydown', { key: 'Enter' })
+            await nextTick()
+
+            expect(activeId).toBeUndefined()
+            expect(model.value).toBe(null)
+        })
+
+        it('item сам отдаёт active/inactive id по hover', async () => {
+            let activeId: string | undefined
+            let inactiveId: string | undefined
+
+            const wrapper = mount(CList<string>, {
+                props: { variant: 'listbox' },
+                slots: {
+                    default: () => h(CListItem, {
+                        value: 'first',
+                        onActive: (id: string) => {
+                            activeId = id
+                        },
+                        onInactive: (id: string) => {
+                            inactiveId = id
+                        },
+                    }, () => 'first'),
+                },
+            })
+
+            await nextTick()
+
+            const item = wrapper.find('.c-list-item')
+            const itemId = item.attributes('id')
+
+            await item.trigger('mouseenter')
+            await nextTick()
+
+            expect(activeId).toBe(itemId)
+            expect(wrapper.attributes('aria-activedescendant')).toBeUndefined()
+
+            await item.trigger('mouseleave')
+            await nextTick()
+
+            expect(inactiveId).toBe(itemId)
+        })
+
+        it('item отдаёт active id при клавиатурной навигации списка', async () => {
+            let activeId: string | undefined
+
+            const wrapper = mount(CList<string>, {
+                props: { variant: 'listbox' },
                 slots: {
                     default: () => [
-                        h(CListItem, { value: 'first' }, () => 'first'),
+                        h(CListItem, {
+                            value: 'first',
+                            onActive: (id: string) => {
+                                activeId = id
+                            },
+                        }, () => 'first'),
                         h(CListItem, { value: 'second' }, () => 'second'),
                     ],
                 },
@@ -542,34 +960,451 @@ describe('CList', () => {
 
             const firstItemId = wrapper.findAll('.c-list-item')[0].attributes('id')
 
-            expect(wrapper.attributes('aria-activedescendant')).toBe(firstItemId)
+            expect(activeId).toBe(firstItemId)
+        })
+
+        it('ArrowUp без активного элемента входит в список с конца', async () => {
+            let activeId: string | undefined
+
+            const wrapper = mount(CList<string>, {
+                props: { variant: 'listbox' },
+                slots: {
+                    default: () => [
+                        h(CListItem, { value: 'first' }, () => 'first'),
+                        h(CListItem, { value: 'second' }, () => 'second'),
+                        h(CListItem, {
+                            value: 'third',
+                            onActive: (id: string) => {
+                                activeId = id
+                            },
+                        }, () => 'third'),
+                    ],
+                },
+            })
+
+            await nextTick()
+            await wrapper.trigger('keydown', { key: 'ArrowUp' })
+            await nextTick()
+
+            const lastItemId = wrapper.findAll('.c-list-item')[2].attributes('id')
+
+            expect(activeId).toBe(lastItemId)
+        })
+
+        it('клавиатурная навигация пропускает disabled items', async () => {
+            const model = ref<string | null>(null)
+            let activeId: string | undefined
+
+            const Host = defineComponent({
+                setup() {
+                    return () =>
+                        h(CList<string>, {
+                            variant: 'listbox',
+                            modelValue: model.value,
+                            'onUpdate:modelValue': (v: any) => {
+                                model.value = v
+                            },
+                        }, {
+                            default: () => [
+                                h(CListItem, {
+                                    disabled: true,
+                                    value: 'first',
+                                }, () => 'first'),
+                                h(CListItem, {
+                                    value: 'second',
+                                    onActive: (id: string) => {
+                                        activeId = id
+                                    },
+                                }, () => 'second'),
+                            ],
+                        })
+                },
+            })
+
+            const wrapper = mount(Host)
+
+            await nextTick()
+            await wrapper.trigger('keydown', { key: 'ArrowDown' })
+            await wrapper.trigger('keydown', { key: 'Enter' })
+            await nextTick()
+
+            const enabledItem = wrapper.findAll('.c-list-item')[1]
+
+            expect(activeId).toBe(enabledItem.attributes('id'))
+            expect(model.value).toBe('second')
+        })
+
+        it('Home/End переводят active item к началу и концу списка', async () => {
+            const activeIds: string[] = []
+
+            const wrapper = mount(CList<string>, {
+                props: { variant: 'listbox' },
+                slots: {
+                    default: () => [
+                        h(CListItem, {
+                            value: 'first',
+                            onActive: (id: string) => {
+                                activeIds.push(id)
+                            },
+                        }, () => 'first'),
+                        h(CListItem, { value: 'second' }, () => 'second'),
+                        h(CListItem, {
+                            value: 'third',
+                            onActive: (id: string) => {
+                                activeIds.push(id)
+                            },
+                        }, () => 'third'),
+                    ],
+                },
+            })
+
+            await nextTick()
+            await wrapper.trigger('keydown', { key: 'End' })
+            await nextTick()
+
+            const items = wrapper.findAll('.c-list-item')
+
+            expect(activeIds.at(-1)).toBe(items[2].attributes('id'))
+
+            await wrapper.trigger('keydown', { key: 'Home' })
+            await nextTick()
+
+            expect(activeIds.at(-1)).toBe(items[0].attributes('id'))
+        })
+
+        it('Enter/Space переключают текущий active item в listbox', async () => {
+            const model = ref<string | null>(null)
+
+            const Host = defineComponent({
+                setup() {
+                    return () =>
+                        h(CList<string>, {
+                            variant: 'listbox',
+                            modelValue: model.value,
+                            'onUpdate:modelValue': (v: any) => {
+                                model.value = v
+                            },
+                        }, {
+                            default: () => [
+                                h(CListItem, { value: 'first' }, () => 'first'),
+                                h(CListItem, { value: 'second' }, () => 'second'),
+                            ],
+                        })
+                },
+            })
+
+            const wrapper = mount(Host)
+
+            await nextTick()
+            await wrapper.trigger('keydown', { key: 'ArrowDown' })
+            await wrapper.trigger('keydown', { key: 'Enter' })
+            await nextTick()
+
+            expect(model.value).toBe('first')
+
+            await wrapper.trigger('keydown', { key: ' ' })
+            await nextTick()
+
+            expect(model.value).toBe(null)
+        })
+
+        it('typeahead фокусирует первый подходящий enabled item', async () => {
+            let activeId: string | undefined
+
+            const wrapper = mount(CList<string>, {
+                props: { variant: 'listbox' },
+                slots: {
+                    default: () => [
+                        h(CListItem, {
+                            disabled: true,
+                            value: 'apple',
+                        }, () => 'Apple'),
+                        h(CListItem, {
+                            value: 'apricot',
+                            onActive: (id: string) => {
+                                activeId = id
+                            },
+                        }, () => 'Apricot'),
+                        h(CListItem, { value: 'banana' }, () => 'Banana'),
+                    ],
+                },
+            })
+
+            await nextTick()
+            await wrapper.trigger('keydown', { key: 'a' })
+            await nextTick()
+
+            const apricotItem = wrapper.findAll('.c-list-item')[1]
+
+            expect(activeId).toBe(apricotItem.attributes('id'))
+        })
+
+        it('Enter активирует menu item через click без выбора значения', async () => {
+            const model = ref<string | null>(null)
+            let clicks = 0
+
+            const Host = defineComponent({
+                setup() {
+                    return () =>
+                        h(CList<string>, {
+                            variant: 'menu',
+                            modelValue: model.value,
+                            'onUpdate:modelValue': (v: any) => {
+                                model.value = v
+                            },
+                        }, {
+                            default: () => h(CListItem, {
+                                value: 'action',
+                                onClick: () => {
+                                    clicks += 1
+                                },
+                            }, () => 'action'),
+                        })
+                },
+            })
+
+            const wrapper = mount(Host)
+
+            await nextTick()
+            await wrapper.trigger('keydown', { key: 'ArrowDown' })
+            await wrapper.trigger('keydown', { key: 'Enter' })
+            await nextTick()
+
+            expect(clicks).toBe(1)
+            expect(model.value).toBe(null)
+        })
+
+        it('disabled listbox не реагирует на click и клавиатуру', async () => {
+            const model = ref<string | null>(null)
+            let activeId: string | undefined
+
+            const Host = defineComponent({
+                setup() {
+                    return () =>
+                        h(CList<string>, {
+                            disabled: true,
+                            variant: 'listbox',
+                            modelValue: model.value,
+                            'onUpdate:modelValue': (v: any) => {
+                                model.value = v
+                            },
+                        }, {
+                            default: () => h(CListItem, {
+                                value: 'first',
+                                onActive: (id: string) => {
+                                    activeId = id
+                                },
+                            }, () => 'first'),
+                        })
+                },
+            })
+
+            const wrapper = mount(Host)
+            const item = wrapper.find('.c-list-item')
+
+            await nextTick()
+            await item.trigger('click')
+            await wrapper.trigger('keydown', { key: 'ArrowDown' })
+            await wrapper.trigger('keydown', { key: 'Enter' })
+            await nextTick()
+
+            expect(activeId).toBeUndefined()
+            expect(model.value).toBe(null)
+        })
+
+        it('disabled listbox реактивно включает и выключает интерактивность', async () => {
+            const disabled = ref(true)
+            const model = ref<string | null>(null)
+            let activeId: string | undefined
+
+            const Host = defineComponent({
+                setup() {
+                    return () =>
+                        h(CList<string>, {
+                            disabled: disabled.value,
+                            variant: 'listbox',
+                            modelValue: model.value,
+                            'onUpdate:modelValue': (v: any) => {
+                                model.value = v
+                            },
+                        }, {
+                            default: () => h(CListItem, {
+                                value: 'first',
+                                onActive: (id: string) => {
+                                    activeId = id
+                                },
+                            }, () => 'first'),
+                        })
+                },
+            })
+
+            const wrapper = mount(Host)
+
+            await nextTick()
+
+            let item = wrapper.find('.c-list-item')
+
+            expect(wrapper.classes()).toContain('c-list--disabled')
+            expect(wrapper.attributes('aria-disabled')).toBe('true')
+            expect(wrapper.attributes('tabindex')).toBeUndefined()
+            expect(item.attributes('tabindex')).toBeUndefined()
+
+            await item.trigger('mouseenter')
+            await item.trigger('click')
+            await wrapper.trigger('keydown', { key: 'ArrowDown' })
+            await wrapper.trigger('keydown', { key: 'Enter' })
+            await nextTick()
+
+            expect(activeId).toBeUndefined()
+            expect(model.value).toBe(null)
+
+            disabled.value = false
+            await nextTick()
+
+            item = wrapper.find('.c-list-item')
+            const itemId = item.attributes('id')
+
+            expect(wrapper.classes()).not.toContain('c-list--disabled')
+            expect(wrapper.attributes('aria-disabled')).toBeUndefined()
+            expect(wrapper.attributes('tabindex')).toBe('0')
+            expect(item.attributes('tabindex')).toBe('-1')
+
+            await wrapper.trigger('keydown', { key: 'ArrowDown' })
+            await wrapper.trigger('keydown', { key: 'Enter' })
+            await nextTick()
+
+            expect(activeId).toBe(itemId)
+            expect(model.value).toBe('first')
+
+            activeId = undefined
+            model.value = null
+            await nextTick()
+
+            await item.trigger('click')
+            await nextTick()
+
+            expect(model.value).toBe('first')
+
+            activeId = undefined
+            model.value = null
+            disabled.value = true
+            await nextTick()
+
+            item = wrapper.find('.c-list-item')
+
+            expect(wrapper.classes()).toContain('c-list--disabled')
+            expect(wrapper.attributes('aria-disabled')).toBe('true')
+            expect(wrapper.attributes('tabindex')).toBeUndefined()
+            expect(item.attributes('tabindex')).toBeUndefined()
+
+            await item.trigger('mouseenter')
+            await item.trigger('click')
+            await wrapper.trigger('keydown', { key: 'ArrowDown' })
+            await wrapper.trigger('keydown', { key: 'Enter' })
+            await nextTick()
+
+            expect(activeId).toBeUndefined()
+            expect(model.value).toBe(null)
+        })
+
+        it('multiple listbox: Ctrl+A выбирает только enabled items', async () => {
+            const model = ref<string[]>([])
+
+            const Host = defineComponent({
+                setup() {
+                    return () =>
+                        h(CList<string>, {
+                            multiple: true,
+                            variant: 'listbox',
+                            modelValue: model.value,
+                            'onUpdate:modelValue': (v: any) => {
+                                model.value = v
+                            },
+                        }, {
+                            default: () => [
+                                h(CListItem, {
+                                    disabled: true,
+                                    value: 'first',
+                                }, () => 'first'),
+                                h(CListItem, { value: 'second' }, () => 'second'),
+                                h(CListItem, { value: 'third' }, () => 'third'),
+                            ],
+                        })
+                },
+            })
+
+            const wrapper = mount(Host)
+
+            await nextTick()
+            await wrapper.trigger('keydown', {
+                ctrlKey: true,
+                key: 'a',
+            })
+            await nextTick()
+
+            expect(model.value).toEqual(['second', 'third'])
+        })
+
+        it('multiple listbox: Shift+Arrow расширяет выбор по enabled диапазону', async () => {
+            const model = ref<string[]>([])
+
+            const Host = defineComponent({
+                setup() {
+                    return () =>
+                        h(CList<string>, {
+                            multiple: true,
+                            variant: 'listbox',
+                            modelValue: model.value,
+                            'onUpdate:modelValue': (v: any) => {
+                                model.value = v
+                            },
+                        }, {
+                            default: () => [
+                                h(CListItem, { value: 'first' }, () => 'first'),
+                                h(CListItem, {
+                                    disabled: true,
+                                    value: 'second',
+                                }, () => 'second'),
+                                h(CListItem, { value: 'third' }, () => 'third'),
+                            ],
+                        })
+                },
+            })
+
+            const wrapper = mount(Host)
+
+            await nextTick()
+            await wrapper.trigger('keydown', { key: 'ArrowDown' })
+            await wrapper.trigger('keydown', { key: ' ' })
+            await wrapper.trigger('keydown', {
+                key: 'ArrowDown',
+                shiftKey: true,
+            })
+            await nextTick()
+
+            expect(model.value).toEqual(['first', 'third'])
         })
     })
 
     describe('tabindex', () => {
-        it('без role и selectable не устанавливает tabindex', () => {
+        it('variant=list не устанавливает tabindex', () => {
             const wrapper = mount(CList)
             expect(wrapper.attributes('tabindex')).toBeUndefined()
         })
 
-        it('selectable=true устанавливает tabindex="-1"', () => {
-            const wrapper = mount(CList, { props: { selectable: true } })
-            expect(wrapper.attributes('tabindex')).toBe('-1')
+        it('variant=listbox устанавливает tabindex="0" (доступен с клавиатуры)', () => {
+            const wrapper = mount(CList, { props: { variant: 'listbox' } })
+            expect(wrapper.attributes('tabindex')).toBe('0')
         })
 
-        it('role="listbox" устанавливает tabindex="-1"', () => {
-            const wrapper = mount(CList, { props: { role: 'listbox' } })
-            expect(wrapper.attributes('tabindex')).toBe('-1')
-        })
-
-        it('role="menu" устанавливает tabindex="-1"', () => {
-            const wrapper = mount(CList, { props: { role: 'menu' } })
-            expect(wrapper.attributes('tabindex')).toBe('-1')
+        it('variant=menu устанавливает tabindex="0" (доступен с клавиатуры)', () => {
+            const wrapper = mount(CList, { props: { variant: 'menu' } })
+            expect(wrapper.attributes('tabindex')).toBe('0')
         })
 
         it('кастомный tabindex через attrs перекрывает вычисленный', () => {
             const wrapper = mount(CList, {
-                props: { selectable: true },
+                props: { variant: 'listbox' },
                 attrs: { tabindex: 0 },
             })
             expect(wrapper.attributes('tabindex')).toBe('0')
