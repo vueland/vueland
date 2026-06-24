@@ -1,21 +1,15 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "lib": ["ES2022", "DOM"],
-    "noEmit": false,
-    "target": "ES2022",
-    "moduleResolution": "Node",
-    "declaration": true,
-    "emitDeclarationOnly": false,
-    "declarationMap": true,
-    "outDir": "dist/temp-types"
-  },
-  "include": [
-    "src",
-    "src/**/*.json",
-    "env.d.ts",
-  ],
-  "exclude": [
-    "**/*.spec.ts",
-  ]
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "lib": ["ES2022", "DOM"],
+        "noEmit": false,
+        "target": "ES2022",
+        "moduleResolution": "Node",
+        "declaration": true,
+        "emitDeclarationOnly": false,
+        "declarationMap": true,
+        "outDir": "dist/temp-types"
+    },
+    "include": ["src", "src/**/*.json", "env.d.ts"],
+    "exclude": ["**/*.spec.ts"]
 }

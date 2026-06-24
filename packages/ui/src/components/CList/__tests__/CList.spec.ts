@@ -13,7 +13,7 @@ import {
 } from 'vue'
 
 import { $LIST_API_KEY } from '../../../constants'
-import { CList } from '../../index'
+import { CList, CListItem } from '../../index'
 
 type ListApi<T> = {
     select: (item: T) => void
@@ -445,14 +445,104 @@ describe('CList', () => {
     })
 
     describe('aria-multiselectable', () => {
-        it('multiple=true устанавливает aria-multiselectable="true"', () => {
-            const wrapper = mount(CList, { props: { multiple: true } })
+        it('multiple=true в listbox устанавливает aria-multiselectable="true"', () => {
+            const wrapper = mount(CList, {
+                props: {
+                    multiple: true,
+                    selectable: true,
+                },
+            })
+
             expect(wrapper.attributes('aria-multiselectable')).toBe('true')
         })
 
-        it('без multiple устанавливает aria-multiselectable="false"', () => {
-            const wrapper = mount(CList)
-            expect(wrapper.attributes('aria-multiselectable')).toBe('false')
+        it('без multiple в listbox не устанавливает aria-multiselectable', () => {
+            const wrapper = mount(CList, { props: { selectable: true } })
+            expect(wrapper.attributes('aria-multiselectable')).toBeUndefined()
+        })
+
+        it('без role/listbox не устанавливает aria-multiselectable', () => {
+            const wrapper = mount(CList, { props: { multiple: true } })
+            expect(wrapper.attributes('aria-multiselectable')).toBeUndefined()
+        })
+
+        it('role="menu" не устанавливает aria-multiselectable', () => {
+            const wrapper = mount(CList, {
+                props: {
+                    multiple: true,
+                    role: 'menu',
+                },
+            })
+
+            expect(wrapper.attributes('aria-multiselectable')).toBeUndefined()
+        })
+    })
+
+    describe('item aria', () => {
+        it('в listbox item получает option, id и aria-selected', async () => {
+            const wrapper = mount(CList<string>, {
+                props: {
+                    modelValue: 'second',
+                    selectable: true,
+                },
+                slots: {
+                    default: () => [
+                        h(CListItem, { value: 'first' }, () => 'first'),
+                        h(CListItem, { value: 'second' }, () => 'second'),
+                    ],
+                },
+            })
+
+            await nextTick()
+
+            const items = wrapper.findAll('.c-list-item')
+
+            expect(items[0].attributes('role')).toBe('option')
+            expect(items[0].attributes('id')).toMatch(/^c-list-.+-option-0$/)
+            expect(items[0].attributes('aria-selected')).toBe('false')
+            expect(items[1].attributes('role')).toBe('option')
+            expect(items[1].attributes('id')).toMatch(/^c-list-.+-option-1$/)
+            expect(items[1].attributes('aria-selected')).toBe('true')
+        })
+
+        it('в menu item получает menuitem без aria-selected', async () => {
+            const wrapper = mount(CList<string>, {
+                props: {
+                    modelValue: 'action',
+                    role: 'menu',
+                },
+                slots: {
+                    default: () => h(CListItem, { value: 'action' }, () => 'action'),
+                },
+            })
+
+            await nextTick()
+
+            const item = wrapper.find('.c-list-item')
+
+            expect(item.attributes('role')).toBe('menuitem')
+            expect(item.attributes('id')).toMatch(/^c-list-.+-option-0$/)
+            expect(item.attributes('aria-selected')).toBeUndefined()
+        })
+
+        it('обновляет aria-activedescendant через активный item', async () => {
+            const wrapper = mount(CList<string>, {
+                props: { selectable: true },
+                slots: {
+                    default: () => [
+                        h(CListItem, { value: 'first' }, () => 'first'),
+                        h(CListItem, { value: 'second' }, () => 'second'),
+                    ],
+                },
+            })
+
+            await nextTick()
+            await wrapper.trigger('keydown', { key: 'ArrowDown' })
+            await nextTick()
+
+            const firstItemId = wrapper.findAll('.c-list-item')[0].attributes('id')
+
+            expect(wrapper.attributes('aria-activedescendant')).toBe(firstItemId)
         })
     })
 

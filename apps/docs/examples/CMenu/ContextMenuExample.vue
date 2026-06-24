@@ -2,8 +2,11 @@
     import { ref } from 'vue'
 
     const open = ref(false)
+
     const x = ref(0)
+
     const y = ref(0)
+
     const msg = ref('')
 
     const files = [
@@ -15,6 +18,8 @@
         { icon: 'fas:key',    name: '.env',           color: '#ef5350' },
     ]
 
+    let timer: ReturnType<typeof setTimeout>
+
     function onContextMenu(e: MouseEvent) {
         open.value = false
         setTimeout(() => {
@@ -24,7 +29,6 @@
         }, 0)
     }
 
-    let timer: ReturnType<typeof setTimeout>
     function toast(text: string) {
         msg.value = text
         clearTimeout(timer)

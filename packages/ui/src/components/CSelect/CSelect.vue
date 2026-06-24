@@ -5,21 +5,18 @@
         unref
     } from 'vue'
 
-    import {
-        CField,
-        CInput,
-        CMenu
-    } from '@/components'
-    import {
-        useKeyboard,
-        useNormalizedItems,
-        useSelectedChips
-    } from '@/composables'
+    import { CField } from '@/components/CField'
+    import { CInput } from '@/components/CInput'
+    import { CMenu } from '@/components/CMenu'
+    import { useKeyboard } from '@/composables/use-keyboard'
+    import { useNormalizedItems } from '@/composables/use-normalized-items'
+    import { useSelectedChips } from '@/composables/use-selected-chips'
     import { IconAliases } from '@/enums'
 
     import type { CSelectProps, CSelectSlots } from './types'
 
     defineOptions({ name: 'CSelect' })
+
     const props = defineProps<CSelectProps<T>>()
 
     defineSlots<CSelectSlots<T>>()
@@ -30,13 +27,13 @@
     })
 
     const inputRef = shallowRef()
+
     const menuRef = shallowRef()
+
     const menuListRef = shallowRef()
 
-    const ariaControls = computed(() => unref(menuListRef)?.listId)
-    const ariaActiveDescendant = computed(() => unref(menuListRef)?.activeDescendant)
-
     const normalizedItems = useNormalizedItems(props)
+
     const {
         chips: selectedItems,
         hasValue,
@@ -51,6 +48,10 @@
         ArrowDown: () => unref(menuListRef)?.navigateDown(),
         ArrowUp: () => unref(menuListRef)?.navigateUp(),
     }, { prevent: ['ArrowDown', 'ArrowUp'] })
+
+    const ariaControls = computed(() => unref(menuListRef)?.listId)
+
+    const descendant = computed(() => unref(menuListRef)?.descendant)
 
     function onBlur() {
         unref(inputRef).blur()
@@ -73,7 +74,7 @@
         validate-on="blur"
         role="combobox"
         :aria-controls="ariaControls"
-        :aria-activedescendant="ariaActiveDescendant"
+        :aria-activedescendant="descendant"
     >
         <template #field="field">
             <c-menu
@@ -177,4 +178,3 @@
         </template>
     </c-input>
 </template>
-

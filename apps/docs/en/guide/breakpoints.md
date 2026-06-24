@@ -276,7 +276,7 @@ All properties are reactive `Ref<boolean>`.
 | `display.mdAndUp` | width ≥ md |
 | `display.lgAndUp` | width ≥ lg |
 | `display.xlAndUp` | width ≥ xl |
-| `display.smAndLess` | sm < width ≤ md |
-| `display.mdAndLess` | md < width ≤ lg |
-| `display.lgAndLess` | lg < width ≤ xl |
-| `display.xlAndLess` | xl < width ≤ xxl |
+| `display.smAndLess` | xs < width ≤ sm |
+| `display.mdAndLess` | sm < width ≤ md |
+| `display.lgAndLess` | md < width ≤ lg |
+| `display.xlAndLess` | lg < width ≤ xl |

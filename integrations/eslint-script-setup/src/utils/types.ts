@@ -33,9 +33,9 @@ export const CATEGORY_ORDER: NodeCategory[] = [
 export const MACRO_APIS = new Set([
     'defineProps',
     'defineEmits',
-    'defineExpose',
     'defineOptions',
     'defineSlots',
+    'defineModel',
     'withDefaults',
 ])
 

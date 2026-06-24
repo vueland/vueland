@@ -19,11 +19,18 @@
 
     defineSlots<CSelectControlSlots>()
 
+    defineExpose({
+        checkOn,
+        checkOff,
+        toggle,
+    })
+
     const model = defineModel<T | T[] | boolean>({ default: false })
 
     const { isArray } = Array
 
     const isInArray = computed(() => isArray(modelValue) && modelValue.includes(value))
+
     const isEqual = computed(() => value === model.value)
 
     const checked = computed(() => {
@@ -63,12 +70,6 @@
         toggle,
         checkOn,
         checkOff,
-    })
-
-    defineExpose({
-        checkOn,
-        checkOff,
-        toggle,
     })
 </script>
 

@@ -9,7 +9,7 @@
 
     import { useOverlayStack } from '@/composables/use-overlay-stack'
 
-    import type { COverlayProps, COverlaySlots } from './tyoes'
+    import type { COverlayProps, COverlaySlots } from './types'
 
     defineOptions({
         name: 'COverlay',
@@ -17,13 +17,14 @@
     })
 
     const props = defineProps<COverlayProps>()
+
     defineSlots<COverlaySlots>()
 
     const model = defineModel<boolean>({ default: false })
 
-    const { register, unregister } = useOverlayStack()
-
     const zIndex = shallowRef()
+
+    const { register, unregister } = useOverlayStack()
 
     const target = computed(() => props.to ?? 'body')
 

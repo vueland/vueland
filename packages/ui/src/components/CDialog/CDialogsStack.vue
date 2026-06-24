@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { COverlay } from '@/components/COverlay'
-    import { useDialogsStack } from '@/composables'
+    import { useDialogsStack } from '@/composables/use-dialogs-stack'
 
     const { current } = useDialogsStack()
 </script>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { provide } from 'vue'
 
-    import { useApplicationScroll } from '@/composables'
+    import { useApplicationScroll } from '@/composables/use-application-scroll'
     import { $APP_API_KEY } from '@/constants'
 
     import type { CAppSlots } from './types'
@@ -15,15 +15,15 @@
         classes,
         getScrollTop,
         getScrollLeft,
-        blockScroll,
-        unblockScroll
+        lockScroll,
+        unlockScroll
     } = useApplicationScroll()
 
     provide($APP_API_KEY, {
         getScrollTop,
         getScrollLeft,
-        blockScroll,
-        unblockScroll,
+        lockScroll,
+        unlockScroll,
     })
 </script>
 

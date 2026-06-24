@@ -1,8 +1,11 @@
-@use "../maps/elevations-map" as *;
-@use "sass:map";
+@use '../maps/elevations-map' as *;
+@use 'sass:map';
 
 @mixin elevation($z, $important: false) {
-  box-shadow: map.get($shadow-key-umbra, $z), map.get($shadow-key-penumbra, $z), map.get($shadow-key-ambient, $z) if(sass($important): !important)
+  box-shadow:
+    map.get($shadow-key-umbra, $z),
+    map.get($shadow-key-penumbra, $z),
+    map.get($shadow-key-ambient, $z) if(sass($important): !important);
 }
 
 $z: 24;

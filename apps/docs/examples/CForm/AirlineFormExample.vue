@@ -2,56 +2,71 @@
     import { computed,ref } from 'vue'
 
     const formRef = ref()
+
     const currentStep = ref(0)
+
     const submitting = ref(false)
 
-    const steps = ['Flight', 'Passenger', 'Payment']
-    const classes = ['Economy', 'Business', 'First']
-    const classPrices: Record<string, number> = { Economy: 299, Business: 799, First: 1499 }
-
-    const today = new Date()
     const flight = ref<{ from: string; to: string; departure: Date | null; passengers: string; class: string }>(
         { from: '', to: '', departure: null, passengers: '1', class: 'Economy' },
     )
+
     const passenger = ref({ firstName: '', lastName: '', passport: '', email: '', phone: '' })
+
     const payment = ref({ card: '', expiry: '', cvv: '' })
 
-    const totalPrice = computed(() =>
-        (classPrices[flight.value.class] * Number(flight.value.passengers)).toLocaleString(),
-    )
+    const steps = ['Flight', 'Passenger', 'Payment']
+
+    const classes = ['Economy', 'Business', 'First']
+
+    const classPrices: Record<string, number> = { Economy: 299, Business: 799, First: 1499 }
+
+    const today = new Date()
 
     const requiredRule = [(v: string) => ({ valid: !!v?.trim(), message: 'Required' })]
+
     const departureDateRule = [
         (v: Date | null) => ({ valid: !!v, message: 'Select departure date' }),
     ]
+
     const passengersRule = [
         (v: string) => ({ valid: !!v, message: 'Required' }),
         (v: string) => ({ valid: Number(v) >= 1 && Number(v) <= 9, message: '1–9 passengers' }),
     ]
+
     const passportRule = [
         (v: string) => ({ valid: !!v?.trim(), message: 'Required' }),
         (v: string) => ({ valid: /^[A-Z0-9]{6,9}$/.test(v.toUpperCase()), message: 'Invalid passport' }),
     ]
+
     const emailRules = [
         (v: string) => ({ valid: !!v, message: 'Required' }),
         (v: string) => ({ valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), message: 'Invalid email' }),
     ]
+
     const phoneRules = [
         (v: string) => ({ valid: !!v, message: 'Required' }),
         (v: string) => ({ valid: /^\+?[\d\s\-()]{7,}$/.test(v), message: 'Invalid phone' }),
     ]
+
     const cardRule = [
         (v: string) => ({ valid: !!v, message: 'Required' }),
         (v: string) => ({ valid: v.replace(/\s/g, '').length === 16, message: '16-digit card number' }),
     ]
+
     const expiryRule = [
         (v: string) => ({ valid: !!v, message: 'Required' }),
         (v: string) => ({ valid: /^\d{2}\/\d{2}$/.test(v), message: 'MM/YY format' }),
     ]
+
     const cvvRule = [
         (v: string) => ({ valid: !!v, message: 'Required' }),
         (v: string) => ({ valid: /^\d{3,4}$/.test(v), message: '3–4 digits' }),
     ]
+
+    const totalPrice = computed(() =>
+        (classPrices[flight.value.class] * Number(flight.value.passengers)).toLocaleString(),
+    )
 
     async function handleNext(validate: () => Promise<boolean>) {
         const valid = await validate()

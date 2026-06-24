@@ -6,12 +6,11 @@
         watch
     } from 'vue'
 
-    import {
-        CField,
-        CInput,
-        CMenu
-    } from '@/components'
-    import { useAutocomplete, useKeyboard } from '@/composables'
+    import { CField } from '@/components/CField'
+    import { CInput } from '@/components/CInput'
+    import { CMenu } from '@/components/CMenu'
+    import { useAutocomplete } from '@/composables/use-autocomplete'
+    import { useKeyboard } from '@/composables/use-keyboard'
     import { IconAliases } from '@/enums'
 
     import type { CAutocompleteProps, CAutocompleteSlots } from './types'
@@ -31,6 +30,14 @@
         set: (val) => val,
     })
 
+    const inputRef = shallowRef()
+
+    const fieldRef = shallowRef()
+
+    const menuRef = shallowRef()
+
+    const menuListRef = shallowRef()
+
     const {
         inputValue,
         searchItems,
@@ -38,14 +45,6 @@
         hasValue,
         select
     } = useAutocomplete(props)
-
-    const inputRef = shallowRef()
-    const fieldRef = shallowRef()
-    const menuRef = shallowRef()
-    const menuListRef = shallowRef()
-
-    const ariaControls = computed(() => unref(menuListRef)?.listId)
-    const ariaActiveDescendant = computed(() => unref(menuListRef)?.activeDescendant)
 
     const { onKeydown } = useKeyboard({
         Backspace: () => {
@@ -68,6 +67,10 @@
         ArrowDown: () => unref(menuListRef)?.navigateDown(),
         ArrowUp: () => unref(menuListRef)?.navigateUp(),
     }, { prevent: ['ArrowDown', 'ArrowUp'] })
+
+    const ariaControls = computed(() => unref(menuListRef)?.listId)
+
+    const descendant = computed(() => unref(menuListRef)?.descendant)
 
     function clear() {
         model.value = props.multiple ? [] : undefined
@@ -95,7 +98,7 @@
         v-bind="$attrs"
         role="combobox"
         :aria-controls="ariaControls"
-        :aria-activedescendant="ariaActiveDescendant"
+        :aria-activedescendant="descendant"
     >
         <template #field="field">
             <c-menu
@@ -137,14 +140,17 @@
                                 @keydown="onKeydown"
                                 @clear="clear"
                             >
-                                <template #prepend>
+                                <template
+                                    v-if="$slots.prepend"
+                                    #prepend
+                                >
                                     <slot name="prepend"></slot>
                                 </template>
                                 <template #append>
                                     <slot name="append">
                                         <c-icon
                                             :name="IconAliases.DROPDOWN"
-                                            size="20"
+                                            size="24"
                                         />
                                     </slot>
                                 </template>
@@ -153,13 +159,13 @@
                                         name="chips"
                                         :items="chips"
                                     >
-                                        <div
-                                            v-for="(it, i) in chips"
+                                        <c-chip
+                                            v-for="it in chips"
                                             :key="it"
-                                            class="c-autocomplete__item"
+                                            class="c-autocomplete__chip"
                                         >
-                                            {{ `${it}` + (i + 1 !== chips.length ? ',' : '') }}
-                                        </div>
+                                            {{ it }}
+                                        </c-chip>
                                     </slot>
                                 </template>
                             </c-field>

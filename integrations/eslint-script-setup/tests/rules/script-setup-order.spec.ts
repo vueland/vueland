@@ -94,6 +94,18 @@ describe('script-setup-order', () => {
         })
     })
 
+    it('valid: defineExpose может ссылаться на локальные объявления', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [
+                {
+                    filename: 'Component.vue',
+                    code: 'const el = ref()\nfunction focus() {}\ndefineExpose({ el, focus })',
+                },
+            ],
+            invalid: [],
+        })
+    })
+
     it('valid: кастомный order без watchEffect — категория игнорируется', () => {
         tester.run('script-setup-order', scriptSetupOrder, {
             valid: [
@@ -118,6 +130,20 @@ describe('script-setup-order', () => {
                     filename: 'Component.vue',
                     code: 'const router = useRouter()\ndefineProps({ count: Number })',
                     output: 'defineProps({ count: Number })\n\nconst router = useRouter()',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    it('invalid: defineModel после reactive — autofix переставляет как макрос', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    code: 'const count = ref(0)\nconst model = defineModel()',
+                    output: 'const model = defineModel()\n\nconst count = ref(0)',
                     errors: [{ messageId: 'wrongOrder' }],
                 },
             ],

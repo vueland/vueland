@@ -1,11 +1,8 @@
 import type { VNode } from 'vue'
 
 import type { CInputSlots } from '@/components/CInput'
-import type {
-    IterableItemsProps,
-    NormalizedItem,
-    SelectableProps,
-} from '@/composables'
+import type { IterableItemsProps, NormalizedItem } from '@/composables/use-normalized-items'
+import type { SelectableProps } from '@/composables/use-selected-chips'
 
 export type CSelectProps<T> = SelectableProps<T>
     & IterableItemsProps<T>

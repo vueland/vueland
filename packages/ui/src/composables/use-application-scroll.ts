@@ -8,14 +8,13 @@ import {
 import { convertToUnit, IN_BROWSER } from '@/utils'
 
 export function useApplicationScroll() {
-    const state = shallowReactive({ blockScroll: false })
-
+    const state = shallowReactive({ lock: false })
     const appRef = shallowRef<HTMLElement>()
 
     let savedScrollTop = 0
     let savedScrollLeft = 0
 
-    const classes = computed(() => ({ 'c-app--block-scroll': state.blockScroll }))
+    const classes = computed(() => ({ 'c-app--block-scroll': state.lock }))
 
     function getScrollTop() {
         if (!IN_BROWSER) return 0
@@ -27,7 +26,7 @@ export function useApplicationScroll() {
         return window.scrollX
     }
 
-    function blockScroll() {
+    function lockScroll() {
         savedScrollTop = getScrollTop()
         savedScrollLeft = getScrollLeft()
 
@@ -35,12 +34,12 @@ export function useApplicationScroll() {
         unref(appRef)!.style.setProperty('--c-scroll-left', convertToUnit(-savedScrollLeft))
 
         requestAnimationFrame(() => {
-            state.blockScroll = true
+            state.lock = true
         })
     }
 
-    function unblockScroll() {
-        state.blockScroll = false
+    function unlockScroll() {
+        state.lock = false
 
         requestAnimationFrame(() => {
             unref(appRef)?.style.removeProperty('--c-scroll-top')
@@ -59,7 +58,7 @@ export function useApplicationScroll() {
         classes,
         getScrollTop,
         getScrollLeft,
-        blockScroll,
-        unblockScroll,
+        lockScroll,
+        unlockScroll,
     }
 }

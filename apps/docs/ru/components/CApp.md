@@ -23,8 +23,8 @@ import { useApplication } from '@vueland/ui/composables'
 
 const app = useApplication()
 
-app?.blockScroll()    // заблокировать прокрутку
-app?.unblockScroll()  // восстановить прокрутку
+app?.lockScroll()    // заблокировать прокрутку
+app?.unlockScroll()  // восстановить прокрутку
 app?.getScrollTop()   // текущая позиция прокрутки Y
 app?.getScrollLeft()  // текущая позиция прокрутки X
 ```

@@ -2,7 +2,7 @@
     import { watch } from 'vue'
 
     import { COverlay } from '@/components/COverlay'
-    import { useApplication } from '@/composables'
+    import { useApplication } from '@/composables/use-application'
     import { vClickOutside } from '@/directives'
 
     import type { CDialogProps, CDialogSlots } from './types'
@@ -15,7 +15,7 @@
 
     const model = defineModel<boolean>({ default: false })
 
-    const { blockScroll, unblockScroll } = useApplication()
+    const { lockScroll, unlockScroll } = useApplication()
 
     const onOutsideClick = (): void => {
         if (props.closeOnClickOutside) {
@@ -24,8 +24,8 @@
     }
 
     watch(model, (value) => {
-        if (value) blockScroll()
-        else unblockScroll()
+        if (value) lockScroll()
+        else unlockScroll()
     })
 
 </script>
