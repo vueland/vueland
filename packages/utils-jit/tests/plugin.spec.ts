@@ -21,7 +21,6 @@ import {
 type HookPlugin = Plugin & {
     configResolved: NonNullable<Plugin['configResolved']>
     configureServer: NonNullable<Plugin['configureServer']>
-    buildStart: NonNullable<Plugin['buildStart']>
     transform: NonNullable<Plugin['transform']>
     handleHotUpdate: NonNullable<Plugin['handleHotUpdate']>
     watchChange: NonNullable<Plugin['watchChange']>
@@ -52,10 +51,6 @@ function callConfigResolved(plugin: HookPlugin, root: string): void {
 
 function callConfigureServer(plugin: HookPlugin, server: ReturnType<typeof createDevServer>): void {
     callHook(plugin.configureServer as any, server)
-}
-
-function callBuildStart(plugin: HookPlugin): void {
-    callHook(plugin.buildStart as any)
 }
 
 function callTransform(plugin: HookPlugin, code: string, id: string): void {
@@ -141,7 +136,6 @@ describe('plugins / base shape', () => {
         expect(plugin.enforce).toBe('pre')
         expect(plugin.configResolved).toBeTypeOf('function')
         expect(plugin.configureServer).toBeTypeOf('function')
-        expect(plugin.buildStart).toBeTypeOf('function')
         expect(plugin.transform).toBeTypeOf('function')
         expect(plugin.handleHotUpdate).toBeTypeOf('function')
         expect(plugin.watchChange).toBeTypeOf('function')
@@ -697,7 +691,7 @@ describe('plugins / filesystem integration', () => {
         expect(css).toContain('.h-\\[40px\\]{height: 40px !important;}')
     })
 
-    it('buildStart пересканирует проект полностью', () => {
+    it('повторный configResolved пересканирует проект полностью', () => {
         project.write(
             'src/App.vue',
             `
@@ -720,7 +714,7 @@ describe('plugins / filesystem integration', () => {
         `,
         )
 
-        callBuildStart(plugin)
+        callConfigResolved(plugin, project.root)
 
         const css = project.read('src/.generated/utils-jit.css')
 

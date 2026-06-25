@@ -160,6 +160,12 @@ export function utilsJIT(options?: JitOptions): Plugin {
     let devServer: ViteDevServer | null = null
     let currentCss = ''
 
+    // Грязный флаг: набор активных правил изменился с последней записи. Позволяет
+    // НЕ гонять buildFinalCss (сортировка + конкатенация всех правил) и не писать
+    // файл на каждый transform, когда ничего не поменялось. Запись происходит
+    // только на реальные изменения набора.
+    let cssDirty = false
+
     const allRules: UtilityRule[] = [...defaultRules, ...resolvedOptions.rules]
 
     const fileToTokens = new Map<string, Set<string>>()
@@ -239,10 +245,14 @@ export function utilsJIT(options?: JitOptions): Plugin {
         return [resolvedOptions.banner, ...sortedRules, ''].join('\n')
     }
 
+    // Пишет файл только если набор правил грязный (иначе ранний выход — без
+    // сортировки/конкатенации) и только если итоговый CSS реально изменился.
     function writeCssFile(notify = false): void {
-        if (!outFile) {
+        if (!outFile || !cssDirty) {
             return
         }
+
+        cssDirty = false
 
         const nextCss = buildFinalCss()
 
@@ -277,6 +287,7 @@ export function utilsJIT(options?: JitOptions): Plugin {
 
             if (cssRule) {
                 activeCssRules.set(token, cssRule)
+                cssDirty = true
             }
         }
     }
@@ -292,7 +303,11 @@ export function utilsJIT(options?: JitOptions): Plugin {
 
         if (nextCount === 0) {
             tokenRefCount.delete(token)
-            activeCssRules.delete(token)
+
+            if (activeCssRules.delete(token)) {
+                cssDirty = true
+            }
+
             return
         }
 
@@ -326,6 +341,7 @@ export function utilsJIT(options?: JitOptions): Plugin {
         fileToTokens.clear()
         tokenRefCount.clear()
         activeCssRules.clear()
+        cssDirty = true
 
         const files = collectProjectFiles(root, resolvedOptions, outFile)
 
@@ -434,11 +450,14 @@ export function utilsJIT(options?: JitOptions): Plugin {
                 },
             }
         },
-
         configResolved(config: any) {
             root = config.root
             outFile = path.resolve(root, resolvedOptions.outFile)
 
+            // Полный обход проекта — ровно один раз. configResolved срабатывает
+            // до transform/импортов и в dev, и в build, поэтому файл готов
+            // заранее; инкрементальные изменения дальше идут через transform/
+            // handleHotUpdate/watchChange. (Раньше обход дублировался в buildStart.)
             rebuildAll(false)
         },
 
@@ -448,10 +467,6 @@ export function utilsJIT(options?: JitOptions): Plugin {
             if (outFile) {
                 server.watcher.add(outFile)
             }
-        },
-
-        buildStart() {
-            rebuildAll(false)
         },
 
         transform(code: string, id: string) {
