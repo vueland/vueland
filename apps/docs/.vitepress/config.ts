@@ -21,7 +21,7 @@ export default defineConfig({
             label: 'Русский',
             lang: 'ru-RU',
             title: 'Vueland',
-            description: 'Современная frontend-платформа для Vue 3',
+            description: 'Современная frontend-платформа для Vue',
             link: '/ru/',
             themeConfig: ruConfig.themeConfig,
         },
@@ -29,6 +29,7 @@ export default defineConfig({
         en: {
             ...enConfig,
             link: '/en/',
+            description: 'Modern frontend platform for Vue',
         },
     },
 })

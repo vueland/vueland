@@ -12,7 +12,7 @@ title: Vueland
 <div class="vueland-hero__content">
 <p class="vueland-hero__eyebrow">Vueland</p>
 
-<h1>A frontend platform for Vue 3</h1>
+<h1>A frontend platform for Vue</h1>
 
 <p class="vueland-hero__description">
 Not just a component library — a platform. Components, utility classes, a preset engine, global settings, composables, and a growing plugin ecosystem, all designed to work together from day one.
