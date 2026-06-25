@@ -10,7 +10,6 @@ $input-transition-duration: 0.2s;
   --c-input-transition-duration: #{$input-transition-duration};
 
   // Colors
-  --c-input-background-color: var(--c-app-surface-color);
   --c-input-primary-color: var(--c-app-primary-color);
   --c-input-error-color: var(--c-app-error-color);
   --c-input-disabled-color: var(--c-app-disabled-color);
@@ -22,7 +21,6 @@ $input-transition-duration: 0.2s;
   transition: color var(--c-input-transition-duration) $primary-transition;
   color: currentColor;
   position: relative;
-  background-color: var(--c-input-background-color);
 
   &--focused {
     #{$self}__field {

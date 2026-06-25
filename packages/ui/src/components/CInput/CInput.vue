@@ -85,9 +85,7 @@
     const INTERNAL_HANDLERS = new Set(['onUpdate:modelValue', 'onUpdate:focused'])
 
     const isCombobox = props.role === 'combobox'
-
     const isCheckBox = props.role === 'checkbox'
-
     const isRadio = props.role === 'radio'
 
     const hasDetails = computed(() => !props.noDetails && (

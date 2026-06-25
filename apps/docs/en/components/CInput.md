@@ -300,7 +300,6 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 | ------------------------------- | ----------------------------- | --------------------------- |
 | `--c-input-details-height`      | `24px`                        | Height of the details area  |
 | `--c-input-transition-duration` | `0.2s`                        | Color transition duration   |
-| `--c-input-background-color`    | `var(--c-app-surface-color)`  | Component background        |
 | `--c-input-primary-color`       | `var(--c-app-primary-color)`  | Text color in default state |
 | `--c-input-error-color`         | `var(--c-app-error-color)`    | Text color on error         |
 | `--c-input-disabled-color`      | `var(--c-app-disabled-color)` | Text color when disabled    |

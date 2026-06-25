@@ -100,22 +100,29 @@ export function useDisplay(): {
 
             const screen = unref(width)
 
-            state.xs = screen < sm
-            state.sm = screen >= sm && screen < md
-            state.md = screen >= md && screen < lg
-            state.lg = screen >= lg && screen < xl
-            state.xl = screen >= xl && screen < xxl
-            state.xxl = screen >= xxl
+            const xs = screen < sm
+            const smActive = screen < md && !xs
+            const mdActive = screen < lg && !(smActive || xs)
+            const lgActive = screen < xl && !(mdActive || smActive || xs)
+            const xlActive = screen < xxl && !(lgActive || mdActive || smActive || xs)
+            const xxlActive = screen >= xxl
 
-            state.smAndUp = screen >= sm
-            state.mdAndUp = screen >= md
-            state.lgAndUp = screen >= lg
-            state.xlAndUp = screen >= xl
+            state.xs = xs
+            state.sm = smActive
+            state.md = mdActive
+            state.lg = lgActive
+            state.xl = xlActive
+            state.xxl = xxlActive
 
-            state.smAndLess = screen < md
-            state.mdAndLess = screen < lg
-            state.lgAndLess = screen < xl
-            state.xlAndLess = screen < xxl
+            state.smAndUp = !xs
+            state.mdAndUp = !(xs || smActive)
+            state.lgAndUp = !(xs || smActive || mdActive)
+            state.xlAndUp = !(xs || smActive || mdActive || lgActive)
+
+            state.smAndLess = !(mdActive || lgActive || xlActive || xxlActive)
+            state.mdAndLess = !(lgActive || xlActive || xxlActive)
+            state.lgAndLess = !(xlActive || xxlActive)
+            state.xlAndLess = !xxlActive
         })
 
         return {

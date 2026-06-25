@@ -900,7 +900,7 @@ describe('CList', () => {
             expect(model.value).toBe(null)
         })
 
-        it('item сам отдаёт active/inactive id по hover', async () => {
+        it('hover не активирует элемент: active/inactive не эмитятся', async () => {
             let activeId: string | undefined
             let inactiveId: string | undefined
 
@@ -922,18 +922,13 @@ describe('CList', () => {
             await nextTick()
 
             const item = wrapper.find('.c-list-item')
-            const itemId = item.attributes('id')
 
             await item.trigger('mouseenter')
-            await nextTick()
-
-            expect(activeId).toBe(itemId)
-            expect(wrapper.attributes('aria-activedescendant')).toBeUndefined()
-
             await item.trigger('mouseleave')
             await nextTick()
 
-            expect(inactiveId).toBe(itemId)
+            expect(activeId).toBeUndefined()
+            expect(inactiveId).toBeUndefined()
         })
 
         it('item отдаёт active id при клавиатурной навигации списка', async () => {
@@ -1014,6 +1009,41 @@ describe('CList', () => {
             await nextTick()
 
             expect(firstItem.classes()).not.toContain('c-list-item--focused')
+        })
+
+        it('наведение мышью не сбрасывает клавиатурный фокус', async () => {
+            const wrapper = mount(CList<string>, {
+                props: { variant: 'listbox' },
+                slots: {
+                    default: () => [
+                        h(CListItem, { value: 'first' }, () => 'first'),
+                        h(CListItem, { value: 'second' }, () => 'second'),
+                    ],
+                },
+            })
+
+            await nextTick()
+            // клавиатурой ставим фокус на первый элемент
+            await wrapper.trigger('keydown', { key: 'ArrowDown' })
+            await nextTick()
+
+            const [firstItem, secondItem] = wrapper.findAll('.c-list-item')
+
+            expect(firstItem.classes()).toContain('c-list-item--focused')
+
+            // наводим мышь на второй — фокус на первом должен сохраниться
+            await secondItem.trigger('mouseenter')
+            await nextTick()
+
+            expect(firstItem.classes()).toContain('c-list-item--focused')
+            expect(secondItem.classes()).not.toContain('c-list-item--focused')
+
+            // и навигация продолжается с первого, а не с наведённого
+            await wrapper.trigger('keydown', { key: 'ArrowDown' })
+            await nextTick()
+
+            expect(firstItem.classes()).not.toContain('c-list-item--focused')
+            expect(secondItem.classes()).toContain('c-list-item--focused')
         })
 
         it('клавиатурная навигация пропускает disabled items', async () => {

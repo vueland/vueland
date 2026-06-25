@@ -13,8 +13,8 @@ export default defineConfig({
         utilsJIT({
             breakpoints: {
                 xs: 0,
-                sm: 600,
-                md: 960,
+                sm: 680,
+                md: 970,
                 lg: 1280,
                 xl: 1920,
                 xxl: 2560,

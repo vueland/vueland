@@ -153,8 +153,10 @@ describe('plugins / scss breakpoints injection', () => {
         return plugin.config?.()?.css?.preprocessorOptions?.scss?.additionalData
     }
 
-    const STYLES_FILE = '/path/to/@vueland/ui/src/styles/styles.scss'
-    const STYLES_SOURCE = '@forward "maps/grids";\n@use "ress";\n@use "utils/flex";'
+    const MARKER_START = '// ##vueland:breakpoints:start'
+    const MARKER_END = '// ##vueland:breakpoints:end'
+    const MARKED_FILE = '/path/to/@vueland/ui/src/styles/utils.scss'
+    const MARKED_SOURCE = `${MARKER_START}\n${MARKER_END}\n@use 'utils/transitions';\n@use 'utils/spaces';`
 
     it('config хук не возвращается если breakpoints не переданы', () => {
         const plugin = utilsJIT() as any
@@ -162,19 +164,20 @@ describe('plugins / scss breakpoints injection', () => {
         expect(plugin.config?.()).toBeUndefined()
     })
 
-    it('additionalData подменяет @forward в styles.scss с кастомными брейкпоинтами', () => {
+    it('additionalData подставляет брейкпоинты в размеченный блок', () => {
         const plugin = utilsJIT({ breakpoints: { sm: 640, md: 768, lg: 1024 } }) as any
         const fn = getAdditionalData(plugin)!
-        const result = fn(STYLES_SOURCE, STYLES_FILE)
+        const result = fn(MARKED_SOURCE, MARKED_FILE)
 
-        expect(result).toContain("@forward \"maps/grids\" with ($grid-breakpoints: ('sm': 640px, 'md': 768px, 'lg': 1024px))")
-        expect(result).not.toContain('@forward "maps/grids";')
+        expect(result).toContain("@use 'maps/grids' with ($grid-breakpoints: ('sm': 640px, 'md': 768px, 'lg': 1024px))")
+        expect(result).toContain(MARKER_START)
+        expect(result).toContain(MARKER_END)
     })
 
-    it('additionalData не трогает другие scss файлы', () => {
+    it('additionalData не трогает файлы без маркера (даже с импортом grids)', () => {
         const plugin = utilsJIT({ breakpoints: { sm: 640 } }) as any
         const fn = getAdditionalData(plugin)!
-        const otherSource = '.foo { display: flex; }'
+        const otherSource = "@use '../maps/grids' as *;\n.foo { display: flex; }"
         const result = fn(otherSource, '/path/to/utils/_flex.scss')
 
         expect(result).toBe(otherSource)
@@ -183,19 +186,19 @@ describe('plugins / scss breakpoints injection', () => {
     it('additionalData корректно обрабатывает xs: 0', () => {
         const plugin = utilsJIT({ breakpoints: { xs: 0, sm: 640 } }) as any
         const fn = getAdditionalData(plugin)!
-        const result = fn(STYLES_SOURCE, STYLES_FILE)
+        const result = fn(MARKED_SOURCE, MARKED_FILE)
 
         expect(result).toContain("'xs': 0")
         expect(result).toContain("'sm': 640px")
     })
 
-    it('additionalData не меняет остальное содержимое styles.scss', () => {
+    it('additionalData не меняет содержимое вне размеченного блока', () => {
         const plugin = utilsJIT({ breakpoints: { sm: 640 } }) as any
         const fn = getAdditionalData(plugin)!
-        const result = fn(STYLES_SOURCE, STYLES_FILE)
+        const result = fn(MARKED_SOURCE, MARKED_FILE)
 
-        expect(result).toContain('@use "ress"')
-        expect(result).toContain('@use "utils/flex"')
+        expect(result).toContain("@use 'utils/transitions'")
+        expect(result).toContain("@use 'utils/spaces'")
     })
 })
 

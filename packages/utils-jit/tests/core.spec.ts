@@ -383,7 +383,7 @@ describe('core / buildCssRule', () => {
         expect(parsed).not.toBeNull()
 
         expect(buildCssRule(parsed!, { declarations: ['width: 100px !important;'] })).toBe(
-            '@media (min-width: 768px) { .md\\:w-\\[100px\\]{width: 100px !important;} }',
+            '@media (min-width: 960px) { .md\\:w-\\[100px\\]{width: 100px !important;} }',
         )
     })
 
@@ -393,7 +393,7 @@ describe('core / buildCssRule', () => {
         expect(parsed).not.toBeNull()
 
         expect(buildCssRule(parsed!, { declarations: ['width: 100px !important;'] })).toBe(
-            '@media (min-width: 768px) { .hover\\:md\\:w-\\[100px\\]:hover{width: 100px !important;} }',
+            '@media (min-width: 960px) { .hover\\:md\\:w-\\[100px\\]:hover{width: 100px !important;} }',
         )
     })
 
