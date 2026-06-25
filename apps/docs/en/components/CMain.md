@@ -4,12 +4,14 @@
 
 ## Basic usage
 
-```html
-<CApp>
-  <CMain>
-    <!-- page content -->
-  </CMain>
-</CApp>
+```vue
+<template>
+  <CApp>
+    <CMain>
+      <!-- page content -->
+    </CMain>
+  </CApp>
+</template>
 ```
 
 ## Props

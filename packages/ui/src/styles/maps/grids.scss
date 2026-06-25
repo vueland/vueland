@@ -13,6 +13,9 @@ $grid-gutters: (
   'xxl': $grid-gutter,
 );
 
+// Дефолтные брейкпоинты (standalone-сборка). При сборке с @vueland/utils-jit
+// переопределяются из конфига плагина — инъекцией в utils.scss / lib.scss.
+// Должны совпадать с use-display и DEFAULT_BREAKPOINTS плагина.
 $grid-breakpoints: (
   'xs': 0,
   'sm': 600px,
