@@ -166,6 +166,7 @@ $self: '.c-field';
 
   &--readonly {
     background-color: var(--c-app-readonly-bg-color);
+    border-color: var(--c-field-border-color);
   }
 
   &--has-prepend {

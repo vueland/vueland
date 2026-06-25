@@ -2,22 +2,26 @@
 
 $self: '.c-input';
 $input-details-height: 24px;
+$input-transition-duration: 0.2s;
 
 .c-input {
+  // Layout
   --c-input-details-height: #{$input-details-height};
-  --c-input-error-color: var(--c-app-error-color);
-  --c-input-primary-color: var(--c-app-primary-color);
+  --c-input-transition-duration: #{$input-transition-duration};
+
+  // Colors
   --c-input-background-color: var(--c-app-surface-color);
+  --c-input-primary-color: var(--c-app-primary-color);
+  --c-input-error-color: var(--c-app-error-color);
   --c-input-disabled-color: var(--c-app-disabled-color);
-  --c-input-readonly-color: var(--c-app-disabled-color);
+  --c-input-readonly-color: var(--c-app-readonly-color);
 
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
-  transition: 0.2s color $primary-transition;
+  transition: color var(--c-input-transition-duration) $primary-transition;
   color: currentColor;
   position: relative;
-  border-radius: var(--c-app-border-radius);
   background-color: var(--c-input-background-color);
 
   &--focused {
@@ -40,7 +44,7 @@ $input-details-height: 24px;
   }
 
   &--readonly {
-    color: var(--c-input-primary-color);
+    color: var(--c-input-readonly-color);
   }
 
   &__field {

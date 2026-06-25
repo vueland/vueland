@@ -72,6 +72,10 @@
     function onMousedown(e: MouseEvent) {
         e.preventDefault()
 
+        if (props.readonly || props.disabled) {
+            return
+        }
+
         if (document.activeElement !== unref(inputRef)) {
             unref(inputRef)?.focus()
         }

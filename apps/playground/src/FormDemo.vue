@@ -176,6 +176,7 @@
                             :items="typed"
                             title-key="name"
                             value-key="email"
+                            readonly
                             multiple
                             clearable
                         />

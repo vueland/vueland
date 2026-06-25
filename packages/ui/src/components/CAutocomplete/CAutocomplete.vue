@@ -195,6 +195,11 @@
                             :multiple
                             :mandatory
                         >
+                            <c-list-item v-if="!searchItems.length">
+                                <c-list-item-title>
+                                    {{ options?.noItemsMessage ?? 'No items' }}
+                                </c-list-item-title>
+                            </c-list-item>
                             <c-list-item
                                 v-for="item of searchItems"
                                 :key="item.key"
