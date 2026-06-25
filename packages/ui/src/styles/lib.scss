@@ -1,3 +1,9 @@
+// Сюда @vueland/utils-jit подставляет `@use 'maps/grids' with (...)` с
+// брейкпоинтами из конфига плагина — до загрузки CGrid, чтобы грид использовал
+// те же значения. Без плагина блок пуст (CGrid берёт дефолты из maps/grids).
+// ##vueland:breakpoints:start
+// ##vueland:breakpoints:end
+
 @use '../components/CApp/CApp';
 @use '../components/CBtn/CBtn';
 @use '../components/CForm/CForm';

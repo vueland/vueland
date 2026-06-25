@@ -299,7 +299,6 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 | ------------------------------- | ----------------------------- | ------------------------------- |
 | `--c-input-details-height`      | `24px`                        | Высота блока details            |
 | `--c-input-transition-duration` | `0.2s`                        | Длительность перехода цвета     |
-| `--c-input-background-color`    | `var(--c-app-surface-color)`  | Фон компонента                  |
 | `--c-input-primary-color`       | `var(--c-app-primary-color)`  | Цвет текста в состоянии default |
 | `--c-input-error-color`         | `var(--c-app-error-color)`    | Цвет текста при ошибке          |
 | `--c-input-disabled-color`      | `var(--c-app-disabled-color)` | Цвет текста при disabled        |

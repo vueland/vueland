@@ -27,12 +27,15 @@ export const DEFAULT_EXCLUDE: Pattern[] = [
     /(^|[/\\])playwright-report([/\\]|$)/,
 ]
 
+// Совпадают с $grid-breakpoints (maps/grids.scss) и use-display, чтобы без явного
+// конфига arbitrary-утилиты были на тех же порогах, что статические утилиты и JS.
 export const DEFAULT_BREAKPOINTS: Record<string, number> = {
-    sm: 640,
-    md: 768,
-    lg: 1024,
-    xl: 1280,
-    '2xl': 1536,
+    xs: 0,
+    sm: 600,
+    md: 960,
+    lg: 1280,
+    xl: 1920,
+    xxl: 2560,
 }
 
 export const DEFAULT_VARIANTS: VariantMap = {
@@ -448,6 +451,11 @@ export function buildCssRule(
 
         if (typeof minWidth !== 'number') {
             return null
+        }
+
+        // Брейкпоинт 0 (xs) — базовый, без медиа-обёртки (как `@if != 0` в SCSS).
+        if (minWidth === 0) {
+            continue
         }
 
         result = `@media (min-width: ${minWidth}px) { ${result} }`

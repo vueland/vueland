@@ -22,6 +22,24 @@ import type {
     UtilityRule,
 } from './types'
 
+// Размеченный блок-маркер в SCSS-исходниках библиотеки. Это явный контракт
+// «сюда подставить брейкпоинты»: плагин не парсит текст импорта и не зависит от
+// кавычек — он находит блок и заменяет его содержимое на `@use ... with (...)`,
+// который конфигурирует грид-модуль до загрузки партиалов с адаптивными стилями.
+export const BREAKPOINTS_MARKER_START = '// ##vueland:breakpoints:start'
+export const BREAKPOINTS_MARKER_END = '// ##vueland:breakpoints:end'
+
+const BREAKPOINTS_REGION_RE =
+    /(\/\/\s*##vueland:breakpoints:start)[\s\S]*?(\/\/\s*##vueland:breakpoints:end)/
+
+export function injectGridBreakpoints(source: string, bpMap: string): string {
+    return source.replace(
+        BREAKPOINTS_REGION_RE,
+        (_match, start: string, end: string) =>
+            `${start}\n@use 'maps/grids' with ($grid-breakpoints: ${bpMap});\n${end}`,
+    )
+}
+
 function resolveOptions(options: JitOptions = {}): ResolvedJitOptions {
     return {
         include: options.include ?? DEFAULT_INCLUDE,
@@ -390,23 +408,8 @@ export function utilsJIT(options?: JitOptions): Plugin {
                 css: {
                     preprocessorOptions: {
                         scss: {
-                            additionalData(source: string, filename: string) {
-                                if (filename.includes('styles/styles.scss')) {
-                                    return source.replace(
-                                        '@forward "maps/grids"',
-                                        `@forward "maps/grids" with ($grid-breakpoints: ${bpMap})`,
-                                    )
-                                }
-
-                                if (filename.includes('CGrid/CGrid.scss')) {
-                                    return source.replace(
-                                        '@use "../../styles/maps/grids" as *;',
-                                        `@use "../../styles/maps/grids" as * with ($grid-breakpoints: ${bpMap});`,
-                                    )
-                                }
-
-                                return source
-                            },
+                            additionalData: (source: string) =>
+                                injectGridBreakpoints(source, bpMap),
                         },
                     },
                 },

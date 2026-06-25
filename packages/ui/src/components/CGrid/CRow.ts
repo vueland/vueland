@@ -7,6 +7,7 @@ import {
 } from 'vue'
 
 import { BREAKPOINTS } from '@/constants'
+import { BreakpointLabels } from '@/enums'
 import { isDef, toCamelCase } from '@/helpers'
 
 const positions = ['start', 'center', 'end'] as const
@@ -23,59 +24,130 @@ type JustifyValue = (typeof justifyValues)[number]
 type AlignValue = (typeof alignValues)[number]
 type AlignContentValue = (typeof alignContentValues)[number]
 
+type CRowJustifyBreakpointKey =
+    | 'justifyXs'
+    | 'justifySm'
+    | 'justifyMd'
+    | 'justifyLg'
+    | 'justifyXl'
+    | 'justifyXxl'
+
+type CRowAlignBreakpointKey =
+    | 'alignXs'
+    | 'alignSm'
+    | 'alignMd'
+    | 'alignLg'
+    | 'alignXl'
+    | 'alignXxl'
+
+type CRowAlignContentBreakpointKey =
+    | 'alignContentXs'
+    | 'alignContentSm'
+    | 'alignContentMd'
+    | 'alignContentLg'
+    | 'alignContentXl'
+    | 'alignContentXxl'
+
+type CRowInternalProps = {
+    align: AlignValue | null
+    alignContent: AlignContentValue | null
+    justify: JustifyValue | null
+    noGutter: boolean
+
+    justifyXs: JustifyValue | null
+    justifySm: JustifyValue | null
+    justifyMd: JustifyValue | null
+    justifyLg: JustifyValue | null
+    justifyXl: JustifyValue | null
+    justifyXxl: JustifyValue | null
+
+    alignXs: AlignValue | null
+    alignSm: AlignValue | null
+    alignMd: AlignValue | null
+    alignLg: AlignValue | null
+    alignXl: AlignValue | null
+    alignXxl: AlignValue | null
+
+    alignContentXs: AlignContentValue | null
+    alignContentSm: AlignContentValue | null
+    alignContentMd: AlignContentValue | null
+    alignContentLg: AlignContentValue | null
+    alignContentXl: AlignContentValue | null
+    alignContentXxl: AlignContentValue | null
+}
+
+function createJustifyProp() {
+    return {
+        type: String as PropType<JustifyValue>,
+        default: null,
+        validator: (value: string) => justifyValues.includes(value as JustifyValue),
+    }
+}
+
+function createAlignProp() {
+    return {
+        type: String as PropType<AlignValue>,
+        default: null,
+        validator: (value: string) => alignValues.includes(value as AlignValue),
+    }
+}
+
+function createAlignContentProp() {
+    return {
+        type: String as PropType<AlignContentValue>,
+        default: null,
+        validator: (value: string) =>
+            alignContentValues.includes(value as AlignContentValue),
+    }
+}
+
+function getJustifyPropName(bp: BreakpointLabels): CRowJustifyBreakpointKey {
+    return toCamelCase('justify', bp) as CRowJustifyBreakpointKey
+}
+
+function getAlignPropName(bp: BreakpointLabels): CRowAlignBreakpointKey {
+    return toCamelCase('align', bp) as CRowAlignBreakpointKey
+}
+
+function getAlignContentPropName(bp: BreakpointLabels): CRowAlignContentBreakpointKey {
+    return toCamelCase('align', 'content', bp) as CRowAlignContentBreakpointKey
+}
+
 export const CRow = defineComponent({
     name: 'CRow',
 
     props: {
-        align: {
-            type: String as PropType<AlignValue>,
-            default: null,
-            validator: (value: string) => alignValues.includes(value as AlignValue),
-        },
-
-        alignContent: {
-            type: String as PropType<AlignContentValue>,
-            default: null,
-            validator: (value: string) =>
-                alignContentValues.includes(value as AlignContentValue),
-        },
-
-        justify: {
-            type: String as PropType<JustifyValue>,
-            default: null,
-            validator: (value: string) =>
-                justifyValues.includes(value as JustifyValue),
-        },
+        align: createAlignProp(),
+        alignContent: createAlignContentProp(),
+        justify: createJustifyProp(),
 
         noGutter: Boolean,
 
-        ...BREAKPOINTS.reduce((props, bp) => {
-            props[`justify-${bp}`] = {
-                type: String as PropType<JustifyValue>,
-                default: null,
-                validator: (value: string) =>
-                    justifyValues.includes(value as JustifyValue),
-            }
+        justifyXs: createJustifyProp(),
+        justifySm: createJustifyProp(),
+        justifyMd: createJustifyProp(),
+        justifyLg: createJustifyProp(),
+        justifyXl: createJustifyProp(),
+        justifyXxl: createJustifyProp(),
 
-            props[`align-${bp}`] = {
-                type: String as PropType<AlignValue>,
-                default: null,
-                validator: (value: string) =>
-                    alignValues.includes(value as AlignValue),
-            }
+        alignXs: createAlignProp(),
+        alignSm: createAlignProp(),
+        alignMd: createAlignProp(),
+        alignLg: createAlignProp(),
+        alignXl: createAlignProp(),
+        alignXxl: createAlignProp(),
 
-            props[`align-content-${bp}`] = {
-                type: String as PropType<AlignContentValue>,
-                default: null,
-                validator: (value: string) =>
-                    alignContentValues.includes(value as AlignContentValue),
-            }
-
-            return props
-        }, {} as Record<string, any>),
+        alignContentXs: createAlignContentProp(),
+        alignContentSm: createAlignContentProp(),
+        alignContentMd: createAlignContentProp(),
+        alignContentLg: createAlignContentProp(),
+        alignContentXl: createAlignContentProp(),
+        alignContentXxl: createAlignContentProp(),
     },
 
-    setup(props, { slots }): () => VNode {
+    setup(rawProps, { slots }): () => VNode {
+        const props = rawProps as Readonly<CRowInternalProps>
+
         const classes = computed<Record<string, boolean>>(() => {
             const cls: Record<string, boolean> = { 'c-row': true }
 
@@ -96,20 +168,26 @@ export const CRow = defineComponent({
             }
 
             for (const bp of BREAKPOINTS) {
-                const justifyVal = toCamelCase(...`justify-${bp}`.split('-'))
-                const alignVal = toCamelCase(...`align-${bp}`.split('-'))
-                const contentVal = toCamelCase(...`align-content-${bp}`.split('-'))
+                const breakpoint = bp as BreakpointLabels
 
-                if (isDef(props[justifyVal])) {
-                    cls[`${bp}:justify-${props[justifyVal]}`] = true
+                const justifyProp = getJustifyPropName(breakpoint)
+                const alignProp = getAlignPropName(breakpoint)
+                const alignContentProp = getAlignContentPropName(breakpoint)
+
+                const justify = props[justifyProp]
+                const align = props[alignProp]
+                const alignContent = props[alignContentProp]
+
+                if (isDef(justify)) {
+                    cls[`${breakpoint}:justify-${justify}`] = true
                 }
 
-                if (isDef(props[alignVal])) {
-                    cls[`${bp}:items-${props[alignVal]}`] = true
+                if (isDef(align)) {
+                    cls[`${breakpoint}:items-${align}`] = true
                 }
 
-                if (isDef(props[contentVal])) {
-                    cls[`${bp}:content-${props[contentVal]}`] = true
+                if (isDef(alignContent)) {
+                    cls[`${breakpoint}:content-${alignContent}`] = true
                 }
             }
 

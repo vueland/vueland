@@ -77,8 +77,6 @@
         }
 
         return {
-            mouseenter: activateItem,
-            mouseleave: deactivateItem,
             blur: onBlur,
             ...(state.listbox ? { click: toggleSelection } : {}),
         }

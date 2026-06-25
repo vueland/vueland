@@ -7,48 +7,106 @@ import {
 } from 'vue'
 
 import { BREAKPOINTS } from '@/constants'
+import { BreakpointLabels } from '@/enums'
 import { isDef, toCamelCase } from '@/helpers'
+
+type CColPropValue = string | number
+
+type CColBreakpoint = `${BreakpointLabels}`
+
+type CColOrderBreakpointKey =
+    | 'orderXxl'
+    | 'orderXl'
+    | 'orderLg'
+    | 'orderMd'
+    | 'orderSm'
+    | 'orderXs'
+
+type CColOffsetBreakpointKey =
+    | 'offsetXxl'
+    | 'offsetXl'
+    | 'offsetLg'
+    | 'offsetMd'
+    | 'offsetSm'
+    | 'offsetXs'
+
+export type CColBreakpointProps = Partial<Record<CColBreakpoint, CColPropValue>>
+
+type CColInternalProps = {
+    order: CColPropValue | null
+    cols: CColPropValue | null
+    offset: CColPropValue | null
+
+    xxl: CColPropValue | null
+    xl: CColPropValue | null
+    lg: CColPropValue | null
+    md: CColPropValue | null
+    sm: CColPropValue | null
+    xs: CColPropValue | null
+
+    orderXxl: CColPropValue | null
+    orderXl: CColPropValue | null
+    orderLg: CColPropValue | null
+    orderMd: CColPropValue | null
+    orderSm: CColPropValue | null
+    orderXs: CColPropValue | null
+
+    offsetXxl: CColPropValue | null
+    offsetXl: CColPropValue | null
+    offsetLg: CColPropValue | null
+    offsetMd: CColPropValue | null
+    offsetSm: CColPropValue | null
+    offsetXs: CColPropValue | null
+}
+
+function createColProp() {
+    return {
+        type: [String, Number] as PropType<CColPropValue>,
+        default: null,
+    }
+}
+
+function getOrderPropName(bp: CColBreakpoint): CColOrderBreakpointKey {
+    return toCamelCase('order', bp) as CColOrderBreakpointKey
+}
+
+function getOffsetPropName(bp: CColBreakpoint): CColOffsetBreakpointKey {
+    return toCamelCase('offset', bp) as CColOffsetBreakpointKey
+}
 
 export const CCol = defineComponent({
     name: 'CCol',
 
     props: {
-        order: {
-            type: [String, Number] as PropType<string | number>,
-            default: null,
-        },
+        order: createColProp(),
+        cols: createColProp(),
+        offset: createColProp(),
 
-        cols: {
-            type: [String, Number] as PropType<string | number>,
-            default: null,
-        },
+        xxl: createColProp(),
+        xl: createColProp(),
+        lg: createColProp(),
+        md: createColProp(),
+        sm: createColProp(),
+        xs: createColProp(),
 
-        offset: {
-            type: [String, Number] as PropType<string | number>,
-            default: null,
-        },
+        orderXxl: createColProp(),
+        orderXl: createColProp(),
+        orderLg: createColProp(),
+        orderMd: createColProp(),
+        orderSm: createColProp(),
+        orderXs: createColProp(),
 
-        ...BREAKPOINTS.reduce((props, bp) => {
-            props[bp] = {
-                type: [String, Number] as PropType<string | number>,
-                default: null,
-            }
-
-            props[`order-${bp}`] = {
-                type: [String, Number] as PropType<string | number>,
-                default: null,
-            }
-
-            props[`offset-${bp}`] = {
-                type: [String, Number] as PropType<string | number>,
-                default: null,
-            }
-
-            return props
-        }, {} as Record<string, any>),
+        offsetXxl: createColProp(),
+        offsetXl: createColProp(),
+        offsetLg: createColProp(),
+        offsetMd: createColProp(),
+        offsetSm: createColProp(),
+        offsetXs: createColProp(),
     },
 
-    setup(props, { slots }): () => VNode {
+    setup(rawProps, { slots }): () => VNode {
+        const props = rawProps as Readonly<CColInternalProps>
+
         const classes = computed<Record<string, boolean>>(() => {
             const cls: Record<string, boolean> = { 'c-col': true }
 
@@ -65,19 +123,24 @@ export const CCol = defineComponent({
             }
 
             for (const bp of BREAKPOINTS) {
-                const orderVal = toCamelCase(...`order-${bp}`.split('-'))
-                const offsetVal = toCamelCase(...`offset-${bp}`.split('-'))
+                const breakpoint = bp as CColBreakpoint
+                const orderProp = getOrderPropName(breakpoint)
+                const offsetProp = getOffsetPropName(breakpoint)
 
-                if (isDef(props[bp])) {
-                    cls[`${bp}-${props[bp]}`] = true
+                const colValue = props[breakpoint]
+                const orderValue = props[orderProp]
+                const offsetValue = props[offsetProp]
+
+                if (isDef(colValue)) {
+                    cls[`${breakpoint}-${colValue}`] = true
                 }
 
-                if (isDef(props[orderVal])) {
-                    cls[`${bp}:order-${props[orderVal]}`] = true
+                if (isDef(orderValue)) {
+                    cls[`${breakpoint}:order-${orderValue}`] = true
                 }
 
-                if (isDef(props[offsetVal])) {
-                    cls[`${bp}:offset-${props[offsetVal]}`] = true
+                if (isDef(offsetValue)) {
+                    cls[`${breakpoint}:offset-${offsetValue}`] = true
                 }
             }
 
