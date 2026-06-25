@@ -16,14 +16,10 @@ import PresetsExample from '../../examples/CTextField/PresetsExample.vue'
 <BasicExample />
 
 ::: details Показать код
+
 ```vue
 <template>
-  <CTextField
-    v-model="value"
-    id="basic-email"
-    label="Email"
-    placeholder="Enter your email"
-  />
+  <CTextField v-model="value" id="basic-email" label="Email" placeholder="Enter your email" />
 </template>
 
 <script setup lang="ts">
@@ -31,6 +27,7 @@ import { ref } from 'vue'
 const value = ref('')
 </script>
 ```
+
 :::
 
 ## Состояния
@@ -40,6 +37,7 @@ const value = ref('')
 <StatesExample />
 
 ::: details Показать код
+
 ```vue
 <template>
   <CTextField v-model="value" label="Default" />
@@ -48,6 +46,7 @@ const value = ref('')
   <CTextField v-model="value" label="Clearable" clearable />
 </template>
 ```
+
 :::
 
 ## Валидация
@@ -57,6 +56,7 @@ const value = ref('')
 <ValidationExample />
 
 ::: details Показать код
+
 ```vue
 <template>
   <CTextField
@@ -92,6 +92,7 @@ const passwordRules = [
 ]
 </script>
 ```
+
 :::
 
 ## Слоты prepend, append и details
@@ -101,6 +102,7 @@ const passwordRules = [
 <SlotsExample />
 
 ::: details Показать код
+
 ```vue
 <template>
   <!-- Prepend icon -->
@@ -118,12 +120,7 @@ const passwordRules = [
   </CTextField>
 
   <!-- Custom details slot -->
-  <CTextField
-    v-model="nickname"
-    label="Nickname"
-    :rules="nicknameRules"
-    validate-on="input"
-  >
+  <CTextField v-model="nickname" label="Nickname" :rules="nicknameRules" validate-on="input">
     <template #details="{ errorMessage, hasError }">
       <span :style="{ color: hasError ? 'var(--c-app-error-color)' : 'inherit' }">
         {{ errorMessage || `${nickname.length}/20 characters` }}
@@ -132,6 +129,7 @@ const passwordRules = [
   </CTextField>
 </template>
 ```
+
 :::
 
 ## Асинхронная валидация
@@ -141,14 +139,10 @@ const passwordRules = [
 <AsyncValidationExample />
 
 ::: details Показать код
+
 ```vue
 <template>
-  <CTextField
-    v-model="username"
-    label="Username"
-    :rules="usernameRules"
-    validate-on="blur"
-  >
+  <CTextField v-model="username" label="Username" :rules="usernameRules" validate-on="blur">
     <template #details="{ errorMessage, hasError, validating }">
       <span v-if="validating" style="color: var(--c-app-primary-color)">
         Checking availability…
@@ -169,12 +163,13 @@ const taken = ['admin', 'user', 'root']
 const usernameRules = [
   (v: string) => ({ valid: v.length >= 3, message: 'Minimum 3 characters' }),
   async (v: string) => {
-    await new Promise(resolve => setTimeout(resolve, 800))
+    await new Promise((resolve) => setTimeout(resolve, 800))
     return { valid: !taken.includes(v.toLowerCase()), message: `"${v}" is already taken` }
   },
 ]
 </script>
 ```
+
 :::
 
 ## Пресеты
@@ -184,6 +179,7 @@ const usernameRules = [
 <PresetsExample />
 
 ::: details Показать код
+
 ```vue
 <template>
   <CTextField v-model="value" label="Email" preset="input.blue">
@@ -191,6 +187,7 @@ const usernameRules = [
   </CTextField>
 </template>
 ```
+
 :::
 
 Регистрация пресетов при инициализации плагина:
@@ -203,10 +200,10 @@ createVuelandUI({
   presets: {
     input: {
       blue: {
-        base:    { label: ['text-blue'] },
+        base: { label: ['text-blue'] },
         focused: { label: ['text-blue'], field: ['text-blue'] },
-        filled:  { label: ['text-blue'] },
-        error:   { label: ['text-red'], details: ['text-red'] },
+        filled: { label: ['text-blue'] },
+        error: { label: ['text-red'], details: ['text-red'] },
       } satisfies CInputPreset,
     },
   },
@@ -235,72 +232,78 @@ type CInputPreset = Partial<Record<'base' | CInputState, ZonePreset>>
 
 ### Props
 
-| Prop | Тип | По умолчанию | Описание |
-|------|-----|-------------|----------|
-| `modelValue` | `string \| number \| null` | `undefined` | Значение поля (v-model) |
-| `id` | `string` | auto | ID для `<input>`. Если не передан, генерируется с префиксом `input-` |
-| `label` | `string` | — | Плавающий лейбл поля |
-| `placeholder` | `string` | — | Placeholder нативного `<input>` (attr) |
-| `details` | `string` | — | Подсказка под полем |
-| `noDetails` | `boolean` | `false` | Скрыть блок details полностью |
-| `clearable` | `boolean` | `false` | Кнопка очистки при наличии значения и фокуса |
-| `disabled` | `boolean` | `false` | Отключить поле. Блокирует фокус и ввод |
-| `readonly` | `boolean` | `false` | Только для чтения. Фокус разрешён, редактирование — нет |
-| `focused` | `boolean` | `false` | Начальное состояние фокуса |
-| `rules` | `ValidateFn[]` | `[]` | Массив функций валидации |
-| `validateOn` | `'input' \| 'blur'` | `'input'` | Момент запуска автоматической валидации |
-| `preset` | `string` | — | Имя пресета из конфигурации Vueland UI |
-| `type` | `string` | `'text'` | Тип `<input>` — передаётся как нативный attr |
-| `name` | `string` | — | `name` нативного `<input>` |
-| `autocomplete` | `string` | — | `autocomplete` нативного `<input>` |
-| `required` | `boolean` | — | `required` нативного `<input>` |
-| `inputmode` | `string` | — | `inputmode` нативного `<input>` |
-| `pattern` | `string` | — | `pattern` нативного `<input>` |
-| `maxlength` | `number` | — | `maxlength` нативного `<input>` |
-| `minlength` | `number` | — | `minlength` нативного `<input>` |
-| `min` | `number` | — | `min` для `type="number"` |
-| `max` | `number` | — | `max` для `type="number"` |
-| `step` | `number` | — | `step` для `type="number"` |
-| `tabindex` | `number` | — | `tabindex` нативного `<input>` |
-| `enterkeyhint` | `string` | — | Подпись кнопки Enter на мобильной клавиатуре |
-| `aria-label` | `string` | — | Дополнительная aria-метка (attr) |
+| Prop         | Тип                                     | По умолчанию | Описание                                                             |
+| ------------ | --------------------------------------- | ------------ | -------------------------------------------------------------------- |
+| `modelValue` | `string \| number \| null \| undefined` | `undefined`  | Значение поля (v-model)                                              |
+| `id`         | `string`                                | auto         | ID для `<input>`. Если не передан, генерируется с префиксом `input-` |
+| `label`      | `string`                                | —            | Плавающий лейбл поля                                                 |
+| `details`    | `string`                                | —            | Подсказка под полем                                                  |
+| `noDetails`  | `boolean`                               | `false`      | Скрыть блок details полностью                                        |
+| `clearable`  | `boolean`                               | `false`      | Кнопка очистки при наличии значения и фокуса                         |
+| `disabled`   | `boolean`                               | `false`      | Отключить поле. Блокирует фокус и ввод                               |
+| `readonly`   | `boolean`                               | `false`      | Только для чтения. Фокус разрешён, редактирование — нет              |
+| `focused`    | `boolean`                               | `false`      | Начальное состояние фокуса                                           |
+| `rules`      | `ValidateFn[]`                          | `[]`         | Массив функций валидации                                             |
+| `validateOn` | `'input' \| 'blur'`                     | `'input'`    | Момент запуска автоматической валидации                              |
+| `preset`     | `string`                                | —            | Имя пресета из конфигурации Vueland UI                               |
+
+### Нативные атрибуты
+
+`CTextField` **не** оборачивает атрибуты `<input>` в собственные пропсы. Благодаря `inheritAttrs` любой нестандартный атрибут пробрасывается как есть на внутренний `<input>` — поэтому используйте обычные HTML-атрибуты напрямую:
+
+```vue
+<CTextField
+  type="number"
+  placeholder="0"
+  :min="0"
+  :max="100"
+  :step="5"
+  inputmode="numeric"
+  maxlength="10"
+  autocomplete="off"
+  name="amount"
+  required
+/>
+```
+
+Так же пробрасываются `pattern`, `minlength`, `tabindex`, `enterkeyhint` и любые `data-*` / `aria-*` атрибуты. Эти значения **не** документируются как пропсы — это стандартный контракт нативного `<input>`.
 
 ### Slots
 
-| Слот | Пропсы | Описание |
-|------|--------|----------|
-| `prepend` | — | Контент слева внутри поля (иконка, текст) |
-| `append` | — | Контент справа внутри поля (иконка, текст) |
-| `details` | `CInputDetailsSlotProps` | Замена блока подсказки/ошибки |
+| Слот      | Пропсы                   | Описание                                   |
+| --------- | ------------------------ | ------------------------------------------ |
+| `prepend` | —                        | Контент слева внутри поля (иконка, текст)  |
+| `append`  | —                        | Контент справа внутри поля (иконка, текст) |
+| `details` | `CInputDetailsSlotProps` | Замена блока подсказки/ошибки              |
 
 #### Пропсы слота `details`
 
-| Проп | Тип | Описание |
-|------|-----|----------|
-| `errorMessage` | `string \| undefined` | Текущее сообщение об ошибке |
-| `hasError` | `boolean` | Есть ли активная ошибка |
-| `validating` | `boolean` | Идёт ли async-валидация прямо сейчас |
-| `uid` | `string` | ID поля (совпадает с `id` нативного `<input>`) |
-| `details` | `string \| undefined` | Значение prop `details` |
+| Проп           | Тип                   | Описание                                       |
+| -------------- | --------------------- | ---------------------------------------------- |
+| `errorMessage` | `string \| undefined` | Текущее сообщение об ошибке                    |
+| `hasError`     | `boolean`             | Есть ли активная ошибка                        |
+| `validating`   | `boolean`             | Идёт ли async-валидация прямо сейчас           |
+| `uid`          | `string`              | ID поля (совпадает с `id` нативного `<input>`) |
+| `details`      | `string \| undefined` | Значение prop `details`                        |
 
 ### События
 
-| Событие | Аргументы | Описание |
-|---------|-----------|----------|
+| Событие             | Аргументы                       | Описание                     |
+| ------------------- | ------------------------------- | ---------------------------- |
 | `update:modelValue` | `string \| number \| undefined` | Изменение значения (v-model) |
-| `focus` | — | Поле получило фокус |
-| `blur` | — | Поле потеряло фокус |
+| `focus`             | —                               | Поле получило фокус          |
+| `blur`              | —                               | Поле потеряло фокус          |
 
 ### Expose
 
 Методы, доступные через template ref:
 
-| Метод | Сигнатура | Описание |
-|-------|-----------|----------|
-| `validate` | `() => Promise<boolean>` | Запустить валидацию вручную |
-| `reset` | `() => void` | Сбросить состояние ошибки |
-| `focus` | `() => void` | Программно сфокусировать поле |
-| `blur` | `() => void` | Программно убрать фокус |
+| Метод      | Сигнатура                | Описание                      |
+| ---------- | ------------------------ | ----------------------------- |
+| `validate` | `() => Promise<boolean>` | Запустить валидацию вручную   |
+| `reset`    | `() => void`             | Сбросить состояние ошибки     |
+| `focus`    | `() => void`             | Программно сфокусировать поле |
+| `blur`     | `() => void`             | Программно убрать фокус       |
 
 ```vue
 <template>
@@ -329,23 +332,31 @@ type ValidateFn = (value: any) => ValidateResult | Promise<ValidateResult>
 
 ### CInput (корневой элемент)
 
-| Переменная | По умолчанию | Описание |
-|-----------|-------------|----------|
-| `--c-input-background-color` | `var(--c-app-surface-color)` | Фон компонента |
-| `--c-input-primary-color` | `var(--c-app-primary-color)` | Цвет текста в состоянии default |
-| `--c-input-error-color` | `var(--c-app-error-color)` | Цвет текста при ошибке |
-| `--c-input-disabled-color` | `var(--c-app-disabled-color)` | Цвет текста при disabled |
-| `--c-input-readonly-color` | `var(--c-app-primary-color)` | Цвет текста при readonly |
-| `--c-input-readonly-bg-color` | `grey lighten-4` | Фон поля при readonly |
-| `--c-input-field-border-radius` | `var(--c-app-border-radius)` | Скругление поля |
-| `--c-input-details-height` | `24px` | Высота блока details |
+| Переменная                      | По умолчанию                  | Описание                        |
+| ------------------------------- | ----------------------------- | ------------------------------- |
+| `--c-input-details-height`      | `24px`                        | Высота блока details            |
+| `--c-input-transition-duration` | `0.2s`                        | Длительность перехода цвета     |
+| `--c-input-background-color`    | `var(--c-app-surface-color)`  | Фон компонента                  |
+| `--c-input-primary-color`       | `var(--c-app-primary-color)`  | Цвет текста в состоянии default |
+| `--c-input-error-color`         | `var(--c-app-error-color)`    | Цвет текста при ошибке          |
+| `--c-input-disabled-color`      | `var(--c-app-disabled-color)` | Цвет текста при disabled        |
+| `--c-input-readonly-color`      | `var(--c-app-readonly-color)` | Цвет текста при readonly        |
 
 ### CField (рамка и лейбл)
 
-| Переменная | По умолчанию | Описание |
-|-----------|-------------|----------|
-| `--c-field-border-color` | `var(--c-app-border-color, #e5e5e5)` | Цвет рамки |
-| `--c-field-disabled-opacity` | `0.5` | Прозрачность при disabled |
+| Переменная                      | По умолчанию                     | Описание                      |
+| ------------------------------- | -------------------------------- | ----------------------------- |
+| `--c-field-min-height`          | `40px`                           | Минимальная высота поля       |
+| `--c-field-prepend-min-width`   | `40px`                           | Мин. ширина зоны prepend      |
+| `--c-field-append-min-width`    | `24px`                           | Мин. ширина зоны append       |
+| `--c-field-border-radius`       | `var(--c-app-border-radius)`     | Скругление поля               |
+| `--c-field-transition-duration` | `0.2s`                           | Длительность переходов поля   |
+| `--c-field-bg-color`            | `var(--c-app-surface-color)`     | Фон поля                      |
+| `--c-field-color`               | `var(--c-input-primary-color)`   | Цвет рамки и лейбла в default |
+| `--c-field-border-color`        | `var(--c-app-border-color)`      | Цвет рамки                    |
+| `--c-field-input-color`         | `var(--c-app-text-color)`        | Цвет вводимого текста         |
+| `--c-field-readonly-bg-color`   | `var(--c-app-readonly-bg-color)` | Фон поля при readonly         |
+| `--c-field-disabled-opacity`    | `var(--c-app-disabled-opacity)`  | Прозрачность при disabled     |
 
 ### Пример переопределения
 
@@ -364,17 +375,17 @@ type ValidateFn = (value: any) => ValidateResult | Promise<ValidateResult>
 
 ## CSS-классы состояний
 
-| Класс | Условие |
-|-------|---------|
-| `c-input--default` | Нет ошибки, не disabled, не readonly |
-| `c-input--focused` | Поле в фокусе |
-| `c-input--has-error` | Есть ошибка валидации |
-| `c-input--disabled` | `disabled = true` |
-| `c-input--readonly` | `readonly = true` |
-| `c-input--clearable` | `clearable = true` |
-| `c-input--validating` | Идёт async-валидация |
-| `c-field--focused` | Рамка в фокусе |
-| `c-field--filled` | Поле имеет значение (лейбл поднят) |
-| `c-field--disabled` | Рамка disabled |
-| `c-field--readonly` | Рамка readonly (пунктирная рамка) |
-| `c-field--has-prepend` | Есть слот prepend |
+| Класс                  | Условие                              |
+| ---------------------- | ------------------------------------ |
+| `c-input--default`     | Нет ошибки, не disabled, не readonly |
+| `c-input--focused`     | Поле в фокусе                        |
+| `c-input--has-error`   | Есть ошибка валидации                |
+| `c-input--disabled`    | `disabled = true`                    |
+| `c-input--readonly`    | `readonly = true`                    |
+| `c-input--clearable`   | `clearable = true`                   |
+| `c-input--validating`  | Идёт async-валидация                 |
+| `c-field--focused`     | Рамка в фокусе                       |
+| `c-field--filled`      | Поле имеет значение (лейбл поднят)   |
+| `c-field--disabled`    | Рамка disabled                       |
+| `c-field--readonly`    | Рамка readonly (пунктирная рамка)    |
+| `c-field--has-prepend` | Есть слот prepend                    |

@@ -4,7 +4,7 @@
 
 ## Basic usage
 
-```vue
+```html
 <CApp>
   <CMain>
     <!-- page content -->
@@ -14,14 +14,14 @@
 
 ## Props
 
-| Prop | Type | Default | Description |
-|---|---|---|---|
+| Prop  | Type     | Default | Description                  |
+| ----- | -------- | ------- | ---------------------------- |
 | `tag` | `string` | `'div'` | HTML tag of the root element |
 
 ## Slots
 
-| Slot | Description |
-|---|---|
+| Slot      | Description  |
+| --------- | ------------ |
 | `default` | Page content |
 
 ## CSS variables
