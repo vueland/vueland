@@ -1,0 +1,28 @@
+{
+    "version": "0.0.1",
+    "configurations": [
+        {
+            "name": "docs-preview",
+            "runtimeExecutable": "pnpm",
+            "runtimeArgs": ["--filter", "@vueland/docs", "run", "preview:docs"],
+            "port": 4173,
+            "autoPort": false
+        },
+        {
+            "name": "docs-dev",
+            "runtimeExecutable": "pnpm",
+            "runtimeArgs": [
+                "--filter",
+                "@vueland/docs",
+                "exec",
+                "vitepress",
+                "dev",
+                ".",
+                "--port",
+                "5199"
+            ],
+            "port": 5199,
+            "autoPort": false
+        }
+    ]
+}

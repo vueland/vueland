@@ -1,2 +1,32 @@
+// List
 $list-bg-color: var(--c-app-surface-color);
-$list-item-height: 36px;
+$list-color: var(--c-app-text-color);
+$list-border-radius: var(--c-app-border-radius);
+$list-padding-block: 0;
+$list-padding-inline: 0;
+$list-disabled-opacity: var(--c-app-disabled-opacity, 0.5);
+
+// List item layout
+$list-item-min-height: 36px;
+$list-item-padding-block: 4px;
+$list-item-padding-inline: 8px;
+$list-item-gap: 12px;
+$list-item-border-radius: 0;
+
+// List item colors
+$list-item-color: currentColor;
+$list-item-bg-color: transparent;
+$list-item-selected-bg-color: var(--c-app-primary-color);
+$list-item-selected-color: var(--c-app-on-primary-color);
+$list-item-disabled-opacity: var(--c-app-disabled-opacity, 0.5);
+$list-item-disabled-color: var(--c-app-disabled-color);
+$list-item-hover-bg-color: var(--c-app-primary-color);
+
+// List item typography
+$list-item-title-font-size: 1rem;
+$list-item-title-line-height: 1.25rem;
+$list-item-title-font-weight: 400;
+$list-item-subtitle-font-size: 0.8rem;
+$list-item-subtitle-line-height: 1rem;
+$list-item-subtitle-color: currentColor;
+$list-item-subtitle-opacity: 0.6;

@@ -16,15 +16,10 @@ import PresetStatesExample from '../../examples/CInput/PresetStatesExample.vue'
 <CustomFieldExample />
 
 ::: details Show code
+
 ```vue
 <template>
-  <CInput
-    v-model="pin"
-    id="custom-pin"
-    label="PIN code"
-    :rules="pinRules"
-    validate-on="blur"
-  >
+  <CInput v-model="pin" id="custom-pin" label="PIN code" :rules="pinRules" validate-on="blur">
     <template #field="field">
       <div class="pin-wrap" :class="{ 'has-error': field.hasError }">
         <label :for="field.uid">PIN code</label>
@@ -35,7 +30,7 @@ import PresetStatesExample from '../../examples/CInput/PresetStatesExample.vue'
           maxlength="4"
           inputmode="numeric"
           :value="pin"
-          @input="(e: any) => pin = (e.target as HTMLInputElement).value"
+          @input="(e: any) => (pin = (e.target as HTMLInputElement).value)"
           @focus="field.focus"
           @blur="field.blur"
         />
@@ -53,11 +48,10 @@ import PresetStatesExample from '../../examples/CInput/PresetStatesExample.vue'
 import { ref } from 'vue'
 
 const pin = ref('')
-const pinRules = [
-  (v: string) => ({ valid: /^\d{4}$/.test(v), message: 'Enter a 4-digit PIN' }),
-]
+const pinRules = [(v: string) => ({ valid: /^\d{4}$/.test(v), message: 'Enter a 4-digit PIN' })]
 </script>
 ```
+
 :::
 
 ---
@@ -72,15 +66,15 @@ Every value is an array of utility class names, so presets work with any utility
 
 A flat preset (`ZonePreset`) maps **zones** to class lists. Zones map 1:1 to the rendered DOM:
 
-| Zone | Element |
-|---|---|
-| `root` | the `.c-input` wrapper |
-| `field` | the `.c-field` box (border / background) |
-| `input` | the native `<input>` |
-| `label` | the floating label |
-| `details` | the hint / error row |
-| `prepend` | the prepend-slot wrapper |
-| `append` | the append-slot wrapper |
+| Zone      | Element                                  |
+| --------- | ---------------------------------------- |
+| `root`    | the `.c-input` wrapper                   |
+| `field`   | the `.c-field` box (border / background) |
+| `input`   | the native `<input>`                     |
+| `label`   | the floating label                       |
+| `details` | the hint / error row                     |
+| `prepend` | the prepend-slot wrapper                 |
+| `append`  | the append-slot wrapper                  |
 
 ### The CInputPreset type
 
@@ -120,10 +114,10 @@ import type { CInputPreset } from '@vueland/ui/types'
 
 function makePreset(color: string): CInputPreset {
   return {
-    base:     { label: [color] },
-    focused:  { label: [color], field: [color] },
-    filled:   { label: [color] },
-    error:    { label: ['text-red'], field: ['text-red'], details: ['text-red'] },
+    base: { label: [color] },
+    focused: { label: [color], field: [color] },
+    filled: { label: [color] },
+    error: { label: ['text-red'], field: ['text-red'], details: ['text-red'] },
     readonly: { label: ['text-grey'] },
     // `disabled` is dimmed by the component; add a zone only to override
   }
@@ -155,6 +149,7 @@ You write a **single** preset. `CInput` resolves it, applies its own zones (`roo
 <PresetStatesExample />
 
 The example above uses `preset="input.blue"` across six states:
+
 - **Default** — `base` zones
 - **Focused** — `focused` replaces base per-zone
 - **Filled** — `filled` replaces base (label floats up, keeps color)
@@ -168,21 +163,21 @@ The example above uses `preset="input.blue"` across six states:
 
 ### Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `modelValue` | `any` | `undefined` | Field value (v-model) |
-| `id` | `string` | auto | Base ID used to generate `uid`, `uid-label`, `uid-details` |
-| `label` | `string` | — | Label text (forwarded into the `field` slot) |
-| `details` | `string` | — | Hint text shown below the field |
-| `noDetails` | `boolean` | `false` | Hide the details area entirely |
-| `clearable` | `boolean` | `false` | Forward `clearable` into the `field` slot |
-| `disabled` | `boolean` | `false` | Blocks focus, adds `aria-disabled` |
-| `readonly` | `boolean` | `false` | Adds `aria-readonly`, blocks editing |
-| `focused` | `boolean` | `false` | Initial focused state |
-| `role` | `CInputRole` | — | Semantic role. Drives the aria wiring and the `uid` prefix |
-| `rules` | `ValidateFn[]` | `[]` | Validation functions |
-| `validateOn` | `'input' \| 'blur'` | `'input'` | When to trigger automatic validation |
-| `preset` | `string` | — | Preset name (dot-path into the `presets` object passed to `createVuelandUI`) |
+| Prop         | Type                | Default     | Description                                                                  |
+| ------------ | ------------------- | ----------- | ---------------------------------------------------------------------------- |
+| `modelValue` | `any`               | `undefined` | Field value (v-model)                                                        |
+| `id`         | `string`            | auto        | Base ID used to generate `uid`, `uid-label`, `uid-details`                   |
+| `label`      | `string`            | —           | Label text (forwarded into the `field` slot)                                 |
+| `details`    | `string`            | —           | Hint text shown below the field                                              |
+| `noDetails`  | `boolean`           | `false`     | Hide the details area entirely                                               |
+| `clearable`  | `boolean`           | `false`     | Forward `clearable` into the `field` slot                                    |
+| `disabled`   | `boolean`           | `false`     | Blocks focus, adds `aria-disabled`                                           |
+| `readonly`   | `boolean`           | `false`     | Adds `aria-readonly`, blocks editing                                         |
+| `focused`    | `boolean`           | `false`     | Initial focused state                                                        |
+| `role`       | `CInputRole`        | —           | Semantic role. Drives the aria wiring and the `uid` prefix                   |
+| `rules`      | `ValidateFn[]`      | `[]`        | Validation functions                                                         |
+| `validateOn` | `'input' \| 'blur'` | `'input'`   | When to trigger automatic validation                                         |
+| `preset`     | `string`            | —           | Preset name (dot-path into the `presets` object passed to `createVuelandUI`) |
 
 #### CInputRole type
 
@@ -190,65 +185,65 @@ The example above uses `preset="input.blue"` across six states:
 type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 ```
 
-| Value | Behavior |
-|-------|----------|
+| Value        | Behavior                                                                                                                   |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------- |
 | `'combobox'` | Adds `role="combobox"`, `aria-haspopup="listbox"`, `aria-controls`, `aria-expanded` — for select / autocomplete activators |
-| `'checkbox'` | Wires `aria-labelledby` to the label |
-| `'radio'` | Wires `aria-labelledby` to the label |
-| `'listbox'` | For listbox-based controls (aria wiring + `uid` prefix) |
+| `'checkbox'` | Wires `aria-labelledby` to the label                                                                                       |
+| `'radio'`    | Wires `aria-labelledby` to the label                                                                                       |
+| `'listbox'`  | For listbox-based controls (aria wiring + `uid` prefix)                                                                    |
 
 ### Slots
 
-| Slot | Props | Description |
-|------|-------|-------------|
-| `field` | `CInputFieldSlotProps` | **Required.** Renders the actual input control |
-| `details` | `CInputDetailsSlotProps` | Replaces the hint/error area |
+| Slot      | Props                    | Description                                    |
+| --------- | ------------------------ | ---------------------------------------------- |
+| `field`   | `CInputFieldSlotProps`   | **Required.** Renders the actual input control |
+| `details` | `CInputDetailsSlotProps` | Replaces the hint/error area                   |
 
 #### `field` slot props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `uid` | `string` | Generated ID for the native `<input>` |
-| `attrs` | `Record<string, unknown>` | Ready-to-use aria + native attrs — spread with `v-bind` |
-| `focused` | `boolean` | Current focus state |
-| `label` | `string \| undefined` | Value of the `label` prop |
-| `clearable` | `boolean \| undefined` | Value of the `clearable` prop |
-| `disabled` | `boolean \| undefined` | Value of the `disabled` prop |
-| `readonly` | `boolean \| undefined` | Value of the `readonly` prop |
-| `preset` | `CInputPreset \| undefined` | Resolved preset set (also provided to the field subtree) |
-| `hasError` | `boolean` | Whether there is an active validation error |
-| `errorMessage` | `string \| undefined` | Current error message |
-| `validating` | `boolean` | Whether async validation is running |
-| `focus` | `() => void` | Call when the native element receives focus |
-| `blur` | `() => void` | Call when the native element loses focus |
-| `reset` | `() => void` | Clear the validation error |
-| `validate` | `() => Promise<boolean>` | Trigger validation |
+| Prop           | Type                        | Description                                              |
+| -------------- | --------------------------- | -------------------------------------------------------- |
+| `uid`          | `string`                    | Generated ID for the native `<input>`                    |
+| `attrs`        | `Record<string, unknown>`   | Ready-to-use aria + native attrs — spread with `v-bind`  |
+| `focused`      | `boolean`                   | Current focus state                                      |
+| `label`        | `string \| undefined`       | Value of the `label` prop                                |
+| `clearable`    | `boolean \| undefined`      | Value of the `clearable` prop                            |
+| `disabled`     | `boolean \| undefined`      | Value of the `disabled` prop                             |
+| `readonly`     | `boolean \| undefined`      | Value of the `readonly` prop                             |
+| `preset`       | `CInputPreset \| undefined` | Resolved preset set (also provided to the field subtree) |
+| `hasError`     | `boolean`                   | Whether there is an active validation error              |
+| `errorMessage` | `string \| undefined`       | Current error message                                    |
+| `validating`   | `boolean`                   | Whether async validation is running                      |
+| `focus`        | `() => void`                | Call when the native element receives focus              |
+| `blur`         | `() => void`                | Call when the native element loses focus                 |
+| `reset`        | `() => void`                | Clear the validation error                               |
+| `validate`     | `() => Promise<boolean>`    | Trigger validation                                       |
 
 #### `details` slot props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `uid` | `string` | Field ID |
-| `errorMessage` | `string \| undefined` | Current error message |
-| `hasError` | `boolean` | Whether there is an error |
-| `validating` | `boolean` | Whether async validation is running |
-| `details` | `string \| undefined` | Value of the `details` prop |
+| Prop           | Type                  | Description                         |
+| -------------- | --------------------- | ----------------------------------- |
+| `uid`          | `string`              | Field ID                            |
+| `errorMessage` | `string \| undefined` | Current error message               |
+| `hasError`     | `boolean`             | Whether there is an error           |
+| `validating`   | `boolean`             | Whether async validation is running |
+| `details`      | `string \| undefined` | Value of the `details` prop         |
 
 ### Events
 
-| Event | Arguments | Description |
-|-------|-----------|-------------|
+| Event   | Arguments | Description          |
+| ------- | --------- | -------------------- |
 | `focus` | `boolean` | Field received focus |
-| `blur` | — | Field lost focus |
+| `blur`  | —         | Field lost focus     |
 
 ### Expose
 
-| Method | Signature | Description |
-|--------|-----------|-------------|
-| `validate` | `() => Promise<boolean>` | Trigger validation manually |
-| `reset` | `() => void` | Clear the error state |
-| `focus` | `() => void` | Programmatically focus the field |
-| `blur` | `() => void` | Programmatically remove focus |
+| Method     | Signature                | Description                      |
+| ---------- | ------------------------ | -------------------------------- |
+| `validate` | `() => Promise<boolean>` | Trigger validation manually      |
+| `reset`    | `() => void`             | Clear the error state            |
+| `focus`    | `() => void`             | Programmatically focus the field |
+| `blur`     | `() => void`             | Programmatically remove focus    |
 
 ---
 
@@ -284,42 +279,45 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 
 `CInput` computes aria attributes and passes them via `field.attrs`. Always spread `v-bind="field.attrs"` on the native element.
 
-| Attribute | Condition |
-|-----------|-----------|
-| `aria-labelledby="{uid}-label"` | `label` is set, or `kind` = checkbox/radio |
-| `aria-label` | If `label` is the only label |
-| `aria-describedby="{uid}-details"` | `details` prop or error message is present |
-| `aria-invalid="true"` | Validation error is active |
-| `aria-errormessage="{uid}-details"` | Error message is present |
-| `aria-disabled="true"` | `disabled = true` |
-| `aria-readonly="true"` | `readonly = true` |
-| `aria-haspopup="listbox"` | `kind = 'listbox'` |
-| `aria-controls="{uid}-menu"` | `kind = 'listbox'` |
-| `aria-expanded` | `kind = 'listbox'` (updated on focus change) |
+| Attribute                           | Condition                                    |
+| ----------------------------------- | -------------------------------------------- |
+| `aria-labelledby="{uid}-label"`     | `label` is set, or `kind` = checkbox/radio   |
+| `aria-label`                        | If `label` is the only label                 |
+| `aria-describedby="{uid}-details"`  | `details` prop or error message is present   |
+| `aria-invalid="true"`               | Validation error is active                   |
+| `aria-errormessage="{uid}-details"` | Error message is present                     |
+| `aria-disabled="true"`              | `disabled = true`                            |
+| `aria-readonly="true"`              | `readonly = true`                            |
+| `aria-haspopup="listbox"`           | `kind = 'listbox'`                           |
+| `aria-controls="{uid}-menu"`        | `kind = 'listbox'`                           |
+| `aria-expanded`                     | `kind = 'listbox'` (updated on focus change) |
 
 ---
 
 ## CSS variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `--c-input-background-color` | `var(--c-app-surface-color)` | Component background |
-| `--c-input-primary-color` | `var(--c-app-primary-color)` | Text color in default state |
-| `--c-input-error-color` | `var(--c-app-error-color)` | Text color on error |
-| `--c-input-disabled-color` | `var(--c-app-disabled-color)` | Text color when disabled |
-| `--c-input-readonly-color` | `var(--c-app-primary-color)` | Text color when readonly |
-| `--c-input-details-height` | `24px` | Height of the details area |
+| Variable                        | Default                       | Description                 |
+| ------------------------------- | ----------------------------- | --------------------------- |
+| `--c-input-details-height`      | `24px`                        | Height of the details area  |
+| `--c-input-transition-duration` | `0.2s`                        | Color transition duration   |
+| `--c-input-background-color`    | `var(--c-app-surface-color)`  | Component background        |
+| `--c-input-primary-color`       | `var(--c-app-primary-color)`  | Text color in default state |
+| `--c-input-error-color`         | `var(--c-app-error-color)`    | Text color on error         |
+| `--c-input-disabled-color`      | `var(--c-app-disabled-color)` | Text color when disabled    |
+| `--c-input-readonly-color`      | `var(--c-app-readonly-color)` | Text color when readonly    |
+
+> The field background in `readonly`/`disabled` states is rendered by `CField` (`--c-field-readonly-bg-color`, `--c-field-disabled-opacity`), not `CInput`.
 
 ---
 
 ## State CSS classes
 
-| Class | Condition |
-|-------|-----------|
-| `c-input--default` | No error, not disabled, not readonly |
-| `c-input--focused` | Field is focused |
-| `c-input--has-error` | Validation error is active |
-| `c-input--disabled` | `disabled = true` |
-| `c-input--readonly` | `readonly = true` |
-| `c-input--clearable` | `clearable = true` |
-| `c-input--validating` | Async validation is running |
+| Class                 | Condition                            |
+| --------------------- | ------------------------------------ |
+| `c-input--default`    | No error, not disabled, not readonly |
+| `c-input--focused`    | Field is focused                     |
+| `c-input--has-error`  | Validation error is active           |
+| `c-input--disabled`   | `disabled = true`                    |
+| `c-input--readonly`   | `readonly = true`                    |
+| `c-input--clearable`  | `clearable = true`                   |
+| `c-input--validating` | Async validation is running          |

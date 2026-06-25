@@ -129,7 +129,7 @@
         <template #field="field">
             <c-menu
                 v-model="menuOpen"
-                bottom
+                align="bottom-left"
                 :offset-y="2"
                 :width="320"
                 close-on-click-outside

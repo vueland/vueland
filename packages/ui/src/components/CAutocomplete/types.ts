@@ -27,4 +27,4 @@ export type CAutocompleteSlots<T> = {
     ['no-items-message'](): string
 }
 
-export type CAutocompletePublicProps<T> = CInputProps<T> & CAutocompleteProps<T>
+export type CAutocompletePublicProps<T> = Omit<CInputProps<T>, 'modelValue' | 'role'> & CAutocompleteProps<T>

@@ -45,7 +45,6 @@
             v-model="readonly"
             label="Readonly"
             readonly
-            preset="input.teal"
         >
             <template #prepend>
                 <c-icon

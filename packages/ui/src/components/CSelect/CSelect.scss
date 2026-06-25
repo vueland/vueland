@@ -1,6 +1,10 @@
 .c-select {
   flex: 1 1;
 
+  &__listbox {
+    padding: 5px 0;
+  }
+
   & > .c-field > .c-field__append {
     transition: transform 0.1s linear;
   }

@@ -1,10 +1,27 @@
 @use 'variables' as *;
 
 .c-list {
-  --list-bg-color: #{$list-bg-color};
-  //background-color: var(--list-bg-color);
+  --c-list-bg-color: #{$list-bg-color};
+  --c-list-color: #{$list-color};
+  --c-list-border-radius: #{$list-border-radius};
+  --c-list-padding-block: #{$list-padding-block};
+  --c-list-padding-inline: #{$list-padding-inline};
+  --c-list-disabled-opacity: #{$list-disabled-opacity};
+
+  padding: var(--c-list-padding-block) var(--c-list-padding-inline);
+  border-radius: var(--c-list-border-radius);
+  background-color: var(--c-list-bg-color);
+  color: var(--c-list-color);
 
   &--readonly {
     pointer-events: none;
+  }
+
+  &--disabled {
+    opacity: var(--c-list-disabled-opacity);
+    pointer-events: none;
+  }
+
+  &:first-child {
   }
 }

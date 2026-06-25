@@ -26,7 +26,9 @@ declare module 'vue' {
         CLabel: typeof import('./CLabel').CLabel
         CList: typeof import('./CList').CList
         CListItem: typeof import('./CList').CListItem
+        CListItemContent: typeof import('./CList').CListItemContent
         CListItemTitle: typeof import('./CList').CListItemTitle
+        CListItemSubtitle: typeof import('./CList').CListItemSubtitle
         CListItemIcon: typeof import('./CList').CListItemIcon
         CMain: typeof import('./CMain').CMain
         CMenu: typeof import('./CMenu').CMenu

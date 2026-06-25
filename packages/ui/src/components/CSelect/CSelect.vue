@@ -1,13 +1,10 @@
 <script setup lang="ts" generic="T">
-    import {
-        computed,
-        shallowRef,
-        unref
-    } from 'vue'
+    import { shallowRef, unref } from 'vue'
 
     import { CField } from '@/components/CField'
     import { CInput } from '@/components/CInput'
     import { CMenu } from '@/components/CMenu'
+    import { useId } from '@/composables/use-id'
     import { useKeyboard } from '@/composables/use-keyboard'
     import { useNormalizedItems } from '@/composables/use-normalized-items'
     import { useSelectedChips } from '@/composables/use-selected-chips'
@@ -32,12 +29,16 @@
 
     const menuListRef = shallowRef()
 
+    const activeDescendant = shallowRef<string>()
+
+    const listId = useId(undefined, { prefix: 'c-select-list' })
+
     const normalizedItems = useNormalizedItems(props)
 
     const {
         chips: selectedItems,
         hasValue,
-        select
+        select,
     } = useSelectedChips(props)
 
     const { onKeydown } = useKeyboard({
@@ -48,10 +49,6 @@
         ArrowDown: () => unref(menuListRef)?.navigateDown(),
         ArrowUp: () => unref(menuListRef)?.navigateUp(),
     }, { prevent: ['ArrowDown', 'ArrowUp'] })
-
-    const ariaControls = computed(() => unref(menuListRef)?.listId)
-
-    const descendant = computed(() => unref(menuListRef)?.descendant)
 
     function onBlur() {
         unref(inputRef).blur()
@@ -64,6 +61,16 @@
     function onFocus() {
         unref(inputRef).focus()
     }
+
+    function setActiveDescendant(id: string) {
+        activeDescendant.value = id
+    }
+
+    function clearActiveDescendant(id: string) {
+        if (activeDescendant.value === id) {
+            activeDescendant.value = undefined
+        }
+    }
 </script>
 
 <template>
@@ -73,8 +80,8 @@
         :model-value="model"
         validate-on="blur"
         role="combobox"
-        :aria-controls="ariaControls"
-        :aria-activedescendant="descendant"
+        :aria-controls="listId"
+        :aria-activedescendant="activeDescendant"
     >
         <template #field="field">
             <c-menu
@@ -144,10 +151,12 @@
                         :items="normalizedItems"
                     >
                         <c-list
+                            :id="listId"
                             ref="menuListRef"
                             v-model="model"
-                            role="listbox"
-                            selectable
+                            variant="listbox"
+                            class="c-select__listbox"
+                            :disabled="field.disabled"
                             :multiple
                             :mandatory
                         >
@@ -155,6 +164,8 @@
                                 v-for="item of normalizedItems"
                                 :key="item.key"
                                 :value="item.value ?? item.raw"
+                                @active="setActiveDescendant"
+                                @inactive="clearActiveDescendant"
                             >
                                 <c-list-item-title>
                                     {{ item.title }}
