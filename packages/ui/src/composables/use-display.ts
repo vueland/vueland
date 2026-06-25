@@ -27,10 +27,12 @@ export interface Breakpoints {
     md: boolean
     sm: boolean
     xs: boolean
+
     xlAndLess: boolean
     lgAndLess: boolean
     mdAndLess: boolean
     smAndLess: boolean
+
     xlAndUp: boolean
     lgAndUp: boolean
     mdAndUp: boolean
@@ -42,7 +44,7 @@ export type Display = {
 }
 
 export function useDisplay(): {
-    state: ShallowReactive<Breakpoints>,
+    state: ShallowReactive<Breakpoints>
     createDisplay(points?: Record<BreakpointLabels, number>): Display
     update(): void
     } {
@@ -53,10 +55,12 @@ export function useDisplay(): {
         md: false,
         sm: false,
         xs: false,
+
         xlAndLess: false,
         lgAndLess: false,
         mdAndLess: false,
         smAndLess: false,
+
         xlAndUp: false,
         lgAndUp: false,
         mdAndUp: false,
@@ -79,7 +83,9 @@ export function useDisplay(): {
         height.value = getClientHeight()
     }
 
-    const createDisplay = (points: Record<BreakpointLabels, number> = breakpoints) => {
+    const createDisplay = (
+        points: Record<BreakpointLabels, number> = breakpoints,
+    ) => {
         width.value = getClientWidth()
         height.value = getClientHeight()
 
@@ -90,25 +96,26 @@ export function useDisplay(): {
                 lg,
                 md,
                 sm,
-                xs,
             } = points
 
             const screen = unref(width)
 
             state.xs = screen < sm
-            state.sm = screen < md && screen > xs
-            state.md = screen < lg && screen > sm
-            state.lg = screen < xl && screen > md
-            state.xl = screen < xxl && screen > lg
+            state.sm = screen >= sm && screen < md
+            state.md = screen >= md && screen < lg
+            state.lg = screen >= lg && screen < xl
+            state.xl = screen >= xl && screen < xxl
             state.xxl = screen >= xxl
-            state.xlAndUp = !(state.xs || state.sm || state.md || state.lg)
-            state.lgAndUp = !(state.xs || state.sm || state.md)
-            state.mdAndUp = !(state.xs || state.sm)
-            state.smAndUp = !state.xs
-            state.xlAndLess = screen <= xl && screen > lg
-            state.lgAndLess = screen <= lg && screen > md
-            state.mdAndLess = screen <= md && screen > sm
-            state.smAndLess = screen <= sm && screen > xs
+
+            state.smAndUp = screen >= sm
+            state.mdAndUp = screen >= md
+            state.lgAndUp = screen >= lg
+            state.xlAndUp = screen >= xl
+
+            state.smAndLess = screen < md
+            state.mdAndLess = screen < lg
+            state.lgAndLess = screen < xl
+            state.xlAndLess = screen < xxl
         })
 
         return {

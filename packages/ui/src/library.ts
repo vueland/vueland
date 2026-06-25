@@ -117,7 +117,10 @@ export class VuelandUI {
         const unmount = app.unmount
 
         app.unmount = (...args) => {
-            window.removeEventListener('resize', update)
+            if (IN_BROWSER) {
+                window.removeEventListener('resize', update)
+            }
+
             unmount(...args)
         }
 
