@@ -1,5 +1,11 @@
 # @vueland/ui
 
+## 0.0.5
+
+### Patch Changes
+
+- [#61](https://github.com/vueland/vueland/pull/61) [`cb57694`](https://github.com/vueland/vueland/commit/cb576946698fe0ac6626c6b8447f5ae3e07d0f22) Thanks [@wiseadme](https://github.com/wiseadme)! - fully breakpoints synchronization between ui and utils-jit
+
 ## 0.0.4
 
 ### Patch Changes
