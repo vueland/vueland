@@ -79,6 +79,7 @@
         return {
             mouseenter: activateItem,
             mouseleave: deactivateItem,
+            blur: onBlur,
             ...(state.listbox ? { click: toggleSelection } : {}),
         }
     })
@@ -144,6 +145,18 @@
         deactivateItem()
         isFocused.value = false
         unref(rootRef)?.blur()
+    }
+
+    // Нативный blur: фокус ушёл с элемента не через навигацию (клик мимо, Tab,
+    // закрытие меню) — сбрасываем подсветку. Программная навигация уже обнулила
+    // isFocused через blurItem, поэтому guard исключает двойную обработку.
+    function onBlur() {
+        if (!unref(isFocused)) {
+            return
+        }
+
+        isFocused.value = false
+        deactivateItem()
     }
 
     function activateItem() {

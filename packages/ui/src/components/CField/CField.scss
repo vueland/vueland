@@ -3,33 +3,40 @@
 $self: '.c-field';
 
 #{$self} {
-  --c-field-border-color: var(--c-app-border-color);
-  --c-field-border-radius: var(--c-app-border-radius);
-  --c-field-disabled-opacity: var(--c-app-disabled-opacity);
-  --c-field-readonly-bg-color: var(--c-app-readonly-bg-color);
+  // Layout
+  --c-field-min-height: 40px;
   --c-field-prepend-min-width: 40px;
   --c-field-append-min-width: 24px;
-  --c-field-min-height: 40px;
+  --c-field-border-radius: var(--c-app-border-radius);
+  --c-field-transition-duration: 0.2s;
+
+  // Colors
+  --c-field-bg-color: var(--c-app-surface-color);
+  --c-field-color: var(--c-input-primary-color);
+  --c-field-border-color: var(--c-app-border-color);
+  --c-field-input-color: var(--c-app-text-color);
+  --c-field-readonly-bg-color: var(--c-app-readonly-bg-color);
+  --c-field-disabled-opacity: var(--c-app-disabled-opacity);
 
   position: relative;
   isolation: isolate;
   display: flex;
   align-items: center;
-  background: var(--c-app-surface-color);
+  background: var(--c-field-bg-color);
   min-height: var(--c-field-min-height);
   padding: 1px 8px;
-  border-radius: var(--c-app-border-radius);
+  border-radius: var(--c-field-border-radius);
   border: thin solid;
   transition:
-    color 0.2s $primary-transition,
-    opacity 0.2s $primary-transition;
+    color var(--c-field-transition-duration) $primary-transition,
+    opacity var(--c-field-transition-duration) $primary-transition;
 
   &__outline {
     position: absolute;
     top: -1px;
     z-index: -1;
     bottom: 0;
-    left: var(--c-app-border-radius);
+    left: var(--c-field-border-radius);
     border-top: 1px solid transparent;
 
     &::after {
@@ -42,8 +49,8 @@ $self: '.c-field';
       z-index: -2;
       background-color: inherit;
       transition:
-        transform 0.2s $primary-transition,
-        background-color 0.2s $primary-transition;
+        transform var(--c-field-transition-duration) $primary-transition,
+        background-color var(--c-field-transition-duration) $primary-transition;
       transform: scaleX(0);
       transform-origin: left;
     }
@@ -57,13 +64,13 @@ $self: '.c-field';
   &-label {
     position: absolute;
     top: 50%;
-    left: var(--c-app-border-radius);
+    left: var(--c-field-border-radius);
     line-height: 0.9;
     transform: translate(0, -50%);
     transition:
-      top 0.2s $primary-transition,
-      left 0.2s $primary-transition,
-      transform 0.2s $primary-transition;
+      top var(--c-field-transition-duration) $primary-transition,
+      left var(--c-field-transition-duration) $primary-transition,
+      transform var(--c-field-transition-duration) $primary-transition;
   }
 
   &__core {
@@ -71,7 +78,7 @@ $self: '.c-field';
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    min-height: 40px;
+    min-height: var(--c-field-min-height);
     width: 100%;
     padding: 5px 0;
     column-gap: 3px;
@@ -108,7 +115,7 @@ $self: '.c-field';
     min-width: 20%;
     outline: none;
     cursor: inherit;
-    color: var(--c-app-text-color);
+    color: var(--c-field-input-color);
 
     &::placeholder {
       opacity: 0;
@@ -117,7 +124,7 @@ $self: '.c-field';
 
   &--default {
     border-color: var(--c-field-border-color);
-    color: var(--c-input-primary-color);
+    color: var(--c-field-color);
   }
 
   &--focused {
@@ -137,7 +144,7 @@ $self: '.c-field';
   &--focused > &__core > &-label,
   &--filled > &__core > &-label {
     top: 0;
-    left: var(--c-app-border-radius);
+    left: var(--c-field-border-radius);
     transform: translate(0, -50%) scale(0.8);
   }
 
@@ -155,9 +162,6 @@ $self: '.c-field';
     }
   }
 
-  &--error {
-  }
-
   &--disabled {
     opacity: var(--c-field-disabled-opacity);
     pointer-events: none;
@@ -165,7 +169,7 @@ $self: '.c-field';
   }
 
   &--readonly {
-    background-color: var(--c-app-readonly-bg-color);
+    background-color: var(--c-field-readonly-bg-color);
     border-color: var(--c-field-border-color);
   }
 
@@ -184,7 +188,7 @@ $self: '.c-field';
   &--has-prepend#{$self}--focused > &__core > &-label,
   &--has-prepend#{$self}--filled > &__core > &-label {
     top: 0;
-    left: var(--c-app-border-radius);
+    left: var(--c-field-border-radius);
     transform: translate(0, -50%) scale(0.8);
   }
 }

@@ -991,6 +991,31 @@ describe('CList', () => {
             expect(activeId).toBe(lastItemId)
         })
 
+        it('снимает класс --focused при потере фокуса элементом', async () => {
+            const wrapper = mount(CList<string>, {
+                props: { variant: 'listbox' },
+                slots: {
+                    default: () => [
+                        h(CListItem, { value: 'first' }, () => 'first'),
+                        h(CListItem, { value: 'second' }, () => 'second'),
+                    ],
+                },
+            })
+
+            await nextTick()
+            await wrapper.trigger('keydown', { key: 'ArrowDown' })
+            await nextTick()
+
+            const firstItem = wrapper.findAll('.c-list-item')[0]
+
+            expect(firstItem.classes()).toContain('c-list-item--focused')
+
+            await firstItem.trigger('blur')
+            await nextTick()
+
+            expect(firstItem.classes()).not.toContain('c-list-item--focused')
+        })
+
         it('клавиатурная навигация пропускает disabled items', async () => {
             const model = ref<string | null>(null)
             let activeId: string | undefined

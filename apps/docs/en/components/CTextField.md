@@ -16,14 +16,10 @@ import PresetsExample from '../../examples/CTextField/PresetsExample.vue'
 <BasicExample />
 
 ::: details Show code
+
 ```vue
 <template>
-  <CTextField
-    v-model="value"
-    id="basic-email"
-    label="Email"
-    placeholder="Enter your email"
-  />
+  <CTextField v-model="value" id="basic-email" label="Email" placeholder="Enter your email" />
 </template>
 
 <script setup lang="ts">
@@ -31,6 +27,7 @@ import { ref } from 'vue'
 const value = ref('')
 </script>
 ```
+
 :::
 
 ## States
@@ -40,6 +37,7 @@ const value = ref('')
 <StatesExample />
 
 ::: details Show code
+
 ```vue
 <template>
   <CTextField v-model="value" label="Default" />
@@ -48,6 +46,7 @@ const value = ref('')
   <CTextField v-model="value" label="Clearable" clearable />
 </template>
 ```
+
 :::
 
 ## Validation
@@ -57,6 +56,7 @@ Pass an array of rule functions via the `rules` prop. Each rule receives the cur
 <ValidationExample />
 
 ::: details Show code
+
 ```vue
 <template>
   <CTextField
@@ -92,6 +92,7 @@ const passwordRules = [
 ]
 </script>
 ```
+
 :::
 
 ## Prepend, append and details slots
@@ -101,6 +102,7 @@ The `prepend` and `append` slots place content inside the field borders. The `de
 <SlotsExample />
 
 ::: details Show code
+
 ```vue
 <template>
   <!-- Prepend icon -->
@@ -118,12 +120,7 @@ The `prepend` and `append` slots place content inside the field borders. The `de
   </CTextField>
 
   <!-- Custom details slot -->
-  <CTextField
-    v-model="nickname"
-    label="Nickname"
-    :rules="nicknameRules"
-    validate-on="input"
-  >
+  <CTextField v-model="nickname" label="Nickname" :rules="nicknameRules" validate-on="input">
     <template #details="{ errorMessage, hasError }">
       <span :style="{ color: hasError ? 'var(--c-app-error-color)' : 'inherit' }">
         {{ errorMessage || `${nickname.length}/20 characters` }}
@@ -132,6 +129,7 @@ The `prepend` and `append` slots place content inside the field borders. The `de
   </CTextField>
 </template>
 ```
+
 :::
 
 ## Async validation
@@ -141,14 +139,10 @@ Rules may return a `Promise`. While validation is in progress, the `details` slo
 <AsyncValidationExample />
 
 ::: details Show code
+
 ```vue
 <template>
-  <CTextField
-    v-model="username"
-    label="Username"
-    :rules="usernameRules"
-    validate-on="blur"
-  >
+  <CTextField v-model="username" label="Username" :rules="usernameRules" validate-on="blur">
     <template #details="{ errorMessage, hasError, validating }">
       <span v-if="validating" style="color: var(--c-app-primary-color)">
         Checking availability…
@@ -169,12 +163,13 @@ const taken = ['admin', 'user', 'root']
 const usernameRules = [
   (v: string) => ({ valid: v.length >= 3, message: 'Minimum 3 characters' }),
   async (v: string) => {
-    await new Promise(resolve => setTimeout(resolve, 800))
+    await new Promise((resolve) => setTimeout(resolve, 800))
     return { valid: !taken.includes(v.toLowerCase()), message: `"${v}" is already taken` }
   },
 ]
 </script>
 ```
+
 :::
 
 ## Presets
@@ -184,6 +179,7 @@ Presets let you define the field's appearance (label color, border) once during 
 <PresetsExample />
 
 ::: details Show code
+
 ```vue
 <template>
   <CTextField v-model="value" label="Email" preset="input.blue">
@@ -191,6 +187,7 @@ Presets let you define the field's appearance (label color, border) once during 
   </CTextField>
 </template>
 ```
+
 :::
 
 Register presets when initializing the plugin:
@@ -203,10 +200,10 @@ createVuelandUI({
   presets: {
     input: {
       blue: {
-        base:    { label: ['text-blue'] },
+        base: { label: ['text-blue'] },
         focused: { label: ['text-blue'], field: ['text-blue'] },
-        filled:  { label: ['text-blue'] },
-        error:   { label: ['text-red'], details: ['text-red'] },
+        filled: { label: ['text-blue'] },
+        error: { label: ['text-red'], details: ['text-red'] },
       } satisfies CInputPreset,
     },
   },
@@ -235,72 +232,78 @@ The preset is distributed automatically: `CInput` applies `root` and `details`, 
 
 ### Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `modelValue` | `string \| number \| null` | `undefined` | Field value (v-model) |
-| `id` | `string` | auto | `<input>` id. Auto-generated with prefix `input-` if omitted |
-| `label` | `string` | — | Floating label text |
-| `placeholder` | `string` | — | Native `<input>` placeholder (attr) |
-| `details` | `string` | — | Hint text shown below the field |
-| `noDetails` | `boolean` | `false` | Hide the details area entirely |
-| `clearable` | `boolean` | `false` | Show a clear button when the field has a value and is focused |
-| `disabled` | `boolean` | `false` | Disable the field. Blocks focus and input |
-| `readonly` | `boolean` | `false` | Read-only. Focus is allowed, editing is not |
-| `focused` | `boolean` | `false` | Initial focused state |
-| `rules` | `ValidateFn[]` | `[]` | Array of validation functions |
-| `validateOn` | `'input' \| 'blur'` | `'input'` | When to trigger automatic validation |
-| `preset` | `string` | — | Preset name from Vueland UI configuration |
-| `type` | `string` | `'text'` | Native `<input>` type (passed as attr) |
-| `name` | `string` | — | Native `<input>` name attr |
-| `autocomplete` | `string` | — | Native `<input>` autocomplete attr |
-| `required` | `boolean` | — | Native `<input>` required attr |
-| `inputmode` | `string` | — | Native `<input>` inputmode attr |
-| `pattern` | `string` | — | Native `<input>` pattern attr |
-| `maxlength` | `number` | — | Native `<input>` maxlength attr |
-| `minlength` | `number` | — | Native `<input>` minlength attr |
-| `min` | `number` | — | Min value for `type="number"` |
-| `max` | `number` | — | Max value for `type="number"` |
-| `step` | `number` | — | Step for `type="number"` |
-| `tabindex` | `number` | — | Native `<input>` tabindex attr |
-| `enterkeyhint` | `string` | — | Mobile keyboard Enter button label |
-| `aria-label` | `string` | — | Additional aria label (attr) |
+| Prop         | Type                                    | Default     | Description                                                   |
+| ------------ | --------------------------------------- | ----------- | ------------------------------------------------------------- |
+| `modelValue` | `string \| number \| null \| undefined` | `undefined` | Field value (v-model)                                         |
+| `id`         | `string`                                | auto        | `<input>` id. Auto-generated with prefix `input-` if omitted  |
+| `label`      | `string`                                | —           | Floating label text                                           |
+| `details`    | `string`                                | —           | Hint text shown below the field                               |
+| `noDetails`  | `boolean`                               | `false`     | Hide the details area entirely                                |
+| `clearable`  | `boolean`                               | `false`     | Show a clear button when the field has a value and is focused |
+| `disabled`   | `boolean`                               | `false`     | Disable the field. Blocks focus and input                     |
+| `readonly`   | `boolean`                               | `false`     | Read-only. Focus is allowed, editing is not                   |
+| `focused`    | `boolean`                               | `false`     | Initial focused state                                         |
+| `rules`      | `ValidateFn[]`                          | `[]`        | Array of validation functions                                 |
+| `validateOn` | `'input' \| 'blur'`                     | `'input'`   | When to trigger automatic validation                          |
+| `preset`     | `string`                                | —           | Preset name from Vueland UI configuration                     |
+
+### Native attributes
+
+`CTextField` does **not** wrap `<input>` attributes in its own props. Thanks to `inheritAttrs`, any non-prop attribute falls through to the inner `<input>` as-is — so just use the standard HTML attributes directly:
+
+```vue
+<CTextField
+  type="number"
+  placeholder="0"
+  :min="0"
+  :max="100"
+  :step="5"
+  inputmode="numeric"
+  maxlength="10"
+  autocomplete="off"
+  name="amount"
+  required
+/>
+```
+
+`pattern`, `minlength`, `tabindex`, `enterkeyhint` and any `data-*` / `aria-*` attributes fall through the same way. These are **not** documented as props — they are the standard native `<input>` contract.
 
 ### Slots
 
-| Slot | Props | Description |
-|------|-------|-------------|
-| `prepend` | — | Content placed on the left inside the field border |
-| `append` | — | Content placed on the right inside the field border |
-| `details` | `CInputDetailsSlotProps` | Replaces the entire hint/error area |
+| Slot      | Props                    | Description                                         |
+| --------- | ------------------------ | --------------------------------------------------- |
+| `prepend` | —                        | Content placed on the left inside the field border  |
+| `append`  | —                        | Content placed on the right inside the field border |
+| `details` | `CInputDetailsSlotProps` | Replaces the entire hint/error area                 |
 
 #### `details` slot props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `errorMessage` | `string \| undefined` | Current error message |
-| `hasError` | `boolean` | Whether there is an active error |
-| `validating` | `boolean` | Whether async validation is currently running |
-| `uid` | `string` | Field ID (matches the native `<input>` id) |
-| `details` | `string \| undefined` | The value of the `details` prop |
+| Prop           | Type                  | Description                                   |
+| -------------- | --------------------- | --------------------------------------------- |
+| `errorMessage` | `string \| undefined` | Current error message                         |
+| `hasError`     | `boolean`             | Whether there is an active error              |
+| `validating`   | `boolean`             | Whether async validation is currently running |
+| `uid`          | `string`              | Field ID (matches the native `<input>` id)    |
+| `details`      | `string \| undefined` | The value of the `details` prop               |
 
 ### Events
 
-| Event | Arguments | Description |
-|-------|-----------|-------------|
+| Event               | Arguments                       | Description             |
+| ------------------- | ------------------------------- | ----------------------- |
 | `update:modelValue` | `string \| number \| undefined` | Value changed (v-model) |
-| `focus` | — | Field received focus |
-| `blur` | — | Field lost focus |
+| `focus`             | —                               | Field received focus    |
+| `blur`              | —                               | Field lost focus        |
 
 ### Expose
 
 Methods available via template ref:
 
-| Method | Signature | Description |
-|--------|-----------|-------------|
-| `validate` | `() => Promise<boolean>` | Trigger validation manually |
-| `reset` | `() => void` | Clear the error state |
-| `focus` | `() => void` | Programmatically focus the field |
-| `blur` | `() => void` | Programmatically remove focus |
+| Method     | Signature                | Description                      |
+| ---------- | ------------------------ | -------------------------------- |
+| `validate` | `() => Promise<boolean>` | Trigger validation manually      |
+| `reset`    | `() => void`             | Clear the error state            |
+| `focus`    | `() => void`             | Programmatically focus the field |
+| `blur`     | `() => void`             | Programmatically remove focus    |
 
 ```vue
 <template>
@@ -329,23 +332,31 @@ type ValidateFn = (value: any) => ValidateResult | Promise<ValidateResult>
 
 ### CInput (root element)
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `--c-input-background-color` | `var(--c-app-surface-color)` | Component background |
-| `--c-input-primary-color` | `var(--c-app-primary-color)` | Text color in default state |
-| `--c-input-error-color` | `var(--c-app-error-color)` | Text color on error |
-| `--c-input-disabled-color` | `var(--c-app-disabled-color)` | Text color when disabled |
-| `--c-input-readonly-color` | `var(--c-app-primary-color)` | Text color when readonly |
-| `--c-input-readonly-bg-color` | `grey lighten-4` | Field background when readonly |
-| `--c-input-field-border-radius` | `var(--c-app-border-radius)` | Field border radius |
-| `--c-input-details-height` | `24px` | Height of the details area |
+| Variable                        | Default                       | Description                 |
+| ------------------------------- | ----------------------------- | --------------------------- |
+| `--c-input-details-height`      | `24px`                        | Height of the details area  |
+| `--c-input-transition-duration` | `0.2s`                        | Color transition duration   |
+| `--c-input-background-color`    | `var(--c-app-surface-color)`  | Component background        |
+| `--c-input-primary-color`       | `var(--c-app-primary-color)`  | Text color in default state |
+| `--c-input-error-color`         | `var(--c-app-error-color)`    | Text color on error         |
+| `--c-input-disabled-color`      | `var(--c-app-disabled-color)` | Text color when disabled    |
+| `--c-input-readonly-color`      | `var(--c-app-readonly-color)` | Text color when readonly    |
 
 ### CField (border and label)
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `--c-field-border-color` | `var(--c-app-border-color, #e5e5e5)` | Border color |
-| `--c-field-disabled-opacity` | `0.5` | Opacity when disabled |
+| Variable                        | Default                          | Description                         |
+| ------------------------------- | -------------------------------- | ----------------------------------- |
+| `--c-field-min-height`          | `40px`                           | Minimum field height                |
+| `--c-field-prepend-min-width`   | `40px`                           | Min width of the prepend zone       |
+| `--c-field-append-min-width`    | `24px`                           | Min width of the append zone        |
+| `--c-field-border-radius`       | `var(--c-app-border-radius)`     | Field border radius                 |
+| `--c-field-transition-duration` | `0.2s`                           | Field transition duration           |
+| `--c-field-bg-color`            | `var(--c-app-surface-color)`     | Field background                    |
+| `--c-field-color`               | `var(--c-input-primary-color)`   | Border/label color in default state |
+| `--c-field-border-color`        | `var(--c-app-border-color)`      | Border color                        |
+| `--c-field-input-color`         | `var(--c-app-text-color)`        | Typed text color                    |
+| `--c-field-readonly-bg-color`   | `var(--c-app-readonly-bg-color)` | Field background when readonly      |
+| `--c-field-disabled-opacity`    | `var(--c-app-disabled-opacity)`  | Opacity when disabled               |
 
 ### Override example
 
@@ -364,17 +375,17 @@ type ValidateFn = (value: any) => ValidateResult | Promise<ValidateResult>
 
 ## State CSS classes
 
-| Class | Condition |
-|-------|-----------|
-| `c-input--default` | No error, not disabled, not readonly |
-| `c-input--focused` | Field is focused |
-| `c-input--has-error` | Validation error is active |
-| `c-input--disabled` | `disabled = true` |
-| `c-input--readonly` | `readonly = true` |
-| `c-input--clearable` | `clearable = true` |
-| `c-input--validating` | Async validation is running |
-| `c-field--focused` | Border is focused |
-| `c-field--filled` | Field has a value (label is raised) |
-| `c-field--disabled` | Border disabled |
-| `c-field--readonly` | Border readonly (dashed) |
-| `c-field--has-prepend` | prepend slot is present |
+| Class                  | Condition                            |
+| ---------------------- | ------------------------------------ |
+| `c-input--default`     | No error, not disabled, not readonly |
+| `c-input--focused`     | Field is focused                     |
+| `c-input--has-error`   | Validation error is active           |
+| `c-input--disabled`    | `disabled = true`                    |
+| `c-input--readonly`    | `readonly = true`                    |
+| `c-input--clearable`   | `clearable = true`                   |
+| `c-input--validating`  | Async validation is running          |
+| `c-field--focused`     | Border is focused                    |
+| `c-field--filled`      | Field has a value (label is raised)  |
+| `c-field--disabled`    | Border disabled                      |
+| `c-field--readonly`    | Border readonly (dashed)             |
+| `c-field--has-prepend` | prepend slot is present              |

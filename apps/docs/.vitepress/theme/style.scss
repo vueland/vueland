@@ -349,6 +349,14 @@
   background: rgba(47, 140, 255, 0.08);
 }
 
+/* Shiki fix: in `html` blocks the `one-light` theme colors PascalCase / custom
+   component tags (e.g. <CApp>, <CMain>) `white`, which is invisible on the light
+   code background. Remap those exact tokens to one-light's tag color so they read
+   like the `vue` blocks. Dark mode is unaffected (uses --shiki-dark). */
+html:not(.dark) .vp-doc div[class*='language-'] code span[style*='--shiki-light:white'] {
+  color: #e45649 !important;
+}
+
 /* ─── Details / collapsible code block ──────────────────────── */
 
 .vp-doc details {

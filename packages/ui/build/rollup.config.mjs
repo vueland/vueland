@@ -6,7 +6,6 @@ import { defineConfig } from 'rollup'
 import postcss from 'rollup-plugin-postcss'
 import { fileURLToPath } from 'url'
 
-import modernSassLoader from './modern-sass-loader.mjs'
 import base from './rollup-base.config.mjs'
 
 const cmpMap = {}
@@ -25,7 +24,6 @@ const vuePlugin = vue({
 const makeCssPlugin = (fileName) =>
     postcss({
         extract: fileName,
-        loaders: [modernSassLoader],
         minimize: true,
         sourceMap: false,
         use: ['sass'],
