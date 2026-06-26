@@ -1,4 +1,5 @@
 @use '../../styles/modules/global-vars' as *;
+@use '../../styles/mixins/functions' as *;
 
 $self: '.c-field';
 
@@ -7,36 +8,37 @@ $self: '.c-field';
   --c-field-min-height: 40px;
   --c-field-prepend-min-width: 40px;
   --c-field-append-min-width: 24px;
-  --c-field-border-radius: var(--c-app-border-radius);
+  --c-field-border-radius: #{getCssVar('app', 'border-radius')};
   --c-field-transition-duration: 0.2s;
 
   // Colors
-  --c-field-bg-color: var(--c-app-surface-color);
-  --c-field-color: var(--c-input-primary-color);
-  --c-field-border-color: var(--c-app-border-color);
-  --c-field-input-color: var(--c-app-text-color);
-  --c-field-readonly-bg-color: var(--c-app-readonly-bg-color);
-  --c-field-disabled-opacity: var(--c-app-disabled-opacity);
+  --c-field-bg-color: #{getCssVar('app', 'surface-color')};
+  --c-field-label-color: #{getCssVar('app', 'primary-color')};
+  --c-field-focused-border-color: #{getCssVar('app', 'primary-color')};
+  --c-field-border-color: #{getCssVar('app', 'border-color')};
+  --c-field-input-text-color: #{getCssVar('app', 'text-color')};
+  --c-field-readonly-bg-color: #{getCssVar('app', 'readonly-bg-color')};
+  --c-field-disabled-opacity: #{getCssVar('app', 'disabled-opacity')};
 
   position: relative;
   isolation: isolate;
   display: flex;
   align-items: center;
-  background: var(--c-field-bg-color);
-  min-height: var(--c-field-min-height);
+  background: getCssVar('field', 'bg-color');
+  min-height: getCssVar('field', 'min-height');
   padding: 1px 8px;
-  border-radius: var(--c-field-border-radius);
+  border-radius: getCssVar('field', 'border-radius');
   border: thin solid;
   transition:
-    color var(--c-field-transition-duration) $primary-transition,
-    opacity var(--c-field-transition-duration) $primary-transition;
+    color getCssVar('field', 'transition-duration') $primary-transition,
+    opacity getCssVar('field', 'transition-duration') $primary-transition;
 
   &__outline {
     position: absolute;
     top: -1px;
     z-index: -1;
     bottom: 0;
-    left: var(--c-field-border-radius);
+    left: getCssVar('field', 'border-radius');
     border-top: 1px solid transparent;
 
     &::after {
@@ -49,8 +51,8 @@ $self: '.c-field';
       z-index: -2;
       background-color: inherit;
       transition:
-        transform var(--c-field-transition-duration) $primary-transition,
-        background-color var(--c-field-transition-duration) $primary-transition;
+        transform getCssVar('field', 'transition-duration') $primary-transition,
+        background-color getCssVar('field', 'transition-duration') $primary-transition;
       transform: scaleX(0);
       transform-origin: left;
     }
@@ -64,13 +66,13 @@ $self: '.c-field';
   &-label {
     position: absolute;
     top: 50%;
-    left: var(--c-field-border-radius);
+    left: getCssVar('field', 'border-radius');
     line-height: 0.9;
     transform: translate(0, -50%);
     transition:
-      top var(--c-field-transition-duration) $primary-transition,
-      left var(--c-field-transition-duration) $primary-transition,
-      transform var(--c-field-transition-duration) $primary-transition;
+      top getCssVar('field', 'transition-duration') $primary-transition,
+      left getCssVar('field', 'transition-duration') $primary-transition,
+      transform getCssVar('field', 'transition-duration') $primary-transition;
   }
 
   &__core {
@@ -78,7 +80,7 @@ $self: '.c-field';
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    min-height: var(--c-field-min-height);
+    min-height: getCssVar('field', 'min-height');
     width: 100%;
     padding: 5px 0;
     column-gap: 3px;
@@ -88,8 +90,8 @@ $self: '.c-field';
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: var(--c-field-prepend-min-width);
-    min-height: var(--c-field-min-height);
+    min-width: getCssVar('field', 'prepend-min-width');
+    min-height: getCssVar('field', 'min-height');
   }
 
   &__clear {
@@ -97,7 +99,8 @@ $self: '.c-field';
     align-items: center;
     justify-content: center;
     width: 24px;
-    min-height: var(--c-field-min-height);
+    min-height: getCssVar('field', 'min-height');
+    color: getCssVar('field', '');
     cursor: pointer;
   }
 
@@ -105,8 +108,8 @@ $self: '.c-field';
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: var(--c-field-append-min-width);
-    min-height: var(--c-field-min-height);
+    min-width: getCssVar('field', 'append-min-width');
+    min-height: getCssVar('field', 'min-height');
   }
 
   &-input {
@@ -115,7 +118,7 @@ $self: '.c-field';
     min-width: 20%;
     outline: none;
     cursor: inherit;
-    color: var(--c-field-input-color);
+    color: getCssVar('field', 'input-text-color');
 
     &::placeholder {
       opacity: 0;
@@ -124,7 +127,7 @@ $self: '.c-field';
 
   &--default {
     border-color: var(--c-field-border-color);
-    color: var(--c-field-color);
+    //color: var(--c-field-color);
   }
 
   &--focused {
@@ -144,7 +147,7 @@ $self: '.c-field';
   &--focused > &__core > &-label,
   &--filled > &__core > &-label {
     top: 0;
-    left: var(--c-field-border-radius);
+    left: getCssVar('field', 'border-radius');
     transform: translate(0, -50%) scale(0.8);
   }
 
@@ -163,7 +166,7 @@ $self: '.c-field';
   }
 
   &--disabled {
-    opacity: var(--c-field-disabled-opacity);
+    opacity: getCssVar('field', 'disabled-opacity');
     pointer-events: none;
     cursor: not-allowed;
   }
@@ -188,7 +191,7 @@ $self: '.c-field';
   &--has-prepend#{$self}--focused > &__core > &-label,
   &--has-prepend#{$self}--filled > &__core > &-label {
     top: 0;
-    left: var(--c-field-border-radius);
+    left: getCssVar('field', 'border-radius');
     transform: translate(0, -50%) scale(0.8);
   }
 }

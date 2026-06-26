@@ -35,7 +35,7 @@
                 xl="3"
                 lg="3"
                 md="6"
-                class="h-[200px] pa-1 md:pa-4 lg:pa-1 d-flex"
+                class="h-[250px] pa-1 md:pa-4 lg:pa-1 d-flex"
             >
                 <c-card class="elevation-2 align-self-stretch">
                     <c-card-header>

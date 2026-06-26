@@ -123,9 +123,6 @@ importers:
       '@vitejs/plugin-vue':
         specifier: ^6.0.3
         version: 6.0.4(vite@7.3.5(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.98.0)(terser@5.46.0)(yaml@2.9.0))(vue@3.5.27(typescript@5.9.3))
-      '@vitejs/plugin-vue-jsx':
-        specifier: ^5.1.5
-        version: 5.1.5(vite@7.3.5(@types/node@25.4.0)(jiti@2.6.1)(lightningcss@1.31.1)(sass@1.98.0)(terser@5.46.0)(yaml@2.9.0))(vue@3.5.27(typescript@5.9.3))
       '@vueland/eslint-script-setup':
         specifier: workspace:*
         version: link:../../integrations/eslint-script-setup
