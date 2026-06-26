@@ -1,4 +1,6 @@
+@use 'sass:map';
 @use 'config';
+@use '../maps/grids' as *;
 
 @function joinVarName($list) {
   $name: '--' + config.$namespace;

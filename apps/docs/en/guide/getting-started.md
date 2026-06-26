@@ -4,12 +4,12 @@ This guide covers two setup modes depending on your needs.
 
 ## Choose your setup
 
-|                                | Pre-built CSS     | SCSS + JIT                         |
-| ------------------------------ | ----------------- | ---------------------------------- |
-| Utility classes                | Fixed breakpoints | **Customizable breakpoints**       |
-| Arbitrary values (`w-[320px]`) | ✗                 | ✓ via `@vueland/utils-jit`         |
-| Custom breakpoints             | ✗                 | ✓ single config, all layers synced |
-| Setup complexity               | Minimal           | Requires Vite + SCSS               |
+|                                | Pre-built CSS     | SCSS + JIT                     |
+| ------------------------------ | ----------------- | ------------------------------ |
+| Utility classes                | Fixed breakpoints | **Customizable breakpoints**   |
+| Arbitrary values (`w-[320px]`) | ✗                 | ✓ via `@vueland/utils-jit`     |
+| Custom breakpoints             | ✗                 | ✓ single config, shared values |
+| Setup complexity               | Minimal           | Requires Vite + SCSS           |
 
 ---
 

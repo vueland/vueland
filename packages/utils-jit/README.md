@@ -20,7 +20,7 @@
 
 `@vueland/utils-jit` is the JIT utility layer of the Vueland platform. It generates CSS utility classes on demand from your actual source usage — no predefined bundle, no purge step, no configuration overhead.
 
-When used alongside `@vueland/ui`, a single `breakpoints` config in `vite.config.ts` automatically syncs JIT classes, predefined SCSS utilities, grid components, and the `useDisplay` composable. One source of truth for the entire visual layer.
+When used alongside `@vueland/ui`, a single `breakpoints` config in `vite.config.ts` syncs JIT classes, predefined SCSS utilities, grid CSS, and the `useDisplay` composable. Default grid props keep their standard names, while custom breakpoint names are available through generated classes.
 
 ## Documentation
 
@@ -81,6 +81,7 @@ utilsJIT({
     xs: 0,
     sm: 600,
     md: 960,
+    tablet: 1280,
     lg: 1280,
     xl: 1920,
     xxl: 2560,
@@ -92,15 +93,24 @@ This single config does four things:
 
 1. **JIT classes** — responsive variants like `sm:bg-[#fff]` or `lg:w-[960px]` use these breakpoints.
 2. **SCSS utilities** — predefined classes like `sm:d-flex`, `md:pa-4` from `@vueland/ui` are compiled with the same values.
-3. **Grid components** — `CRow` and `CCol` responsive props use the same breakpoints.
+3. **Grid components** — default `CRow` and `CCol` responsive props use the overridden default breakpoint values; custom breakpoint names generate CSS classes such as `tablet-6`, but do not create new Vue props.
 4. **`useDisplay`** — the reactive composable picks up the values automatically at build time.
+
+```vue
+<template>
+  <c-row>
+    <c-col cols="12" class="tablet-6">Tablet half-width</c-col>
+    <c-col cols="12" class="tablet-4">Tablet third-width</c-col>
+  </c-row>
+</template>
+```
 
 ### Paired with `@vueland/ui`
 
 ```ts
-// vite.config.ts — one config, everything synced
+// vite.config.ts — one config, shared breakpoint values
 utilsJIT({
-  breakpoints: { xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920, xxl: 2560 },
+  breakpoints: { xs: 0, sm: 600, md: 960, tablet: 1280, lg: 1280, xl: 1920, xxl: 2560 },
 })
 ```
 

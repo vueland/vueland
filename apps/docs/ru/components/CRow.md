@@ -14,6 +14,7 @@ import DashboardLayoutExample from '../../examples/CGrid/DashboardLayoutExample.
 <AlignmentExample />
 
 ::: details Показать код
+
 ```vue
 <template>
   <!-- align="start" · justify="start" -->
@@ -24,16 +25,13 @@ import DashboardLayoutExample from '../../examples/CGrid/DashboardLayoutExample.
   </c-row>
 
   <!-- align="center" · justify="center" -->
-  <c-row align="center" justify="center">
-    …
-  </c-row>
+  <c-row align="center" justify="center"> … </c-row>
 
   <!-- align="end" · justify="space-between" -->
-  <c-row align="end" justify="space-between">
-    …
-  </c-row>
+  <c-row align="end" justify="space-between"> … </c-row>
 </template>
 ```
+
 :::
 
 ## Пример dashboard-раскладки
@@ -43,6 +41,7 @@ import DashboardLayoutExample from '../../examples/CGrid/DashboardLayoutExample.
 <DashboardLayoutExample />
 
 ::: details Показать код
+
 ```vue
 <template>
   <!-- Статистика: 2 колонки на мобилке, 4 на md+ -->
@@ -63,6 +62,7 @@ import DashboardLayoutExample from '../../examples/CGrid/DashboardLayoutExample.
   </c-row>
 </template>
 ```
+
 :::
 
 ## Адаптивное выравнивание
@@ -93,29 +93,31 @@ import DashboardLayoutExample from '../../examples/CGrid/DashboardLayoutExample.
 
 ## Props
 
-| Проп | Тип | По умолчанию | Описание |
-|------|-----|--------------|----------|
-| `align` | `'start' \| 'center' \| 'end' \| 'baseline' \| 'stretch'` | `null` | Вертикальное выравнивание колонок (`align-items`) |
-| `align-content` | `'start' \| 'center' \| 'end' \| 'space-between' \| 'space-around' \| 'stretch'` | `null` | Выравнивание переносов строк (`align-content`) |
-| `justify` | `'start' \| 'center' \| 'end' \| 'space-between' \| 'space-around'` | `null` | Горизонтальное распределение колонок (`justify-content`) |
-| `no-gutter` | `boolean` | `false` | Убирает gap между колонками |
+| Проп            | Тип                                                                              | По умолчанию | Описание                                                 |
+| --------------- | -------------------------------------------------------------------------------- | ------------ | -------------------------------------------------------- |
+| `align`         | `'start' \| 'center' \| 'end' \| 'baseline' \| 'stretch'`                        | `null`       | Вертикальное выравнивание колонок (`align-items`)        |
+| `align-content` | `'start' \| 'center' \| 'end' \| 'space-between' \| 'space-around' \| 'stretch'` | `null`       | Выравнивание переносов строк (`align-content`)           |
+| `justify`       | `'start' \| 'center' \| 'end' \| 'space-between' \| 'space-around'`              | `null`       | Горизонтальное распределение колонок (`justify-content`) |
+| `no-gutter`     | `boolean`                                                                        | `false`      | Убирает gap между колонками                              |
 
 ### Адаптивные пропы выравнивания
 
 Для каждого брейкпоинта (`xs`, `sm`, `md`, `lg`, `xl`, `xxl`) доступны следующие пропы:
 
-| Проп | Тип | Описание |
-|------|-----|----------|
-| `align-xs` … `align-xxl` | как у `align` | Переопределяет `align` начиная с этого брейкпоинта |
+| Проп                                     | Тип                   | Описание                                                   |
+| ---------------------------------------- | --------------------- | ---------------------------------------------------------- |
+| `align-xs` … `align-xxl`                 | как у `align`         | Переопределяет `align` начиная с этого брейкпоинта         |
 | `align-content-xs` … `align-content-xxl` | как у `align-content` | Переопределяет `align-content` начиная с этого брейкпоинта |
-| `justify-xs` … `justify-xxl` | как у `justify` | Переопределяет `justify` начиная с этого брейкпоинта |
+| `justify-xs` … `justify-xxl`             | как у `justify`       | Переопределяет `justify` начиная с этого брейкпоинта       |
 
 Значения брейкпоинтов по умолчанию: `xs` ≥ 0 px · `sm` ≥ 600 px · `md` ≥ 960 px · `lg` ≥ 1280 px · `xl` ≥ 1920 px · `xxl` ≥ 2560 px.
 
+Кастомные имена брейкпоинтов, настроенные через `@vueland/utils-jit`, не становятся новыми пропами выравнивания. Для них используйте сгенерированные utility-классы, например `class="tablet:justify-center tablet:items-center"`.
+
 ## Слоты
 
-| Слот | Описание |
-|------|----------|
+| Слот      | Описание                                             |
+| --------- | ---------------------------------------------------- |
 | `default` | Компоненты колонок (`CCol`) или любой другой контент |
 
 ## См. также

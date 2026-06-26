@@ -14,6 +14,7 @@ Control vertical alignment of columns via `align` and horizontal distribution vi
 <AlignmentExample />
 
 ::: details Show code
+
 ```vue
 <template>
   <!-- align="start" · justify="start" -->
@@ -24,16 +25,13 @@ Control vertical alignment of columns via `align` and horizontal distribution vi
   </c-row>
 
   <!-- align="center" · justify="center" -->
-  <c-row align="center" justify="center">
-    …
-  </c-row>
+  <c-row align="center" justify="center"> … </c-row>
 
   <!-- align="end" · justify="space-between" -->
-  <c-row align="end" justify="space-between">
-    …
-  </c-row>
+  <c-row align="end" justify="space-between"> … </c-row>
 </template>
 ```
+
 :::
 
 ## Dashboard layout example
@@ -43,6 +41,7 @@ A full responsive layout using `CRow` + `CCol`: stat cards, a bar chart, and a s
 <DashboardLayoutExample />
 
 ::: details Show code
+
 ```vue
 <template>
   <!-- Stats: 2 cols on mobile, 4 on md+ -->
@@ -63,6 +62,7 @@ A full responsive layout using `CRow` + `CCol`: stat cards, a bar chart, and a s
   </c-row>
 </template>
 ```
+
 :::
 
 ## Responsive alignment
@@ -93,29 +93,31 @@ Remove the default column gutter with `no-gutter`:
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `align` | `'start' \| 'center' \| 'end' \| 'baseline' \| 'stretch'` | `null` | Vertical alignment of columns (`align-items`) |
-| `align-content` | `'start' \| 'center' \| 'end' \| 'space-between' \| 'space-around' \| 'stretch'` | `null` | Alignment of wrapped rows (`align-content`) |
-| `justify` | `'start' \| 'center' \| 'end' \| 'space-between' \| 'space-around'` | `null` | Horizontal distribution of columns (`justify-content`) |
-| `no-gutter` | `boolean` | `false` | Removes the gap between columns |
+| Prop            | Type                                                                             | Default | Description                                            |
+| --------------- | -------------------------------------------------------------------------------- | ------- | ------------------------------------------------------ |
+| `align`         | `'start' \| 'center' \| 'end' \| 'baseline' \| 'stretch'`                        | `null`  | Vertical alignment of columns (`align-items`)          |
+| `align-content` | `'start' \| 'center' \| 'end' \| 'space-between' \| 'space-around' \| 'stretch'` | `null`  | Alignment of wrapped rows (`align-content`)            |
+| `justify`       | `'start' \| 'center' \| 'end' \| 'space-between' \| 'space-around'`              | `null`  | Horizontal distribution of columns (`justify-content`) |
+| `no-gutter`     | `boolean`                                                                        | `false` | Removes the gap between columns                        |
 
 ### Responsive alignment props
 
 For each breakpoint (`xs`, `sm`, `md`, `lg`, `xl`, `xxl`) the following props are available:
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `align-xs` … `align-xxl` | same as `align` | Override `align` from that breakpoint upward |
+| Prop                                     | Type                    | Description                                          |
+| ---------------------------------------- | ----------------------- | ---------------------------------------------------- |
+| `align-xs` … `align-xxl`                 | same as `align`         | Override `align` from that breakpoint upward         |
 | `align-content-xs` … `align-content-xxl` | same as `align-content` | Override `align-content` from that breakpoint upward |
-| `justify-xs` … `justify-xxl` | same as `justify` | Override `justify` from that breakpoint upward |
+| `justify-xs` … `justify-xxl`             | same as `justify`       | Override `justify` from that breakpoint upward       |
 
 Breakpoint defaults: `xs` ≥ 0 px · `sm` ≥ 600 px · `md` ≥ 960 px · `lg` ≥ 1280 px · `xl` ≥ 1920 px · `xxl` ≥ 2560 px.
 
+Custom breakpoint names configured through `@vueland/utils-jit` do not become new alignment props. Use generated utility classes instead, for example `class="tablet:justify-center tablet:items-center"`.
+
 ## Slots
 
-| Slot | Description |
-|------|-------------|
+| Slot      | Description                                     |
+| --------- | ----------------------------------------------- |
 | `default` | Column components (`CCol`) or any other content |
 
 ## See also
