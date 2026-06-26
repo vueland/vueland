@@ -13,14 +13,14 @@ Vueland использует **единую систему брейкпоинт�
 
 ## Брейкпоинты по умолчанию
 
-| Название | min-width | CSS-префикс |
-|----------|-----------|-------------|
-| xs   | 0         | — (нет префикса) |
-| sm   | 600px     | `sm:` |
-| md   | 960px     | `md:` |
-| lg   | 1280px    | `lg:` |
-| xl   | 1920px    | `xl:` |
-| xxl  | 2560px    | `xxl:` |
+| Название | min-width | CSS-префикс      |
+| -------- | --------- | ---------------- |
+| xs       | 0         | — (нет префикса) |
+| sm       | 600px     | `sm:`            |
+| md       | 960px     | `md:`            |
+| lg       | 1280px    | `lg:`            |
+| xl       | 1920px    | `xl:`            |
+| xxl      | 2560px    | `xxl:`           |
 
 ## Полная настройка шаг за шагом
 
@@ -84,9 +84,9 @@ export default defineConfig({
 
 ```ts
 // src/main.ts
-import '@vueland/ui/styles/styles.scss'  // CSS-переменные
-import '@vueland/ui/styles/lib.scss'     // стили компонентов
-import '@vueland/ui/styles/utils.scss'   // утилиты
+import '@vueland/ui/styles/styles.scss' // CSS-переменные
+import '@vueland/ui/styles/lib.scss' // стили компонентов
+import '@vueland/ui/styles/utils.scss' // утилиты
 ```
 
 Это запускает SCSS-препроцессор Vite, в ходе которого плагин перехватывает компиляцию и подставляет ваши значения в переменную `$grid-breakpoints`. В результате все четыре слоя — предопределённые утилиты (`sm:d-flex`), JIT-классы, media-запросы компонентов сетки и `useBreakpoints` — работают с одними и теми же числами.
@@ -95,7 +95,7 @@ import '@vueland/ui/styles/utils.scss'   // утилиты
 
 ```ts
 // src/main.ts
-import 'src/.generated/utils-jit.css'
+import 'virtual:utils-jit.css'
 ```
 
 ### Шаг 4 — зарегистрируйте библиотеку
@@ -109,7 +109,7 @@ import * as components from '@vueland/ui/components'
 import '@vueland/ui/styles/styles.scss'
 import '@vueland/ui/styles/lib.scss'
 import '@vueland/ui/styles/utils.scss'
-import 'src/.generated/utils-jit.css'
+import 'virtual:utils-jit.css'
 
 import App from './App.vue'
 
@@ -167,18 +167,15 @@ app.mount('#app')
 **`useBreakpoints`** — реактивные булевые значения в JS/Vue, синхронизированные с теми же числами:
 
 ```vue
-
 <script setup lang="ts">
-  import { useBreakpoints } from '@vueland/ui/composables'
+import { useBreakpoints } from '@vueland/ui/composables'
 
-  const { mdAndUp } = useBreakpoints()
+const { mdAndUp } = useBreakpoints()
 </script>
 
 <template>
   <c-row>
-    <c-col :cols="mdAndUp ? 6 : 12">
-      Адаптивная колонка через JS
-    </c-col>
+    <c-col :cols="mdAndUp ? 6 : 12"> Адаптивная колонка через JS</c-col>
   </c-row>
 </template>
 ```
@@ -211,11 +208,11 @@ const vueland = createVuelandUI({
 
 ### Приоритет
 
-| Источник | Приоритет                                                                     |
-|----------|-------------------------------------------------------------------------------|
+| Источник                           | Приоритет                                                                     |
+| ---------------------------------- | ----------------------------------------------------------------------------- |
 | `createVuelandUI({ breakpoints })` | **высший** — управляет только `useBreakpoints`                                |
-| `utilsJIT({ breakpoints })` | управляет SCSS-утилитами, компонентами сетки, `useBreakpoints` и JIT-классами |
-| Встроенные значения | запасной вариант                                                              |
+| `utilsJIT({ breakpoints })`        | управляет SCSS-утилитами, компонентами сетки, `useBreakpoints` и JIT-классами |
+| Встроенные значения                | запасной вариант                                                              |
 
 ## Отзывчивые CSS-утилиты
 
@@ -246,10 +243,9 @@ const vueland = createVuelandUI({
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue'
-import { $BREAKPOINTS_KEY } from '@vueland/ui/constants'
+import { useBreakpoints } from '@vueland/ui/composables'
 
-const display = inject($BREAKPOINTS_KEY)!
+const display = useBreakpoints()
 </script>
 ```
 
@@ -259,23 +255,23 @@ const display = inject($BREAKPOINTS_KEY)!
 
 #### Точные брейкпоинты
 
-| Свойство | Условие |
-|----------|---------|
-| `display.xs` | width < sm |
-| `display.sm` | sm ≤ width < md |
-| `display.md` | md ≤ width < lg |
-| `display.lg` | lg ≤ width < xl |
-| `display.xl` | xl ≤ width < xxl |
-| `display.xxl` | width ≥ xxl |
+| Свойство      | Условие          |
+| ------------- | ---------------- |
+| `display.xs`  | width < sm       |
+| `display.sm`  | sm ≤ width < md  |
+| `display.md`  | md ≤ width < lg  |
+| `display.lg`  | lg ≤ width < xl  |
+| `display.xl`  | xl ≤ width < xxl |
+| `display.xxl` | width ≥ xxl      |
 
 #### Диапазонные хелперы
 
-| Свойство | Условие |
-|----------|---------|
-| `display.smAndUp` | width ≥ sm |
-| `display.mdAndUp` | width ≥ md |
-| `display.lgAndUp` | width ≥ lg |
-| `display.xlAndUp` | width ≥ xl |
+| Свойство            | Условие         |
+| ------------------- | --------------- |
+| `display.smAndUp`   | width ≥ sm      |
+| `display.mdAndUp`   | width ≥ md      |
+| `display.lgAndUp`   | width ≥ lg      |
+| `display.xlAndUp`   | width ≥ xl      |
 | `display.smAndLess` | xs < width ≤ sm |
 | `display.mdAndLess` | sm < width ≤ md |
 | `display.lgAndLess` | md < width ≤ lg |

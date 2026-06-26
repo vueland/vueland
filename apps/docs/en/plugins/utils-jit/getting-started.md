@@ -30,44 +30,46 @@ import vue from '@vitejs/plugin-vue'
 import { utilsJIT } from '@vueland/utils-jit'
 
 export default defineConfig({
-  plugins: [
-    vue(),
-    utilsJIT(),
-  ],
+  plugins: [vue(), utilsJIT()],
 })
 ```
 
-By default, the plugin generates the following file:
-
-```txt
-src/.generated/utils-jit.css
-```
-
-Import it in your application entry file, for example in `src/main.ts`:
+By default the CSS is served as a virtual module, `virtual:utils-jit.css` — no file is written to disk. Import it once in your application entry file, for example in `src/main.ts`:
 
 ```ts
-import './.generated/utils-jit.css'
+import 'virtual:utils-jit.css'
 ```
+
+If you want to inspect the result as a file (for debugging), enable [`emitFile`](./configuration#emitfile) — the CSS will additionally be written to [`outFile`](./configuration#outfile).
 
 ## Quick example
 
 ```vue
 <template>
-  <div class="w-[300px] h-[200px] px-[16px] radius-[12px] z-[10]">
-    Hello Vueland
-  </div>
+  <div class="w-[300px] h-[200px] px-[16px] radius-[12px] z-[10]">Hello Vueland</div>
 </template>
 ```
 
-The generated CSS will look roughly like this:
+The virtual module will serve roughly this CSS:
 
 ```css
 /* @vueland/utils-jit: generated utilities */
-.h-\[200px\]{height: 200px !important;}
-.px-\[16px\]{padding-left: 16px !important;padding-right: 16px !important;}
-.radius-\[12px\]{border-radius: 12px !important;}
-.w-\[300px\]{width: 300px !important;}
-.z-\[10\]{z-index: 10 !important;}
+.h-\[200px\] {
+  height: 200px !important;
+}
+.px-\[16px\] {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+.radius-\[12px\] {
+  border-radius: 12px !important;
+}
+.w-\[300px\] {
+  width: 300px !important;
+}
+.z-\[10\] {
+  z-index: 10 !important;
+}
 ```
 
-Generated rules are sorted by utility token name, so you should not rely on the order of classes in the template.
+Generated rules are sorted by utility token name in the output, so you should not rely on the order of classes in the template.

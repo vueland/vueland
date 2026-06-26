@@ -17,6 +17,10 @@ export {
     stripComments,
     tokenize,
 } from './core'
+export {
+    RESOLVED_VIRTUAL_CSS_ID,
+    VIRTUAL_CSS_ID,
+} from './css-output'
 export { utilsJIT } from './plugin'
 export { defaultRules } from './rules'
 export * from './types'

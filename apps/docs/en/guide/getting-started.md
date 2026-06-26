@@ -4,12 +4,12 @@ This guide covers two setup modes depending on your needs.
 
 ## Choose your setup
 
-| | Pre-built CSS | SCSS + JIT |
-|---|---|---|
-| Utility classes | Fixed breakpoints | **Customizable breakpoints** |
-| Arbitrary values (`w-[320px]`) | ✗ | ✓ via `@vueland/utils-jit` |
-| Custom breakpoints | ✗ | ✓ single config, all layers synced |
-| Setup complexity | Minimal | Requires Vite + SCSS |
+|                                | Pre-built CSS     | SCSS + JIT                         |
+| ------------------------------ | ----------------- | ---------------------------------- |
+| Utility classes                | Fixed breakpoints | **Customizable breakpoints**       |
+| Arbitrary values (`w-[320px]`) | ✗                 | ✓ via `@vueland/utils-jit`         |
+| Custom breakpoints             | ✗                 | ✓ single config, all layers synced |
+| Setup complexity               | Minimal           | Requires Vite + SCSS               |
 
 ---
 
@@ -29,15 +29,15 @@ pnpm add @vueland/ui
 // src/plugins/vueland.ts
 import * as components from '@vueland/ui/components'
 import { createVuelandUI } from '@vueland/ui'
-import '@vueland/ui/styles.css'     // reset and ui themes variables
-import '@vueland/ui/css/lib.css'    // component styles
-import '@vueland/ui/css/utils.css'    // utils css classes
+import '@vueland/ui/styles.css' // reset and ui themes variables
+import '@vueland/ui/css/lib.css' // component styles
+import '@vueland/ui/css/utils.css' // utils css classes
 
 export const vueland = createVuelandUI({
   components,
   theme: 'light',
   themes: {
-    light: { primary: '#1976d2', /* ... */ },
+    light: { primary: '#1976d2' /* ... */ },
   },
 })
 ```
@@ -109,8 +109,6 @@ export default defineConfig({
 /* 3. Utilities */
 @use '@vueland/ui/styles/utils.scss';
 
-
-
 /* 3. Your own styles */
 @use './variables';
 @use './overrides';
@@ -130,7 +128,7 @@ export const vueland = createVuelandUI({
   components,
   theme: 'light',
   themes: {
-    light: { primary: '#1976d2', /* ... */ },
+    light: { primary: '#1976d2' /* ... */ },
   },
   // breakpoints are picked up from utils-jit automatically
   // pass explicitly here only if you want to override them for useDisplay
@@ -148,8 +146,8 @@ import { vueland } from './plugins/vueland'
 // Import your SCSS entry (Vite compiles it)
 import './styles/main.scss'
 
-// Import the JIT-generated utilities
-import 'src/.generated/utils-jit.css'
+// Import the JIT-generated utilities (virtual module)
+import 'virtual:utils-jit.css'
 
 createApp(App).use(vueland).mount('#app')
 ```
@@ -160,17 +158,11 @@ createApp(App).use(vueland).mount('#app')
 <template>
   <!-- Predefined utilities with responsive variants -->
   <div class="d-flex flex-col md:flex-row gap-4 pa-4">
-
     <!-- Arbitrary values via JIT -->
-    <div class="w-[320px] h-[200px] bg-[#42b883] radius-[8px]">
-      Card
-    </div>
+    <div class="w-[320px] h-[200px] bg-[#42b883] radius-[8px]">Card</div>
 
     <!-- Responsive JIT -->
-    <div class="w-[100%] md:w-[480px] lg:w-[640px]">
-      Sidebar
-    </div>
-
+    <div class="w-[100%] md:w-[480px] lg:w-[640px]">Sidebar</div>
   </div>
 </template>
 ```
@@ -203,12 +195,12 @@ src/.generated/
 
 ## `createVuelandUI` options
 
-| Option | Type | Description |
-|---|---|---|
-| `components` | `Record` | Components to register globally |
-| `theme` | `string` | Active theme on startup |
-| `themes` | `ThemesOptions` | Theme color definitions |
-| `icons` | `IconsOptions` | Icon sets and aliases |
-| `presets` | `Record` | Component style presets |
+| Option        | Type                     | Description                                                                                                                                           |
+| ------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `components`  | `Record`                 | Components to register globally                                                                                                                       |
+| `theme`       | `string`                 | Active theme on startup                                                                                                                               |
+| `themes`      | `ThemesOptions`          | Theme color definitions                                                                                                                               |
+| `icons`       | `IconsOptions`           | Icon sets and aliases                                                                                                                                 |
+| `presets`     | `Record`                 | Component style presets                                                                                                                               |
 | `breakpoints` | `Record<string, number>` | Custom breakpoints for `useDisplay`. Auto-synced from `utils-jit` when used — explicit value takes priority. See [Breakpoints](/en/guide/breakpoints) |
-| `ssr` | `boolean` | SSR support |
+| `ssr`         | `boolean`                | SSR support                                                                                                                                           |

@@ -13,14 +13,14 @@ By default each layer comes with sensible defaults. When you configure custom br
 
 ## Default breakpoints
 
-| Name | min-width | CSS prefix |
-|------|-----------|------------|
+| Name | min-width | CSS prefix    |
+| ---- | --------- | ------------- |
 | xs   | 0         | — (no prefix) |
-| sm   | 600px     | `sm:` |
-| md   | 960px     | `md:` |
-| lg   | 1280px    | `lg:` |
-| xl   | 1920px    | `xl:` |
-| xxl  | 2560px    | `xxl:` |
+| sm   | 600px     | `sm:`         |
+| md   | 960px     | `md:`         |
+| lg   | 1280px    | `lg:`         |
+| xl   | 1920px    | `xl:`         |
+| xxl  | 2560px    | `xxl:`        |
 
 ## Full setup step by step
 
@@ -84,9 +84,9 @@ In your app entry file, import both SCSS source files:
 
 ```ts
 // src/main.ts
-import '@vueland/ui/styles/styles.scss'  // utilities + CSS variables
-import '@vueland/ui/styles/lib.scss'      // component styles
-import '@vueland/ui/styles/utils.scss'    // utilities
+import '@vueland/ui/styles/styles.scss' // utilities + CSS variables
+import '@vueland/ui/styles/lib.scss' // component styles
+import '@vueland/ui/styles/utils.scss' // utilities
 ```
 
 This triggers Vite's SCSS preprocessor, which is where the plugin intercepts the compilation and rewrites the `$grid-breakpoints` map with your values. All four layers — predefined utilities (`sm:d-flex`), JIT classes, grid component media queries, and `useBreakpoints` — share the same values as a result.
@@ -95,7 +95,7 @@ Also import the generated JIT CSS file:
 
 ```ts
 // src/main.ts
-import 'src/.generated/utils-jit.css'
+import 'virtual:utils-jit.css'
 ```
 
 ### Step 4 — register the UI library
@@ -109,7 +109,7 @@ import * as components from '@vueland/ui/components'
 import '@vueland/ui/styles/styles.scss'
 import '@vueland/ui/styles/lib.scss'
 import '@vueland/ui/styles/utils.scss'
-import 'src/.generated/utils-jit.css'
+import 'virtual:utils-jit.css'
 
 import App from './App.vue'
 
@@ -167,18 +167,15 @@ Row-level alignment also responds to breakpoints:
 **`useBreakpoints`** — reactive booleans in JS/Vue, synced to the same values:
 
 ```vue
-
 <script setup lang="ts">
-  import { useBreakpoints } from '@vueland/ui/composables'
+import { useBreakpoints } from '@vueland/ui/composables'
 
-  const { mdAndUp } = useBreakpoints()
+const { mdAndUp } = useBreakpoints()
 </script>
 
 <template>
   <c-row>
-    <c-col :cols="mdAndUp ? 6 : 12">
-      Адаптивная колонка через JS
-    </c-col>
+    <c-col :cols="mdAndUp ? 6 : 12"> Адаптивная колонка через JS </c-col>
   </c-row>
 </template>
 ```
@@ -211,11 +208,11 @@ Grid component column breakpoints (`sm="6"`, `md="4"`) come from the SCSS compil
 
 ### Priority
 
-| Source | Priority |
-|--------|----------|
-| `createVuelandUI({ breakpoints })` | **highest** — controls `useBreakpoints` only |
-| `utilsJIT({ breakpoints })` | controls SCSS utilities, grid components, `useBreakpoints`, and JIT classes |
-| Built-in defaults | fallback |
+| Source                             | Priority                                                                    |
+| ---------------------------------- | --------------------------------------------------------------------------- |
+| `createVuelandUI({ breakpoints })` | **highest** — controls `useBreakpoints` only                                |
+| `utilsJIT({ breakpoints })`        | controls SCSS utilities, grid components, `useBreakpoints`, and JIT classes |
+| Built-in defaults                  | fallback                                                                    |
 
 ## CSS utility responsive classes
 
@@ -237,20 +234,17 @@ Predefined utility classes follow the pattern `{bp}:{class}` and apply from the 
 `useBreakpoints` exposes reactive boolean refs for the current screen state in JS/Vue code.
 
 ```vue
-<template>
-  <div>
-    <p v-if="display.xs.value">Mobile</p>
-    <p v-if="display.mdAndUp.value">Tablet and up</p>
-    <p v-if="display.lgAndLess.value">Up to desktop</p>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { inject } from 'vue'
-import { $BREAKPOINTS_KEY } from '@vueland/ui/constants'
+import { useBreakpoints } from '@vueland/ui/composables'
 
-const display = inject($BREAKPOINTS_KEY)!
+const { mdAndUp } = useBreakpoints()
 </script>
+
+<template>
+  <c-row>
+    <c-col :cols="mdAndUp ? 6 : 12"> Адаптивная колонка через JS </c-col>
+  </c-row>
+</template>
 ```
 
 ### Available properties
@@ -259,23 +253,23 @@ All properties are reactive `Ref<boolean>`.
 
 #### Exact breakpoints
 
-| Property | Condition |
-|----------|-----------|
-| `display.xs` | width < sm |
-| `display.sm` | sm ≤ width < md |
-| `display.md` | md ≤ width < lg |
-| `display.lg` | lg ≤ width < xl |
-| `display.xl` | xl ≤ width < xxl |
-| `display.xxl` | width ≥ xxl |
+| Property      | Condition        |
+| ------------- | ---------------- |
+| `display.xs`  | width < sm       |
+| `display.sm`  | sm ≤ width < md  |
+| `display.md`  | md ≤ width < lg  |
+| `display.lg`  | lg ≤ width < xl  |
+| `display.xl`  | xl ≤ width < xxl |
+| `display.xxl` | width ≥ xxl      |
 
 #### Range helpers
 
-| Property | Condition |
-|----------|-----------|
-| `display.smAndUp` | width ≥ sm |
-| `display.mdAndUp` | width ≥ md |
-| `display.lgAndUp` | width ≥ lg |
-| `display.xlAndUp` | width ≥ xl |
+| Property            | Condition       |
+| ------------------- | --------------- |
+| `display.smAndUp`   | width ≥ sm      |
+| `display.mdAndUp`   | width ≥ md      |
+| `display.lgAndUp`   | width ≥ lg      |
+| `display.xlAndUp`   | width ≥ xl      |
 | `display.smAndLess` | xs < width ≤ sm |
 | `display.mdAndLess` | sm < width ≤ md |
 | `display.lgAndLess` | md < width ≤ lg |

@@ -3,6 +3,7 @@
 `@vueland/utils-jit` — Vite-плагин для генерации CSS-утилит в JIT-режиме.
 
 ## Установка
+
 ::: code-group
 
 ```bash [pnpm]
@@ -29,44 +30,46 @@ import vue from '@vitejs/plugin-vue'
 import { utilsJIT } from '@vueland/utils-jit'
 
 export default defineConfig({
-  plugins: [
-    vue(),
-    utilsJIT(),
-  ],
+  plugins: [vue(), utilsJIT()],
 })
 ```
 
-По умолчанию плагин создаёт файл:
-
-```txt
-src/.generated/utils-jit.css
-```
-
-Импортируйте его в точке входа приложения, например в `src/main.ts`:
+По умолчанию CSS отдаётся виртуальным модулем `virtual:utils-jit.css` — файл на диск не пишется. Импортируйте его один раз в точке входа приложения, например в `src/main.ts`:
 
 ```ts
-import './.generated/utils-jit.css'
+import 'virtual:utils-jit.css'
 ```
+
+Если нужно увидеть результат файлом (для дебага), включите [`emitFile`](./configuration#emitfile) — тогда CSS дополнительно запишется в [`outFile`](./configuration#outfile).
 
 ## Быстрый пример
 
 ```vue
 <template>
-  <div class="w-[300px] h-[200px] px-[16px] radius-[12px] z-[10]">
-    Hello Vueland
-  </div>
+  <div class="w-[300px] h-[200px] px-[16px] radius-[12px] z-[10]">Hello Vueland</div>
 </template>
 ```
 
-Сгенерированный CSS будет выглядеть примерно так:
+Виртуальный модуль будет отдавать примерно такой CSS:
 
 ```css
 /* @vueland/utils-jit: generated utilities */
-.h-\[200px\]{height: 200px !important;}
-.px-\[16px\]{padding-left: 16px !important;padding-right: 16px !important;}
-.radius-\[12px\]{border-radius: 12px !important;}
-.w-\[300px\]{width: 300px !important;}
-.z-\[10\]{z-index: 10 !important;}
+.h-\[200px\] {
+  height: 200px !important;
+}
+.px-\[16px\] {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+.radius-\[12px\] {
+  border-radius: 12px !important;
+}
+.w-\[300px\] {
+  width: 300px !important;
+}
+.z-\[10\] {
+  z-index: 10 !important;
+}
 ```
 
-Порядок правил в итоговом файле сортируется по имени utility-токена, поэтому не стоит завязывать поведение на порядок объявления классов в шаблоне.
+Порядок правил в итоговом CSS сортируется по имени utility-токена, поэтому не стоит завязывать поведение на порядок объявления классов в шаблоне.

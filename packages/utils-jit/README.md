@@ -48,10 +48,15 @@ import { defineConfig } from 'vite'
 import { utilsJIT } from '@vueland/utils-jit'
 
 export default defineConfig({
-  plugins: [
-    utilsJIT(),
-  ],
+  plugins: [utilsJIT()],
 })
+```
+
+Import the generated CSS once in your entry file. It is served as a virtual module — no file is written to disk:
+
+```ts
+// main.ts
+import 'virtual:utils-jit.css'
 ```
 
 Then use arbitrary utility classes in your templates:

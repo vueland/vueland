@@ -11,9 +11,10 @@ export default defineConfig({
   plugins: [
     vue(),
     utilsJIT({
-      outFile: 'src/.generated/utils-jit.css',
       include: [/\.(vue|js|ts|jsx|tsx|html)$/],
       exclude: [/src\/fixtures/],
+      emitFile: false,
+      outFile: 'src/.generated/utils-jit.css',
       breakpoints: {
         xs: 0,
         sm: 600,
@@ -30,32 +31,50 @@ export default defineConfig({
 
 ## Options
 
-| Option | Type | Default | Description |
-| --- | --- | --- | --- |
-| `include` | `Array<string \| RegExp>` | `[/\.(vue\|js\|ts\|jsx\|tsx\|html)$/]` | Files that should be scanned. |
-| `exclude` | `Array<string \| RegExp>` | Service directories | Files and directories that should be ignored. |
-| `outFile` | `string` | `src/.generated/utils-jit.css` | Path to the generated CSS file relative to the Vite root. |
-| `breakpoints` | `Record<string, number>` | `{ sm: 600, md: 960, lg: 1280, xl: 1920, xxl: 2560 }` | Responsive breakpoints. When passed, fully replaces the defaults. |
-| `rules` | `UtilityRule[]` | `[]` | Custom utility rules. |
-| `variants` | `VariantMap` | `{}` | Custom variants that are added to the built-in variants. |
-| `banner` | `string` | `/* @vueland/utils-jit: generated utilities */` | Banner at the top of the generated CSS file. |
-| `emitEmptyFile` | `boolean` | `true` | Creates a file with a comment when no utilities are found. |
-| `debug` | `boolean` | `false` | Prints diagnostic messages. |
+| Option          | Type                      | Default                                                      | Description                                                                                                 |
+| --------------- | ------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `include`       | `Array<string \| RegExp>` | `[/\.(vue\|js\|ts\|jsx\|tsx\|html)$/]`                       | Files that should be scanned.                                                                               |
+| `exclude`       | `Array<string \| RegExp>` | Service directories                                          | Files and directories that should be ignored.                                                               |
+| `emitFile`      | `boolean`                 | `false`                                                      | Also write the CSS to a file (for debugging). By default the CSS is served only as a virtual module.        |
+| `outFile`       | `string`                  | `src/.generated/utils-jit.css`                               | Path to the debug file relative to the Vite root. Only used when `emitFile: true`.                          |
+| `breakpoints`   | `Record<string, number>`  | `{ xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920, xxl: 2560 }` | Responsive breakpoints. When passed, they are **merged** with the defaults (values are overridden per key). |
+| `rules`         | `UtilityRule[]`           | `[]`                                                         | Custom utility rules.                                                                                       |
+| `variants`      | `VariantMap`              | `{}`                                                         | Custom variants that are added to the built-in variants.                                                    |
+| `banner`        | `string`                  | `/* @vueland/utils-jit: generated utilities */`              | Banner at the top of the generated CSS.                                                                     |
+| `emitEmptyFile` | `boolean`                 | `true`                                                       | Serve a placeholder comment when no utilities are found (otherwise empty CSS).                              |
+| `debug`         | `boolean`                 | `false`                                                      | Prints diagnostic messages.                                                                                 |
 
-## `outFile`
+## `emitFile`
 
-Path to the generated CSS file relative to the Vite project `root`.
+By default the CSS is served as a virtual module, `virtual:utils-jit.css`, and is never written to disk — consumers import the module:
+
+```ts
+import 'virtual:utils-jit.css'
+```
+
+If you want to inspect the result as a file (for debugging, diffing, external tooling), enable `emitFile` — the CSS is additionally written to [`outFile`](#outfile). This does not change delivery: you still import the virtual module.
 
 ```ts
 utilsJIT({
+  emitFile: true,
+})
+```
+
+## `outFile`
+
+Path to the debug file relative to the Vite project `root`. **Only used when `emitFile: true`** — in the default mode no file is written.
+
+```ts
+utilsJIT({
+  emitFile: true,
   outFile: 'src/styles/generated/utils.css',
 })
 ```
 
-After changing this option, update the import path accordingly:
+You still import the virtual module, not this file:
 
 ```ts
-import './styles/generated/utils.css'
+import 'virtual:utils-jit.css'
 ```
 
 ## `include`
@@ -65,7 +84,7 @@ A list of patterns for files that should be scanned.
 Default:
 
 ```ts
-[/\.(vue|js|ts|jsx|tsx|html)$/]
+;[/\.(vue|js|ts|jsx|tsx|html)$/]
 ```
 
 Example:
@@ -100,17 +119,13 @@ Example:
 
 ```ts
 utilsJIT({
-  exclude: [
-    /src\/fixtures/,
-    /src\/legacy/,
-    'storybook-static',
-  ],
+  exclude: [/src\/fixtures/, /src\/legacy/, 'storybook-static'],
 })
 ```
 
 ## `breakpoints`
 
-An object of responsive breakpoints. The key is used as a class prefix, the value is the `min-width` in pixels. When provided, the object **fully replaces** the built-in defaults.
+An object of responsive breakpoints. The key is used as a class prefix, the value is the `min-width` in pixels. When provided, it is **merged** with the built-in defaults (`xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920, xxl: 2560`): the passed keys override values, the remaining default names are kept.
 
 ```ts
 utilsJIT({
@@ -131,14 +146,18 @@ After that you can use:
 <div class="sm:w-[640px] lg:w-[1024px]"></div>
 ```
 
+::: tip Why merge, not replace
+The breakpoint names (`xs/sm/md/lg/xl/xxl`) are a shared contract: `@vueland/ui` generates predefined `.md\:pa-4`, `.lg\:d-flex` classes and the responsive `CRow`/`CCol` props from them, and `useDisplay` exposes them at runtime. Overriding a single value (e.g. `{ sm: 680 }`) must not drop the other names — otherwise the whole library would lose its `.md\:*` / `.lg\:*` utilities. So you can override values and add **new** names (e.g. `tablet: 900`), but you cannot remove the default names.
+:::
+
 ### Key naming constraints
 
 Breakpoint keys can be any string — they become CSS class prefixes and are valid in that context. However, if you use `@vueland/ui` and want the same breakpoints to apply to **predefined SCSS utility classes** (`sm:d-flex`, `md:pa-4`), the keys must be valid SCSS identifiers: they **cannot start with a digit**.
 
-| Key | JIT classes | SCSS utilities (with `@vueland/ui`) |
-|-----|-------------|-------------------------------------|
-| `sm`, `md`, `xxl` | ✓ | ✓ |
-| `'2xl'`, `'3xl'` | ✓ | ✗ invalid SCSS identifier |
+| Key               | JIT classes | SCSS utilities (with `@vueland/ui`) |
+| ----------------- | ----------- | ----------------------------------- |
+| `sm`, `md`, `xxl` | ✓           | ✓                                   |
+| `'2xl'`, `'3xl'`  | ✓           | ✗ invalid SCSS identifier           |
 
 If you only use `utils-jit` without `@vueland/ui` SCSS, keys like `'2xl'` are perfectly fine.
 
@@ -171,13 +190,13 @@ utilsJIT({
 
 ## `emitEmptyFile`
 
-When `emitEmptyFile: true`, a file is created with this content if no utility classes are found:
+When `emitEmptyFile: true` (the default) and no utility classes are found, the virtual module serves a placeholder comment (and the same text is written to the debug file when `emitFile` is on):
 
 ```css
 /* @vueland/utils-jit: no utilities found */
 ```
 
-When `emitEmptyFile: false`, the file will not be created until the plugin finds at least one utility class.
+When `emitEmptyFile: false`, empty CSS is served if no utility classes are found.
 
 ```ts
 utilsJIT({
@@ -229,15 +248,16 @@ When Vite starts, the plugin:
 3. Scans only files that match `include`.
 4. Extracts utility tokens.
 5. Validates values.
-6. Generates the final CSS file.
+6. Serves the final CSS as the `virtual:utils-jit.css` module (and optionally a debug file when `emitFile` is on).
 
 During development, the plugin updates CSS incrementally:
 
 - adds rules for new tokens;
 - removes rules when a token is no longer used anywhere;
 - keeps a rule if the same token is still used in another file;
+- skips re-tokenizing files whose content has not changed;
 - reuses token parsing and CSS rule caches;
-- notifies the Vite watcher when the generated CSS changes.
+- invalidates the virtual module for hot replacement (HMR) without a full page reload.
 
 ## Limits and safety
 
@@ -268,9 +288,7 @@ Good:
 
 ```vue
 <template>
-  <c-card class="max-w-[720px] px-[24px] radius-[16px]">
-    Content
-  </c-card>
+  <c-card class="max-w-[720px] px-[24px] radius-[16px]"> Content </c-card>
 </template>
 ```
 
@@ -278,24 +296,25 @@ If a value is repeated across the project, it is better to move it into a theme,
 
 ## Troubleshooting
 
-### The CSS file was not created
+### Utilities are not applied
 
 Check that:
 
 - `utilsJIT()` is added to `vite.config.ts`;
+- the application imports `virtual:utils-jit.css` in its entry file;
 - the project contains at least one supported utility class;
-- the `outFile` path is correct;
-- the generated CSS file is imported by the application;
-- the file matches `include`;
+- the file with the classes matches `include`;
 - the file is not ignored by `exclude`.
 
-If no utility classes are found and `emitEmptyFile: true`, the file will be created with this comment:
+If no utility classes are found and `emitEmptyFile: true`, the virtual module serves this comment:
 
 ```css
 /* @vueland/utils-jit: no utilities found */
 ```
 
-If `emitEmptyFile: false`, the file will appear only after at least one utility class is found.
+If `emitEmptyFile: false`, empty CSS is served when no classes are found.
+
+> If `emitFile: true` is enabled but the debug file did not appear, check that the `outFile` path is correct and writable within the project.
 
 ### The class exists, but CSS is not generated
 
@@ -310,17 +329,12 @@ Check that:
 
 ### A responsive prefix does not work
 
-The breakpoint must be explicitly listed in the `breakpoints` option. The default set only includes `sm`, `md`, `lg`, `xl`, `xxl` — any other prefix must be added manually:
+The prefix must be the name of an existing breakpoint. The default set is `xs`, `sm`, `md`, `lg`, `xl`, `xxl`; to add your own (e.g. `tablet`), pass it in `breakpoints` — it is merged with the defaults:
 
 ```ts
 utilsJIT({
   breakpoints: {
-    xs: 0,
-    sm: 600,
-    md: 960,
-    lg: 1280,
-    xl: 1920,
-    xxl: 2560,
+    tablet: 900, // added to the default xs/sm/md/lg/xl/xxl
   },
 })
 ```

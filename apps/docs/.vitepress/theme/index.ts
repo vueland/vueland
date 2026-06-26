@@ -70,7 +70,7 @@ import VuelandLayout from './VuelandLayout.vue'
 import '@vueland/ui/styles/styles.scss'
 import '@vueland/ui/styles/lib.scss'
 import '@vueland/ui/styles/utils.scss'
-import './utils-jit.css'
+import 'virtual:utils-jit.css'
 import './style.scss'
 
 const fa = createFontAwesomeResolver({

@@ -31,7 +31,17 @@ export type JitOptions = {
     exclude?: Pattern[]
 
     /**
-     * Путь к генерируемому CSS файлу относительно Vite root.
+     * Писать сгенерированный CSS в файл (для дебага / инспекции).
+     *
+     * По умолчанию CSS отдаётся виртуальным модулем `virtual:utils-jit.css`
+     * без записи на диск. Включи, если хочешь видеть результат файлом.
+     *
+     * По умолчанию: false.
+     */
+    emitFile?: boolean
+
+    /**
+     * Путь к дебаг-файлу относительно Vite root (используется при emitFile).
      *
      * По умолчанию: src/.generated/utils-jit.css
      */
@@ -78,6 +88,7 @@ export type ResolvedJitOptions = Required<
         JitOptions,
         | 'include'
         | 'exclude'
+        | 'emitFile'
         | 'outFile'
         | 'breakpoints'
         | 'rules'

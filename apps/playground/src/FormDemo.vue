@@ -6,10 +6,9 @@
         watchEffect
     } from 'vue'
 
-    import { useBreakpoints, useCore } from '@/composables'
+    import { useBreakpoints } from '@/composables'
 
     const display = useBreakpoints()
-    const core = useCore()
 
     const value = shallowRef([])
 
@@ -21,7 +20,6 @@
 
     watchEffect(() => {{
         Object.keys(display).forEach(key => unref(display[key]))
-        console.log(core.breakpoints)
     }})
 </script>
 

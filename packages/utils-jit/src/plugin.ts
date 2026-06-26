@@ -1,4 +1,3 @@
-import * as fs from 'node:fs'
 import * as path from 'node:path'
 import type { Plugin, ViteDevServer } from 'vite'
 
@@ -11,6 +10,11 @@ import {
     shouldProcess,
     tokenize,
 } from './core'
+import {
+    CssOutput,
+    RESOLVED_VIRTUAL_CSS_ID,
+    VIRTUAL_CSS_ID,
+} from './css-output'
 import {
     collectProjectFiles,
     isSameFile,
@@ -29,7 +33,15 @@ function resolveOptions(options: JitOptions = {}): ResolvedJitOptions {
     return {
         include: options.include ?? DEFAULT_INCLUDE,
         exclude: [...DEFAULT_EXCLUDE, ...(options.exclude ?? [])],
+        emitFile: options.emitFile ?? false,
         outFile: options.outFile ?? 'src/.generated/utils-jit.css',
+        // Мерж, а НЕ replace — намеренно и обязательно. Имена брейкпоинтов
+        // (xs/sm/md/lg/xl/xxl) — контракт: @vueland/ui генерит `.{name}\:*`
+        // утилиты через `@each ... in $grid-breakpoints` в 6 модулях (+CGrid,
+        // use-display, JIT). Эта карта инжектится в $grid-breakpoints. Replace
+        // при переопределении одного значения (напр. {sm: 680}) уронил бы все
+        // .md\:* / .lg\:* / ... по всей либе. Override значений и добавление
+        // имён — ок; убрать дефолтные имена нельзя (и не нужно).
         breakpoints: {
             ...DEFAULT_BREAKPOINTS,
             ...(options.breakpoints ?? {}),
@@ -45,12 +57,12 @@ function resolveOptions(options: JitOptions = {}): ResolvedJitOptions {
     }
 }
 
-
 export function utilsJIT(options?: JitOptions): Plugin {
     const resolvedOptions = resolveOptions(options)
     const allRules: UtilityRule[] = [...defaultRules, ...resolvedOptions.rules]
     const registry = new TokenRegistry(resolvedOptions, allRules)
     const contentCache = new ContentCache()
+    const cssOutput = new CssOutput({ emitFile: resolvedOptions.emitFile })
 
     // Гейт по СЫРОМУ флагу: брейкпоинты инжектим в SCSS/JS только если их явно
     // задали. А значение берём из resolvedOptions (мерж с дефолтами) — Sass
@@ -59,9 +71,7 @@ export function utilsJIT(options?: JitOptions): Plugin {
     const shouldInjectBreakpoints = options?.breakpoints !== undefined
 
     let root = process.cwd()
-    let outFile = ''
-    let devServer: ViteDevServer | null = null
-    let currentCss = ''
+    let outFileAbs = ''
 
     function debug(message: string): void {
         if (resolvedOptions.debug) {
@@ -69,51 +79,24 @@ export function utilsJIT(options?: JitOptions): Plugin {
         }
     }
 
-    function notifyCssChanged(): void {
-        if (!devServer || !outFile) {
+    // Отдаёт обновлённый CSS в virtual-модуль (и опц. дебаг-файл). Гейт по
+    // consumeDirty: сериализация и доставка только когда набор правил менялся.
+    function flushCss(notify: boolean): void {
+        if (!registry.consumeDirty()) {
             return
         }
 
-        devServer.watcher.emit('change', outFile)
+        cssOutput.update(registry.buildCss(), notify)
     }
 
-    // Пишет файл только если registry.dirty (иначе ранний выход — без
-    // сортировки/конкатенации) и только если итоговый CSS реально изменился.
-    function writeCssFile(notify = false): void {
-        if (!outFile || !registry.consumeDirty()) {
-            return
-        }
-
-        const nextCss = registry.buildCss()
-
-        if (nextCss === currentCss) {
-            return
-        }
-
-        currentCss = nextCss
-
-        fs.mkdirSync(path.dirname(outFile), { recursive: true })
-        fs.writeFileSync(outFile, currentCss, 'utf8')
-
-        if (devServer) {
-            devServer.watcher.add(outFile)
-        }
-
-        if (notify) {
-            notifyCssChanged()
-        }
-
-        debug(`wrote ${path.relative(root, outFile).replace(/\\/g, '/')}`)
-    }
-
-    function rebuildAll(notify = false): void {
+    function rebuildAll(notify: boolean): void {
         contentCache.clear()
 
         const filePaths = collectProjectFiles(
             root,
             resolvedOptions.include,
             resolvedOptions.exclude,
-            outFile,
+            outFileAbs,
         )
 
         const files = filePaths.flatMap((filePath) => {
@@ -131,13 +114,15 @@ export function utilsJIT(options?: JitOptions): Plugin {
         })
 
         registry.rebuildAll(files)
-        writeCssFile(notify)
+        flushCss(notify)
 
         debug(`scanned ${filePaths.length} files, found ${registry.activeCount} utilities`)
     }
 
-    function rebuildOne(file: string, code: string, notify = false): void {
-        if (isSameFile(file, outFile)) {
+    function rebuildOne(file: string, code: string, notify: boolean): void {
+        // На случай emitFile с кастомным outFile «нашего» расширения — не
+        // обрабатываем собственный дебаг-вывод.
+        if (isSameFile(file, outFileAbs)) {
             return
         }
 
@@ -151,17 +136,17 @@ export function utilsJIT(options?: JitOptions): Plugin {
         }
 
         registry.syncFile(file, tokenize(code))
-        writeCssFile(notify)
+        flushCss(notify)
     }
 
-    function removeOne(file: string, notify = false): void {
-        if (isSameFile(file, outFile)) {
+    function removeOne(file: string, notify: boolean): void {
+        if (isSameFile(file, outFileAbs)) {
             return
         }
 
         contentCache.delete(file)
         registry.removeFile(file)
-        writeCssFile(notify)
+        flushCss(notify)
     }
 
     return {
@@ -189,21 +174,26 @@ export function utilsJIT(options?: JitOptions): Plugin {
 
         configResolved(config: any) {
             root = config.root
-            outFile = path.resolve(root, resolvedOptions.outFile)
+            outFileAbs = path.resolve(root, resolvedOptions.outFile)
+            cssOutput.setOutFile(outFileAbs)
 
             // Полный обход проекта — ровно один раз. configResolved срабатывает
-            // до transform/импортов и в dev, и в build, поэтому файл готов
-            // заранее; инкрементальные изменения дальше идут через transform/
-            // handleHotUpdate/watchChange.
+            // до transform/импортов и в dev, и в build, поэтому CSS готов
+            // заранее (его отдаст load); инкрементальные изменения дальше идут
+            // через transform/handleHotUpdate/watchChange.
             rebuildAll(false)
         },
 
         configureServer(server: ViteDevServer) {
-            devServer = server
+            cssOutput.setServer(server)
+        },
 
-            if (outFile) {
-                server.watcher.add(outFile)
-            }
+        resolveId(id: string) {
+            return id === VIRTUAL_CSS_ID ? RESOLVED_VIRTUAL_CSS_ID : null
+        },
+
+        load(id: string) {
+            return id === RESOLVED_VIRTUAL_CSS_ID ? cssOutput.css : null
         },
 
         transform(code: string, id: string) {
@@ -211,7 +201,7 @@ export function utilsJIT(options?: JitOptions): Plugin {
             // модуля — токенизировать их нельзя, иначе они затрут токены полного
             // файла. Полный файл приходит по каноническому id (без query) и при
             // изменениях через handleHotUpdate/watchChange.
-            if (id.includes('?') || isSameFile(id, outFile)) {
+            if (id.includes('?')) {
                 return null
             }
 
@@ -222,10 +212,6 @@ export function utilsJIT(options?: JitOptions): Plugin {
 
         async handleHotUpdate(ctx) {
             const { file } = ctx
-
-            if (isSameFile(file, outFile)) {
-                return
-            }
 
             if (!shouldProcess(file, resolvedOptions.include, resolvedOptions.exclude)) {
                 return
@@ -239,7 +225,7 @@ export function utilsJIT(options?: JitOptions): Plugin {
         watchChange(id: string, change) {
             const file = id.split('?')[0]
 
-            if (!file || isSameFile(file, outFile)) {
+            if (!file) {
                 return
             }
 
