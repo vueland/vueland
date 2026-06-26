@@ -1,0 +1,36 @@
+html {
+  background: #ffffff;
+  color-scheme: light;
+}
+
+body {
+  background: #ffffff;
+}
+
+html.dark,
+html[data-theme='dark'] {
+  --vp-c-bg: #1e1e1e;
+  --vp-c-bg-alt: #1e1e1e;
+  --vp-nav-bg-color: #1e1e1e;
+  --vp-sidebar-bg-color: #1e1e1e;
+  --c-app-background-color: #212121;
+  --c-app-surface-color: #1e1e1e;
+  --c-app-surface-variant-color: #2a2a2a;
+  --c-app-text-color: #e0e0e0;
+
+  background: #1e1e1e;
+  color: #e0e0e0;
+  color-scheme: dark;
+}
+
+html.dark body,
+html[data-theme='dark'] body {
+  background: #1e1e1e;
+}
+
+html.dark #app,
+html[data-theme='dark'] #app,
+html.dark .c-app__wrapper,
+html[data-theme='dark'] .c-app__wrapper {
+  background: #212121;
+}
