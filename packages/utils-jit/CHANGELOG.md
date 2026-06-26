@@ -1,5 +1,11 @@
 # @vueland/utils-jit
 
+## 0.3.0
+
+### Minor Changes
+
+- [#64](https://github.com/vueland/vueland/pull/64) [`9d42f5d`](https://github.com/vueland/vueland/commit/9d42f5d3a59fa55e161af863d735d9ab67428438) Thanks [@wiseadme](https://github.com/wiseadme)! - virtual utils
+
 ## 0.2.7
 
 ### Patch Changes
