@@ -158,14 +158,42 @@ describe('plugins / scss breakpoints injection', () => {
         expect(plugin.config?.()).toBeUndefined()
     })
 
-    it('additionalData подставляет брейкпоинты в размеченный блок', () => {
+    it('additionalData подставляет смерженные с дефолтами брейкпоинты', () => {
+        // Переопределяем 3 из дефолтных — остальные (xs/xl/xxl) должны остаться,
+        // иначе Sass `@use with (...)` затрёт всю карту грида.
         const plugin = utilsJIT({ breakpoints: { sm: 640, md: 768, lg: 1024 } }) as any
         const fn = getAdditionalData(plugin)!
         const result = fn(MARKED_SOURCE, MARKED_FILE)
 
-        expect(result).toContain("@use 'maps/grids' with ($grid-breakpoints: ('sm': 640px, 'md': 768px, 'lg': 1024px))")
+        expect(result).toContain("@use 'maps/grids' with ($grid-breakpoints: ('xs': 0, 'sm': 640px, 'md': 768px, 'lg': 1024px, 'xl': 1920px, 'xxl': 2560px))")
         expect(result).toContain(MARKER_START)
         expect(result).toContain(MARKER_END)
+    })
+
+    it('кастомный брейкпоинт не стирает дефолтные (регрессия)', () => {
+        const plugin = utilsJIT({ breakpoints: { tablet: 900 } }) as any
+        const fn = getAdditionalData(plugin)!
+        const result = fn(MARKED_SOURCE, MARKED_FILE)
+
+        // Все дефолты на месте + добавлен кастомный.
+        for (const bp of ["'xs': 0", "'sm': 600px", "'md': 960px", "'lg': 1280px", "'xl': 1920px", "'xxl': 2560px", "'tablet': 900px"]) {
+            expect(result).toContain(bp)
+        }
+    })
+
+    it('__VUELAND_BREAKPOINTS__ синхронизирован с SCSS (смерженная карта)', () => {
+        const plugin = utilsJIT({ breakpoints: { tablet: 900 } }) as any
+        const define = plugin.config?.()?.define?.__VUELAND_BREAKPOINTS__
+
+        expect(JSON.parse(define)).toEqual({
+            xs: 0,
+            sm: 600,
+            md: 960,
+            lg: 1280,
+            xl: 1920,
+            xxl: 2560,
+            tablet: 900,
+        })
     })
 
     it('additionalData не трогает файлы без маркера (даже с импортом grids)', () => {
