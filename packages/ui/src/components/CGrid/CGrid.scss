@@ -1,12 +1,13 @@
 @use '../../styles/maps/grids' as *;
-@use 'sass:map';
 @use 'sass:math';
+
+$base-gutter: grid-gutter('xs', 0);
 
 .c-row {
   display: flex;
   flex-wrap: wrap;
-  margin-right: -#{math.div(map.get($grid-gutters, 'xs'), 2)};
-  margin-left: -#{math.div(map.get($grid-gutters, 'xs'), 2)};
+  margin-right: -#{math.div($base-gutter, 2)};
+  margin-left: -#{math.div($base-gutter, 2)};
 }
 
 .c-row.no-gutter {
@@ -22,8 +23,8 @@
 .c-col {
   width: 100%;
   position: relative;
-  padding-right: math.div(map.get($grid-gutters, 'xs'), 2);
-  padding-left: math.div(map.get($grid-gutters, 'xs'), 2);
+  padding-right: math.div($base-gutter, 2);
+  padding-left: math.div($base-gutter, 2);
 }
 
 .c-spacer {
@@ -42,6 +43,8 @@
 }
 
 @each $size, $breakpoint in $grid-breakpoints {
+  $gutter: grid-gutter($size, $breakpoint);
+
   @if $breakpoint == 0 {
     // xs: no media query — classes apply unconditionally (base layer)
     @for $i from 1 through $columns {
@@ -63,13 +66,13 @@
   } @else {
     @media all and (min-width: $breakpoint) {
       .c-row {
-        margin-right: -#{math.div(map.get($grid-gutters, $size), 2)};
-        margin-left: -#{math.div(map.get($grid-gutters, $size), 2)};
+        margin-right: -#{math.div($gutter, 2)};
+        margin-left: -#{math.div($gutter, 2)};
       }
 
       .c-col {
-        padding-right: math.div(map.get($grid-gutters, $size), 2);
-        padding-left: math.div(map.get($grid-gutters, $size), 2);
+        padding-right: math.div($gutter, 2);
+        padding-left: math.div($gutter, 2);
       }
 
       @for $i from 1 through $columns {

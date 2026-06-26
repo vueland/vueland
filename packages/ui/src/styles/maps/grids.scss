@@ -1,7 +1,11 @@
+// Дефолтные брейкпоинты (standalone-сборка). При сборке с @vueland/utils-jit
+// переопределяются из конфига плагина — инъекцией в utils.scss / lib.scss.
+// Должны совпадать с use-display и DEFAULT_BREAKPOINTS плагина.
 @use 'sass:math';
+@use 'sass:map';
 
-$columns: 12;
-$grid-gutter: 10px;
+$columns: 12 !default;
+$grid-gutter: 10px !default;
 $gutter-column: math.div($grid-gutter, 2);
 
 $grid-gutters: (
@@ -11,11 +15,8 @@ $grid-gutters: (
   'lg': math.div($grid-gutter, 3),
   'xl': math.div($grid-gutter * 2, 3),
   'xxl': $grid-gutter,
-);
+) !default;
 
-// Дефолтные брейкпоинты (standalone-сборка). При сборке с @vueland/utils-jit
-// переопределяются из конфига плагина — инъекцией в utils.scss / lib.scss.
-// Должны совпадать с use-display и DEFAULT_BREAKPOINTS плагина.
 $grid-breakpoints: (
   'xs': 0,
   'sm': 600px,
@@ -24,3 +25,31 @@ $grid-breakpoints: (
   'xl': 1920px,
   'xxl': 2560px,
 ) !default;
+
+@function grid-gutter($size, $breakpoint: null) {
+  @if map.has-key($grid-gutters, $size) {
+    @return map.get($grid-gutters, $size);
+  }
+
+  @if $breakpoint == null {
+    @return $grid-gutter;
+  }
+
+  $closest-size: 'xs';
+  $closest-distance: null;
+
+  @each $known-size, $known-gutter in $grid-gutters {
+    $known-breakpoint: map.get($grid-breakpoints, $known-size);
+
+    @if $known-breakpoint != null {
+      $distance: math.abs($breakpoint - $known-breakpoint);
+
+      @if $closest-distance == null or $distance < $closest-distance {
+        $closest-distance: $distance;
+        $closest-size: $known-size;
+      }
+    }
+  }
+
+  @return map.get($grid-gutters, $closest-size);
+}

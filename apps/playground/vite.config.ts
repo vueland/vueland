@@ -9,6 +9,7 @@ export default defineConfig({
     plugins: [
         vue(),
         utilsJIT({
+            emitFile: true,
             breakpoints: {
                 xs: 0,
                 sm: 680,
@@ -16,6 +17,7 @@ export default defineConfig({
                 lg: 1280,
                 xl: 1920,
                 xxl: 2560,
+                tablet: 1400,
             },
             rules: [
                 defineRule({

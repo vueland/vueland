@@ -52,7 +52,7 @@ function resolveOptions(options: JitOptions = {}): ResolvedJitOptions {
             ...(options.variants ?? {}),
         },
         banner: options.banner ?? '/* @vueland/utils-jit: generated utilities */',
-        emitEmptyFile: options.emitEmptyFile ?? true,
+        emitEmptyFile: options.emitEmptyFile ?? false,
         debug: options.debug ?? false,
     }
 }
