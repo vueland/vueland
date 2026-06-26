@@ -48,6 +48,10 @@
 
 /* ─── Navbar ────────────────────────────────────────────────── */
 
+.VPNav {
+  background: var(--vp-nav-bg-color);
+}
+
 .VPNavBar .title span {
   font-weight: 800;
   letter-spacing: -0.03em;
