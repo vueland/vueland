@@ -546,6 +546,63 @@ describe('plugins / filesystem integration', () => {
         expect(css).not.toContain('.h-\\[40px\\]')
     })
 
+    it('повторный update с тем же контентом не эмитит HMR (кеш контента)', async () => {
+        project.write(
+            'src/App.vue',
+            `
+            <template>
+                <div class="w-[100px]"></div>
+            </template>
+        `,
+        )
+
+        const plugin = asHookPlugin(utilsJIT())
+        const server = createDevServer()
+
+        callConfigResolved(plugin, project.root)
+        callConfigureServer(plugin, server)
+
+        const changed = `
+            <template>
+                <div class="h-[40px]"></div>
+            </template>
+        `
+
+        // Первый раз — контент новый: запись + emit.
+        await callHandleHotUpdate(plugin, createHotContext(project.file('src/App.vue'), changed))
+        // Второй раз тот же контент — кеш короткозамыкает, без повторного emit.
+        await callHandleHotUpdate(plugin, createHotContext(project.file('src/App.vue'), changed))
+
+        expect(server.watcher.emit).toHaveBeenCalledTimes(1)
+    })
+
+    it('transform игнорирует под-запросы (?vue&type=...) и не затирает токены файла', () => {
+        project.write(
+            'src/App.vue',
+            `
+            <template>
+                <div class="w-[100px]"></div>
+            </template>
+        `,
+        )
+
+        const plugin = asHookPlugin(utilsJIT())
+
+        callConfigResolved(plugin, project.root)
+
+        // Vite прогоняет через pre-transform под-блоки .vue с фрагментом кода.
+        // style-блок без utility-классов НЕ должен удалять токены файла.
+        callTransform(
+            plugin,
+            '.foo { color: red; }',
+            `${project.file('src/App.vue')}?vue&type=style&index=0&lang.css`,
+        )
+
+        const css = project.read('src/.generated/utils-jit.css')
+
+        expect(css).toContain('.w-\\[100px\\]{width: 100px !important;}')
+    })
+
     it('не удаляет utility, если он ещё используется в другом файле', () => {
         project.write(
             'src/App.vue',

@@ -2,6 +2,7 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import type { Plugin, ViteDevServer } from 'vite'
 
+import { ContentCache } from './content-cache'
 import {
     DEFAULT_BREAKPOINTS,
     DEFAULT_EXCLUDE,
@@ -49,6 +50,7 @@ export function utilsJIT(options?: JitOptions): Plugin {
     const resolvedOptions = resolveOptions(options)
     const allRules: UtilityRule[] = [...defaultRules, ...resolvedOptions.rules]
     const registry = new TokenRegistry(resolvedOptions, allRules)
+    const contentCache = new ContentCache()
 
     // Гейт по СЫРОМУ флагу: брейкпоинты инжектим в SCSS/JS только если их явно
     // задали. А значение берём из resolvedOptions (мерж с дефолтами) — Sass
@@ -105,6 +107,8 @@ export function utilsJIT(options?: JitOptions): Plugin {
     }
 
     function rebuildAll(notify = false): void {
+        contentCache.clear()
+
         const filePaths = collectProjectFiles(
             root,
             resolvedOptions.include,
@@ -115,7 +119,15 @@ export function utilsJIT(options?: JitOptions): Plugin {
         const files = filePaths.flatMap((filePath) => {
             const code = readFileSafe(filePath)
 
-            return code !== null ? [{ path: filePath, tokens: tokenize(code) }] : []
+            if (code === null) {
+                return []
+            }
+
+            // Запоминаем хэш, чтобы последующий transform по этому файлу не
+            // токенизировал повторно тот же контент (двойной обход на старте).
+            contentCache.changed(filePath, code)
+
+            return [{ path: filePath, tokens: tokenize(code) }]
         })
 
         registry.rebuildAll(files)
@@ -133,6 +145,11 @@ export function utilsJIT(options?: JitOptions): Plugin {
             return
         }
 
+        // Контент не менялся с прошлого раза → токены те же, работу пропускаем.
+        if (!contentCache.changed(file, code)) {
+            return
+        }
+
         registry.syncFile(file, tokenize(code))
         writeCssFile(notify)
     }
@@ -142,6 +159,7 @@ export function utilsJIT(options?: JitOptions): Plugin {
             return
         }
 
+        contentCache.delete(file)
         registry.removeFile(file)
         writeCssFile(notify)
     }
@@ -189,13 +207,15 @@ export function utilsJIT(options?: JitOptions): Plugin {
         },
 
         transform(code: string, id: string) {
-            const file = id.split('?')[0]
-
-            if (!file || isSameFile(file, outFile)) {
+            // Под-запросы (?vue&type=..., ?raw, ?worker) несут лишь ФРАГМЕНТ
+            // модуля — токенизировать их нельзя, иначе они затрут токены полного
+            // файла. Полный файл приходит по каноническому id (без query) и при
+            // изменениях через handleHotUpdate/watchChange.
+            if (id.includes('?') || isSameFile(id, outFile)) {
                 return null
             }
 
-            rebuildOne(file, code, false)
+            rebuildOne(id, code, false)
 
             return null
         },
