@@ -24,11 +24,8 @@
     })
 
     const inputRef = shallowRef()
-
     const menuRef = shallowRef()
-
     const menuListRef = shallowRef()
-
     const activeDescendant = shallowRef<string>()
 
     const listId = useId(undefined, { prefix: 'c-select-list' })

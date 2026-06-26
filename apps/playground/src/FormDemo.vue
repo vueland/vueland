@@ -39,7 +39,7 @@
                         <h2>Simple card example</h2>
                     </c-card-header>
                     <c-card-body>
-                        <c-autocomplete
+                        <c-select
                             v-model="value"
                             label="Select user"
                             clearable
