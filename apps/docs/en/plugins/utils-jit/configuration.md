@@ -31,18 +31,18 @@ export default defineConfig({
 
 ## Options
 
-| Option          | Type                      | Default                                                      | Description                                                                                                 |
-| --------------- | ------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| `include`       | `Array<string \| RegExp>` | `[/\.(vue\|js\|ts\|jsx\|tsx\|html)$/]`                       | Files that should be scanned.                                                                               |
-| `exclude`       | `Array<string \| RegExp>` | Service directories                                          | Files and directories that should be ignored.                                                               |
-| `emitFile`      | `boolean`                 | `false`                                                      | Also write the CSS to a file (for debugging). By default the CSS is served only as a virtual module.        |
-| `outFile`       | `string`                  | `src/.generated/utils-jit.css`                               | Path to the debug file relative to the Vite root. Only used when `emitFile: true`.                          |
-| `breakpoints`   | `Record<string, number>`  | `{ xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920, xxl: 2560 }` | Responsive breakpoints. When passed, they are **merged** with the defaults (values are overridden per key). |
-| `rules`         | `UtilityRule[]`           | `[]`                                                         | Custom utility rules.                                                                                       |
-| `variants`      | `VariantMap`              | `{}`                                                         | Custom variants that are added to the built-in variants.                                                    |
-| `banner`        | `string`                  | `/* @vueland/utils-jit: generated utilities */`              | Banner at the top of the generated CSS.                                                                     |
-| `emitEmptyFile` | `boolean`                 | `true`                                                       | Serve a placeholder comment when no utilities are found (otherwise empty CSS).                              |
-| `debug`         | `boolean`                 | `false`                                                      | Prints diagnostic messages.                                                                                 |
+| Option          | Type                      | Default                                                      | Description                                                                                                                                       |
+| --------------- | ------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `include`       | `Array<string \| RegExp>` | `[/\.(vue\|js\|ts\|jsx\|tsx\|html)$/]`                       | Files that should be scanned.                                                                                                                     |
+| `exclude`       | `Array<string \| RegExp>` | Service directories                                          | Files and directories that should be ignored.                                                                                                     |
+| `emitFile`      | `boolean`                 | `false`                                                      | Also write the CSS to a file (for debugging). By default the CSS is served only as a virtual module.                                              |
+| `outFile`       | `string`                  | `src/.generated/utils-jit.css`                               | Path to the debug file relative to the Vite root. Only used when `emitFile: true`.                                                                |
+| `breakpoints`   | `Record<string, number>`  | `{ xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920, xxl: 2560 }` | Responsive breakpoints. When passed, they are **merged** with the defaults (values are overridden per key, new keys are added as class prefixes). |
+| `rules`         | `UtilityRule[]`           | `[]`                                                         | Custom utility rules.                                                                                                                             |
+| `variants`      | `VariantMap`              | `{}`                                                         | Custom variants that are added to the built-in variants.                                                                                          |
+| `banner`        | `string`                  | `/* @vueland/utils-jit: generated utilities */`              | Banner at the top of the generated CSS.                                                                                                           |
+| `emitEmptyFile` | `boolean`                 | `true`                                                       | Serve a placeholder comment when no utilities are found (otherwise empty CSS).                                                                    |
+| `debug`         | `boolean`                 | `false`                                                      | Prints diagnostic messages.                                                                                                                       |
 
 ## `emitFile`
 
@@ -133,6 +133,7 @@ utilsJIT({
     xs: 0,
     sm: 600,
     md: 960,
+    tablet: 1280,
     lg: 1280,
     xl: 1920,
     xxl: 2560,
@@ -140,15 +141,32 @@ utilsJIT({
 })
 ```
 
-After that you can use:
+After that you can use the new prefix in JIT classes:
 
 ```html
-<div class="sm:w-[640px] lg:w-[1024px]"></div>
+<div class="sm:w-[640px] tablet:w-[1024px] lg:w-[1280px]"></div>
 ```
 
 ::: tip Why merge, not replace
-The breakpoint names (`xs/sm/md/lg/xl/xxl`) are a shared contract: `@vueland/ui` generates predefined `.md\:pa-4`, `.lg\:d-flex` classes and the responsive `CRow`/`CCol` props from them, and `useDisplay` exposes them at runtime. Overriding a single value (e.g. `{ sm: 680 }`) must not drop the other names — otherwise the whole library would lose its `.md\:*` / `.lg\:*` utilities. So you can override values and add **new** names (e.g. `tablet: 900`), but you cannot remove the default names.
+The default breakpoint names (`xs/sm/md/lg/xl/xxl`) are a shared contract: `@vueland/ui` generates predefined `.md\:pa-4`, `.lg\:d-flex` classes and the built-in responsive `CRow`/`CCol` props from them, and `useDisplay` exposes them at runtime. Overriding a single value (e.g. `{ sm: 680 }`) must not drop the other names — otherwise the whole library would lose its `.md\:*` / `.lg\:*` utilities. So you can override values and add **new** names (e.g. `tablet: 1280`), but you cannot remove the default names.
 :::
+
+### Custom breakpoint names in grid components
+
+Custom breakpoint names are compiled into the grid CSS, but Vue components do not receive new props for them. For example, `breakpoints: { tablet: 1280 }` generates tablet grid classes, but it does not make `<c-col tablet="6">` or `<c-row align-tablet="center">` valid props.
+
+Use regular `class` bindings for custom names:
+
+```vue
+<template>
+  <c-row class="tablet:justify-center">
+    <c-col cols="12" class="tablet-6">Half width from tablet</c-col>
+    <c-col cols="12" class="tablet-4 tablet:offset-1">One third from tablet</c-col>
+  </c-row>
+</template>
+```
+
+Default breakpoint props such as `sm="6"`, `md="4"`, `align-md="center"`, and `justify-lg="space-between"` are still available and use the values configured through `utilsJIT`.
 
 ### Key naming constraints
 

@@ -15,6 +15,7 @@ import OffsetOrderExample from '../../examples/CGrid/OffsetOrderExample.vue'
 <BasicGridExample />
 
 ::: details Показать код
+
 ```vue
 <template>
   <!-- Три равные колонки -->
@@ -37,6 +38,7 @@ import OffsetOrderExample from '../../examples/CGrid/OffsetOrderExample.vue'
   </c-row>
 </template>
 ```
+
 :::
 
 ## Адаптивные карточки товаров
@@ -46,21 +48,17 @@ import OffsetOrderExample from '../../examples/CGrid/OffsetOrderExample.vue'
 <ResponsiveCardsExample />
 
 ::: details Показать код
+
 ```vue
 <template>
   <c-row>
-    <c-col
-      v-for="card in cards"
-      :key="card.id"
-      cols="12"
-      sm="6"
-      md="4"
-    >
+    <c-col v-for="card in cards" :key="card.id" cols="12" sm="6" md="4">
       <c-card>…</c-card>
     </c-col>
   </c-row>
 </template>
 ```
+
 :::
 
 ## Offset и Order
@@ -68,6 +66,7 @@ import OffsetOrderExample from '../../examples/CGrid/OffsetOrderExample.vue'
 <OffsetOrderExample />
 
 ::: details Показать код
+
 ```vue
 <template>
   <!-- Offset: центрировать блок шириной 4 колонки -->
@@ -83,32 +82,35 @@ import OffsetOrderExample from '../../examples/CGrid/OffsetOrderExample.vue'
   </c-row>
 </template>
 ```
+
 :::
 
 ## Props
 
-| Проп | Тип | По умолчанию | Описание |
-|------|-----|--------------|----------|
-| `cols` | `string \| number` | `null` | Ширина колонки (1–12) |
-| `offset` | `string \| number` | `null` | Левый отступ в колонках |
-| `order` | `string \| number` | `null` | Визуальный порядок (CSS `order`) |
+| Проп     | Тип                | По умолчанию | Описание                         |
+| -------- | ------------------ | ------------ | -------------------------------- |
+| `cols`   | `string \| number` | `null`       | Ширина колонки (1–12)            |
+| `offset` | `string \| number` | `null`       | Левый отступ в колонках          |
+| `order`  | `string \| number` | `null`       | Визуальный порядок (CSS `order`) |
 
 ### Адаптивные пропы
 
 Для каждого брейкпоинта (`xs`, `sm`, `md`, `lg`, `xl`, `xxl`):
 
-| Проп | Тип | Описание |
-|------|-----|----------|
-| `xs` … `xxl` | `string \| number` | Ширина колонки начиная с этого брейкпоинта |
-| `offset-xs` … `offset-xxl` | `string \| number` | Левый отступ начиная с этого брейкпоинта |
-| `order-xs` … `order-xxl` | `string \| number` | Визуальный порядок начиная с этого брейкпоинта |
+| Проп                       | Тип                | Описание                                       |
+| -------------------------- | ------------------ | ---------------------------------------------- |
+| `xs` … `xxl`               | `string \| number` | Ширина колонки начиная с этого брейкпоинта     |
+| `offset-xs` … `offset-xxl` | `string \| number` | Левый отступ начиная с этого брейкпоинта       |
+| `order-xs` … `order-xxl`   | `string \| number` | Визуальный порядок начиная с этого брейкпоинта |
 
 Значения брейкпоинтов по умолчанию: `xs` ≥ 0 px · `sm` ≥ 600 px · `md` ≥ 960 px · `lg` ≥ 1280 px · `xl` ≥ 1920 px · `xxl` ≥ 2560 px.
 
+Кастомные имена брейкпоинтов, настроенные через `@vueland/utils-jit`, не становятся новыми пропами. Для них используйте сгенерированные классы, например `class="tablet-6"` или `:class="{ 'tablet-4': compact }"`.
+
 ## Слоты
 
-| Слот | Описание |
-|------|----------|
+| Слот      | Описание           |
+| --------- | ------------------ |
 | `default` | Содержимое колонки |
 
 ## См. также

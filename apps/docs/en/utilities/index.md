@@ -7,7 +7,7 @@ Vueland UI provides two complementary layers of CSS utilities:
 
 Both layers support **responsive variants** and share the same breakpoint configuration when `@vueland/utils-jit` is used.
 
-The same breakpoints also drive the [Grid system components](/en/components/CRow) — `CRow`, `CCol`, and `CSpacer` — so column widths and alignment respond to the same values as utility classes.
+The same breakpoints also drive the [Grid system components](/en/components/CRow) — `CRow`, `CCol`, and `CSpacer` — so column widths and alignment respond to the same values as utility classes. Built-in breakpoint names are available as props; custom names configured through `utilsJIT` are used as generated classes such as `tablet-6`.
 
 ## Predefined utilities
 

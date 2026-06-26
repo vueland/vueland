@@ -15,6 +15,7 @@ All 12 columns in action — from 1/12 to full width combinations.
 <BasicGridExample />
 
 ::: details Show code
+
 ```vue
 <template>
   <!-- Three equal columns -->
@@ -37,6 +38,7 @@ All 12 columns in action — from 1/12 to full width combinations.
   </c-row>
 </template>
 ```
+
 :::
 
 ## Responsive product cards
@@ -46,21 +48,17 @@ Cards stack on mobile, show 2 per row on `sm`, and 3 on `md+`.
 <ResponsiveCardsExample />
 
 ::: details Show code
+
 ```vue
 <template>
   <c-row>
-    <c-col
-      v-for="card in cards"
-      :key="card.id"
-      cols="12"
-      sm="6"
-      md="4"
-    >
+    <c-col v-for="card in cards" :key="card.id" cols="12" sm="6" md="4">
       <c-card>…</c-card>
     </c-col>
   </c-row>
 </template>
 ```
+
 :::
 
 ## Offset and order
@@ -68,6 +66,7 @@ Cards stack on mobile, show 2 per row on `sm`, and 3 on `md+`.
 <OffsetOrderExample />
 
 ::: details Show code
+
 ```vue
 <template>
   <!-- Offset: center a 4-column block -->
@@ -83,32 +82,35 @@ Cards stack on mobile, show 2 per row on `sm`, and 3 on `md+`.
   </c-row>
 </template>
 ```
+
 :::
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `cols` | `string \| number` | `null` | Column span (1–12) |
-| `offset` | `string \| number` | `null` | Left offset in columns |
-| `order` | `string \| number` | `null` | Visual order (`order` CSS property) |
+| Prop     | Type               | Default | Description                         |
+| -------- | ------------------ | ------- | ----------------------------------- |
+| `cols`   | `string \| number` | `null`  | Column span (1–12)                  |
+| `offset` | `string \| number` | `null`  | Left offset in columns              |
+| `order`  | `string \| number` | `null`  | Visual order (`order` CSS property) |
 
 ### Responsive props
 
 For each breakpoint (`xs`, `sm`, `md`, `lg`, `xl`, `xxl`):
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `xs` … `xxl` | `string \| number` | Column span from that breakpoint upward |
-| `offset-xs` … `offset-xxl` | `string \| number` | Left offset from that breakpoint upward |
-| `order-xs` … `order-xxl` | `string \| number` | Visual order from that breakpoint upward |
+| Prop                       | Type               | Description                              |
+| -------------------------- | ------------------ | ---------------------------------------- |
+| `xs` … `xxl`               | `string \| number` | Column span from that breakpoint upward  |
+| `offset-xs` … `offset-xxl` | `string \| number` | Left offset from that breakpoint upward  |
+| `order-xs` … `order-xxl`   | `string \| number` | Visual order from that breakpoint upward |
 
 Breakpoint defaults: `xs` ≥ 0 px · `sm` ≥ 600 px · `md` ≥ 960 px · `lg` ≥ 1280 px · `xl` ≥ 1920 px · `xxl` ≥ 2560 px.
 
+Custom breakpoint names configured through `@vueland/utils-jit` do not become new props. Use generated classes for them, for example `class="tablet-6"` or `:class="{ 'tablet-4': compact }"`.
+
 ## Slots
 
-| Slot | Description |
-|------|-------------|
+| Slot      | Description    |
+| --------- | -------------- |
 | `default` | Column content |
 
 ## See also

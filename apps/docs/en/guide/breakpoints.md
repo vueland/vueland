@@ -5,11 +5,11 @@ Vueland uses a **single breakpoint system** shared across four layers:
 - **CSS utility classes** — predefined responsive classes like `sm:d-flex`, `md:pa-4`
 - **JIT classes** — arbitrary responsive classes like `sm:bg-[#fff]`, `lg:w-[960px]`
 - **`useBreakpoints`** — reactive JS composable that exposes the current screen state
-- **Grid components** — `CRow` and `CCol` use the same breakpoints for responsive column widths and alignment props (e.g. `md="6"`, `align-lg="'center'"`)
+- **Grid components** — `CRow` and `CCol` use the same breakpoint values in grid CSS and built-in responsive props (e.g. `md="6"`, `align-lg="'center'"`); custom breakpoint names are used through generated classes such as `tablet-6`
 
 See [Grid system](/en/components/CRow) for the component API.
 
-By default each layer comes with sensible defaults. When you configure custom breakpoints, all four layers stay in sync automatically.
+By default each layer comes with sensible defaults. When you configure custom breakpoints, the values stay in sync automatically. Custom grid breakpoint names generate CSS classes, not additional Vue props.
 
 ## Default breakpoints
 
@@ -65,6 +65,7 @@ export default defineConfig({
         xs: 0,
         sm: 600,
         md: 960,
+        tablet: 1280,
         lg: 1280,
         xl: 1920,
         xxl: 2560,
@@ -89,7 +90,7 @@ import '@vueland/ui/styles/lib.scss' // component styles
 import '@vueland/ui/styles/utils.scss' // utilities
 ```
 
-This triggers Vite's SCSS preprocessor, which is where the plugin intercepts the compilation and rewrites the `$grid-breakpoints` map with your values. All four layers — predefined utilities (`sm:d-flex`), JIT classes, grid component media queries, and `useBreakpoints` — share the same values as a result.
+This triggers Vite's SCSS preprocessor, which is where the plugin intercepts the compilation and rewrites the `$grid-breakpoints` map with your values. Predefined utilities (`sm:d-flex`), JIT classes, grid component media queries, and `useBreakpoints` share the same values as a result.
 
 Also import the generated JIT CSS file:
 
@@ -128,7 +129,7 @@ If you pass `breakpoints` explicitly to `createVuelandUI`, those values take pri
 
 ### Step 5 — use it
 
-Everything is now wired up. Responsive utility classes, grid component props, and `useBreakpoints` all react to the same breakpoints.
+Everything is now wired up. Responsive utility classes, grid CSS, built-in grid component props, and `useBreakpoints` all react to the same breakpoint values.
 
 **Responsive utility classes** — apply from a breakpoint upward (mobile-first):
 
@@ -152,6 +153,15 @@ Everything is now wired up. Responsive utility classes, grid component props, an
   <c-col cols="12" sm="6" md="4">
     <c-card class="pa-4 elevation-2">Card</c-card>
   </c-col>
+</c-row>
+```
+
+Custom breakpoint names from `utilsJIT` do not create new component props. Use the generated classes for those names:
+
+```html
+<c-row>
+  <c-col cols="12" class="tablet-6">Half from tablet</c-col>
+  <c-col cols="12" class="tablet-4">One third from tablet</c-col>
 </c-row>
 ```
 
@@ -184,7 +194,7 @@ const { mdAndUp } = useBreakpoints()
 
 ### With `@vueland/utils-jit` (recommended)
 
-Configure breakpoints once in `vite.config.ts` — the plugin syncs all four layers automatically. See [Step 2](#step-2-configure-vite) above.
+Configure breakpoints once in `vite.config.ts` — the plugin syncs utility classes, grid CSS, built-in grid props, JIT classes, and `useBreakpoints` automatically. See [Step 2](#step-2-configure-vite) above.
 
 ### Without `@vueland/utils-jit`
 
@@ -208,11 +218,11 @@ Grid component column breakpoints (`sm="6"`, `md="4"`) come from the SCSS compil
 
 ### Priority
 
-| Source                             | Priority                                                                    |
-| ---------------------------------- | --------------------------------------------------------------------------- |
-| `createVuelandUI({ breakpoints })` | **highest** — controls `useBreakpoints` only                                |
-| `utilsJIT({ breakpoints })`        | controls SCSS utilities, grid components, `useBreakpoints`, and JIT classes |
-| Built-in defaults                  | fallback                                                                    |
+| Source                             | Priority                                                                                                |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `createVuelandUI({ breakpoints })` | **highest** — controls `useBreakpoints` only                                                            |
+| `utilsJIT({ breakpoints })`        | controls SCSS utilities, grid CSS/classes, built-in grid prop values, `useBreakpoints`, and JIT classes |
+| Built-in defaults                  | fallback                                                                                                |
 
 ## CSS utility responsive classes
 
