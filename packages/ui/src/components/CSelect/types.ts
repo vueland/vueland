@@ -4,9 +4,9 @@ import type { CInputSlots } from '@/components/CInput'
 import type { IterableItemsProps, NormalizedItem } from '@/composables/use-normalized-items'
 import type { SelectableProps } from '@/composables/use-selected-chips'
 
-export type CSelectProps<T> = SelectableProps<T>
-    & IterableItemsProps<T>
-    & {
+type CSelectBaseProps<T> = SelectableProps<T> & IterableItemsProps<T>
+
+export type CSelectProps<T> = CSelectBaseProps<T> & {
     options?: {
         extKey?: string
         noItemsMessage?: string

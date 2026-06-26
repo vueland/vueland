@@ -34,7 +34,7 @@ function mountUseFieldPresets({
 
     const props = reactive({
         preset: undefined,
-        filled: false,
+        dirty: false,
         focused: false,
         error: false,
         disabled: false,

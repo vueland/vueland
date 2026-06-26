@@ -14,9 +14,17 @@ import ContextMenuExample from '../../examples/CMenu/ContextMenuExample.vue'
 <BasicExample />
 
 ::: details Показать код
+
 ```vue
 <template>
-  <CMenu width="auto" open-on-click close-on-click-outside close-on-content-click align="bottom" :offset-y="4">
+  <CMenu
+    width="auto"
+    open-on-click
+    close-on-click-outside
+    close-on-content-click
+    align="bottom"
+    :offset-y="4"
+  >
     <template #activator="{ on, activator }">
       <CBtn class="bg-indigo" v-bind="activator" v-on="on" style="gap:8px">
         <CIcon name="fas:folder" source="fa" :size="14" />
@@ -29,12 +37,12 @@ import ContextMenuExample from '../../examples/CMenu/ContextMenuExample.vue'
       <CCardBody class="py-1 px-0">
         <CList>
           <CListItem class="px-4" style="gap:12px" @click="notify('New file')">
-            <CIcon name="fas:plus"   source="fa" :size="13" style="width:14px;opacity:.55" />
+            <CIcon name="fas:plus" source="fa" :size="13" style="width:14px;opacity:.55" />
             <span style="flex:1">Новый файл</span>
             <span class="kb">⌘N</span>
           </CListItem>
           <CListItem class="px-4" style="gap:12px" @click="notify('Save')">
-            <CIcon name="fas:save"   source="fa" :size="13" style="width:14px;opacity:.55" />
+            <CIcon name="fas:save" source="fa" :size="13" style="width:14px;opacity:.55" />
             <span style="flex:1">Сохранить</span>
             <span class="kb">⌘S</span>
           </CListItem>
@@ -54,14 +62,24 @@ import ContextMenuExample from '../../examples/CMenu/ContextMenuExample.vue'
 <script setup lang="ts">
 import { ref } from 'vue'
 const msg = ref('')
-function notify(text: string) { msg.value = text }
+function notify(text: string) {
+  msg.value = text
+}
 </script>
 
 <style scoped>
-.kb  { font-size: 11px; color: var(--c-app-text-secondary-color) }
-.sep { height: 1px; background: var(--c-app-border-color); margin: 4px 0 }
+.kb {
+  font-size: 11px;
+  color: var(--c-app-text-secondary-color);
+}
+.sep {
+  height: 1px;
+  background: var(--c-app-border-color);
+  margin: 4px 0;
+}
 </style>
 ```
+
 :::
 
 ## Hover
@@ -71,6 +89,7 @@ function notify(text: string) { msg.value = text }
 <HoverExample />
 
 ::: details Показать код
+
 ```vue
 <template>
   <div class="d-flex align-center gap-1 pa-2 radius-8 elevation-1">
@@ -95,12 +114,7 @@ function notify(text: string) { msg.value = text }
       <CCard class="elevation-4" style="min-width:180px">
         <CCardBody class="py-1 px-0">
           <CList>
-            <CListItem
-              v-for="link in item.links"
-              :key="link.label"
-              class="px-4"
-              style="gap:10px"
-            >
+            <CListItem v-for="link in item.links" :key="link.label" class="px-4" style="gap:10px">
               <CIcon :name="link.icon" source="fa" :size="12" style="width:14px;opacity:.5" />
               {{ link.label }}
             </CListItem>
@@ -114,14 +128,18 @@ function notify(text: string) { msg.value = text }
 <script setup lang="ts">
 const nav = [
   {
-    label: 'Продукты', icon: 'fas:briefcase', color: 'text-indigo',
+    label: 'Продукты',
+    icon: 'fas:briefcase',
+    color: 'text-indigo',
     links: [
       { icon: 'fas:list-ul', label: 'UI-компоненты' },
-      { icon: 'fas:image',   label: 'Иконки' },
+      { icon: 'fas:image', label: 'Иконки' },
     ],
   },
   {
-    label: 'Документы', icon: 'fas:code', color: 'text-teal',
+    label: 'Документы',
+    icon: 'fas:code',
+    color: 'text-teal',
     links: [
       { icon: 'fas:home', label: 'Начало работы' },
       { icon: 'fas:file', label: 'Компоненты' },
@@ -131,22 +149,37 @@ const nav = [
 </script>
 
 <style scoped>
-.text-indigo { color: #3f51b5 !important }
-.text-teal   { color: #009688 !important }
+.text-indigo {
+  color: #3f51b5 !important;
+}
+.text-teal {
+  color: #009688 !important;
+}
 </style>
 ```
+
 :::
 
 ## Позиционирование
 
 `align` управляет стороной и выравниванием. `offsetX` / `offsetY` добавляют отступ.
 
+Если меню находится внутри элемента-активатора, передай `activator="parent"` — `CMenu` привяжет события к родительскому DOM-элементу и не будет рендерить слот `activator`.
+
 <PositioningExample />
 
 ::: details Показать код
+
 ```html
 <!-- Снизу от активатора -->
-<CMenu width="auto" align="bottom" :offset-y="8" open-on-click close-on-click-outside close-on-content-click>
+<CMenu
+  width="auto"
+  align="bottom"
+  :offset-y="8"
+  open-on-click
+  close-on-click-outside
+  close-on-content-click
+>
   <template #activator="{ on, activator }">
     <CBtn class="bg-indigo" v-bind="activator" v-on="on">Снизу</CBtn>
   </template>
@@ -161,6 +194,7 @@ const nav = [
   <CCard>...</CCard>
 </CMenu>
 ```
+
 :::
 
 ## Контекстное меню
@@ -170,21 +204,28 @@ const nav = [
 <ContextMenuExample />
 
 ::: details Показать код
+
 ```vue
 <template>
-  <div class="area" @contextmenu.prevent="onContextMenu">
-    Правый клик в этой области
-  </div>
+  <div class="area" @contextmenu.prevent="onContextMenu">Правый клик в этой области</div>
 
-  <CMenu v-model="open" :position-x="x" :position-y="y" width="auto" close-on-click-outside close-on-content-click>
+  <CMenu
+    v-model="open"
+    :position-x="x"
+    :position-y="y"
+    width="auto"
+    close-on-click-outside
+    close-on-content-click
+  >
     <CCard class="elevation-4" style="min-width:200px">
       <CCardBody class="py-1 px-0">
         <CList>
           <CListItem class="px-4" style="gap:12px" @click="toast('Открыто')">
-            <CIcon name="fas:eye"  source="fa" :size="13" style="width:14px;opacity:.5" /> Открыть
+            <CIcon name="fas:eye" source="fa" :size="13" style="width:14px;opacity:.5" /> Открыть
           </CListItem>
           <CListItem class="px-4" style="gap:12px" @click="toast('Переименовано')">
-            <CIcon name="fas:pen"  source="fa" :size="13" style="width:14px;opacity:.5" /> Переименовать
+            <CIcon name="fas:pen" source="fa" :size="13" style="width:14px;opacity:.5" />
+            Переименовать
           </CListItem>
         </CList>
         <div class="sep" />
@@ -212,14 +253,25 @@ function onContextMenu(e: MouseEvent) {
     open.value = true
   }, 0)
 }
-function toast(msg: string) { console.log(msg) }
+function toast(msg: string) {
+  console.log(msg)
+}
 </script>
 
 <style scoped>
-.area { padding: 48px; text-align: center; border: 2px dashed var(--c-app-border-color); border-radius: 8px }
-.sep  { height: 1px; background: var(--c-app-border-color) }
+.area {
+  padding: 48px;
+  text-align: center;
+  border: 2px dashed var(--c-app-border-color);
+  border-radius: 8px;
+}
+.sep {
+  height: 1px;
+  background: var(--c-app-border-color);
+}
 </style>
 ```
+
 :::
 
 ## Ширина
@@ -281,58 +333,58 @@ CMenu не добавляет ARIA-атрибуты самостоятельно
 
 ### Props
 
-| Prop | Тип | По умолчанию | Описание |
-|------|-----|--------------|----------|
-| `modelValue` | `boolean` | `false` | Управляет состоянием открытия |
-| `openOnClick` | `boolean` | — | Открыть по клику |
-| `closeOnClick` | `boolean` | — | Закрыть по повторному клику |
-| `openOnHover` | `boolean` | — | Открыть при наведении |
-| `closeOnLeave` | `boolean` | — | Закрыть при уходе курсора |
-| `openOnFocus` | `boolean` | — | Открыть при фокусе |
-| `closeOnClickOutside` | `boolean` | — | Закрыть при клике вне меню |
-| `closeOnContentClick` | `boolean` | — | Закрыть при клике внутри контента |
-| `align` | `AlignValue` | — | Сторона и выравнивание (напр. `bottom`, `top-center`, `right-center`) |
- |
- |
- |
-| `offsetX` | `number \| string` | — | Горизонтальный отступ (px) |
-| `offsetY` | `number \| string` | — | Вертикальный отступ (px) |
-| `positionX` | `number` | — | Фиксированная координата X |
-| `positionY` | `number` | — | Фиксированная координата Y |
-| `strategy` | `'reverse' \| 'bounce'` | — | Стратегия при коллизии |
-| `width` | `number \| string` | ширина активатора | Ширина контента |
-| `height` | `number \| string` | — | Высота контента |
-| `minWidth` | `number \| string` | — | Минимальная ширина |
-| `maxWidth` | `number \| string` | — | Максимальная ширина |
-| `minHeight` | `number \| string` | — | Минимальная высота |
-| `maxHeight` | `number \| string` | — | Максимальная высота |
-| `openDelay` | `number \| string` | — | Задержка перед открытием (мс) |
-| `closeDelay` | `number \| string` | — | Задержка перед закрытием (мс) |
-| `transition` | `string` | `'fade'` | Имя Vue-перехода |
-| `ssr` | `boolean` | — | Пре-рендер на сервере |
-| `activator` | `Element \| ComponentPublicInstance` | — | Внешний элемент-активатор |
+| Prop                  | Тип                                                        | По умолчанию      | Описание                                                              |
+| --------------------- | ---------------------------------------------------------- | ----------------- | --------------------------------------------------------------------- |
+| `modelValue`          | `boolean`                                                  | `false`           | Управляет состоянием открытия                                         |
+| `openOnClick`         | `boolean`                                                  | —                 | Открыть по клику                                                      |
+| `closeOnClick`        | `boolean`                                                  | —                 | Закрыть по повторному клику                                           |
+| `openOnHover`         | `boolean`                                                  | —                 | Открыть при наведении                                                 |
+| `closeOnLeave`        | `boolean`                                                  | —                 | Закрыть при уходе курсора                                             |
+| `openOnFocus`         | `boolean`                                                  | —                 | Открыть при фокусе                                                    |
+| `closeOnClickOutside` | `boolean`                                                  | —                 | Закрыть при клике вне меню                                            |
+| `closeOnContentClick` | `boolean`                                                  | —                 | Закрыть при клике внутри контента                                     |
+| `align`               | `AlignValue`                                               | —                 | Сторона и выравнивание (напр. `bottom`, `top-center`, `right-center`) |
+|  |
+|  |
+|  |
+| `offsetX`             | `number \| string`                                         | —                 | Горизонтальный отступ (px)                                            |
+| `offsetY`             | `number \| string`                                         | —                 | Вертикальный отступ (px)                                              |
+| `positionX`           | `number`                                                   | —                 | Фиксированная координата X                                            |
+| `positionY`           | `number`                                                   | —                 | Фиксированная координата Y                                            |
+| `strategy`            | `'reverse' \| 'bounce'`                                    | —                 | Стратегия при коллизии                                                |
+| `width`               | `number \| string`                                         | ширина активатора | Ширина контента                                                       |
+| `height`              | `number \| string`                                         | —                 | Высота контента                                                       |
+| `minWidth`            | `number \| string`                                         | —                 | Минимальная ширина                                                    |
+| `maxWidth`            | `number \| string`                                         | —                 | Максимальная ширина                                                   |
+| `minHeight`           | `number \| string`                                         | —                 | Минимальная высота                                                    |
+| `maxHeight`           | `number \| string`                                         | —                 | Максимальная высота                                                   |
+| `openDelay`           | `number \| string`                                         | —                 | Задержка перед открытием (мс)                                         |
+| `closeDelay`          | `number \| string`                                         | —                 | Задержка перед закрытием (мс)                                         |
+| `transition`          | `string`                                                   | `'fade'`          | Имя Vue-перехода                                                      |
+| `ssr`                 | `boolean`                                                  | —                 | Пре-рендер на сервере                                                 |
+| `activator`           | `Element \| ComponentPublicInstance \| 'parent' \| string` | —                 | Внешний активатор, CSS-селектор или родительский элемент              |
 
 ### Slots
 
-| Slot | Props | Описание |
-|------|-------|----------|
+| Slot        | Props               | Описание          |
+| ----------- | ------------------- | ----------------- |
 | `activator` | `{ on, activator }` | Элемент-активатор |
-| `default` | — | Контент меню |
+| `default`   | —                   | Контент меню      |
 
 ### Events
 
-| Событие | Аргументы | Описание |
-|---------|-----------|----------|
+| Событие             | Аргументы | Описание            |
+| ------------------- | --------- | ------------------- |
 | `update:modelValue` | `boolean` | Изменение состояния |
-| `open` | — | Меню открылось |
-| `close` | — | Меню закрылось |
-| `click` | — | Клик по контенту |
-| `outside-click` | — | Клик вне меню |
+| `open`              | —         | Меню открылось      |
+| `close`             | —         | Меню закрылось      |
+| `click`             | —         | Клик по контенту    |
+| `outside-click`     | —         | Клик вне меню       |
 
 ### Expose
 
-| Метод | Сигнатура | Описание |
-|-------|-----------|----------|
-| `open` | `() => void` | Открыть меню |
-| `close` | `() => void` | Закрыть меню |
+| Метод    | Сигнатура    | Описание         |
+| -------- | ------------ | ---------------- |
+| `open`   | `() => void` | Открыть меню     |
+| `close`  | `() => void` | Закрыть меню     |
 | `toggle` | `() => void` | Переключить меню |

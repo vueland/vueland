@@ -3,7 +3,7 @@
 
     import { IconAliases } from '@/enums'
 
-    defineOptions({name: 'CRadio',})
+    defineOptions({ name: 'CRadio', })
 
     defineProps<{
         label?: string

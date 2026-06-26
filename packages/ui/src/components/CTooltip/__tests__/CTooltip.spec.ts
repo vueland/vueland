@@ -13,7 +13,7 @@ import {
     nextTick,
 } from 'vue'
 
-import { CTooltip } from '@/components'
+import { CBtn, CTooltip } from '@/components'
 import { $APP_API_KEY } from '@/constants'
 
 const wrappers: ReturnType<typeof mount>[] = []
@@ -45,6 +45,15 @@ function isTooltipVisible() {
         && el.classList.contains('c-menu--visible')
 }
 
+function toVueListeners(listeners: Record<string, any> = {}) {
+    return Object.fromEntries(
+        Object.entries(listeners).map(([name, handler]) => [
+            `on${name.charAt(0).toUpperCase()}${name.slice(1)}`,
+            handler,
+        ]),
+    )
+}
+
 async function createWrapper(props: Record<string, any> = {}, content = 'Tooltip text') {
     const Host = defineComponent({
         setup() {
@@ -56,9 +65,7 @@ async function createWrapper(props: Record<string, any> = {}, content = 'Tooltip
                         'button',
                         {
                             ...activator,
-                            onMouseenter: on.mouseenter,
-                            onMouseleave: on.mouseleave,
-                            onFocus: on.focus,
+                            ...toVueListeners(on),
                             'data-test': 'activator',
                         },
                         'Hover me',
@@ -103,6 +110,54 @@ async function createWrapper(props: Record<string, any> = {}, content = 'Tooltip
     }
 
     return { wrapper, open, close }
+}
+
+async function createButtonWrapper(props: Record<string, any> = {}, content = 'Tooltip text') {
+    const Host = defineComponent({
+        setup() {
+            return () => h(
+                CTooltip as any,
+                props,
+                {
+                    activator: ({ on, activator }: any) => h(
+                        CBtn as any,
+                        {
+                            ...activator,
+                            ...toVueListeners(on),
+                            'data-test': 'activator',
+                        },
+                        { default: () => 'Hover me' },
+                    ),
+                    default: () => content,
+                },
+            )
+        },
+    })
+
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    containers.push(container)
+
+    const wrapper = mount(Host, {
+        attachTo: container,
+        global: {
+            provide: {
+                [$APP_API_KEY]: {
+                    getScrollTop: () => 0,
+                    getScrollLeft: () => 0,
+                },
+            },
+            stubs: {
+                teleport: false,
+                transition: false,
+            },
+        },
+    })
+
+    wrappers.push(wrapper)
+    await nextTick()
+
+    return { wrapper }
 }
 
 describe('CTooltip', () => {
@@ -201,5 +256,43 @@ describe('CTooltip', () => {
         await wrapper.get('[data-test="activator"]').trigger('focus')
         await flush()
         expect(isTooltipVisible()).toBe(true)
+    })
+
+    it('скрывается при focusout, если включен closeOnBlur', async () => {
+        const { wrapper } = await createWrapper({
+            openOnFocus: true,
+            closeOnBlur: true,
+        })
+
+        const activator = wrapper.get('[data-test="activator"]')
+
+        await activator.trigger('focus')
+        await flush()
+
+        expect(isTooltipVisible()).toBe(true)
+
+        await activator.trigger('focusout', { relatedTarget: document.body })
+        await flush()
+
+        expect(isTooltipVisible()).toBe(false)
+    })
+
+    it('скрывается при focusout на CBtn activator', async () => {
+        const { wrapper } = await createButtonWrapper({
+            openOnFocus: true,
+            closeOnBlur: true,
+        })
+
+        const activator = wrapper.get('[data-test="activator"]')
+
+        await activator.trigger('focus')
+        await flush()
+
+        expect(isTooltipVisible()).toBe(true)
+
+        await activator.trigger('focusout', { relatedTarget: document.body })
+        await flush()
+
+        expect(isTooltipVisible()).toBe(false)
     })
 })

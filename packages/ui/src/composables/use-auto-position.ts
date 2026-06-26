@@ -1,9 +1,9 @@
 import {
     type ComponentPublicInstance,
     computed,
-    type ComputedRef,
     nextTick,
     onBeforeUnmount,
+    type Ref,
     ref,
     shallowRef,
     unref,
@@ -108,7 +108,7 @@ function isSameSize(current: Dimensions, width: number, height: number) {
 
 export function useAutoPosition(
     props: AutoPositionInputProps,
-    activatorEl?: ComputedRef<MaybeElement>,
+    activatorEl?: Ref<MaybeElement>,
 ) {
     const { getScrollTop, getScrollLeft } = useApplication()
 

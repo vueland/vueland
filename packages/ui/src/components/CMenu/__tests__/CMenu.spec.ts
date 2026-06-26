@@ -335,6 +335,104 @@ async function createWrapper(props: Record<string, any> = {}) {
     }
 }
 
+async function createParentActivatorWrapper(props: Record<string, any> = {}) {
+    const model = ref(props.modelValue ?? false)
+    const menuRef = ref()
+
+    const Host = defineComponent({
+        setup() {
+            return () => h(
+                'div',
+                {
+                    'data-test': 'parent-activator',
+                    tabindex: '0',
+                },
+                [
+                    'Open',
+                    h(
+                        CMenu as any,
+                        {
+                            ...props,
+                            ref: menuRef,
+                            activator: 'parent',
+                            modelValue: model.value,
+                            'onUpdate:modelValue': (value: boolean) => {
+                                model.value = value
+                            },
+                        },
+                        {
+                            activator: () => h('button', { 'data-test': 'unused-activator' }, 'Unused'),
+                            default: () => h(
+                                'div',
+                                { 'data-test': 'content' },
+                                'Menu content',
+                            ),
+                        },
+                    ),
+                ],
+            )
+        },
+    })
+
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    containers.push(container)
+
+    const wrapper = mount(Host, {
+        attachTo: container,
+        global: {
+            provide: {
+                [$APP_API_KEY]: {
+                    getScrollTop: () => window.pageYOffset || window.scrollY || 0,
+                    getScrollLeft: () => window.pageXOffset || window.scrollX || 0,
+                },
+            },
+            stubs: {
+                teleport: false,
+                transition: false,
+            },
+        },
+    })
+
+    wrappers.push(wrapper)
+
+    await nextTick()
+
+    const activator = wrapper.get('[data-test="parent-activator"]').element
+
+    setRect(activator, {
+        top: 100,
+        left: 200,
+        width: 120,
+        height: 40,
+    })
+
+    elementSizes.set(activator, {
+        width: 120,
+        height: 40,
+    })
+
+    mockMenuSize()
+
+    const syncMenuSize = (width = 120, height = 60) => {
+        const menu = getMenu()
+
+        if (menu) {
+            elementSizes.set(menu, {
+                width,
+                height,
+            })
+        }
+    }
+
+    return {
+        wrapper,
+        menuRef,
+        activator,
+        syncMenuSize,
+    }
+}
+
 describe('CMenu', () => {
     beforeEach(() => {
         vi.useFakeTimers()
@@ -480,6 +578,27 @@ describe('CMenu', () => {
         expectMenuOpened()
     })
 
+    it('использует parent как activator при activator="parent"', async () => {
+        const { wrapper, syncMenuSize } = await createParentActivatorWrapper({
+            openOnClick: true,
+            align: 'bottom',
+        })
+
+        expect(wrapper.find('[data-test="unused-activator"]').exists()).toBe(false)
+
+        await wrapper.get('[data-test="parent-activator"]').trigger('click')
+        await flush()
+
+        syncMenuSize()
+        await flush()
+
+        const menu = getMenuOrFail()
+
+        expectMenuOpened()
+        expect(parseFloat(menu.style.top)).toBe(140)
+        expect(parseFloat(menu.style.left)).toBe(200)
+    })
+
     it('переключается по click на activator при closeOnClick=true', async () => {
         const { wrapper, syncMenuSize } = await createWrapper({ closeOnClick: true })
 
@@ -539,6 +658,28 @@ describe('CMenu', () => {
         await flush()
 
         expectMenuOpened()
+    })
+
+    it('закрывается по focusout при closeOnBlur=true', async () => {
+        const { wrapper, syncMenuSize } = await createWrapper({
+            openOnFocus: true,
+            closeOnBlur: true,
+        })
+
+        const activator = wrapper.get('[data-test="activator"]')
+
+        await activator.trigger('focus')
+        await flush()
+
+        syncMenuSize()
+        await flush()
+
+        expectMenuOpened()
+
+        await activator.trigger('focusout', { relatedTarget: document.body })
+        await flush()
+
+        expectMenuClosed()
     })
 
     it('закрывается по Escape', async () => {

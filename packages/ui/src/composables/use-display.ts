@@ -47,7 +47,7 @@ export function useDisplay(): {
     state: ShallowReactive<Breakpoints>
     createDisplay(points?: Record<BreakpointLabels, number>): Display
     update(): void
-    } {
+} {
     const state = shallowReactive<Breakpoints>({
         xxl: false,
         xl: false,

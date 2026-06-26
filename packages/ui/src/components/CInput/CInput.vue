@@ -7,7 +7,7 @@
         shallowReactive,
         Transition,
         unref,
-        useAttrs,
+        useAttrs
     } from 'vue'
 
     import { useAriaActivator } from '@/composables/use-aria-activator'
@@ -27,16 +27,16 @@
 
     defineOptions({
         name: 'CInput',
-        inheritAttrs: false
+        inheritAttrs: false,
     })
 
     const props = defineProps<CInputProps<T>>()
 
     defineEmits<CInputEmits<T>>()
 
-    const slots = defineSlots<CInputSlots>()
-
     const focusedModel = defineModel<boolean>('focused', { default: false })
+
+    const slots = defineSlots<CInputSlots>()
 
     const state = shallowReactive<InputState>({
         get focused() {
@@ -61,7 +61,7 @@
     const preset = useInputPresets({
         props,
         state,
-        errors
+        errors,
     })
 
     const fieldId = useId(props.id, { prefix: props.role })
@@ -82,30 +82,35 @@
         controls: `${fieldId}-menu`,
     }))
 
-    const INTERNAL_HANDLERS = new Set(['onUpdate:modelValue', 'onUpdate:focused'])
+    const INTERNAL_HANDLERS = new Set([
+        'onUpdate:modelValue',
+        'onUpdate:focused'
+    ])
 
     const isCombobox = props.role === 'combobox'
+
     const isCheckBox = props.role === 'checkbox'
+
     const isRadio = props.role === 'radio'
 
-    const hasDetails = computed(() => !props.noDetails && (
-        !!props.details ||
-        !!slots?.details ||
-        errors.hasError)
+    const hasDetails = computed(
+        () => !props.noDetails && (!!props.details || !!slots?.details || errors.hasError),
     )
 
-    const normalizedAttrsMap = computed(() => Object.entries(attrs).reduce((acc, [k, v]) => {
-        if (
-            FIELD_ATTRS.has(k)
-            || k.startsWith('aria-')
-            || k.startsWith('data-')
-            || (k.startsWith('on') && !INTERNAL_HANDLERS.has(k))
-        ) {
-            acc[k] = v
-        }
+    const normalizedAttrsMap = computed(() =>
+        Object.entries(attrs).reduce((acc, [k, v]) => {
+            if (
+                FIELD_ATTRS.has(k) ||
+                k.startsWith('aria-') ||
+                k.startsWith('data-') ||
+                (k.startsWith('on') && !INTERNAL_HANDLERS.has(k))
+            ) {
+                acc[k] = v
+            }
 
-        return acc
-    }, {}))
+            return acc
+        }, {}),
+    )
 
     const fieldAttrs = computed(() => ({
         ...unref(ariaField),
@@ -120,17 +125,16 @@
             'c-input--focused': state.focused,
             'c-input--disabled': props.disabled,
             'c-input--readonly': props.readonly,
+            'c-input--dirty': props.dirty,
             'c-input--clearable': props.clearable,
         },
         attrs.class,
-        ...unref(preset).root
+        ...unref(preset).root,
     ])
 
-    const internalDetailsKey = computed(() => [
-        errors.errorMessage,
-        props.details,
-        errors.hasError,
-    ].join('|'))
+    const internalDetailsKey = computed(() =>
+        [errors.errorMessage, props.details, errors.hasError].join('|'),
+    )
 
     function focus() {
         if (props.disabled || props.readonly) {
@@ -151,22 +155,33 @@
         resetValidate()
     }
 
-    const DetailsMessage = () => h(Transition, {
-        name: "fade-in-down",
-        mode: "out-in",
-    }, {
-        default: () => h('div', {
-            key: unref(internalDetailsKey),
-            id: `${unref(fieldId)}-details`,
-            class: ['c-input__details', ...unref(preset).details],
-        }, {
-            default: () => slots.details?.({
-                details: props.details,
-                ...errors,
-                uid: fieldId
-            }),
-        })
-    })
+    const DetailsMessage = () =>
+        h(
+            Transition,
+            {
+                name: 'fade-in-down',
+                mode: 'out-in',
+            },
+            {
+                default: () =>
+                    h(
+                        'div',
+                        {
+                            key: unref(internalDetailsKey),
+                            id: `${unref(fieldId)}-details`,
+                            class: ['c-input__details', ...unref(preset).details],
+                        },
+                        {
+                            default: () =>
+                                slots.details?.({
+                                    details: props.details,
+                                    ...errors,
+                                    uid: fieldId,
+                                }),
+                        },
+                    ),
+            },
+        )
 
     onBeforeMount(() => {
         formApi?.add(validate)
@@ -182,7 +197,7 @@
         validate,
         focus,
         blur,
-        reset
+        reset,
     })
 </script>
 
@@ -204,6 +219,7 @@
                 :preset="preset.field"
                 :focus
                 :blur
+                :dirty
                 :clearable
                 :reset
                 :attrs="fieldAttrs"

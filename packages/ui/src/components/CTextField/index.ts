@@ -1,3 +1,5 @@
+import type { CInputProps } from '@/components'
+
 import CTextFieldImpl from './CTextField.vue'
 import type {
     CTextFieldEmits,
@@ -8,7 +10,7 @@ import type {
 export type { CTextFieldProps, CTextFieldSlots }
 
 type CTextFieldComponent = new <T = any>() => {
-    $props: CTextFieldProps & { modelValue?: T }
+    $props: Omit<CInputProps, 'modelValue'> & CTextFieldProps<T>
     $slots: CTextFieldSlots
     $emits: CTextFieldEmits<T>
 }

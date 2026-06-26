@@ -45,7 +45,10 @@
     const {
         element,
         activatorProps,
+        isParentActivator,
         genListeners,
+        bindListeners,
+        unbindListeners,
     } = useActivator(props)
 
     const {
@@ -78,7 +81,6 @@
     }, THROTTLE_DELAY)
 
     const menuId = computed(() => attrs.id as string ?? _generatedId)
-
     const detached = computed(() => isDef(props.positionX) || isDef(props.positionY))
 
     const sizesStyles = computed(() => ({
@@ -161,6 +163,8 @@
 
     if (IN_BROWSER) {
         watch(model, (value) => {
+            if (props.modelValue) open()
+
             if (value) {
                 window.addEventListener('resize', handler, { passive: true })
                 window.addEventListener('scroll', handler, { passive: true })
@@ -172,18 +176,25 @@
             }
         }, { immediate: true })
 
-        watch(model, (value) => {
-            if (value) open()
-        }, { immediate: unref(detached) })
-
         onMounted(() => {
+            if (isParentActivator) {
+                bindListeners(listeners)
+            }
+
             if (unref(model)) open()
+        })
+
+        onBeforeUnmount(() => {
+            if (isParentActivator) {
+                unbindListeners(listeners)
+            }
         })
     }
 </script>
 
 <template>
     <slot
+        v-if="!isParentActivator"
         name="activator"
         :on="listeners"
         :activator="activatorProps"

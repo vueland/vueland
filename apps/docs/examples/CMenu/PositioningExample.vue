@@ -9,7 +9,7 @@
         { label: 'Bottom', icon: 'fas:chevron-down',  bg: 'bg-indigo',     accent: '#3f51b5', props: { align: 'bottom', offsetY: 8 } },
         { label: 'Top',    icon: 'fas:chevron-down',  bg: 'bg-light-blue', accent: '#03a9f4', props: { align: 'top',    offsetY: 8 } },
         { label: 'Right',  icon: 'fas:chevron-down',  bg: 'bg-teal',       accent: '#009688', props: { align: 'right', offsetX: 8 } },
-        { label: 'Left',   icon: 'fas:chevron-down',  bg: 'bg-deep-purple',accent: '#673ab7', props: { align: 'left',  offsetX: 8 } },
+        { label: 'Left',   icon: 'fas:chevron-down',  bg: 'bg-deep-purple', accent: '#673ab7', props: { align: 'left',  offsetX: 8 } },
     ]
 </script>
 

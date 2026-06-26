@@ -11,19 +11,19 @@ export interface InputState {
 
 export type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 
-export type CInputProps<T = any> = ValidateProps &
-    PresetProps & {
-        id?: string
-        modelValue: T | T[] | undefined | null
-        label?: string
-        details?: string
-        noDetails?: boolean
-        clearable?: boolean
-        disabled?: boolean
-        focused?: boolean
-        readonly?: boolean
-        role?: CInputRole
-    }
+export type CInputProps<T = any> = ValidateProps & PresetProps & {
+    id?: string
+    modelValue: T | T[] | undefined | null
+    label?: string
+    details?: string
+    dirty?: boolean
+    noDetails?: boolean
+    clearable?: boolean
+    disabled?: boolean
+    focused?: boolean
+    readonly?: boolean
+    role?: CInputRole
+}
 
 export type CInputEmits<T = any> = {
     (e: 'update:modelValue', value: T): void
@@ -47,6 +47,7 @@ export type CInputFieldSlotProps = {
     clearable?: boolean
     readonly?: boolean
     disabled?: boolean
+    dirty?: boolean
     preset?: CInputPreset
     errorMessage: ValidateState['errorMessage']
     hasError: ValidateState['hasError']

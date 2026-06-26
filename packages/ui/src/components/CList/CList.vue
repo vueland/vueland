@@ -65,7 +65,6 @@
     const rootClasses = computed(() => ({
         'c-list--disabled': props.disabled,
         'c-list--readonly': props.readonly,
-        [attrs.class as string]: !!attrs.class,
     }))
 
     const isDisabled = computed(() => props.disabled)

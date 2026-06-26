@@ -60,6 +60,7 @@ function createWrapper({
             focused,
             disabled,
             readonly,
+            dirty,
             clearable,
             preset,
             hasError,
@@ -73,6 +74,7 @@ function createWrapper({
             'data-focused': `${focused}`,
             'data-disabled': `${!!disabled}`,
             'data-readonly': `${!!readonly}`,
+            'data-dirty': `${!!dirty}`,
             'data-clearable': `${!!clearable}`,
             'data-preset': preset ? JSON.stringify(preset) : '',
             'data-has-error': `${hasError}`,
@@ -524,6 +526,17 @@ describe('CInput', () => {
             expect(wrapper.classes()).toContain('c-input--disabled')
             expect(wrapper.classes()).toContain('c-input--readonly')
             expect(wrapper.classes()).toContain('c-input--clearable')
+        })
+
+        it('добавляет dirty class и передаёт dirty в field slot', () => {
+            const wrapper = createWrapper({
+                props: {
+                    dirty: true,
+                },
+            })
+
+            expect(wrapper.classes()).toContain('c-input--dirty')
+            expect(field(wrapper).attributes('data-dirty')).toBe('true')
         })
     })
 

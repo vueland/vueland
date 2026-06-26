@@ -35,9 +35,6 @@ $self: '.c-list-item';
   cursor: pointer;
   position: relative;
   color: var(--c-list-item-color);
-  outline-color: var(--c-list-item-hover-bg-color);
-  outline-width: 2px;
-  outline-offset: -1px;
 
   @include state.layer(var(--c-list-item-hover-bg-color));
 
@@ -72,6 +69,10 @@ $self: '.c-list-item';
   }
 
   &--focused {
+    outline-color: var(--c-list-item-hover-bg-color);
+    outline-width: 2px;
+    outline-offset: -1px;
+
     &::before {
       opacity: 0.3;
     }

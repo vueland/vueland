@@ -3,14 +3,13 @@ import type { VNode } from 'vue'
 export type CFieldProps = {
     tag?: 'input' | 'textarea'
     label?: string
-    filled?: boolean
     preset?: string
     focused?: boolean
     clearable?: boolean
     error?: boolean
     disabled?: boolean
+    dirty?: boolean
     readonly?: boolean
-    noInput?: boolean
     modelValue?: string | number | undefined | null
 }
 

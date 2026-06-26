@@ -1,7 +1,6 @@
 import type { CInputProps, CInputSlots } from '@/components/CInput'
 
-// import CSelectImpl from './CSelect.vue'
-import CSelectNew from './CNewSelect.vue'
+import CSelectImpl from './CSelect.vue'
 import type { CSelectProps, CSelectSlots } from './types'
 
 export * from './types'
@@ -11,4 +10,4 @@ type CSelectComponent = new <T>() => {
     $slots: CSelectSlots<T> & CInputSlots
 }
 
-export const CSelect = CSelectNew as unknown as CSelectComponent
+export const CSelect = CSelectImpl as unknown as CSelectComponent

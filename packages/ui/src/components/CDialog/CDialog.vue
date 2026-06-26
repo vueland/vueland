@@ -7,7 +7,7 @@
 
     import type { CDialogProps, CDialogSlots } from './types'
 
-    defineOptions({name: 'CDialog',})
+    defineOptions({ name: 'CDialog', })
 
     const props = defineProps<CDialogProps>()
 

@@ -240,6 +240,26 @@ describe('CTextField', () => {
         expect(wrapper.get('.c-field__append .test-append').text()).toBe('append')
     })
 
+    it('рендерит menu slot рядом с CField и передаёт id меню', () => {
+        const wrapper = createWrapper(
+            { id: 'user' },
+            {
+                menu: ({ id }: { id: string }) => h(
+                    'div',
+                    {
+                        id,
+                        class: 'test-menu',
+                    },
+                    'menu',
+                ),
+            },
+        )
+
+        expect(wrapper.get('.test-menu').attributes('id')).toBe('user-menu')
+        expect(wrapper.find('.c-field .test-menu').exists()).toBe(false)
+        expect(wrapper.get('.c-text-field > .test-menu').text()).toBe('menu')
+    })
+
     it('при фокусе input добавляет класс c-input--focused', async () => {
         const wrapper = createWrapper()
 

@@ -232,20 +232,9 @@ type CInputPreset = Partial<Record<'base' | CInputState, ZonePreset>>
 
 ### Props
 
-| Prop         | Тип                                     | По умолчанию | Описание                                                             |
-| ------------ | --------------------------------------- | ------------ | -------------------------------------------------------------------- |
-| `modelValue` | `string \| number \| null \| undefined` | `undefined`  | Значение поля (v-model)                                              |
-| `id`         | `string`                                | auto         | ID для `<input>`. Если не передан, генерируется с префиксом `input-` |
-| `label`      | `string`                                | —            | Плавающий лейбл поля                                                 |
-| `details`    | `string`                                | —            | Подсказка под полем                                                  |
-| `noDetails`  | `boolean`                               | `false`      | Скрыть блок details полностью                                        |
-| `clearable`  | `boolean`                               | `false`      | Кнопка очистки при наличии значения и фокуса                         |
-| `disabled`   | `boolean`                               | `false`      | Отключить поле. Блокирует фокус и ввод                               |
-| `readonly`   | `boolean`                               | `false`      | Только для чтения. Фокус разрешён, редактирование — нет              |
-| `focused`    | `boolean`                               | `false`      | Начальное состояние фокуса                                           |
-| `rules`      | `ValidateFn[]`                          | `[]`         | Массив функций валидации                                             |
-| `validateOn` | `'input' \| 'blur'`                     | `'input'`    | Момент запуска автоматической валидации                              |
-| `preset`     | `string`                                | —            | Имя пресета из конфигурации Vueland UI                               |
+`CTextField` принимает props [`CInput`](/ru/components/CInput#props), включая `label`, `details`, `clearable`, `disabled`, `readonly`, `focused`, `dirty`, `rules`, `validateOn` и `preset`.
+
+`v-model` работает со значением `string | number | null | undefined`.
 
 ### Нативные атрибуты
 
@@ -270,11 +259,18 @@ type CInputPreset = Partial<Record<'base' | CInputState, ZonePreset>>
 
 ### Slots
 
-| Слот      | Пропсы                   | Описание                                   |
-| --------- | ------------------------ | ------------------------------------------ |
-| `prepend` | —                        | Контент слева внутри поля (иконка, текст)  |
-| `append`  | —                        | Контент справа внутри поля (иконка, текст) |
-| `details` | `CInputDetailsSlotProps` | Замена блока подсказки/ошибки              |
+| Слот      | Пропсы                   | Описание                                     |
+| --------- | ------------------------ | -------------------------------------------- |
+| `prepend` | —                        | Контент слева внутри поля (иконка, текст)    |
+| `append`  | —                        | Контент справа внутри поля (иконка, текст)   |
+| `menu`    | `{ id: string }`         | Контент выпадающего меню, связанного с полем |
+| `details` | `CInputDetailsSlotProps` | Замена блока подсказки/ошибки                |
+
+#### Пропсы слота `menu`
+
+| Проп | Тип      | Описание                                     |
+| ---- | -------- | -------------------------------------------- |
+| `id` | `string` | ID для меню, связанного с полем (`uid-menu`) |
 
 #### Пропсы слота `details`
 

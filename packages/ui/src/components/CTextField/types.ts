@@ -1,8 +1,10 @@
 import type { VNode } from 'vue'
 
-import type { CInputProps } from '@/components/CInput'
-
-export type CTextFieldProps = Omit<CInputProps, 'modelValue' | 'role'>
+export type CTextFieldProps<T> = {
+    modelValue?: T
+    noInput?: boolean
+    filled?: boolean
+}
 
 export type CTextFieldSlots = {
     prepend?(): VNode
@@ -14,6 +16,7 @@ export type CTextFieldSlots = {
         validating?: boolean
     }): VNode
     before?(): VNode
+    menu?(props: { id: string }): VNode
 }
 
 export type CTextFieldEmits<T = any> = {

@@ -1,4 +1,5 @@
 import js from '@eslint/js'
+import stylistic from '@stylistic/eslint-plugin'
 import vueScriptSetup from '@vueland/eslint-script-setup'
 import importPlugin from 'eslint-plugin-import'
 import importNewlines from 'eslint-plugin-import-newlines'
@@ -30,6 +31,7 @@ export default [
     // ── Плагины (регистрация) ─────────────────────────────────────────────
     {
         plugins: {
+            '@stylistic': stylistic,
             import: importPlugin,
             'import-newlines': importNewlines,
             'newline-destructuring': newlineDestructuring,
@@ -76,7 +78,14 @@ export default [
         },
         rules: {
             // Отступы
-            indent: ['error', 4, { SwitchCase: 1 }],
+            '@stylistic/indent': [
+                'error',
+                4,
+                {
+                    SwitchCase: 1,
+                },
+            ],
+            indent: 'off',
 
             // Кавычки
             quotes: ['error', 'single', { avoidEscape: true }],
@@ -226,7 +235,23 @@ export default [
 
             // Общий порядок <script setup> контролирует @vueland/script-setup-order.
             'vue/define-macros-order': 'off',
-
+            'object-curly-spacing': ['error', 'always'],
+            'space-infix-ops': 'error',
+            'key-spacing': [
+                'error',
+                {
+                    beforeColon: false,
+                    afterColon: true,
+                },
+            ],
+            'comma-spacing': ['error', { before: false, after: true }],
+            'arrow-spacing': [
+                'error',
+                {
+                    before: true,
+                    after: true,
+                },
+            ],
             // Пустая строка между блоками SFC
             'vue/padding-line-between-blocks': ['error', 'always'],
             '@vueland/no-multi-declaration': 'error',

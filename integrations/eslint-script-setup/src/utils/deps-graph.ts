@@ -91,10 +91,10 @@ function getDeclaredName(node: AnyNode): string | null {
 }
 
 export interface NodeEntry {
-  node: AnyNode
-  index: number
-  declaredName: string | null
-  usedNames: Set<string>
+    node: AnyNode
+    index: number
+    declaredName: string | null
+    usedNames: Set<string>
 }
 
 export function buildEntries(nodes: AnyNode[]): NodeEntry[] {

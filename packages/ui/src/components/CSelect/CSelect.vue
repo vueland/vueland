@@ -1,9 +1,8 @@
 <script setup lang="ts" generic="T">
     import { shallowRef, unref } from 'vue'
 
-    import { CField } from '@/components/CField'
-    import { CInput } from '@/components/CInput'
     import { CMenu } from '@/components/CMenu'
+    import { CTextField } from '@/components/CTextField'
     import { useId } from '@/composables/use-id'
     import { useKeyboard } from '@/composables/use-keyboard'
     import { useNormalizedItems } from '@/composables/use-normalized-items'
@@ -20,43 +19,50 @@
 
     const model = defineModel<T | T[]>({
         get: () => props.modelValue,
-        set: val => val
+        set: (val) => val,
     })
 
-    const inputRef = shallowRef()
-    const menuRef = shallowRef()
-    const menuListRef = shallowRef()
-    const activeDescendant = shallowRef<string>()
+    const cTextFieldRef = shallowRef()
+    const cListRef = shallowRef()
+    const menu = shallowRef(false)
+
+    const activeDescendant = shallowRef()
 
     const listId = useId(undefined, { prefix: 'c-select-list' })
-
     const normalizedItems = useNormalizedItems(props)
 
     const {
-        chips: selectedItems,
+        chips,
         hasValue,
-        select,
+        select
     } = useSelectedChips(props)
 
-    const { onKeydown } = useKeyboard({
-        Tab: () => {
-            unref(inputRef).blur()
-            unref(menuRef).close()
+    const { onKeydown } = useKeyboard(
+        {
+            ArrowDown: () => unref(cListRef)?.navigateDown(),
+            ArrowUp: () => unref(cListRef)?.navigateUp(),
+            Tab: () => {
+                unref(cTextFieldRef).blur()
+                menu.value = false
+            },
+            Escape: () => {
+                menu.value = false
+                unref(cTextFieldRef).blur()
+            },
         },
-        ArrowDown: () => unref(menuListRef)?.navigateDown(),
-        ArrowUp: () => unref(menuListRef)?.navigateUp(),
-    }, { prevent: ['ArrowDown', 'ArrowUp'] })
+        { prevent: ['ArrowDown', 'ArrowUp'] },
+    )
 
     function onBlur() {
-        unref(inputRef).blur()
+        unref(cTextFieldRef).blur()
+    }
+
+    function onFocus() {
+        menu.value = true
     }
 
     function onClear() {
         model.value = props.multiple ? [] : undefined
-    }
-
-    function onFocus() {
-        unref(inputRef).focus()
     }
 
     function setActiveDescendant(id: string) {
@@ -71,76 +77,65 @@
 </script>
 
 <template>
-    <c-input
-        v-bind="$attrs"
-        ref="inputRef"
-        :model-value="model"
-        validate-on="blur"
+    <c-text-field
+        ref="cTextFieldRef"
+        class="c-select"
         role="combobox"
+        inputmode="none"
         :aria-controls="listId"
         :aria-activedescendant="activeDescendant"
+        :dirty="hasValue"
+        v-bind="$attrs"
+        @beforeinput.prevent
+        @paste.prevent
+        @drop.prevent
+        @keydown="onKeydown"
+        @clear="onClear"
+        @focus="onFocus"
     >
-        <template #field="field">
+        <template #before>
+            <slot
+                name="selects"
+                :items="chips"
+            >
+                <div
+                    v-for="(it, i) in chips"
+                    :key="it"
+                    class="c-select__chip"
+                >
+                    {{ `${it}` + (i + 1 !== chips.length ? ',' : '') }}
+                </div>
+            </slot>
+        </template>
+        <template #append>
+            <c-icon
+                :name="IconAliases.DROPDOWN"
+                size="20"
+            />
+        </template>
+        <template #details="{ errorMessage, details }">
+            <slot
+                name="details"
+                :error-message
+                :details
+            >
+                <span class="c-select__details">
+                    {{ errorMessage || details }}
+                </span>
+            </slot>
+        </template>
+        <template #menu="{ id }">
             <c-menu
-                :id="`${field.uid}-menu`"
-                ref="menuRef"
+                :id
+                v-model="menu"
                 align="bottom"
-                open-on-focus
-                close-on-click-outside
+                activator="parent"
                 :close-on-content-click="!multiple"
+                close-on-click-outside
                 :offset-y="2"
                 strategy="reverse"
                 @close="onBlur"
             >
-                <template #activator="{on, activator}">
-                    <div
-                        class="c-select"
-                        v-bind="activator"
-                    >
-                        <slot
-                            name="field"
-                            v-bind="field"
-                        >
-                            <c-field
-                                :id="field.uid"
-                                v-bind="field.attrs"
-                                :focused="field.focused"
-                                model-value=""
-                                class="c-select__field"
-                                :label="field.label"
-                                :clearable="field.clearable"
-                                :filled="hasValue"
-                                :error="field.hasError"
-                                no-input
-                                v-on="on"
-                                @focus="onFocus"
-                                @clear="onClear"
-                                @keydown="onKeydown"
-                            >
-                                <template #before>
-                                    <slot
-                                        name="selects"
-                                        :items="selectedItems"
-                                    >
-                                        <div
-                                            v-for="(it, i) in selectedItems"
-                                            :key="it"
-                                            class="c-selected__item"
-                                        >
-                                            {{ `${it}` + (i + 1 !== selectedItems.length ? ',' : '') }}
-                                        </div>
-                                    </slot>
-                                </template>
-                                <template #append>
-                                    <c-icon
-                                        :name="IconAliases.DROPDOWN"
-                                        size="20"
-                                    />
-                                </template>
-                            </c-field>
-                        </slot>
-                    </div>
-                </template>
                 <template #default>
                     <slot
                         name="menu"
@@ -149,11 +144,11 @@
                     >
                         <c-list
                             :id="listId"
-                            ref="menuListRef"
+                            ref="cListRef"
                             v-model="model"
                             variant="listbox"
                             class="c-select__listbox"
-                            :disabled="field.disabled"
+                            aria-live="polite"
                             :multiple
                             :mandatory
                         >
@@ -173,16 +168,5 @@
                 </template>
             </c-menu>
         </template>
-        <template #details="{errorMessage, details}">
-            <slot
-                name="details"
-                :error-message
-                :details
-            >
-                <span :key="errorMessage || details">
-                    {{ errorMessage || details }}
-                </span>
-            </slot>
-        </template>
-    </c-input>
+    </c-text-field>
 </template>

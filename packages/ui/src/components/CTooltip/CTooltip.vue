@@ -4,7 +4,7 @@
     import { CMenu } from '@/components/CMenu'
     import { useId } from '@/composables/use-id'
 
-    defineOptions({name: 'CTooltip'})
+    defineOptions({ name: 'CTooltip' })
 
     const attrs = useAttrs()
 
