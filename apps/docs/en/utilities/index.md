@@ -14,9 +14,7 @@ The same breakpoints also drive the [Grid system components](/en/components/CRow
 Simply add the needed class to any HTML element or component:
 
 ```html
-<div class="pa-4 text-center bg-blue text-white">
-  Hello, world!
-</div>
+<div class="pa-4 text-center bg-blue text-white">Hello, world!</div>
 ```
 
 ### Responsive variants
@@ -24,7 +22,7 @@ Simply add the needed class to any HTML element or component:
 Most utilities support responsive prefixes that apply styles from the given breakpoint upward (mobile-first):
 
 | Prefix | Default min-width |
-|--------|-------------------|
+| ------ | ----------------- |
 | (none) | all sizes         |
 | `sm:`  | 600px             |
 | `md:`  | 960px             |
@@ -33,9 +31,7 @@ Most utilities support responsive prefixes that apply styles from the given brea
 | `xxl:` | 2560px            |
 
 ```html
-<div class="pa-2 md:pa-6 lg:pa-10">
-  Responsive padding
-</div>
+<div class="pa-2 md:pa-6 lg:pa-10">Responsive padding</div>
 ```
 
 ## JIT utilities (arbitrary values)
@@ -43,9 +39,7 @@ Most utilities support responsive prefixes that apply styles from the given brea
 The `@vueland/utils-jit` Vite plugin extends the utility layer with arbitrary values in square brackets:
 
 ```html
-<div class="w-[320px] h-[200px] bg-[#42b883] z-[100]">
-  Arbitrary values
-</div>
+<div class="w-[320px] h-[200px] bg-[#42b883] z-[100]">Arbitrary values</div>
 ```
 
 JIT classes are generated on demand — only the classes actually used in your source files end up in the CSS bundle. Nothing is shipped upfront.
@@ -62,8 +56,8 @@ export default defineConfig({
 ```
 
 ```ts
-// Import the generated file in your entry
-import 'src/.generated/utils-jit.css'
+// Import the generated CSS in your entry
+import 'virtual:utils-jit.css'
 ```
 
 ### Responsive JIT classes
@@ -71,17 +65,13 @@ import 'src/.generated/utils-jit.css'
 JIT classes support the same responsive prefixes as predefined utilities:
 
 ```html
-<div class="w-[100%] md:w-[720px] lg:w-[960px]">
-  Responsive widths
-</div>
+<div class="w-[100%] md:w-[720px] lg:w-[960px]">Responsive widths</div>
 ```
 
 ### Hover and focus variants
 
 ```html
-<button class="bg-[#42b883] hover:bg-[#33a06f] focus:outline-[2px]">
-  Button
-</button>
+<button class="bg-[#42b883] hover:bg-[#33a06f] focus:outline-[2px]">Button</button>
 ```
 
 ## Syncing breakpoints across both layers
@@ -106,20 +96,20 @@ After this, `sm:d-flex` (predefined) and `sm:w-[960px]` (JIT) both activate at e
 
 ## Sections
 
-| Section | Description |
-|---------|-------------|
-| [Colors](./colors) | Background, text color, hover/active states |
-| [Spacing](./spacing) | margin, padding, gap |
-| [Typography](./typography) | Font size, weight, line height |
-| [Text](./text) | Alignment, transform, wrap |
-| [Flex](./flex) | Flexbox utilities |
-| [Display](./display) | display values |
-| [Sizing](./sizing) | width, height, min/max |
-| [Positioning](./position) | position, inset, z-index |
-| [Borders](./borders) | border-width, style, color |
-| [Radius](./radius) | border-radius |
-| [Elevation](./elevation) | box-shadow (Material Design) |
-| [Opacity](./opacity) | opacity |
-| [Overflow](./overflow) | overflow |
-| [Helpers](./helpers) | visibility, pointer-events, object-fit and more |
-| [Cursor](./cursor) | cursor |
+| Section                    | Description                                     |
+| -------------------------- | ----------------------------------------------- |
+| [Colors](./colors)         | Background, text color, hover/active states     |
+| [Spacing](./spacing)       | margin, padding, gap                            |
+| [Typography](./typography) | Font size, weight, line height                  |
+| [Text](./text)             | Alignment, transform, wrap                      |
+| [Flex](./flex)             | Flexbox utilities                               |
+| [Display](./display)       | display values                                  |
+| [Sizing](./sizing)         | width, height, min/max                          |
+| [Positioning](./position)  | position, inset, z-index                        |
+| [Borders](./borders)       | border-width, style, color                      |
+| [Radius](./radius)         | border-radius                                   |
+| [Elevation](./elevation)   | box-shadow (Material Design)                    |
+| [Opacity](./opacity)       | opacity                                         |
+| [Overflow](./overflow)     | overflow                                        |
+| [Helpers](./helpers)       | visibility, pointer-events, object-fit and more |
+| [Cursor](./cursor)         | cursor                                          |

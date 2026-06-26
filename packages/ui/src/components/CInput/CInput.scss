@@ -1,4 +1,5 @@
 @use '../../styles/modules/global-vars' as *;
+@use '../../styles/mixins/functions' as *;
 
 $self: '.c-input';
 $input-details-height: 24px;
@@ -10,15 +11,15 @@ $input-transition-duration: 0.2s;
   --c-input-transition-duration: #{$input-transition-duration};
 
   // Colors
-  --c-input-primary-color: var(--c-app-primary-color);
-  --c-input-error-color: var(--c-app-error-color);
-  --c-input-disabled-color: var(--c-app-disabled-color);
-  --c-input-readonly-color: var(--c-app-readonly-color);
+  --c-input-primary-color: #{getCssVar('app', 'primary-color')};
+  --c-input-error-color: #{getCssVar('app', 'error-color')};
+  --c-input-disabled-color: #{getCssVar('app', 'disabled-color')};
+  --c-input-readonly-color: #{getCssVar('app', 'readonly-color')};
 
   display: flex;
   flex-direction: column;
   flex: 1 1 auto;
-  transition: color var(--c-input-transition-duration) $primary-transition;
+  transition: color getCssVar('input', 'transition-duration') $primary-transition;
   color: currentColor;
   position: relative;
 
@@ -29,20 +30,20 @@ $input-transition-duration: 0.2s;
   }
 
   &--default {
-    color: var(--c-input-primary-color);
+    color: getCssVar('input', 'primary-color');
   }
 
   &--has-error {
-    color: var(--c-input-error-color);
+    color: getCssVar('input', 'error-color');
   }
 
   &--disabled {
-    color: var(--c-input-disabled-color);
+    color: getCssVar('input', 'disabled-color');
     pointer-events: none;
   }
 
   &--readonly {
-    color: var(--c-input-readonly-color);
+    color: getCssVar('input', 'readonly-color');
   }
 
   &__field {
@@ -50,7 +51,7 @@ $input-transition-duration: 0.2s;
   }
 
   &__details {
-    height: var(--c-input-details-height);
+    height: getCssVar('input', 'details-height');
     background-color: transparent;
     display: flex;
     justify-content: start;

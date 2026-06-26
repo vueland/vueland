@@ -1,67 +1,47 @@
-import * as fs from 'node:fs'
 import * as path from 'node:path'
 import type { Plugin, ViteDevServer } from 'vite'
 
+import { ContentCache } from './content-cache'
 import {
-    buildCssRule,
     DEFAULT_BREAKPOINTS,
     DEFAULT_EXCLUDE,
     DEFAULT_INCLUDE,
     DEFAULT_VARIANTS,
-    parseToken,
-    resolveRule,
     shouldProcess,
     tokenize,
 } from './core'
+import {
+    CssOutput,
+    RESOLVED_VIRTUAL_CSS_ID,
+    VIRTUAL_CSS_ID,
+} from './css-output'
+import {
+    collectProjectFiles,
+    isSameFile,
+    readFileSafe,
+} from './project-scan'
 import { defaultRules } from './rules'
+import { createScssBreakpointInjector } from './scss-injection'
+import { TokenRegistry } from './token-registry'
 import type {
     JitOptions,
-    ParsedToken,
-    Pattern,
     ResolvedJitOptions,
     UtilityRule,
 } from './types'
-
-// Контракт с SCSS-исходниками @vueland/ui: между этими маркерами плагин
-// подставляет `@use 'maps/grids' with (...)` с брейкпоинтами из конфига и тем
-// самым конфигурирует грид-модуль ДО загрузки партиалов с адаптивными стилями.
-// Контракт строковый (одинаковый литерал в SCSS и здесь) — не зависит ни от
-// кавычек, ни от текста импортов. Без плагина блок остаётся инертным
-// комментарием, и SCSS берёт дефолтные брейкпоинты из maps/grids.
-const BREAKPOINTS_MARKER_START = '// ##vueland:breakpoints:start'
-const BREAKPOINTS_MARKER_END = '// ##vueland:breakpoints:end'
-
-function escapeRegExp(value: string): string {
-    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-}
-
-// Regex строится из тех же констант — маркер задан ровно в одном месте.
-const BREAKPOINTS_REGION_RE = new RegExp(
-    `${escapeRegExp(BREAKPOINTS_MARKER_START)}[\\s\\S]*?${escapeRegExp(BREAKPOINTS_MARKER_END)}`,
-)
-
-// Идемпотентно: каждый прогон целиком переписывает содержимое блока. Дешёвая
-// проверка `includes` отсекает все файлы без маркера (additionalData зовётся
-// для каждого scss).
-function injectGridBreakpoints(source: string, bpMap: string): string {
-    if (!source.includes(BREAKPOINTS_MARKER_START)) {
-        return source
-    }
-
-    return source.replace(
-        BREAKPOINTS_REGION_RE,
-        () =>
-            `${BREAKPOINTS_MARKER_START}\n`
-            + `@use 'maps/grids' with ($grid-breakpoints: ${bpMap});\n`
-            + BREAKPOINTS_MARKER_END,
-    )
-}
 
 function resolveOptions(options: JitOptions = {}): ResolvedJitOptions {
     return {
         include: options.include ?? DEFAULT_INCLUDE,
         exclude: [...DEFAULT_EXCLUDE, ...(options.exclude ?? [])],
+        emitFile: options.emitFile ?? false,
         outFile: options.outFile ?? 'src/.generated/utils-jit.css',
+        // Мерж, а НЕ replace — намеренно и обязательно. Имена брейкпоинтов
+        // (xs/sm/md/lg/xl/xxl) — контракт: @vueland/ui генерит `.{name}\:*`
+        // утилиты через `@each ... in $grid-breakpoints` в 6 модулях (+CGrid,
+        // use-display, JIT). Эта карта инжектится в $grid-breakpoints. Replace
+        // при переопределении одного значения (напр. {sm: 680}) уронил бы все
+        // .md\:* / .lg\:* / ... по всей либе. Override значений и добавление
+        // имён — ок; убрать дефолтные имена нельзя (и не нужно).
         breakpoints: {
             ...DEFAULT_BREAKPOINTS,
             ...(options.breakpoints ?? {}),
@@ -77,96 +57,21 @@ function resolveOptions(options: JitOptions = {}): ResolvedJitOptions {
     }
 }
 
-function normalizePath(value: string): string {
-    return value.replace(/\\/g, '/')
-}
-
-function isSameFile(a: string, b: string): boolean {
-    return normalizePath(path.resolve(a)) === normalizePath(path.resolve(b))
-}
-
-function matchesPattern(value: string, pattern: Pattern): boolean {
-    const normalized = normalizePath(value)
-
-    if (typeof pattern === 'string') {
-        return normalized.includes(normalizePath(pattern))
-    }
-
-    pattern.lastIndex = 0
-
-    return pattern.test(normalized)
-}
-
-function isExcluded(file: string, exclude: Pattern[]): boolean {
-    return exclude.some((pattern) => matchesPattern(file, pattern))
-}
-
-function collectProjectFiles(root: string, options: ResolvedJitOptions, outFile: string): string[] {
-    const files: string[] = []
-
-    function walk(dir: string): void {
-        if (isExcluded(dir, options.exclude)) {
-            return
-        }
-
-        let entries: fs.Dirent[]
-
-        try {
-            entries = fs.readdirSync(dir, { withFileTypes: true })
-        } catch {
-            return
-        }
-
-        for (const entry of entries) {
-            const fullPath = path.join(dir, entry.name)
-
-            if (entry.isDirectory()) {
-                walk(fullPath)
-                continue
-            }
-
-            if (!entry.isFile()) {
-                continue
-            }
-
-            if (isSameFile(fullPath, outFile)) {
-                continue
-            }
-
-            if (shouldProcess(fullPath, options.include, options.exclude)) {
-                files.push(fullPath)
-            }
-        }
-    }
-
-    walk(root)
-
-    return files
-}
-
-function readFileSafe(file: string): string | null {
-    try {
-        return fs.readFileSync(file, 'utf8')
-    } catch {
-        return null
-    }
-}
-
 export function utilsJIT(options?: JitOptions): Plugin {
     const resolvedOptions = resolveOptions(options)
+    const allRules: UtilityRule[] = [...defaultRules, ...resolvedOptions.rules]
+    const registry = new TokenRegistry(resolvedOptions, allRules)
+    const contentCache = new ContentCache()
+    const cssOutput = new CssOutput({ emitFile: resolvedOptions.emitFile })
+
+    // Гейт по СЫРОМУ флагу: брейкпоинты инжектим в SCSS/JS только если их явно
+    // задали. А значение берём из resolvedOptions (мерж с дефолтами) — Sass
+    // `@use with (...)` полностью замещает карту, поэтому partial сломал бы
+    // стандартные брейкпоинты. SCSS, JS и JIT должны видеть одну и ту же карту.
+    const shouldInjectBreakpoints = options?.breakpoints !== undefined
 
     let root = process.cwd()
-    let outFile = ''
-    let devServer: ViteDevServer | null = null
-    let currentCss = ''
-
-    const allRules: UtilityRule[] = [...defaultRules, ...resolvedOptions.rules]
-
-    const fileToTokens = new Map<string, Set<string>>()
-    const tokenRefCount = new Map<string, number>()
-    const tokenParseCache = new Map<string, ParsedToken | null>()
-    const tokenCssCache = new Map<string, string | null>()
-    const activeCssRules = new Map<string, string>()
+    let outFileAbs = ''
 
     function debug(message: string): void {
         if (resolvedOptions.debug) {
@@ -174,200 +79,50 @@ export function utilsJIT(options?: JitOptions): Plugin {
         }
     }
 
-    function notifyCssChanged(): void {
-        if (!devServer || !outFile) {
+    // Отдаёт обновлённый CSS в virtual-модуль (и опц. дебаг-файл). Гейт по
+    // consumeDirty: сериализация и доставка только когда набор правил менялся.
+    function flushCss(notify: boolean): void {
+        if (!registry.consumeDirty()) {
             return
         }
 
-        devServer.watcher.emit('change', outFile)
+        cssOutput.update(registry.buildCss(), notify)
     }
 
-    function getParsedToken(token: string): ParsedToken | null {
-        if (tokenParseCache.has(token)) {
-            return tokenParseCache.get(token) ?? null
-        }
+    function rebuildAll(notify: boolean): void {
+        contentCache.clear()
 
-        const parsed = parseToken(token)
-
-        tokenParseCache.set(token, parsed)
-
-        return parsed
-    }
-
-    function getCssRuleForToken(token: string): string | null {
-        if (tokenCssCache.has(token)) {
-            return tokenCssCache.get(token) ?? null
-        }
-
-        const parsed = getParsedToken(token)
-
-        if (!parsed) {
-            tokenCssCache.set(token, null)
-            return null
-        }
-
-        const cssBody = resolveRule(parsed.utility, allRules)
-
-        if (!cssBody) {
-            tokenCssCache.set(token, null)
-            return null
-        }
-
-        const cssRule = buildCssRule(
-            parsed,
-            cssBody,
-            resolvedOptions.breakpoints,
-            resolvedOptions.variants,
+        const filePaths = collectProjectFiles(
+            root,
+            resolvedOptions.include,
+            resolvedOptions.exclude,
+            outFileAbs,
         )
 
-        tokenCssCache.set(token, cssRule)
-
-        return cssRule
-    }
-
-    function buildFinalCss(): string {
-        if (!activeCssRules.size) {
-            return resolvedOptions.emitEmptyFile
-                ? '/* @vueland/utils-jit: no utilities found */\n'
-                : ''
-        }
-
-        const sortedRules = Array.from(activeCssRules.entries())
-            .sort(([a], [b]) => a.localeCompare(b))
-            .map(([, cssRule]) => cssRule)
-
-        return [resolvedOptions.banner, ...sortedRules, ''].join('\n')
-    }
-
-    function writeCssFile(notify = false): void {
-        if (!outFile) {
-            return
-        }
-
-        const nextCss = buildFinalCss()
-
-        if (nextCss === currentCss) {
-            return
-        }
-
-        currentCss = nextCss
-
-        fs.mkdirSync(path.dirname(outFile), { recursive: true })
-        fs.writeFileSync(outFile, currentCss, 'utf8')
-
-        if (devServer) {
-            devServer.watcher.add(outFile)
-        }
-
-        if (notify) {
-            notifyCssChanged()
-        }
-
-        debug(`wrote ${normalizePath(path.relative(root, outFile))}`)
-    }
-
-    function activateToken(token: string): void {
-        const prevCount = tokenRefCount.get(token) ?? 0
-        const nextCount = prevCount + 1
-
-        tokenRefCount.set(token, nextCount)
-
-        if (prevCount === 0) {
-            const cssRule = getCssRuleForToken(token)
-
-            if (cssRule) {
-                activeCssRules.set(token, cssRule)
-            }
-        }
-    }
-
-    function deactivateToken(token: string): void {
-        const prevCount = tokenRefCount.get(token) ?? 0
-
-        if (prevCount <= 0) {
-            return
-        }
-
-        const nextCount = prevCount - 1
-
-        if (nextCount === 0) {
-            tokenRefCount.delete(token)
-            activeCssRules.delete(token)
-            return
-        }
-
-        tokenRefCount.set(token, nextCount)
-    }
-
-    function applyFileTokens(file: string, nextTokens: Set<string>): void {
-        const normalizedFile = normalizePath(file)
-        const prevTokens = fileToTokens.get(normalizedFile) ?? new Set<string>()
-
-        for (const token of prevTokens) {
-            if (!nextTokens.has(token)) {
-                deactivateToken(token)
-            }
-        }
-
-        for (const token of nextTokens) {
-            if (!prevTokens.has(token)) {
-                activateToken(token)
-            }
-        }
-
-        if (nextTokens.size > 0) {
-            fileToTokens.set(normalizedFile, nextTokens)
-        } else {
-            fileToTokens.delete(normalizedFile)
-        }
-    }
-
-    function rebuildAll(notify = false): void {
-        fileToTokens.clear()
-        tokenRefCount.clear()
-        activeCssRules.clear()
-
-        const files = collectProjectFiles(root, resolvedOptions, outFile)
-
-        for (const file of files) {
-            const code = readFileSafe(file)
+        const files = filePaths.flatMap((filePath) => {
+            const code = readFileSafe(filePath)
 
             if (code === null) {
-                continue
+                return []
             }
 
-            const tokens = tokenize(code)
+            // Запоминаем хэш, чтобы последующий transform по этому файлу не
+            // токенизировал повторно тот же контент (двойной обход на старте).
+            contentCache.changed(filePath, code)
 
-            if (tokens.size > 0) {
-                fileToTokens.set(normalizePath(file), tokens)
+            return [{ path: filePath, tokens: tokenize(code) }]
+        })
 
-                for (const token of tokens) {
-                    const count = tokenRefCount.get(token) ?? 0
+        registry.rebuildAll(files)
+        flushCss(notify)
 
-                    tokenRefCount.set(token, count + 1)
-                }
-            }
-        }
-
-        for (const [token, count] of tokenRefCount) {
-            if (count <= 0) {
-                continue
-            }
-
-            const cssRule = getCssRuleForToken(token)
-
-            if (cssRule) {
-                activeCssRules.set(token, cssRule)
-            }
-        }
-
-        writeCssFile(notify)
-
-        debug(`scanned ${files.length} files, found ${activeCssRules.size} utilities`)
+        debug(`scanned ${filePaths.length} files, found ${registry.activeCount} utilities`)
     }
 
-    function rebuildOne(file: string, code: string, notify = false): void {
-        if (isSameFile(file, outFile)) {
+    function rebuildOne(file: string, code: string, notify: boolean): void {
+        // На случай emitFile с кастомным outFile «нашего» расширения — не
+        // обрабатываем собственный дебаг-вывод.
+        if (isSameFile(file, outFileAbs)) {
             return
         }
 
@@ -375,38 +130,23 @@ export function utilsJIT(options?: JitOptions): Plugin {
             return
         }
 
-        const nextTokens = tokenize(code)
-
-        applyFileTokens(file, nextTokens)
-        writeCssFile(notify)
-    }
-
-    function removeOne(file: string, notify = false): void {
-        if (isSameFile(file, outFile)) {
+        // Контент не менялся с прошлого раза → токены те же, работу пропускаем.
+        if (!contentCache.changed(file, code)) {
             return
         }
 
-        const normalizedFile = normalizePath(file)
-        const prevTokens = fileToTokens.get(normalizedFile)
+        registry.syncFile(file, tokenize(code))
+        flushCss(notify)
+    }
 
-        if (!prevTokens) {
+    function removeOne(file: string, notify: boolean): void {
+        if (isSameFile(file, outFileAbs)) {
             return
         }
 
-        for (const token of prevTokens) {
-            deactivateToken(token)
-        }
-
-        fileToTokens.delete(normalizedFile)
-        writeCssFile(notify)
-    }
-
-    function buildScssBreakpointsMap(bps: Record<string, number>): string {
-        const entries = Object.entries(bps)
-            .map(([key, value]) => `'${key}': ${value === 0 ? '0' : `${value}px`}`)
-            .join(', ')
-
-        return `(${entries})`
+        contentCache.delete(file)
+        registry.removeFile(file)
+        flushCss(notify)
     }
 
     return {
@@ -416,19 +156,16 @@ export function utilsJIT(options?: JitOptions): Plugin {
         config() {
             // Брейкпоинты не заданы → ничего не инжектим и не определяем:
             // SCSS возьмёт дефолты из maps/grids, JS — дефолты use-display.
-            if (!options?.breakpoints) return
-
-            const bpMap = buildScssBreakpointsMap(options.breakpoints)
+            if (!shouldInjectBreakpoints) return
 
             return {
                 define: {
-                    __VUELAND_BREAKPOINTS__: JSON.stringify(options.breakpoints),
+                    __VUELAND_BREAKPOINTS__: JSON.stringify(resolvedOptions.breakpoints),
                 },
                 css: {
                     preprocessorOptions: {
                         scss: {
-                            additionalData: (source: string) =>
-                                injectGridBreakpoints(source, bpMap),
+                            additionalData: createScssBreakpointInjector(resolvedOptions.breakpoints),
                         },
                     },
                 },
@@ -437,41 +174,44 @@ export function utilsJIT(options?: JitOptions): Plugin {
 
         configResolved(config: any) {
             root = config.root
-            outFile = path.resolve(root, resolvedOptions.outFile)
+            outFileAbs = path.resolve(root, resolvedOptions.outFile)
+            cssOutput.setOutFile(outFileAbs)
 
+            // Полный обход проекта — ровно один раз. configResolved срабатывает
+            // до transform/импортов и в dev, и в build, поэтому CSS готов
+            // заранее (его отдаст load); инкрементальные изменения дальше идут
+            // через transform/handleHotUpdate/watchChange.
             rebuildAll(false)
         },
 
         configureServer(server: ViteDevServer) {
-            devServer = server
-
-            if (outFile) {
-                server.watcher.add(outFile)
-            }
+            cssOutput.setServer(server)
         },
 
-        buildStart() {
-            rebuildAll(false)
+        resolveId(id: string) {
+            return id === VIRTUAL_CSS_ID ? RESOLVED_VIRTUAL_CSS_ID : null
+        },
+
+        load(id: string) {
+            return id === RESOLVED_VIRTUAL_CSS_ID ? cssOutput.css : null
         },
 
         transform(code: string, id: string) {
-            const file = id.split('?')[0]
-
-            if (!file || isSameFile(file, outFile)) {
+            // Под-запросы (?vue&type=..., ?raw, ?worker) несут лишь ФРАГМЕНТ
+            // модуля — токенизировать их нельзя, иначе они затрут токены полного
+            // файла. Полный файл приходит по каноническому id (без query) и при
+            // изменениях через handleHotUpdate/watchChange.
+            if (id.includes('?')) {
                 return null
             }
 
-            rebuildOne(file, code, false)
+            rebuildOne(id, code, false)
 
             return null
         },
 
         async handleHotUpdate(ctx) {
             const { file } = ctx
-
-            if (isSameFile(file, outFile)) {
-                return
-            }
 
             if (!shouldProcess(file, resolvedOptions.include, resolvedOptions.exclude)) {
                 return
@@ -485,7 +225,7 @@ export function utilsJIT(options?: JitOptions): Plugin {
         watchChange(id: string, change) {
             const file = id.split('?')[0]
 
-            if (!file || isSameFile(file, outFile)) {
+            if (!file) {
                 return
             }
 

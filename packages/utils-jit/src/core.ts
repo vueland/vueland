@@ -93,11 +93,11 @@ const MIN_TOKEN_LENGTH = 5
 const MAX_TOKEN_LENGTH = 180
 const MAX_VALUE_LENGTH = 160
 
-function normalizePath(value: string): string {
+export function normalizePath(value: string): string {
     return value.replace(/\\/g, '/')
 }
 
-function matchesPattern(value: string, pattern: Pattern): boolean {
+export function matchesPattern(value: string, pattern: Pattern): boolean {
     const normalized = normalizePath(value)
 
     if (typeof pattern === 'string') {

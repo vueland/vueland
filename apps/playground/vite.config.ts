@@ -1,5 +1,4 @@
 import vue from '@vitejs/plugin-vue'
-import vueJsx from '@vitejs/plugin-vue-jsx'
 import { defineRule, utilsJIT } from '@vueland/utils-jit'
 import path from 'node:path'
 import { defineConfig, type PluginOption } from 'vite'
@@ -9,7 +8,6 @@ const useBuiltUi = process.env.USE_BUILT_UI === 'true'
 export default defineConfig({
     plugins: [
         vue(),
-        vueJsx(),
         utilsJIT({
             breakpoints: {
                 xs: 0,

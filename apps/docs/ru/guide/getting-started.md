@@ -4,12 +4,12 @@
 
 ## Выбор варианта
 
-| | Готовый CSS | SCSS + JIT |
-|---|---|---|
-| Утилитарные классы | Фиксированные брейкпоинты | **Настраиваемые брейкпоинты** |
-| Произвольные значения (`w-[320px]`) | ✗ | ✓ через `@vueland/utils-jit` |
-| Кастомные брейкпоинты | ✗ | ✓ один конфиг, все слои синхронизированы |
-| Сложность подключения | Минимальная | Требует Vite + SCSS |
+|                                     | Готовый CSS               | SCSS + JIT                               |
+| ----------------------------------- | ------------------------- | ---------------------------------------- |
+| Утилитарные классы                  | Фиксированные брейкпоинты | **Настраиваемые брейкпоинты**            |
+| Произвольные значения (`w-[320px]`) | ✗                         | ✓ через `@vueland/utils-jit`             |
+| Кастомные брейкпоинты               | ✗                         | ✓ один конфиг, все слои синхронизированы |
+| Сложность подключения               | Минимальная               | Требует Vite + SCSS                      |
 
 ---
 
@@ -29,15 +29,15 @@ pnpm add @vueland/ui
 // src/plugins/vueland.ts
 import * as components from '@vueland/ui/components'
 import { createVuelandUI } from '@vueland/ui'
-import '@vueland/ui/styles.css'     // ресет и переменные
-import '@vueland/ui/css/lib.css'    // стили компонентов
-import '@vueland/ui/css/utils.css'  // утилиты
+import '@vueland/ui/styles.css' // ресет и переменные
+import '@vueland/ui/css/lib.css' // стили компонентов
+import '@vueland/ui/css/utils.css' // утилиты
 
 export const vueland = createVuelandUI({
   components,
   theme: 'light',
   themes: {
-    light: { primary: '#1976d2', /* ... */ },
+    light: { primary: '#1976d2' /* ... */ },
   },
 })
 ```
@@ -128,7 +128,7 @@ export const vueland = createVuelandUI({
   components,
   theme: 'light',
   themes: {
-    light: { primary: '#1976d2', /* ... */ },
+    light: { primary: '#1976d2' /* ... */ },
   },
   // breakpoints подтягиваются из utils-jit автоматически
   // передайте явно только если хотите переопределить их для useDisplay
@@ -146,8 +146,8 @@ import { vueland } from './plugins/vueland'
 // SCSS точка входа (Vite компилирует автоматически)
 import './styles/main.scss'
 
-// JIT-сгенерированные утилиты
-import 'src/.generated/utils-jit.css'
+// JIT-сгенерированные утилиты (виртуальный модуль)
+import 'virtual:utils-jit.css'
 
 createApp(App).use(vueland).mount('#app')
 ```
@@ -158,17 +158,11 @@ createApp(App).use(vueland).mount('#app')
 <template>
   <!-- Предопределённые утилиты с адаптивными вариантами -->
   <div class="d-flex flex-col md:flex-row gap-4 pa-4">
-
     <!-- Произвольные значения через JIT -->
-    <div class="w-[320px] h-[200px] bg-[#42b883] radius-[8px]">
-      Карточка
-    </div>
+    <div class="w-[320px] h-[200px] bg-[#42b883] radius-[8px]">Карточка</div>
 
     <!-- Адаптивные JIT-классы -->
-    <div class="w-[100%] md:w-[480px] lg:w-[640px]">
-      Сайдбар
-    </div>
-
+    <div class="w-[100%] md:w-[480px] lg:w-[640px]">Сайдбар</div>
   </div>
 </template>
 ```
@@ -201,12 +195,12 @@ src/.generated/
 
 ## Опции `createVuelandUI`
 
-| Опция | Тип | Описание |
-|---|---|---|
-| `components` | `Record` | Компоненты для глобальной регистрации |
-| `theme` | `string` | Активная тема при старте |
-| `themes` | `ThemesOptions` | Определения цветов темы |
-| `icons` | `IconsOptions` | Наборы иконок и псевдонимы |
-| `presets` | `Record` | Пресеты стилей компонентов |
+| Опция         | Тип                      | Описание                                                                                                                                                                             |
+| ------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `components`  | `Record`                 | Компоненты для глобальной регистрации                                                                                                                                                |
+| `theme`       | `string`                 | Активная тема при старте                                                                                                                                                             |
+| `themes`      | `ThemesOptions`          | Определения цветов темы                                                                                                                                                              |
+| `icons`       | `IconsOptions`           | Наборы иконок и псевдонимы                                                                                                                                                           |
+| `presets`     | `Record`                 | Пресеты стилей компонентов                                                                                                                                                           |
 | `breakpoints` | `Record<string, number>` | Кастомные брейкпоинты для `useDisplay`. При использовании `utils-jit` подтягиваются автоматически — явное значение имеет приоритет. Подробнее в [Брейкпоинты](/ru/guide/breakpoints) |
-| `ssr` | `boolean` | Поддержка SSR |
+| `ssr`         | `boolean`                | Поддержка SSR                                                                                                                                                                        |

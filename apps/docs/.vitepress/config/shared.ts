@@ -10,7 +10,7 @@ export const sharedConfig: UserConfig = {
     lastUpdated: true,
     vite: {
         plugins: [
-      utilsJIT({ outFile: './.vitepress/theme/utils-jit.css' }) as any,
+            utilsJIT() as any,
         ],
     },
     markdown: {

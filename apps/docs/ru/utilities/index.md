@@ -14,9 +14,7 @@ Vueland UI предоставляет два взаимодополняющих 
 Просто добавьте нужный класс к любому HTML-элементу или компоненту:
 
 ```html
-<div class="pa-4 text-center bg-blue text-white">
-  Привет, мир!
-</div>
+<div class="pa-4 text-center bg-blue text-white">Привет, мир!</div>
 ```
 
 ### Адаптивные варианты
@@ -24,18 +22,16 @@ Vueland UI предоставляет два взаимодополняющих 
 Большинство утилит поддерживают адаптивные префиксы, применяющие стили начиная с указанного брейкпоинта (mobile-first):
 
 | Префикс | Минимальная ширина (по умолчанию) |
-|---------|-----------------------------------|
-| (нет)  | все размеры                        |
-| `sm:`  | 600px                              |
-| `md:`  | 960px                              |
-| `lg:`  | 1280px                             |
-| `xl:`  | 1920px                             |
-| `xxl:` | 2560px                            |
+| ------- | --------------------------------- |
+| (нет)   | все размеры                       |
+| `sm:`   | 600px                             |
+| `md:`   | 960px                             |
+| `lg:`   | 1280px                            |
+| `xl:`   | 1920px                            |
+| `xxl:`  | 2560px                            |
 
 ```html
-<div class="pa-2 md:pa-6 lg:pa-10">
-  Адаптивные отступы
-</div>
+<div class="pa-2 md:pa-6 lg:pa-10">Адаптивные отступы</div>
 ```
 
 ## JIT-утилиты (произвольные значения)
@@ -43,9 +39,7 @@ Vueland UI предоставляет два взаимодополняющих 
 Vite-плагин `@vueland/utils-jit` расширяет утилитарный слой произвольными значениями в квадратных скобках:
 
 ```html
-<div class="w-[320px] h-[200px] bg-[#42b883] z-[100]">
-  Произвольные значения
-</div>
+<div class="w-[320px] h-[200px] bg-[#42b883] z-[100]">Произвольные значения</div>
 ```
 
 JIT-классы генерируются на лету — в CSS-бандл попадают только те классы, которые реально используются в исходниках.
@@ -62,8 +56,8 @@ export default defineConfig({
 ```
 
 ```ts
-// Подключите сгенерированный файл в точке входа
-import 'src/.generated/utils-jit.css'
+// Подключите сгенерированный CSS в точке входа
+import 'virtual:utils-jit.css'
 ```
 
 ### Адаптивные JIT-классы
@@ -71,17 +65,13 @@ import 'src/.generated/utils-jit.css'
 JIT-классы поддерживают те же адаптивные префиксы, что и предопределённые утилиты:
 
 ```html
-<div class="w-[100%] md:w-[720px] lg:w-[960px]">
-  Адаптивная ширина
-</div>
+<div class="w-[100%] md:w-[720px] lg:w-[960px]">Адаптивная ширина</div>
 ```
 
 ### Варианты hover и focus
 
 ```html
-<button class="bg-[#42b883] hover:bg-[#33a06f] focus:outline-[2px]">
-  Кнопка
-</button>
+<button class="bg-[#42b883] hover:bg-[#33a06f] focus:outline-[2px]">Кнопка</button>
 ```
 
 ## Синхронизация брейкпоинтов между слоями
@@ -106,20 +96,20 @@ utilsJIT({
 
 ## Разделы
 
-| Раздел | Описание |
-|--------|----------|
-| [Цвета](./colors) | Фон, цвет текста, hover/active-состояния |
-| [Отступы](./spacing) | margin, padding, gap |
-| [Типографика](./typography) | Размер шрифта, насыщенность, межстрочный интервал |
-| [Текст](./text) | Выравнивание, трансформация, перенос |
-| [Flex](./flex) | Flexbox-утилиты |
-| [Отображение](./display) | Значения display |
-| [Размеры](./sizing) | width, height, min/max |
-| [Позиционирование](./position) | position, inset, z-index |
-| [Границы](./borders) | border-width, style, color |
-| [Скругление](./radius) | border-radius |
-| [Тени](./elevation) | box-shadow (Material Design) |
-| [Прозрачность](./opacity) | opacity |
-| [Переполнение](./overflow) | overflow |
-| [Хелперы](./helpers) | visibility, pointer-events, object-fit и другие |
-| [Курсор](./cursor) | cursor |
+| Раздел                         | Описание                                          |
+| ------------------------------ | ------------------------------------------------- |
+| [Цвета](./colors)              | Фон, цвет текста, hover/active-состояния          |
+| [Отступы](./spacing)           | margin, padding, gap                              |
+| [Типографика](./typography)    | Размер шрифта, насыщенность, межстрочный интервал |
+| [Текст](./text)                | Выравнивание, трансформация, перенос              |
+| [Flex](./flex)                 | Flexbox-утилиты                                   |
+| [Отображение](./display)       | Значения display                                  |
+| [Размеры](./sizing)            | width, height, min/max                            |
+| [Позиционирование](./position) | position, inset, z-index                          |
+| [Границы](./borders)           | border-width, style, color                        |
+| [Скругление](./radius)         | border-radius                                     |
+| [Тени](./elevation)            | box-shadow (Material Design)                      |
+| [Прозрачность](./opacity)      | opacity                                           |
+| [Переполнение](./overflow)     | overflow                                          |
+| [Хелперы](./helpers)           | visibility, pointer-events, object-fit и другие   |
+| [Курсор](./cursor)             | cursor                                            |

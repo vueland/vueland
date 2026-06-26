@@ -4,7 +4,7 @@ import App from './App.vue'
 import { ui } from './plugin'
 
 import './styles/index.scss'
-import './.generated/utils-jit.css'
+import 'virtual:utils-jit.css'
 
 const app = createApp(App)
 

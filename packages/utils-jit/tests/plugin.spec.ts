@@ -15,13 +15,16 @@ import {
     defineRule,
     isColorValue,
     isSizeValue,
+    RESOLVED_VIRTUAL_CSS_ID,
     utilsJIT,
+    VIRTUAL_CSS_ID,
 } from '../src'
 
 type HookPlugin = Plugin & {
     configResolved: NonNullable<Plugin['configResolved']>
     configureServer: NonNullable<Plugin['configureServer']>
-    buildStart: NonNullable<Plugin['buildStart']>
+    resolveId: NonNullable<Plugin['resolveId']>
+    load: NonNullable<Plugin['load']>
     transform: NonNullable<Plugin['transform']>
     handleHotUpdate: NonNullable<Plugin['handleHotUpdate']>
     watchChange: NonNullable<Plugin['watchChange']>
@@ -54,10 +57,6 @@ function callConfigureServer(plugin: HookPlugin, server: ReturnType<typeof creat
     callHook(plugin.configureServer as any, server)
 }
 
-function callBuildStart(plugin: HookPlugin): void {
-    callHook(plugin.buildStart as any)
-}
-
 function callTransform(plugin: HookPlugin, code: string, id: string): void {
     callHook(plugin.transform as any, code, id)
 }
@@ -71,6 +70,11 @@ async function callHandleHotUpdate(
 
 function callWatchChange(plugin: HookPlugin, id: string, change: WatchChangeEvent): void {
     callHook(plugin.watchChange as any, id, change)
+}
+
+// CSS отдаётся виртуальным модулем — читаем его через load(), а не с диска.
+function getCss(plugin: HookPlugin): string {
+    return (callHook(plugin.load as any, RESOLVED_VIRTUAL_CSS_ID) as string | null) ?? ''
 }
 
 function createTempProject() {
@@ -118,11 +122,16 @@ function createConfig(root: string) {
 }
 
 function createDevServer() {
+    const virtualModule = { id: RESOLVED_VIRTUAL_CSS_ID, url: '/@id/__x00__virtual:utils-jit.css' }
+
     return {
-        watcher: {
-            add: vi.fn(),
-            emit: vi.fn(),
+        moduleGraph: {
+            getModuleById: vi.fn((id: string) =>
+                (id === RESOLVED_VIRTUAL_CSS_ID ? virtualModule : null)),
+            invalidateModule: vi.fn(),
         },
+        reloadModule: vi.fn(async () => {}),
+        ws: { send: vi.fn() },
     } as any
 }
 
@@ -141,10 +150,27 @@ describe('plugins / base shape', () => {
         expect(plugin.enforce).toBe('pre')
         expect(plugin.configResolved).toBeTypeOf('function')
         expect(plugin.configureServer).toBeTypeOf('function')
-        expect(plugin.buildStart).toBeTypeOf('function')
+        expect(plugin.resolveId).toBeTypeOf('function')
+        expect(plugin.load).toBeTypeOf('function')
         expect(plugin.transform).toBeTypeOf('function')
         expect(plugin.handleHotUpdate).toBeTypeOf('function')
         expect(plugin.watchChange).toBeTypeOf('function')
+    })
+})
+
+describe('plugins / virtual module', () => {
+    it('resolveId резолвит virtual:utils-jit.css', () => {
+        const plugin = asHookPlugin(utilsJIT())
+
+        expect(callHook(plugin.resolveId as any, VIRTUAL_CSS_ID)).toBe(RESOLVED_VIRTUAL_CSS_ID)
+        expect(callHook(plugin.resolveId as any, 'other')).toBeNull()
+    })
+
+    it('load отдаёт CSS только для резолвнутого id', () => {
+        const plugin = asHookPlugin(utilsJIT())
+
+        expect(callHook(plugin.load as any, 'other')).toBeNull()
+        expect(callHook(plugin.load as any, RESOLVED_VIRTUAL_CSS_ID)).toBeTypeOf('string')
     })
 })
 
@@ -164,14 +190,42 @@ describe('plugins / scss breakpoints injection', () => {
         expect(plugin.config?.()).toBeUndefined()
     })
 
-    it('additionalData подставляет брейкпоинты в размеченный блок', () => {
+    it('additionalData подставляет смерженные с дефолтами брейкпоинты', () => {
+        // Переопределяем 3 из дефолтных — остальные (xs/xl/xxl) должны остаться,
+        // иначе Sass `@use with (...)` затрёт всю карту грида.
         const plugin = utilsJIT({ breakpoints: { sm: 640, md: 768, lg: 1024 } }) as any
         const fn = getAdditionalData(plugin)!
         const result = fn(MARKED_SOURCE, MARKED_FILE)
 
-        expect(result).toContain("@use 'maps/grids' with ($grid-breakpoints: ('sm': 640px, 'md': 768px, 'lg': 1024px))")
+        expect(result).toContain("@use 'maps/grids' with ($grid-breakpoints: ('xs': 0, 'sm': 640px, 'md': 768px, 'lg': 1024px, 'xl': 1920px, 'xxl': 2560px))")
         expect(result).toContain(MARKER_START)
         expect(result).toContain(MARKER_END)
+    })
+
+    it('кастомный брейкпоинт не стирает дефолтные (регрессия)', () => {
+        const plugin = utilsJIT({ breakpoints: { tablet: 900 } }) as any
+        const fn = getAdditionalData(plugin)!
+        const result = fn(MARKED_SOURCE, MARKED_FILE)
+
+        // Все дефолты на месте + добавлен кастомный.
+        for (const bp of ["'xs': 0", "'sm': 600px", "'md': 960px", "'lg': 1280px", "'xl': 1920px", "'xxl': 2560px", "'tablet': 900px"]) {
+            expect(result).toContain(bp)
+        }
+    })
+
+    it('__VUELAND_BREAKPOINTS__ синхронизирован с SCSS (смерженная карта)', () => {
+        const plugin = utilsJIT({ breakpoints: { tablet: 900 } }) as any
+        const define = plugin.config?.()?.define?.__VUELAND_BREAKPOINTS__
+
+        expect(JSON.parse(define)).toEqual({
+            xs: 0,
+            sm: 600,
+            md: 960,
+            lg: 1280,
+            xl: 1920,
+            xxl: 2560,
+            tablet: 900,
+        })
     })
 
     it('additionalData не трогает файлы без маркера (даже с импортом grids)', () => {
@@ -214,12 +268,12 @@ describe('plugins / filesystem integration', () => {
         vi.restoreAllMocks()
     })
 
-    it('создаёт пустой css файл после configResolved, если utilities не найдены', () => {
+    it('виртуальный модуль отдаёт плейсхолдер, если utilities не найдены', () => {
         const plugin = asHookPlugin(utilsJIT())
 
         callConfigResolved(plugin, project.root)
 
-        expect(project.read('src/.generated/utils-jit.css')).toBe(
+        expect(getCss(plugin)).toBe(
             '/* @vueland/utils-jit: no utilities found */\n',
         )
     })
@@ -238,7 +292,7 @@ describe('plugins / filesystem integration', () => {
 
         callConfigResolved(plugin, project.root)
 
-        const css = project.read('src/.generated/utils-jit.css')
+        const css = getCss(plugin)
 
         expect(css).toContain('/* @vueland/utils-jit: generated utilities */')
         expect(css).toContain('.w-\\[100px\\]{width: 100px !important;}')
@@ -260,7 +314,7 @@ describe('plugins / filesystem integration', () => {
 
         callConfigResolved(plugin, project.root)
 
-        const css = project.read('src/.generated/utils-jit.css')
+        const css = getCss(plugin)
         const hIndex = css.indexOf('.h-\\[40px\\]')
         const maIndex = css.indexOf('.ma-\\[8px\\]')
         const wIndex = css.indexOf('.w-\\[100px\\]')
@@ -272,7 +326,7 @@ describe('plugins / filesystem integration', () => {
         expect(maIndex).toBeLessThan(wIndex)
     })
 
-    it('использует кастомный outFile', () => {
+    it('emitFile пишет дебаг-файл в кастомный outFile', () => {
         project.write(
             'src/App.vue',
             `
@@ -282,13 +336,33 @@ describe('plugins / filesystem integration', () => {
         `,
         )
 
-        const plugin = asHookPlugin(utilsJIT({ outFile: 'src/styles/generated.css' }))
+        const plugin = asHookPlugin(
+            utilsJIT({ emitFile: true, outFile: 'src/styles/generated.css' }),
+        )
 
         callConfigResolved(plugin, project.root)
 
         expect(project.read('src/styles/generated.css')).toContain(
             '.w-\\[100px\\]{width: 100px !important;}',
         )
+    })
+
+    it('без emitFile дебаг-файл не пишется (только виртуальный модуль)', () => {
+        project.write(
+            'src/App.vue',
+            `
+            <template>
+                <div class="w-[100px]"></div>
+            </template>
+        `,
+        )
+
+        const plugin = asHookPlugin(utilsJIT())
+
+        callConfigResolved(plugin, project.root)
+
+        expect(project.exists('src/.generated/utils-jit.css')).toBe(false)
+        expect(getCss(plugin)).toContain('.w-\\[100px\\]{width: 100px !important;}')
     })
 
     it('использует кастомный banner', () => {
@@ -305,17 +379,17 @@ describe('plugins / filesystem integration', () => {
 
         callConfigResolved(plugin, project.root)
 
-        expect(project.read('src/.generated/utils-jit.css').startsWith('/* custom banner */')).toBe(
+        expect(getCss(plugin).startsWith('/* custom banner */')).toBe(
             true,
         )
     })
 
-    it('не пишет пустой css при emitEmptyFile=false', () => {
+    it('отдаёт пустой css при emitEmptyFile=false', () => {
         const plugin = asHookPlugin(utilsJIT({ emitEmptyFile: false }))
 
         callConfigResolved(plugin, project.root)
 
-        expect(project.exists('src/.generated/utils-jit.css')).toBe(false)
+        expect(getCss(plugin)).toBe('')
     })
 
     it('учитывает custom breakpoints', () => {
@@ -332,7 +406,7 @@ describe('plugins / filesystem integration', () => {
 
         callConfigResolved(plugin, project.root)
 
-        expect(project.read('src/.generated/utils-jit.css')).toContain(
+        expect(getCss(plugin)).toContain(
             '@media (min-width: 900px) { .tablet\\:w-\\[100px\\]{width: 100px !important;} }',
         )
     })
@@ -360,7 +434,7 @@ describe('plugins / filesystem integration', () => {
 
         callConfigResolved(plugin, project.root)
 
-        expect(project.read('src/.generated/utils-jit.css')).toContain(
+        expect(getCss(plugin)).toContain(
             '.hocus\\:w-\\[100px\\]:hover,.hocus\\:w-\\[100px\\]:focus{width: 100px !important;}',
         )
     })
@@ -400,7 +474,7 @@ describe('plugins / filesystem integration', () => {
 
         callConfigResolved(plugin, project.root)
 
-        const css = project.read('src/.generated/utils-jit.css')
+        const css = getCss(plugin)
 
         expect(css).toContain('.surface-\\[\\#fff\\]{background-color: #fff;}')
         expect(css).toContain('.size-\\[40px\\]{width: 40px !important;height: 40px !important;}')
@@ -429,7 +503,7 @@ describe('plugins / filesystem integration', () => {
 
         callConfigResolved(plugin, project.root)
 
-        const css = project.read('src/.generated/utils-jit.css')
+        const css = getCss(plugin)
 
         expect(css).toContain('.w-\\[100px\\]{width: 100px !important;}')
         expect(css).not.toContain('.h-\\[999px\\]')
@@ -456,7 +530,7 @@ describe('plugins / filesystem integration', () => {
 
         callConfigResolved(plugin, project.root)
 
-        const css = project.read('src/.generated/utils-jit.css')
+        const css = getCss(plugin)
 
         expect(css).toContain('.w-\\[100px\\]{width: 100px !important;}')
         expect(css).not.toContain('.w-\\[999px\\]')
@@ -487,7 +561,7 @@ describe('plugins / filesystem integration', () => {
             file,
         )
 
-        const css = project.read('src/.generated/utils-jit.css')
+        const css = getCss(plugin)
 
         expect(css).toContain('.w-\\[100px\\]{width: 100px !important;}')
         expect(css).toContain('.h-\\[40px\\]{height: 40px !important;}')
@@ -518,10 +592,67 @@ describe('plugins / filesystem integration', () => {
             file,
         )
 
-        const css = project.read('src/.generated/utils-jit.css')
+        const css = getCss(plugin)
 
         expect(css).toContain('.w-\\[100px\\]{width: 100px !important;}')
         expect(css).not.toContain('.h-\\[40px\\]')
+    })
+
+    it('повторный update с тем же контентом не эмитит HMR (кеш контента)', async () => {
+        project.write(
+            'src/App.vue',
+            `
+            <template>
+                <div class="w-[100px]"></div>
+            </template>
+        `,
+        )
+
+        const plugin = asHookPlugin(utilsJIT())
+        const server = createDevServer()
+
+        callConfigResolved(plugin, project.root)
+        callConfigureServer(plugin, server)
+
+        const changed = `
+            <template>
+                <div class="h-[40px]"></div>
+            </template>
+        `
+
+        // Первый раз — контент новый: HMR-инвалидация.
+        await callHandleHotUpdate(plugin, createHotContext(project.file('src/App.vue'), changed))
+        // Второй раз тот же контент — кеш короткозамыкает, без повторного HMR.
+        await callHandleHotUpdate(plugin, createHotContext(project.file('src/App.vue'), changed))
+
+        expect(server.reloadModule).toHaveBeenCalledTimes(1)
+    })
+
+    it('transform игнорирует под-запросы (?vue&type=...) и не затирает токены файла', () => {
+        project.write(
+            'src/App.vue',
+            `
+            <template>
+                <div class="w-[100px]"></div>
+            </template>
+        `,
+        )
+
+        const plugin = asHookPlugin(utilsJIT())
+
+        callConfigResolved(plugin, project.root)
+
+        // Vite прогоняет через pre-transform под-блоки .vue с фрагментом кода.
+        // style-блок без utility-классов НЕ должен удалять токены файла.
+        callTransform(
+            plugin,
+            '.foo { color: red; }',
+            `${project.file('src/App.vue')}?vue&type=style&index=0&lang.css`,
+        )
+
+        const css = getCss(plugin)
+
+        expect(css).toContain('.w-\\[100px\\]{width: 100px !important;}')
     })
 
     it('не удаляет utility, если он ещё используется в другом файле', () => {
@@ -557,13 +688,13 @@ describe('plugins / filesystem integration', () => {
             project.file('src/App.vue'),
         )
 
-        const css = project.read('src/.generated/utils-jit.css')
+        const css = getCss(plugin)
 
         expect(css).toContain('.w-\\[100px\\]{width: 100px !important;}')
         expect(css).toContain('.h-\\[40px\\]{height: 40px !important;}')
     })
 
-    it('handleHotUpdate читает файл, обновляет css и эмитит change generated css', async () => {
+    it('handleHotUpdate читает файл, обновляет css и инвалидирует виртуальный модуль', async () => {
         project.write(
             'src/App.vue',
             `
@@ -591,14 +722,11 @@ describe('plugins / filesystem integration', () => {
             ),
         )
 
-        const css = project.read('src/.generated/utils-jit.css')
+        const css = getCss(plugin)
 
         expect(css).not.toContain('.w-\\[100px\\]')
         expect(css).toContain('.h-\\[40px\\]{height: 40px !important;}')
-        expect(server.watcher.emit).toHaveBeenCalledWith(
-            'change',
-            project.file('src/.generated/utils-jit.css'),
-        )
+        expect(server.reloadModule).toHaveBeenCalledTimes(1)
     })
 
     it('handleHotUpdate игнорирует excluded file', async () => {
@@ -629,11 +757,11 @@ describe('plugins / filesystem integration', () => {
             ),
         )
 
-        const css = project.read('src/.generated/utils-jit.css')
+        const css = getCss(plugin)
 
         expect(css).toContain('.w-\\[100px\\]{width: 100px !important;}')
         expect(css).not.toContain('.h-\\[40px\\]')
-        expect(server.watcher.emit).not.toHaveBeenCalled()
+        expect(server.reloadModule).not.toHaveBeenCalled()
     })
 
     it('watchChange delete удаляет tokens файла', () => {
@@ -654,13 +782,10 @@ describe('plugins / filesystem integration', () => {
 
         callWatchChange(plugin, file, { event: 'delete' })
 
-        const css = project.read('src/.generated/utils-jit.css')
+        const css = getCss(plugin)
 
         expect(css).toBe('/* @vueland/utils-jit: no utilities found */\n')
-        expect(server.watcher.emit).toHaveBeenCalledWith(
-            'change',
-            project.file('src/.generated/utils-jit.css'),
-        )
+        expect(server.reloadModule).toHaveBeenCalledTimes(1)
     })
 
     it('watchChange update перечитывает файл с диска', () => {
@@ -691,13 +816,13 @@ describe('plugins / filesystem integration', () => {
 
         callWatchChange(plugin, file, { event: 'update' })
 
-        const css = project.read('src/.generated/utils-jit.css')
+        const css = getCss(plugin)
 
         expect(css).not.toContain('.w-\\[100px\\]')
         expect(css).toContain('.h-\\[40px\\]{height: 40px !important;}')
     })
 
-    it('buildStart пересканирует проект полностью', () => {
+    it('повторный configResolved пересканирует проект полностью', () => {
         project.write(
             'src/App.vue',
             `
@@ -720,9 +845,9 @@ describe('plugins / filesystem integration', () => {
         `,
         )
 
-        callBuildStart(plugin)
+        callConfigResolved(plugin, project.root)
 
-        const css = project.read('src/.generated/utils-jit.css')
+        const css = getCss(plugin)
 
         expect(css).not.toContain('.w-\\[100px\\]')
         expect(css).toContain('.h-\\[40px\\]{height: 40px !important;}')
@@ -748,12 +873,12 @@ describe('plugins / filesystem integration', () => {
             callWatchChange(plugin, file, { event: 'update' })
         }).not.toThrow()
 
-        const css = project.read('src/.generated/utils-jit.css')
+        const css = getCss(plugin)
 
         expect(css).toContain('.w-\\[100px\\]{width: 100px !important;}')
     })
 
-    it('не эмитит watcher change, если css не изменился', () => {
+    it('не инвалидирует модуль, если css не изменился', () => {
         project.write(
             'src/App.vue',
             `
@@ -779,6 +904,6 @@ describe('plugins / filesystem integration', () => {
             project.file('src/App.vue'),
         )
 
-        expect(server.watcher.emit).not.toHaveBeenCalled()
+        expect(server.reloadModule).not.toHaveBeenCalled()
     })
 })

@@ -1,5 +1,6 @@
+@use '../../styles/mixins/functions' as *;
+
 .c-app {
-  --app-background-color: var(--c-app-surface-color);
   display: flex;
 
   &__wrapper {
@@ -11,14 +12,14 @@
     min-height: 100vh;
     min-height: 100dvh;
     position: relative;
-    background-color: var(--app-background-color);
+    background-color: getCssVar('app', 'background-color');
   }
 
   &--block-scroll {
     width: 100%;
     position: fixed;
-    top: var(--scroll-top);
-    left: var(--scroll-left);
+    top: getCssVar('app', 'scroll-top');
+    left: getCssVar('app', 'scroll-left');
     bottom: 0;
     pointer-events: none;
   }
