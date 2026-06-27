@@ -1,5 +1,11 @@
 # @vueland/ui
 
+## 0.0.6
+
+### Patch Changes
+
+- [#70](https://github.com/vueland/vueland/pull/70) [`962663a`](https://github.com/vueland/vueland/commit/962663af37b19f937e58c0f00699c589b97bdc78) Thanks [@wiseadme](https://github.com/wiseadme)! - c-select and c-menu components refactor
+
 ## 0.0.5
 
 ### Patch Changes
