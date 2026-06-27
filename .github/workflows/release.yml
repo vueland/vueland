@@ -33,7 +33,7 @@ jobs:
       - name: Create release PR or publish packages
         uses: changesets/action@v1
         with:
-          version: pnpm run version-packages
+          version: bash .github/scripts/version-packages-with-retry.sh
           publish: pnpm run release
           title: 'chore: release packages'
           commit: 'chore: release packages'

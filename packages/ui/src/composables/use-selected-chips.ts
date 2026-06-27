@@ -14,10 +14,9 @@ export type SelectableEventProps<T> = {
     'onUpdate:modelValue'?: (value: T | T[] | undefined) => void
 }
 
-export type SelectablePublicProps<T> = SelectableProps<T> & SelectableEventProps<T>
-
 export function useSelectedChips<T>(props: IterableItemsProps<T> & SelectableProps<T>) {
     const instance = getCurrentInstance()!
+
     const { titleKey = '' } = props ?? {}
 
     const hasValue = computed(() =>
