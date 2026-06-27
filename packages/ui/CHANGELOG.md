@@ -1,5 +1,11 @@
 # @vueland/ui
 
+## 0.0.7
+
+### Patch Changes
+
+- [`31116a2`](https://github.com/vueland/vueland/commit/31116a284d290e46218fdd945b3e5c6f97b6cb61) - global css tokens updated
+
 ## 0.0.6
 
 ### Patch Changes
