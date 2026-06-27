@@ -46,6 +46,7 @@ export class VuelandUI {
     breakpoints: Record<BreakpointLabels, number> = breakpoints
     theme?: string
     private installed: boolean = false
+    private appliedThemeVars: string[] = []
 
     applyTheme(name: string): void {
         const theme = this.themes[name]
@@ -57,9 +58,13 @@ export class VuelandUI {
 
         if (IN_BROWSER) {
             const root = document.documentElement
+            const vars = buildVars(theme)
 
-            buildVars(theme).forEach(([prop, val]) => root.style.setProperty(prop, val))
+            this.appliedThemeVars.forEach(prop => root.style.removeProperty(prop))
+            vars.forEach(([prop, val]) => root.style.setProperty(prop, val))
+            root.dataset.theme = name
 
+            this.appliedThemeVars = vars.map(([prop]) => prop)
             this.theme = name
         }
     }

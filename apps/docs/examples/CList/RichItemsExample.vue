@@ -74,7 +74,7 @@
 
     /* On a selected (primary) row the badge inverts: surface bg + primary text */
     .badge--active {
-        background: var(--c-app-on-primary-color);
-        color: var(--c-app-primary-color);
+        background: var(--c-sys-color-on-primary);
+        color: var(--c-sys-color-primary);
     }
 </style>

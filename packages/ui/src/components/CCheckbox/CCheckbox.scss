@@ -1,3 +1,5 @@
+@use '../../styles/mixins/functions' as *;
+
 $self: '.c-checkbox';
 
 .c-checkbox {
@@ -15,7 +17,7 @@ $self: '.c-checkbox';
   &--focused,
   &--checked {
     & > #{$self}__label {
-      color: var(--c-app-text-color);
+      color: getCssVar('sys', 'color', 'on-surface');
     }
   }
 
@@ -28,7 +30,7 @@ $self: '.c-checkbox';
   &--focused {
     & > #{$self}__icon {
       &::before {
-        opacity: 0.2;
+        opacity: getCssVar('sys', 'state', 'focus-opacity');
       }
     }
   }
@@ -44,7 +46,7 @@ $self: '.c-checkbox';
       right: 0;
       bottom: 0;
       background-color: currentColor;
-      border-radius: 8px;
+      border-radius: getCssVar('sys', 'shape', 'md');
       opacity: 0;
       transform: scale(0.7);
     }
@@ -57,7 +59,7 @@ $self: '.c-checkbox';
   }
 
   &--error {
-    color: var(--c-app-error-color);
+    color: getCssVar('sys', 'color', 'error');
     & > #{$self}__label {
       color: currentColor;
     }

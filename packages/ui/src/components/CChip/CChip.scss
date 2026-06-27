@@ -1,10 +1,12 @@
+@use '../../styles/mixins/functions' as *;
+
 .c-chip {
   display: inline-flex;
   align-items: center;
-  padding: 4px 8px;
-  border-radius: var(--c-app-border-radius);
-  color: #ffffff;
-  background-color: var(--c-app-primary-color);
+  padding: getCssVar('sys', 'space', '1') getCssVar('sys', 'space', '2');
+  border-radius: getCssVar('sys', 'shape', 'pill');
+  color: getCssVar('sys', 'color', 'on-primary');
+  background-color: getCssVar('sys', 'color', 'primary');
   overflow: hidden;
   min-width: 60px;
   min-height: 24px;

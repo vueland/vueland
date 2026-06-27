@@ -1,4 +1,5 @@
 @use 'variables' as *;
+@use '../../styles/mixins/functions' as *;
 @use '../../styles/tools/state-layer' as state;
 
 $self: '.c-list-item';
@@ -15,6 +16,10 @@ $self: '.c-list-item';
   --c-list-item-selected-color: #{$list-item-selected-color};
   --c-list-item-disabled-opacity: #{$list-item-disabled-opacity};
   --c-list-item-disabled-color: #{$list-item-disabled-color};
+  --c-list-item-state-layer-color: #{$list-item-state-layer-color};
+  --c-list-item-focus-ring-color: #{$list-item-focus-ring-color};
+  --c-list-item-hover-opacity: #{$list-item-hover-opacity};
+  --c-list-item-focus-opacity: #{$list-item-focus-opacity};
   --c-list-item-title-font-size: #{$list-item-title-font-size};
   --c-list-item-title-line-height: #{$list-item-title-line-height};
   --c-list-item-title-font-weight: #{$list-item-title-font-weight};
@@ -22,21 +27,20 @@ $self: '.c-list-item';
   --c-list-item-subtitle-line-height: #{$list-item-subtitle-line-height};
   --c-list-item-subtitle-color: #{$list-item-subtitle-color};
   --c-list-item-subtitle-opacity: #{$list-item-subtitle-opacity};
-  --c-list-item-hover-bg-color: #{$list-item-hover-bg-color};
 
   display: flex;
   justify-content: start;
   align-items: center;
-  gap: var(--c-list-item-gap);
-  min-height: var(--c-list-item-min-height);
-  padding: var(--c-list-item-padding-block) var(--c-list-item-padding-inline);
-  border-radius: var(--c-list-item-border-radius);
-  background: var(--c-list-item-bg-color);
+  gap: getCssVar('list-item', 'gap');
+  min-height: getCssVar('list-item', 'min-height');
+  padding: getCssVar('list-item', 'padding-block') getCssVar('list-item', 'padding-inline');
+  border-radius: getCssVar('list-item', 'border-radius');
+  background: getCssVar('list-item', 'bg-color');
   cursor: pointer;
   position: relative;
-  color: var(--c-list-item-color);
+  color: getCssVar('list-item', 'color');
 
-  @include state.layer(var(--c-list-item-hover-bg-color));
+  @include state.layer(getCssVar('list-item', 'state-layer-color'));
 
   &-content {
     flex: 1 0;
@@ -51,48 +55,48 @@ $self: '.c-list-item';
     justify-content: center;
     flex-shrink: 0;
     min-width: 36px;
-    min-height: var(--c-list-item-min-height);
+    min-height: getCssVar('list-item', 'min-height');
     height: 100%;
   }
 
   &-title {
-    font-size: var(--c-list-item-title-font-size);
-    font-weight: var(--c-list-item-title-font-weight);
-    line-height: var(--c-list-item-title-line-height);
+    font-size: getCssVar('list-item', 'title-font-size');
+    font-weight: getCssVar('list-item', 'title-font-weight');
+    line-height: getCssVar('list-item', 'title-line-height');
   }
 
   &-subtitle {
-    color: var(--c-list-item-subtitle-color);
-    font-size: var(--c-list-item-subtitle-font-size);
-    line-height: var(--c-list-item-subtitle-line-height);
-    opacity: var(--c-list-item-subtitle-opacity);
+    color: getCssVar('list-item', 'subtitle-color');
+    font-size: getCssVar('list-item', 'subtitle-font-size');
+    line-height: getCssVar('list-item', 'subtitle-line-height');
+    opacity: getCssVar('list-item', 'subtitle-opacity');
   }
 
   &--focused {
-    outline-color: var(--c-list-item-hover-bg-color);
-    outline-width: 2px;
+    outline: getCssVar('sys', 'border-width', 'thick') solid
+      getCssVar('list-item', 'focus-ring-color');
     outline-offset: -1px;
 
     &::before {
-      opacity: 0.3;
+      opacity: getCssVar('list-item', 'focus-opacity');
     }
   }
 
   &:hover {
     &::before {
-      opacity: 0.1;
+      opacity: getCssVar('list-item', 'hover-opacity');
     }
   }
 
   &--disabled {
     cursor: default;
-    color: var(--c-list-item-disabled-color);
-    opacity: var(--c-list-item-disabled-opacity);
+    color: getCssVar('list-item', 'disabled-color');
+    opacity: getCssVar('list-item', 'disabled-opacity');
     pointer-events: none;
   }
 
   &--selected {
-    background: var(--c-list-item-selected-bg-color);
-    color: var(--c-list-item-selected-color);
+    background: getCssVar('list-item', 'selected-bg-color');
+    color: getCssVar('list-item', 'selected-color');
   }
 }

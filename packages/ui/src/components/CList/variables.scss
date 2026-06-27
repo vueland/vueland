@@ -1,32 +1,37 @@
+@use '../../styles/mixins/functions' as *;
+
 // List
-$list-bg-color: var(--c-app-surface-color);
-$list-color: var(--c-app-text-color);
-$list-border-radius: var(--c-app-border-radius);
+$list-bg-color: getCssVar('sys', 'color', 'surface');
+$list-color: getCssVar('sys', 'color', 'on-surface');
+$list-border-radius: getCssVar('sys', 'shape', 'md');
 $list-padding-block: 0;
 $list-padding-inline: 0;
-$list-disabled-opacity: var(--c-app-disabled-opacity, 0.5);
+$list-disabled-opacity: getCssVar('sys', 'state', 'disabled-opacity');
 
 // List item layout
-$list-item-min-height: 36px;
-$list-item-padding-block: 4px;
-$list-item-padding-inline: 8px;
-$list-item-gap: 12px;
+$list-item-min-height: getCssVar('sys', 'control', 'height-sm');
+$list-item-padding-block: getCssVar('sys', 'space', '1');
+$list-item-padding-inline: getCssVar('sys', 'space', '2');
+$list-item-gap: getCssVar('sys', 'space', '3');
 $list-item-border-radius: 0;
 
 // List item colors
 $list-item-color: currentColor;
 $list-item-bg-color: transparent;
-$list-item-selected-bg-color: var(--c-app-primary-color);
-$list-item-selected-color: var(--c-app-on-primary-color);
-$list-item-disabled-opacity: var(--c-app-disabled-opacity, 0.5);
-$list-item-disabled-color: var(--c-app-disabled-color);
-$list-item-hover-bg-color: var(--c-app-primary-color);
+$list-item-selected-bg-color: getCssVar('sys', 'color', 'primary');
+$list-item-selected-color: getCssVar('sys', 'color', 'on-primary');
+$list-item-disabled-opacity: getCssVar('sys', 'state', 'disabled-opacity');
+$list-item-disabled-color: getCssVar('sys', 'color', 'disabled');
+$list-item-state-layer-color: getCssVar('sys', 'color', 'primary');
+$list-item-focus-ring-color: getCssVar('sys', 'color', 'focus-ring');
+$list-item-hover-opacity: 0.1;
+$list-item-focus-opacity: 0.3;
 
 // List item typography
-$list-item-title-font-size: 1rem;
-$list-item-title-line-height: 1.25rem;
+$list-item-title-font-size: getCssVar('sys', 'typography', 'body-size');
+$list-item-title-line-height: getCssVar('sys', 'typography', 'label-line-height');
 $list-item-title-font-weight: 400;
-$list-item-subtitle-font-size: 0.8rem;
-$list-item-subtitle-line-height: 1rem;
+$list-item-subtitle-font-size: getCssVar('sys', 'typography', 'label-size');
+$list-item-subtitle-line-height: getCssVar('sys', 'typography', 'label-line-height');
 $list-item-subtitle-color: currentColor;
 $list-item-subtitle-opacity: 0.6;

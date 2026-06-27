@@ -13,6 +13,7 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 <BasicExample />
 
 ::: details Show code
+
 ```vue
 <template>
   <div class="d-flex align-center gap-3">
@@ -36,6 +37,7 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
   </div>
 </template>
 ```
+
 :::
 
 ## Positioning
@@ -45,6 +47,7 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 <PositioningExample />
 
 ::: details Show code
+
 ```html
 <!-- Above, centered -->
 <CTooltip width="auto" align="top-center" :offset-y="8" open-on-hover close-on-leave>
@@ -70,6 +73,7 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
   Tooltip on the bottom
 </CTooltip>
 ```
+
 :::
 
 ## Delays
@@ -79,6 +83,7 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 <DelayExample />
 
 ::: details Show code
+
 ```vue
 <template>
   <div class="d-flex gap-4">
@@ -91,7 +96,14 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
     </CTooltip>
 
     <!-- Open delay -->
-    <CTooltip width="auto" open-on-hover close-on-leave align="bottom-center" :offset-y="8" :open-delay="400">
+    <CTooltip
+      width="auto"
+      open-on-hover
+      close-on-leave
+      align="bottom-center"
+      :offset-y="8"
+      :open-delay="400"
+    >
       <template #activator="{ on, activator }">
         <CCard class="pa-4" v-bind="activator" v-on="on">Open 400ms</CCard>
       </template>
@@ -99,7 +111,14 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
     </CTooltip>
 
     <!-- Close delay -->
-    <CTooltip width="auto" open-on-hover close-on-leave align="bottom-center" :offset-y="8" :close-delay="600">
+    <CTooltip
+      width="auto"
+      open-on-hover
+      close-on-leave
+      align="bottom-center"
+      :offset-y="8"
+      :close-delay="600"
+    >
       <template #activator="{ on, activator }">
         <CCard class="pa-4" v-bind="activator" v-on="on">Close 600ms</CCard>
       </template>
@@ -108,6 +127,7 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
   </div>
 </template>
 ```
+
 :::
 
 ## Custom width
@@ -126,6 +146,7 @@ By default, the tooltip wraps its content (`width="auto"`). Pass `width` for a f
 ## Accessibility
 
 `CTooltip` automatically:
+
 - Generates a unique `id` for the tooltip container
 - Sets `role="tooltip"` on the container
 - Adds `aria-describedby` with that `id` to the activator
@@ -133,9 +154,7 @@ By default, the tooltip wraps its content (`width="auto"`). Pass `width` for a f
 ```html
 <!-- Resulting HTML -->
 <button aria-describedby="c-tooltip-abc123">Hover me</button>
-<div id="c-tooltip-abc123" role="tooltip" class="c-tooltip c-menu">
-  Save changes
-</div>
+<div id="c-tooltip-abc123" role="tooltip" class="c-tooltip c-menu">Save changes</div>
 ```
 
 ---
@@ -146,25 +165,35 @@ By default, the tooltip wraps its content (`width="auto"`). Pass `width` for a f
 
 ### Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `width` | `number \| string` | `'auto'` | Tooltip width |
-| `openOnHover` | `boolean` | — | Open on mouseenter |
-| `closeOnLeave` | `boolean` | — | Close on mouseleave |
-| `openDelay` | `number \| string` | — | Delay before opening (ms) |
-| `closeDelay` | `number \| string` | — | Delay before closing (ms) |
-| `align` | `AlignValue` | — | Side + cross-axis alignment (e.g. `bottom-center`, `top`, `right-center`) |
-| `offsetX` | `number \| string` | — | Horizontal offset (px) |
-| `offsetY` | `number \| string` | — | Vertical offset (px) |
+| Prop           | Type               | Default  | Description                                                               |
+| -------------- | ------------------ | -------- | ------------------------------------------------------------------------- |
+| `width`        | `number \| string` | `'auto'` | Tooltip width                                                             |
+| `openOnHover`  | `boolean`          | —        | Open on mouseenter                                                        |
+| `closeOnLeave` | `boolean`          | —        | Close on mouseleave                                                       |
+| `openDelay`    | `number \| string` | —        | Delay before opening (ms)                                                 |
+| `closeDelay`   | `number \| string` | —        | Delay before closing (ms)                                                 |
+| `align`        | `AlignValue`       | —        | Side + cross-axis alignment (e.g. `bottom-center`, `top`, `right-center`) |
+| `offsetX`      | `number \| string` | —        | Horizontal offset (px)                                                    |
+| `offsetY`      | `number \| string` | —        | Vertical offset (px)                                                      |
 
 > All other `CMenu` props are also accepted.
 
+### CSS variables
+
+| Variable                    | Default                                     |
+| --------------------------- | ------------------------------------------- |
+| `--c-tooltip-bg-color`      | `var(--c-sys-color-surface)`                |
+| `--c-tooltip-text-color`    | `var(--c-sys-color-on-surface)`             |
+| `--c-tooltip-padding`       | `var(--c-sys-space-1) var(--c-sys-space-3)` |
+| `--c-tooltip-border-radius` | `var(--c-sys-shape-sm)`                     |
+| `--c-tooltip-elevation`     | `var(--c-sys-elevation-2)`                  |
+
 ### Slots
 
-| Slot | Props | Description |
-|------|-------|-------------|
+| Slot        | Props               | Description                           |
+| ----------- | ------------------- | ------------------------------------- |
 | `activator` | `{ on, activator }` | The element that triggers the tooltip |
-| `default` | — | Tooltip content |
+| `default`   | —                   | Tooltip content                       |
 
 ### Events
 

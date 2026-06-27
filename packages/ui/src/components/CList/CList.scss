@@ -1,4 +1,5 @@
 @use 'variables' as *;
+@use '../../styles/mixins/functions' as *;
 
 .c-list {
   --c-list-bg-color: #{$list-bg-color};
@@ -8,17 +9,17 @@
   --c-list-padding-inline: #{$list-padding-inline};
   --c-list-disabled-opacity: #{$list-disabled-opacity};
 
-  padding: var(--c-list-padding-block) var(--c-list-padding-inline);
-  border-radius: var(--c-list-border-radius);
-  background-color: var(--c-list-bg-color);
-  color: var(--c-list-color);
+  padding: getCssVar('list', 'padding-block') getCssVar('list', 'padding-inline');
+  border-radius: getCssVar('list', 'border-radius');
+  background-color: getCssVar('list', 'bg-color');
+  color: getCssVar('list', 'color');
 
   &--readonly {
     pointer-events: none;
   }
 
   &--disabled {
-    opacity: var(--c-list-disabled-opacity);
+    opacity: getCssVar('list', 'disabled-opacity');
     pointer-events: none;
   }
 

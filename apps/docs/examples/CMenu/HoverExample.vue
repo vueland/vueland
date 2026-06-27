@@ -210,12 +210,12 @@
 </template>
 
 <style scoped>
-.nav { background: var(--c-app-surface-color) }
+.nav { background: var(--c-sys-color-surface) }
 .text-indigo     { color: #3f51b5 !important }
 .text-light-blue { color: #03a9f4 !important }
 .text-teal       { color: #009688 !important }
 .text-red        { color: #f44336 }
-.sep { height: 1px; background: var(--c-app-border-color) }
+.sep { height: 1px; background: var(--c-sys-color-outline-variant) }
 .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em }
 .avatar {
   width: 34px; height: 34px; border-radius: 50%;

@@ -1,37 +1,35 @@
+@use '../../styles/mixins/functions' as *;
+
 $card-width: 100%;
-$card-header-padding: 16px;
-$card-body-padding: 16px;
-$card-footer-padding: 16px;
-$card-border-radius: 8px;
 
 .c-card {
-  --card-width: #{$card-width};
-  --card-header-padding: #{$card-header-padding};
-  --card-body-padding: #{$card-body-padding};
-  --card-footer-padding: #{$card-footer-padding};
-  --card-border-radius: #{$card-border-radius};
-  --card-background-color: var(--c-app-surface-color);
-  --card-text-color: var(--c-app-text-color);
+  --c-card-width: #{$card-width};
+  --c-card-header-padding: #{getCssVar('sys', 'space', '4')};
+  --c-card-body-padding: #{getCssVar('sys', 'space', '4')};
+  --c-card-footer-padding: #{getCssVar('sys', 'space', '4')};
+  --c-card-border-radius: #{getCssVar('sys', 'shape', 'md')};
+  --c-card-background-color: #{getCssVar('sys', 'color', 'surface')};
+  --c-card-text-color: #{getCssVar('sys', 'color', 'on-surface')};
 
-  width: var(--card-width);
-  border-radius: var(--card-border-radius);
+  width: getCssVar('card', 'width');
+  border-radius: getCssVar('card', 'border-radius');
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background-color: var(--card-background-color);
-  color: var(--card-text-color);
+  background-color: getCssVar('card', 'background-color');
+  color: getCssVar('card', 'text-color');
 
   &-header {
-    padding: var(--card-header-padding);
+    padding: getCssVar('card', 'header-padding');
     flex-grow: 0;
   }
 
   &-body {
-    padding: var(--card-body-padding);
+    padding: getCssVar('card', 'body-padding');
   }
 
   &-footer {
     flex-grow: 0;
-    padding: var(--card-footer-padding);
+    padding: getCssVar('card', 'footer-padding');
   }
 }

@@ -1,6 +1,6 @@
 # Theming
 
-Vueland UI has a CSS-variable-based theming system. You define tokens in the plugin config — the library applies them to `:root` on startup and whenever you switch the active theme.
+Vueland UI uses layered CSS tokens. Reference tokens describe raw values, system tokens describe semantic UI roles, and component tokens map each component to those roles.
 
 ## Defining themes
 
@@ -14,23 +14,25 @@ import '@vueland/ui/css/lib.css'
 
 export const vueland = createVuelandUI({
   components,
-  theme: 'light',       // theme active on startup
+  theme: 'light',
   themes: {
     light: {
       primary: '#4f6ef7',
       onPrimary: '#ffffff',
       background: '#f5f7fa',
       surface: '#ffffff',
-      text: '#1a1a2e',
+      onSurface: '#1a1a2e',
       error: '#e53935',
+      shapeMd: '8px',
     },
     dark: {
-      primary: '#7b93ff',
-      onPrimary: '#ffffff',
+      scheme: 'dark',
+      primary: '#9db2ff',
+      onPrimary: '#0b1020',
       background: '#121212',
       surface: '#1e1e2e',
-      text: '#e0e0e0',
-      error: '#ef5350',
+      onSurface: '#e8e8f0',
+      error: '#ffb4ab',
     },
   },
 })
@@ -46,74 +48,67 @@ import { vueland } from './plugins/vueland'
 vueland.applyTheme('dark')
 ```
 
-Or via `useCore` inside a component:
+The active theme name is also written to `document.documentElement.dataset.theme`, so `applyTheme('dark')` enables `[data-theme='dark']` CSS defaults before applying explicit theme overrides.
 
-```ts
-import { useCore } from '@vueland/ui/composables'
+## Token Layers
 
-const core = useCore()
-
-function toggleTheme() {
-  core?.applyTheme(core.theme === 'light' ? 'dark' : 'light')
-}
-```
+| Layer     | CSS format          | Purpose                                                    |
+| --------- | ------------------- | ---------------------------------------------------------- |
+| Reference | `--c-ref-*`         | Raw palette values and primitive scales shipped by Vueland |
+| System    | `--c-sys-*`         | Semantic roles used by components and user styles          |
+| Component | `--c-{component}-*` | Component-level knobs mapped to system tokens              |
 
 ## `ThemeDefinition` tokens
 
-| Token | Description |
-|---|---|
-| `primary` | Brand primary color |
-| `onPrimary` | Text color on top of `primary` |
-| `secondary` | Secondary color |
-| `success` / `error` / `warning` / `info` | Semantic colors |
-| `background` | Page background |
-| `surface` | Card and panel background |
-| `surfaceVariant` | Alternative surface background |
-| `text` | Main text color |
-| `textSecondary` | Secondary text |
-| `placeholder` | Placeholder color |
-| `border` | Border color |
-| `radius` | Default border radius |
-| `disabled` / `disabledBg` | Disabled state colors |
-| `readonly` / `readonlyBg` | Read-only state colors |
-| `focus` | Focus ring color |
-| `error` / `errorBg` | Error color and its background |
-| `hover` / `overlay` | Interactive overlay colors |
+Use concise camelCase keys. Color roles map to `--c-sys-color-*`; other groups map to their system namespace:
 
-All tokens are optional — override only the ones you need.
+| Group                | Examples                                                                   |
+| -------------------- | -------------------------------------------------------------------------- |
+| Color roles          | `primary`, `onPrimary`, `surface`, `onSurface`, `outlineVariant`           |
+| State layers         | `stateHoverColor`, `stateFocusColor`, `stateDisabledOpacity`               |
+| Typography           | `typographyBodySize`, `typographyLabelWeight`, `typographyTitleLineHeight` |
+| Spacing and controls | `space1`, `space4`, `controlHeightMd`, `controlIconSize`                   |
+| Shape and borders    | `shapeSm`, `shapeMd`, `shapePill`, `borderWidthThin`                       |
+| Elevation and motion | `elevation1`, `motionDurationMedium`, `motionEasingStandard`               |
+| Stacking             | `zIndexDropdown`, `zIndexModal`, `zIndexTooltip`                           |
 
-## Custom tokens
+All tokens are optional. Override only the roles your theme changes.
 
-You can add any custom key — it will also become a CSS variable:
+Interactive state colors derive from `primary` by default, and surface-like components use `surface` / `onSurface` as their baseline. That keeps common theme changes small: changing `primary`, `surface` and `onSurface` is enough to recolor selected items, hover/focus accents and component backplates.
+
+## Custom Tokens
+
+Custom theme tokens must be explicit CSS custom properties. Short arbitrary keys are ignored, so accidental stale tokens do not silently create a broken theme.
 
 ```ts
 themes: {
   light: {
     primary: '#4f6ef7',
-    'sidebar-bg': '#f0f2f5',      // → var(--c-sidebar-bg)
-    'header-height': '64px',      // → var(--c-header-height)
+    '--app-sidebar-bg': '#f0f2f5',
+    '--app-header-height': '64px',
   },
 }
 ```
 
-## CSS variables
+## CSS Variables
 
-Every token is converted to a CSS variable in the format `--c-{token}` and set on `:root`:
+`primary` becomes `--c-sys-color-primary`, `shapeMd` becomes `--c-sys-shape-md`, and so on:
 
 ```css
 :root {
-  --c-primary: #4f6ef7;
-  --c-background: #f5f7fa;
-  --c-text: #1a1a2e;
+  --c-sys-color-primary: #4f6ef7;
+  --c-sys-color-background: #f5f7fa;
+  --c-sys-color-on-surface: #1a1a2e;
 }
 ```
 
-Use them in your own styles to automatically adapt to theme changes:
+Use system tokens in application styles:
 
 ```scss
 .my-card {
-  background: var(--c-surface);
-  color: var(--c-text);
-  border-color: var(--c-border);
+  background: var(--c-sys-color-surface);
+  color: var(--c-sys-color-on-surface);
+  border-color: var(--c-sys-color-outline-variant);
+  border-radius: var(--c-sys-shape-md);
 }
 ```

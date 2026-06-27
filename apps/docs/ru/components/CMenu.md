@@ -70,11 +70,11 @@ function notify(text: string) {
 <style scoped>
 .kb {
   font-size: 11px;
-  color: var(--c-app-text-secondary-color);
+  color: var(--c-sys-color-on-surface-variant);
 }
 .sep {
   height: 1px;
-  background: var(--c-app-border-color);
+  background: var(--c-sys-color-outline-variant);
   margin: 4px 0;
 }
 </style>
@@ -262,12 +262,12 @@ function toast(msg: string) {
 .area {
   padding: 48px;
   text-align: center;
-  border: 2px dashed var(--c-app-border-color);
+  border: 2px dashed var(--c-sys-color-outline-variant);
   border-radius: 8px;
 }
 .sep {
   height: 1px;
-  background: var(--c-app-border-color);
+  background: var(--c-sys-color-outline-variant);
 }
 </style>
 ```
@@ -344,9 +344,9 @@ CMenu не добавляет ARIA-атрибуты самостоятельно
 | `closeOnClickOutside` | `boolean`                                                  | —                 | Закрыть при клике вне меню                                            |
 | `closeOnContentClick` | `boolean`                                                  | —                 | Закрыть при клике внутри контента                                     |
 | `align`               | `AlignValue`                                               | —                 | Сторона и выравнивание (напр. `bottom`, `top-center`, `right-center`) |
-|  |
-|  |
-|  |
+|                       |
+|                       |
+|                       |
 | `offsetX`             | `number \| string`                                         | —                 | Горизонтальный отступ (px)                                            |
 | `offsetY`             | `number \| string`                                         | —                 | Вертикальный отступ (px)                                              |
 | `positionX`           | `number`                                                   | —                 | Фиксированная координата X                                            |

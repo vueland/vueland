@@ -122,7 +122,7 @@ The `prepend` and `append` slots place content inside the field borders. The `de
   <!-- Custom details slot -->
   <CTextField v-model="nickname" label="Nickname" :rules="nicknameRules" validate-on="input">
     <template #details="{ errorMessage, hasError }">
-      <span :style="{ color: hasError ? 'var(--c-app-error-color)' : 'inherit' }">
+      <span :style="{ color: hasError ? 'var(--c-sys-color-error)' : 'inherit' }">
         {{ errorMessage || `${nickname.length}/20 characters` }}
       </span>
     </template>
@@ -144,10 +144,10 @@ Rules may return a `Promise`. While validation is in progress, the `details` slo
 <template>
   <CTextField v-model="username" label="Username" :rules="usernameRules" validate-on="blur">
     <template #details="{ errorMessage, hasError, validating }">
-      <span v-if="validating" style="color: var(--c-app-primary-color)">
+      <span v-if="validating" style="color: var(--c-sys-color-primary)">
         Checking availability…
       </span>
-      <span v-else-if="hasError" style="color: var(--c-app-error-color)">
+      <span v-else-if="hasError" style="color: var(--c-sys-color-error)">
         {{ errorMessage }}
       </span>
       <span v-else style="opacity: .6">Must be unique</span>
@@ -328,31 +328,32 @@ type ValidateFn = (value: any) => ValidateResult | Promise<ValidateResult>
 
 ### CInput (root element)
 
-| Variable                        | Default                       | Description                 |
-| ------------------------------- | ----------------------------- | --------------------------- |
-| `--c-input-details-height`      | `24px`                        | Height of the details area  |
-| `--c-input-transition-duration` | `0.2s`                        | Color transition duration   |
-| `--c-input-background-color`    | `var(--c-app-surface-color)`  | Component background        |
-| `--c-input-primary-color`       | `var(--c-app-primary-color)`  | Text color in default state |
-| `--c-input-error-color`         | `var(--c-app-error-color)`    | Text color on error         |
-| `--c-input-disabled-color`      | `var(--c-app-disabled-color)` | Text color when disabled    |
-| `--c-input-readonly-color`      | `var(--c-app-readonly-color)` | Text color when readonly    |
+| Variable                        | Default                               | Description                 |
+| ------------------------------- | ------------------------------------- | --------------------------- |
+| `--c-input-details-height`      | `var(--c-sys-control-height-sm)`      | Height of the details area  |
+| `--c-input-transition-duration` | `var(--c-sys-motion-duration-medium)` | Color transition duration   |
+| `--c-input-primary-color`       | `var(--c-sys-color-primary)`          | Text color in default state |
+| `--c-input-error-color`         | `var(--c-sys-color-error)`            | Text color on error         |
+| `--c-input-disabled-color`      | `var(--c-sys-color-disabled)`         | Text color when disabled    |
+| `--c-input-readonly-color`      | `var(--c-sys-color-readonly)`         | Text color when readonly    |
 
 ### CField (border and label)
 
-| Variable                        | Default                          | Description                         |
-| ------------------------------- | -------------------------------- | ----------------------------------- |
-| `--c-field-min-height`          | `40px`                           | Minimum field height                |
-| `--c-field-prepend-min-width`   | `40px`                           | Min width of the prepend zone       |
-| `--c-field-append-min-width`    | `24px`                           | Min width of the append zone        |
-| `--c-field-border-radius`       | `var(--c-app-border-radius)`     | Field border radius                 |
-| `--c-field-transition-duration` | `0.2s`                           | Field transition duration           |
-| `--c-field-bg-color`            | `var(--c-app-surface-color)`     | Field background                    |
-| `--c-field-color`               | `var(--c-input-primary-color)`   | Border/label color in default state |
-| `--c-field-border-color`        | `var(--c-app-border-color)`      | Border color                        |
-| `--c-field-input-color`         | `var(--c-app-text-color)`        | Typed text color                    |
-| `--c-field-readonly-bg-color`   | `var(--c-app-readonly-bg-color)` | Field background when readonly      |
-| `--c-field-disabled-opacity`    | `var(--c-app-disabled-opacity)`  | Opacity when disabled               |
+| Variable                         | Default                                 | Description                    |
+| -------------------------------- | --------------------------------------- | ------------------------------ |
+| `--c-field-min-height`           | `var(--c-sys-control-height-md)`        | Minimum field height           |
+| `--c-field-prepend-min-width`    | `var(--c-sys-control-height-md)`        | Min width of the prepend zone  |
+| `--c-field-append-min-width`     | `var(--c-sys-control-icon-size)`        | Min width of the append zone   |
+| `--c-field-border-radius`        | `var(--c-sys-shape-md)`                 | Field border radius            |
+| `--c-field-transition-duration`  | `var(--c-sys-motion-duration-medium)`   | Field transition duration      |
+| `--c-field-bg-color`             | `var(--c-sys-color-surface)`            | Field background               |
+| `--c-field-label-color`          | `var(--c-sys-color-primary)`            | Label color                    |
+| `--c-field-focused-border-color` | `var(--c-sys-color-focus-ring)`         | Focus border color             |
+| `--c-field-border-color`         | `var(--c-sys-color-outline-variant)`    | Border color                   |
+| `--c-field-input-text-color`     | `var(--c-sys-color-on-surface)`         | Typed text color               |
+| `--c-field-placeholder-color`    | `var(--c-sys-color-placeholder)`        | Placeholder color              |
+| `--c-field-readonly-bg-color`    | `var(--c-sys-color-readonly-container)` | Field background when readonly |
+| `--c-field-disabled-opacity`     | `var(--c-sys-state-disabled-opacity)`   | Opacity when disabled          |
 
 ### Override example
 

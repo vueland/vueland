@@ -81,5 +81,5 @@
 </template>
 
 <style scoped>
-.sep { height: 1px; background: var(--c-app-border-color) }
+.sep { height: 1px; background: var(--c-sys-color-outline-variant) }
 </style>

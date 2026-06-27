@@ -123,5 +123,5 @@
   justify-items: center;
 }
 .dot-wrap { display: flex; align-items: center; justify-content: center; padding: 20px }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c-app-border-color) }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c-sys-color-outline-variant) }
 </style>

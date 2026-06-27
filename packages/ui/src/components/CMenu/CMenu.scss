@@ -1,24 +1,24 @@
-@use 'sass:map';
-@use '../../styles/maps/elevations-map' as *;
+@use '../../styles/mixins/functions' as *;
 
 $self: '.c-menu';
 
 .c-menu {
-  --menu-bg-color: var(--c-app-surface-color);
-  --menu-text-color: var(--c-app-text-color);
-  --menu-border-radius: var(--c-app-border-radius);
-  --menu-max-height: 100%;
+  --c-menu-bg-color: #{getCssVar('sys', 'color', 'surface')};
+  --c-menu-text-color: #{getCssVar('sys', 'color', 'on-surface')};
+  --c-menu-border-radius: #{getCssVar('sys', 'shape', 'md')};
+  --c-menu-elevation: #{getCssVar('sys', 'elevation', '3')};
+  --c-menu-max-height: 100%;
 
   position: absolute;
   width: auto;
-  background-color: var(--menu-bg-color);
-  border-radius: var(--menu-border-radius);
+  background-color: getCssVar('menu', 'bg-color');
+  border-radius: getCssVar('menu', 'border-radius');
   overflow: hidden;
-  color: var(--menu-text-color);
-  max-height: var(--menu-max-height);
+  color: getCssVar('menu', 'text-color');
+  max-height: getCssVar('menu', 'max-height');
   outline: none;
-  box-shadow:
-    map.get($shadow-key-umbra, 3), map.get($shadow-key-penumbra, 3), map.get($shadow-key-ambient, 3);
+  box-shadow: getCssVar('menu', 'elevation');
+  z-index: getCssVar('sys', 'z-index', 'dropdown');
 
   &__content {
     overflow-x: hidden;

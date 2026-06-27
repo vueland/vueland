@@ -12,7 +12,11 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vueland/vueland.git",
-    "directory": "/"
+    "directory": "packages/ui"
+  },
+  "homepage": "https://vueland.github.io/vueland/en/",
+  "bugs": {
+    "url": "https://github.com/vueland/vueland/issues"
   },
   "sideEffects": [
     "**/*.scss",
@@ -20,6 +24,21 @@
   ],
   "files": [
     "dist"
+  ],
+  "keywords": [
+    "vue",
+    "vue3",
+    "vue-component-library",
+    "ui-library",
+    "design-system",
+    "vite",
+    "typescript",
+    "scss",
+    "jit",
+    "utility-css",
+    "components",
+    "composables",
+    "frontend-platform"
   ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",

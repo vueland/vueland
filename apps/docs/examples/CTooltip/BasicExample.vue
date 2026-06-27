@@ -181,7 +181,7 @@
 .text-pink       { color: #e91e63 !important }
 .text-amber      { color: #ffc107 !important }
 .text-red        { color: #f44336 !important }
-.vsep { width: 1px; height: 24px; background: var(--c-app-border-color) }
+.vsep { width: 1px; height: 24px; background: var(--c-sys-color-outline-variant) }
 .toast-enter-active, .toast-leave-active { transition: opacity .25s, transform .25s }
 .toast-enter-from, .toast-leave-to { opacity: 0; transform: translateY(6px) }
 </style>

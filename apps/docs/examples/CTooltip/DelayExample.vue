@@ -51,9 +51,9 @@
 .delay-card {
   width: 140px;
   cursor: default;
-  background: var(--c-app-surface-color);
+  background: var(--c-sys-color-surface);
   transition: transform .15s, box-shadow .15s;
-  border: 1px solid var(--c-app-border-color);
+  border: 1px solid var(--c-sys-color-outline-variant);
 }
 .delay-card:hover {
   transform: translateY(-4px);
@@ -71,6 +71,6 @@
 }
 .card-sub {
   font-size: 11px;
-  color: var(--c-app-text-secondary-color);
+  color: var(--c-sys-color-on-surface-variant);
 }
 </style>

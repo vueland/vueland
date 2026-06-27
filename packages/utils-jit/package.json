@@ -15,7 +15,11 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vueland/vueland.git",
-    "directory": "/"
+    "directory": "packages/utils-jit"
+  },
+  "homepage": "https://vueland.github.io/vueland/en/plugins/utils-jit/getting-started",
+  "bugs": {
+    "url": "https://github.com/vueland/vueland/issues"
   },
   "exports": {
     ".": {
@@ -26,6 +30,14 @@
   },
   "files": [
     "dist"
+  ],
+  "keywords": [
+    "utility-css",
+    "classes",
+    "jit",
+    "utils",
+    "utility",
+    "scss"
   ],
   "sideEffects": false,
   "scripts": {

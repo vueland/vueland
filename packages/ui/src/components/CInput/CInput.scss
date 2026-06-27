@@ -2,19 +2,16 @@
 @use '../../styles/mixins/functions' as *;
 
 $self: '.c-input';
-$input-details-height: 24px;
-$input-transition-duration: 0.2s;
-
 .c-input {
   // Layout
-  --c-input-details-height: #{$input-details-height};
-  --c-input-transition-duration: #{$input-transition-duration};
+  --c-input-details-height: #{getCssVar('sys', 'control', 'height-sm')};
+  --c-input-transition-duration: #{getCssVar('sys', 'motion', 'duration-medium')};
 
   // Colors
-  --c-input-primary-color: #{getCssVar('app', 'primary-color')};
-  --c-input-error-color: #{getCssVar('app', 'error-color')};
-  --c-input-disabled-color: #{getCssVar('app', 'disabled-color')};
-  --c-input-readonly-color: #{getCssVar('app', 'readonly-color')};
+  --c-input-primary-color: #{getCssVar('sys', 'color', 'primary')};
+  --c-input-error-color: #{getCssVar('sys', 'color', 'error')};
+  --c-input-disabled-color: #{getCssVar('sys', 'color', 'disabled')};
+  --c-input-readonly-color: #{getCssVar('sys', 'color', 'readonly')};
 
   display: flex;
   flex-direction: column;

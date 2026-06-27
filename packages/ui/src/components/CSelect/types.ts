@@ -7,6 +7,7 @@ import type { SelectableProps } from '@/composables/use-selected-chips'
 type CSelectBaseProps<T> = SelectableProps<T> & IterableItemsProps<T>
 
 export type CSelectProps<T> = CSelectBaseProps<T> & {
+    chips?: boolean
     options?: {
         extKey?: string
         noItemsMessage?: string
