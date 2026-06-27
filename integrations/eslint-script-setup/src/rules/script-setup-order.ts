@@ -34,6 +34,40 @@ function getNodeIndent(sourceCode: Rule.RuleContext['sourceCode'], node: AnyNode
     return /^\s+$/.test(indent) ? indent : ''
 }
 
+function getOrderIndex(order: NodeCategory[], category: NodeCategory): number | null {
+    if (category === 'unknown') {
+        return null
+    }
+
+    const index = order.indexOf(category)
+
+    return index === -1 ? order.length : index
+}
+
+function getSortedIndices(categories: NodeCategory[], order: NodeCategory[]): number[] {
+    const sortableIndices = categories
+        .map((category, index) => ({ category, index }))
+        .filter(({ category }) => getOrderIndex(order, category) !== null)
+        .map(({ index }) => index)
+
+    const sortedSortableIndices = [...sortableIndices].sort((a, b) => {
+        const idxA = getOrderIndex(order, categories[a])!
+        const idxB = getOrderIndex(order, categories[b])!
+
+        return idxA !== idxB ? idxA - idxB : a - b
+    })
+
+    let sortedIndex = 0
+
+    return categories.map((category, index) => {
+        if (getOrderIndex(order, category) === null) {
+            return index
+        }
+
+        return sortedSortableIndices[sortedIndex++]
+    })
+}
+
 // Конвертирует const foo = () => {} / const foo = function() {} → function foo() {}
 // Возвращает null если нода не подходит для конвертации
 function convertArrowToFunctionDecl(
@@ -140,9 +174,9 @@ export const scriptSetupOrder: Rule.RuleModule = {
 
                 for (let i = 0; i < body.length; i++) {
                     const cat = categories[i] as NodeCategory
-                    const orderIdx = customOrder.indexOf(cat)
+                    const orderIdx = getOrderIndex(customOrder, cat)
 
-                    if (orderIdx === -1) {
+                    if (orderIdx === null) {
                         continue
                     }
 
@@ -160,19 +194,7 @@ export const scriptSetupOrder: Rule.RuleModule = {
                 if (!violatingNode) return
 
                 // build sorted order
-                const sortedIndices = [...body.keys()].sort((a, b) => {
-                    const catA = categories[a] as NodeCategory
-                    const catB = categories[b] as NodeCategory
-
-                    const idxA = customOrder.indexOf(catA)
-                    const idxB = customOrder.indexOf(catB)
-
-                    if (idxA === -1 && idxB === -1) return a - b
-                    if (idxA === -1) return 1
-                    if (idxB === -1) return -1
-
-                    return idxA !== idxB ? idxA - idxB : a - b
-                })
+                const sortedIndices = getSortedIndices(categories, customOrder)
 
                 const entries = buildEntries(body)
                 const conflicts = detectOrderConflicts(entries, sortedIndices)
@@ -218,16 +240,7 @@ export const scriptSetupOrder: Rule.RuleModule = {
                                 )
 
                                 // Пересортируем с новыми категориями
-                                const newSortedIndices = [...body.keys()].sort((a, b) => {
-                                    const catA = newCategories[a]
-                                    const catB = newCategories[b]
-                                    const idxA = customOrder.indexOf(catA)
-                                    const idxB = customOrder.indexOf(catB)
-                                    if (idxA === -1 && idxB === -1) return a - b
-                                    if (idxA === -1) return 1
-                                    if (idxB === -1) return -1
-                                    return idxA !== idxB ? idxA - idxB : a - b
-                                })
+                                const newSortedIndices = getSortedIndices(newCategories, customOrder)
 
                                 const sortedText = newSortedIndices
                                     .map((idx) => getNodeIndent(sourceCode, body[idx]) + convertedTexts[idx])

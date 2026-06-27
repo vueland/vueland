@@ -38,7 +38,7 @@
 
     const clearable = computed(() => props.clearable
         && props.focused
-        && (props.filled || !!unref(value))
+        && (!!unref(value) || props.dirty)
     )
 
     const isDefault = computed(() =>
@@ -51,7 +51,7 @@
     const classes = computed(() => [
         {
             'c-field--focused': props.focused,
-            'c-field--filled': props.filled || !!unref(value),
+            'c-field--filled': !!unref(value) || props.dirty,
             'c-field--has-prepend': !!slots.prepend,
             'c-field--disabled': props.disabled,
             'c-field--readonly': props.readonly,
@@ -130,7 +130,7 @@
                 ref="inputRef"
                 :value="value"
                 :disabled="disabled"
-                :readonly="readonly || noInput"
+                :readonly="readonly"
                 class="c-field-input"
                 :class="presets.input"
                 @input="onInput"

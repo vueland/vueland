@@ -6,12 +6,13 @@ import type { AutoPositionProps } from '@/composables/use-auto-position'
 import type { DelayProps } from '@/composables/use-delay-actions'
 import type { DimensionsProps } from '@/types'
 
-export type CMenuProps =
-    ActivatorProps &
+type CMenuBaseProps = ActivatorProps &
     DimensionsProps &
     AutoPositionProps &
     DelayProps &
-    Partial<COverlayProps> & {
+    Partial<COverlayProps>
+
+export type CMenuProps = CMenuBaseProps & {
     closeOnClickOutside?: boolean
     closeOnContentClick?: boolean
     ssr?: boolean

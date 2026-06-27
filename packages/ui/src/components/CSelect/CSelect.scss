@@ -5,11 +5,15 @@
     padding: 5px 0;
   }
 
-  & > .c-field > .c-field__append {
+  & > .c-input__field > .c-text-field > .c-field > .c-field__append {
     transition: transform 0.1s linear;
   }
 
-  & > .c-field--focused > .c-field__append {
+  & > .c-input__field > .c-text-field > .c-field--focused > .c-field__append {
     transform: rotate(180deg);
+  }
+
+  & > .c-input__field > .c-text-field > .c-field--focused > .c-field__core > .c-field-input {
+    caret-color: transparent;
   }
 }

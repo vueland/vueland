@@ -21,12 +21,12 @@ function getInitCallName(decl: AnyNode): string | null {
 }
 
 export interface ClassifyConfig {
-  reactiveApis: Set<string>
-  computedApis: Set<string>
-  watchEffectApis: Set<string>
-  watchApis: Set<string>
-  lifecycleApis: Set<string>
-  composablePattern: RegExp
+    reactiveApis: Set<string>
+    computedApis: Set<string>
+    watchEffectApis: Set<string>
+    watchApis: Set<string>
+    lifecycleApis: Set<string>
+    composablePattern: RegExp
 }
 
 export function classifyNode(node: AnyNode, config: ClassifyConfig): NodeCategory {

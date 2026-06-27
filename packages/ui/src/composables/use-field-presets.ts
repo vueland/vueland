@@ -20,7 +20,7 @@ export function useFieldPresets({
 
     const active = (): Partial<Record<CInputState, boolean>> => ({
         focused: !!props.focused,
-        filled: !!props.filled || isDef(props.modelValue),
+        filled: !!props.dirty || isDef(props.modelValue),
         error: !!props.error,
         disabled: !!props.disabled,
         readonly: !!props.readonly,

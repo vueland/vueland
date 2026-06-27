@@ -106,14 +106,43 @@ describe('script-setup-order', () => {
         })
     })
 
-    it('valid: кастомный order без watchEffect — категория игнорируется', () => {
+    it('invalid: кастомный order ставит неперечисленные категории после указанных', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    options: [{ order: ['import', 'reactive', 'computed', 'watch', 'lifecycle'] }],
+                    code: 'const count = ref(0)\nwatch(count, () => {})\nwatchEffect(() => {})\nonMounted(() => {})',
+                    output: 'const count = ref(0)\n\nwatch(count, () => {})\n\nonMounted(() => {})\n\nwatchEffect(() => {})',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    it('invalid: частичный order закрепляет macros выше composable', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    options: [{ order: ['import', 'type', 'macros'] }],
+                    code: 'const router = useRouter()\nconst slots = defineSlots()',
+                    output: 'const slots = defineSlots()\n\nconst router = useRouter()',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    it('valid: unknown-ноды не участвуют в кастомном order', () => {
         tester.run('script-setup-order', scriptSetupOrder, {
             valid: [
                 {
                     filename: 'Component.vue',
-                    options: [{ order: ['import', 'reactive', 'computed', 'watch', 'lifecycle'] }],
-                    // watchEffect не в order → пропускается, нарушения нет
-                    code: 'const count = ref(0)\nwatch(count, () => {})\nwatchEffect(() => {})\nonMounted(() => {})',
+                    options: [{ order: ['import', 'type', 'macros'] }],
+                    code: 'defineExpose({ focus })\nconst model = defineModel()',
                 },
             ],
             invalid: [],

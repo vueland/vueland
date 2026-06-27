@@ -1,5 +1,9 @@
 <script setup lang="ts" generic="T">
-    import { shallowRef } from 'vue'
+    import {
+        shallowRef,
+        unref,
+        useAttrs
+    } from 'vue'
 
     import { CField } from '@/components/CField'
     import { CInput } from '@/components/CInput'
@@ -9,6 +13,8 @@
     type CInputExpose = {
         validate(): Promise<boolean> | boolean | undefined
         reset(): void
+        blur(): void
+        focus(): void
     }
 
     defineOptions({ name: 'CTextField' })
@@ -19,30 +25,51 @@
 
     const model = defineModel<string | number | undefined | null>()
 
-    const inputRef = shallowRef<CInputExpose>()
+    const cInputRef = shallowRef<CInputExpose>()
+
+    const rootAttrs = useAttrs()
 
     function validate() {
-        return inputRef.value?.validate()
+        return unref(cInputRef)?.validate()
     }
 
     function reset() {
-        inputRef.value?.reset()
+        unref(cInputRef)?.reset()
     }
 
     function onClear() {
         model.value = undefined
     }
 
-    defineExpose({ validate, reset })
+    function onFocus() {
+        unref(cInputRef)?.focus()
+    }
+
+    function onBlur() {
+        if (rootAttrs.role === 'combobox') {
+            return
+        }
+
+        unref(cInputRef)?.blur()
+    }
+
+    defineExpose({
+        validate,
+        reset,
+        blur: () => unref(cInputRef)?.blur(),
+        focus: () => unref(cInputRef)?.focus(),
+    })
+
+
 </script>
 
 <template>
     <c-input
-        ref="inputRef"
+        ref="cInputRef"
         :model-value="model"
-        v-bind="$attrs"
+        v-bind="rootAttrs"
     >
-        <template #field="{focus, blur, focused, attrs, uid, label, clearable, readonly, disabled, hasError}">
+        <template #field="{focused, attrs, uid, dirty, label, clearable, readonly, disabled, hasError}">
             <div class="c-text-field">
                 <c-field
                     :id="uid"
@@ -51,14 +78,19 @@
                     :label
                     :readonly
                     :disabled
+                    :dirty
                     :clearable
                     :error="hasError"
                     v-bind="attrs"
-                    @focus="focus"
-                    @blur="blur"
+                    @focus="onFocus"
+                    @blur="onBlur"
                     @clear="onClear"
+                    @click.prevent.stop
                 >
-                    <template #before>
+                    <template
+                        v-if="$slots.before"
+                        #before
+                    >
                         <slot name="before" />
                     </template>
                     <template
@@ -74,6 +106,11 @@
                         <slot name="append" />
                     </template>
                 </c-field>
+                <slot
+                    v-if="$slots.menu"
+                    :id="`${uid}-menu`"
+                    name="menu"
+                />
             </div>
         </template>
         <template #details="{errorMessage, details, validating, hasError}">

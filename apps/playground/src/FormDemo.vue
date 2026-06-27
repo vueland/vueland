@@ -12,9 +12,9 @@
     const value = shallowRef([])
 
     const items = [
-        {name: 'Alex', email: 'aaa@mail.ru'},
-        {name: 'Vitaly', email: 'vvv@mail.ru'},
-        {name: 'Mikhail', email: 'mmm@mail.ru'},
+        { name: 'Alex', email: 'aaa@mail.ru' },
+        { name: 'Vitaly', email: 'vvv@mail.ru' },
+        { name: 'Mikhail', email: 'mmm@mail.ru' },
     ]
 
     watchEffect(() => {{
@@ -39,7 +39,7 @@
                         <h2>Simple card example</h2>
                     </c-card-header>
                     <c-card-body>
-                        <c-autocomplete
+                        <c-select
                             v-model="value"
                             label="Select user"
                             clearable
@@ -50,6 +50,24 @@
                                 noItemsMessage: 'No user found',
                             }"
                         />
+
+                        <c-tooltip
+                            align="top-center"
+                            open-on-hover
+                            open-on-focus
+                            close-on-leave
+                            close-on-blur
+                        >
+                            <template #activator="{ on, activator }">
+                                <c-btn
+                                    v-bind="activator"
+                                    v-on="on"
+                                >
+                                    tooltip
+                                </c-btn>
+                            </template>
+                            <span>some text</span>
+                        </c-tooltip>
                     </c-card-body>
                 </c-card>
             </c-col>

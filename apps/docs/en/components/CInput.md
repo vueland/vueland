@@ -163,21 +163,22 @@ The example above uses `preset="input.blue"` across six states:
 
 ### Props
 
-| Prop         | Type                | Default     | Description                                                                  |
-| ------------ | ------------------- | ----------- | ---------------------------------------------------------------------------- |
-| `modelValue` | `any`               | `undefined` | Field value (v-model)                                                        |
-| `id`         | `string`            | auto        | Base ID used to generate `uid`, `uid-label`, `uid-details`                   |
-| `label`      | `string`            | —           | Label text (forwarded into the `field` slot)                                 |
-| `details`    | `string`            | —           | Hint text shown below the field                                              |
-| `noDetails`  | `boolean`           | `false`     | Hide the details area entirely                                               |
-| `clearable`  | `boolean`           | `false`     | Forward `clearable` into the `field` slot                                    |
-| `disabled`   | `boolean`           | `false`     | Blocks focus, adds `aria-disabled`                                           |
-| `readonly`   | `boolean`           | `false`     | Adds `aria-readonly`, blocks editing                                         |
-| `focused`    | `boolean`           | `false`     | Initial focused state                                                        |
-| `role`       | `CInputRole`        | —           | Semantic role. Drives the aria wiring and the `uid` prefix                   |
-| `rules`      | `ValidateFn[]`      | `[]`        | Validation functions                                                         |
-| `validateOn` | `'input' \| 'blur'` | `'input'`   | When to trigger automatic validation                                         |
-| `preset`     | `string`            | —           | Preset name (dot-path into the `presets` object passed to `createVuelandUI`) |
+| Prop         | Type                            | Default     | Description                                                                  |
+| ------------ | ------------------------------- | ----------- | ---------------------------------------------------------------------------- |
+| `modelValue` | `T \| T[] \| undefined \| null` | `undefined` | Field value (v-model)                                                        |
+| `id`         | `string`                        | auto        | Base ID used to generate `uid`, `uid-label`, `uid-details`                   |
+| `label`      | `string`                        | —           | Label text (forwarded into the `field` slot)                                 |
+| `details`    | `string`                        | —           | Hint text shown below the field                                              |
+| `noDetails`  | `boolean`                       | `false`     | Hide the details area entirely                                               |
+| `clearable`  | `boolean`                       | `false`     | Forward `clearable` into the `field` slot                                    |
+| `disabled`   | `boolean`                       | `false`     | Blocks focus, adds `aria-disabled`                                           |
+| `readonly`   | `boolean`                       | `false`     | Adds `aria-readonly`, blocks editing                                         |
+| `focused`    | `boolean`                       | `false`     | Initial focused state                                                        |
+| `dirty`      | `boolean`                       | `false`     | Marks the field as filled for visual state                                   |
+| `role`       | `CInputRole`                    | —           | Semantic role. Drives the aria wiring and the `uid` prefix                   |
+| `rules`      | `ValidateFn[]`                  | `[]`        | Validation functions                                                         |
+| `validateOn` | `'input' \| 'blur'`             | `'input'`   | When to trigger automatic validation                                         |
+| `preset`     | `string`                        | —           | Preset name (dot-path into the `presets` object passed to `createVuelandUI`) |
 
 #### CInputRole type
 
@@ -210,6 +211,7 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 | `clearable`    | `boolean \| undefined`      | Value of the `clearable` prop                            |
 | `disabled`     | `boolean \| undefined`      | Value of the `disabled` prop                             |
 | `readonly`     | `boolean \| undefined`      | Value of the `readonly` prop                             |
+| `dirty`        | `boolean \| undefined`      | Value of the `dirty` prop                                |
 | `preset`       | `CInputPreset \| undefined` | Resolved preset set (also provided to the field subtree) |
 | `hasError`     | `boolean`                   | Whether there is an active validation error              |
 | `errorMessage` | `string \| undefined`       | Current error message                                    |
@@ -318,5 +320,6 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 | `c-input--has-error`  | Validation error is active           |
 | `c-input--disabled`   | `disabled = true`                    |
 | `c-input--readonly`   | `readonly = true`                    |
+| `c-input--dirty`      | `dirty = true`                       |
 | `c-input--clearable`  | `clearable = true`                   |
 | `c-input--validating` | Async validation is running          |

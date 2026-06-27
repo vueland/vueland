@@ -5,7 +5,7 @@
     import { CLabel } from '@/components/CLabel'
     import { IconAliases } from '@/enums'
 
-    defineOptions({inheritAttrs: false})
+    defineOptions({ inheritAttrs: false })
 
     const props = defineProps<{
         error: boolean

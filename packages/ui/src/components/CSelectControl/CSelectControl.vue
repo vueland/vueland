@@ -65,7 +65,7 @@
         checkOn()
     }
 
-    provide($SELECT_CONTROL_API_KEY,{
+    provide($SELECT_CONTROL_API_KEY, {
         checked,
         toggle,
         checkOn,

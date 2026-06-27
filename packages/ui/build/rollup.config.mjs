@@ -1,5 +1,6 @@
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
+import autoprefixer from 'autoprefixer'
 import * as fs from 'node:fs'
 import path from 'path'
 import { defineConfig } from 'rollup'
@@ -25,6 +26,7 @@ const makeCssPlugin = (fileName) =>
     postcss({
         extract: fileName,
         minimize: true,
+        plugins: [autoprefixer()],
         sourceMap: false,
         use: ['sass'],
     })

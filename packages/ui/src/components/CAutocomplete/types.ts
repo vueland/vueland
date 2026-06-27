@@ -4,10 +4,9 @@ import type { CInputProps, CInputSlots } from '@/components/CInput'
 import type { IterableItemsProps, NormalizedItem } from '@/composables/use-normalized-items'
 import type { SelectableProps } from '@/composables/use-selected-chips'
 
-export type CAutocompleteProps<T> =
-    IterableItemsProps<T>
-    & SelectableProps<T>
-    & {
+type CAutocompleteBaseProps<T> = IterableItemsProps<T> & SelectableProps<T>
+
+export type CAutocompleteProps<T> = CAutocompleteBaseProps<T> & {
     options?: {
         noItemsMessage?: string
         menuPreset?: string

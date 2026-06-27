@@ -5,7 +5,7 @@
         fixed?: boolean;
     }>()
 
-    const classes = computed(() => ({'c-toolbar--fixed': props.fixed,}))
+    const classes = computed(() => ({ 'c-toolbar--fixed': props.fixed, }))
 </script>
 
 <template>

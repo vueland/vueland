@@ -163,21 +163,22 @@ const vueland = createVuelandUI({
 
 ### Props
 
-| Prop         | Тип                 | По умолчанию | Описание                                                                   |
-| ------------ | ------------------- | ------------ | -------------------------------------------------------------------------- |
-| `modelValue` | `any`               | `undefined`  | Значение (v-model)                                                         |
-| `id`         | `string`            | auto         | Базовый ID для генерации `uid`, `uid-label`, `uid-details`                 |
-| `label`      | `string`            | —            | Текст лейбла (передаётся в слот `field`)                                   |
-| `details`    | `string`            | —            | Подсказка под полем                                                        |
-| `noDetails`  | `boolean`           | `false`      | Скрыть блок details                                                        |
-| `clearable`  | `boolean`           | `false`      | Передать `clearable` в слот `field`                                        |
-| `disabled`   | `boolean`           | `false`      | Блокирует фокус, добавляет `aria-disabled`                                 |
-| `readonly`   | `boolean`           | `false`      | Добавляет `aria-readonly`, блокирует ввод                                  |
-| `focused`    | `boolean`           | `false`      | Начальное состояние фокуса                                                 |
-| `role`       | `CInputRole`        | —            | Семантическая роль. Управляет aria-разметкой и префиксом `uid`             |
-| `rules`      | `ValidateFn[]`      | `[]`         | Функции валидации                                                          |
-| `validateOn` | `'input' \| 'blur'` | `'input'`    | Момент запуска валидации                                                   |
-| `preset`     | `string`            | —            | Имя пресета (dot-путь в объекте `presets`, переданном в `createVuelandUI`) |
+| Prop         | Тип                             | По умолчанию | Описание                                                                   |
+| ------------ | ------------------------------- | ------------ | -------------------------------------------------------------------------- |
+| `modelValue` | `T \| T[] \| undefined \| null` | `undefined`  | Значение (v-model)                                                         |
+| `id`         | `string`                        | auto         | Базовый ID для генерации `uid`, `uid-label`, `uid-details`                 |
+| `label`      | `string`                        | —            | Текст лейбла (передаётся в слот `field`)                                   |
+| `details`    | `string`                        | —            | Подсказка под полем                                                        |
+| `noDetails`  | `boolean`                       | `false`      | Скрыть блок details                                                        |
+| `clearable`  | `boolean`                       | `false`      | Передать `clearable` в слот `field`                                        |
+| `disabled`   | `boolean`                       | `false`      | Блокирует фокус, добавляет `aria-disabled`                                 |
+| `readonly`   | `boolean`                       | `false`      | Добавляет `aria-readonly`, блокирует ввод                                  |
+| `focused`    | `boolean`                       | `false`      | Начальное состояние фокуса                                                 |
+| `dirty`      | `boolean`                       | `false`      | Помечает поле как заполненное для визуального состояния                    |
+| `role`       | `CInputRole`                    | —            | Семантическая роль. Управляет aria-разметкой и префиксом `uid`             |
+| `rules`      | `ValidateFn[]`                  | `[]`         | Функции валидации                                                          |
+| `validateOn` | `'input' \| 'blur'`             | `'input'`    | Момент запуска валидации                                                   |
+| `preset`     | `string`                        | —            | Имя пресета (dot-путь в объекте `presets`, переданном в `createVuelandUI`) |
 
 #### Тип CInputRole
 
@@ -210,6 +211,7 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 | `clearable`    | `boolean \| undefined`      | Значение prop `clearable`                                          |
 | `disabled`     | `boolean \| undefined`      | Значение prop `disabled`                                           |
 | `readonly`     | `boolean \| undefined`      | Значение prop `readonly`                                           |
+| `dirty`        | `boolean \| undefined`      | Значение prop `dirty`                                              |
 | `preset`       | `CInputPreset \| undefined` | Резолвнутый набор пресета (также провайдится в поддерево поля)     |
 | `hasError`     | `boolean`                   | Есть ли активная ошибка                                            |
 | `errorMessage` | `string \| undefined`       | Текущее сообщение об ошибке                                        |
@@ -317,5 +319,6 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 | `c-input--has-error`  | Ошибка валидации                     |
 | `c-input--disabled`   | `disabled = true`                    |
 | `c-input--readonly`   | `readonly = true`                    |
+| `c-input--dirty`      | `dirty = true`                       |
 | `c-input--clearable`  | `clearable = true`                   |
 | `c-input--validating` | Идёт async-валидация                 |

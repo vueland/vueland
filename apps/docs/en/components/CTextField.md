@@ -232,20 +232,9 @@ The preset is distributed automatically: `CInput` applies `root` and `details`, 
 
 ### Props
 
-| Prop         | Type                                    | Default     | Description                                                   |
-| ------------ | --------------------------------------- | ----------- | ------------------------------------------------------------- |
-| `modelValue` | `string \| number \| null \| undefined` | `undefined` | Field value (v-model)                                         |
-| `id`         | `string`                                | auto        | `<input>` id. Auto-generated with prefix `input-` if omitted  |
-| `label`      | `string`                                | —           | Floating label text                                           |
-| `details`    | `string`                                | —           | Hint text shown below the field                               |
-| `noDetails`  | `boolean`                               | `false`     | Hide the details area entirely                                |
-| `clearable`  | `boolean`                               | `false`     | Show a clear button when the field has a value and is focused |
-| `disabled`   | `boolean`                               | `false`     | Disable the field. Blocks focus and input                     |
-| `readonly`   | `boolean`                               | `false`     | Read-only. Focus is allowed, editing is not                   |
-| `focused`    | `boolean`                               | `false`     | Initial focused state                                         |
-| `rules`      | `ValidateFn[]`                          | `[]`        | Array of validation functions                                 |
-| `validateOn` | `'input' \| 'blur'`                     | `'input'`   | When to trigger automatic validation                          |
-| `preset`     | `string`                                | —           | Preset name from Vueland UI configuration                     |
+`CTextField` accepts [`CInput`](/en/components/CInput#props) props, including `label`, `details`, `clearable`, `disabled`, `readonly`, `focused`, `dirty`, `rules`, `validateOn`, and `preset`.
+
+`v-model` works with `string | number | null | undefined`.
 
 ### Native attributes
 
@@ -274,7 +263,14 @@ The preset is distributed automatically: `CInput` applies `root` and `details`, 
 | --------- | ------------------------ | --------------------------------------------------- |
 | `prepend` | —                        | Content placed on the left inside the field border  |
 | `append`  | —                        | Content placed on the right inside the field border |
+| `menu`    | `{ id: string }`         | Dropdown content associated with the field          |
 | `details` | `CInputDetailsSlotProps` | Replaces the entire hint/error area                 |
+
+#### `menu` slot props
+
+| Prop | Type     | Description                                    |
+| ---- | -------- | ---------------------------------------------- |
+| `id` | `string` | Menu ID associated with the field (`uid-menu`) |
 
 #### `details` slot props
 
