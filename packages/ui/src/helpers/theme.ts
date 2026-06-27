@@ -1,54 +1,176 @@
-import type { ThemeDefinition } from '@/types'
+import type { SystemThemeTokens, ThemeDefinition } from '@/types'
 
-const SEMANTIC_VAR_MAP: Record<string, string> = {
-    primary: '--c-app-primary-color',
-    onPrimary: '--c-app-on-primary-color',
-    secondary: '--c-app-secondary-color',
-    success: '--c-app-success-color',
-    error: '--c-app-error-color',
-    warning: '--c-app-warning-color',
-    info: '--c-app-info-color',
-    accent: '--c-app-accent-color',
+type SystemThemeKey = keyof SystemThemeTokens
 
-    background: '--c-app-background-color',
-    surface: '--c-app-surface-color',
-    surfaceVariant: '--c-app-surface-variant-color',
-    onSurface: '--c-app-on-surface-color',
+const COLOR_THEME_KEYS = [
+    'scheme',
+    'primary',
+    'onPrimary',
+    'primaryContainer',
+    'onPrimaryContainer',
+    'secondary',
+    'onSecondary',
+    'secondaryContainer',
+    'onSecondaryContainer',
+    'tertiary',
+    'onTertiary',
+    'tertiaryContainer',
+    'onTertiaryContainer',
+    'success',
+    'onSuccess',
+    'successContainer',
+    'onSuccessContainer',
+    'error',
+    'onError',
+    'errorContainer',
+    'onErrorContainer',
+    'warning',
+    'onWarning',
+    'warningContainer',
+    'onWarningContainer',
+    'info',
+    'onInfo',
+    'infoContainer',
+    'onInfoContainer',
+    'background',
+    'onBackground',
+    'surface',
+    'surfaceDim',
+    'surfaceBright',
+    'surfaceContainerLowest',
+    'surfaceContainerLow',
+    'surfaceContainer',
+    'surfaceContainerHigh',
+    'surfaceContainerHighest',
+    'surfaceVariant',
+    'onSurface',
+    'onSurfaceVariant',
+    'inverseSurface',
+    'inverseOnSurface',
+    'outline',
+    'outlineVariant',
+    'placeholder',
+    'disabled',
+    'disabledContainer',
+    'readonly',
+    'readonlyContainer',
+    'focusRing',
+    'scrim',
+    'shadow',
+] satisfies SystemThemeKey[]
 
-    text: '--c-app-text-color',
-    textSecondary: '--c-app-text-secondary-color',
-    placeholder: '--c-app-placeholder-color',
+const SYSTEM_THEME_KEYS = [
+    'stateHoverColor',
+    'stateFocusColor',
+    'statePressedColor',
+    'stateSelectedColor',
+    'stateHoverOpacity',
+    'stateFocusOpacity',
+    'statePressedOpacity',
+    'stateDraggedOpacity',
+    'stateDisabledOpacity',
+    'stateDisabledContainerOpacity',
+    'typographyFontFamilyBase',
+    'typographyFontFamilyMono',
+    'typographyBodySize',
+    'typographyBodyLineHeight',
+    'typographyLabelSize',
+    'typographyLabelLineHeight',
+    'typographyLabelWeight',
+    'typographyTitleSize',
+    'typographyTitleLineHeight',
+    'typographyTitleWeight',
+    'space0',
+    'space1',
+    'space2',
+    'space3',
+    'space4',
+    'space5',
+    'space6',
+    'space8',
+    'space10',
+    'densityScale',
+    'controlHeightSm',
+    'controlHeightMd',
+    'controlHeightLg',
+    'controlPaddingInline',
+    'controlIconSize',
+    'shapeNone',
+    'shapeXs',
+    'shapeSm',
+    'shapeMd',
+    'shapeLg',
+    'shapeXl',
+    'shapePill',
+    'borderWidthThin',
+    'borderWidthMedium',
+    'borderWidthThick',
+    'elevation0',
+    'elevation1',
+    'elevation2',
+    'elevation3',
+    'elevation4',
+    'elevation5',
+    'motionDurationInstant',
+    'motionDurationFast',
+    'motionDurationMedium',
+    'motionDurationSlow',
+    'motionEasingLinear',
+    'motionEasingStandard',
+    'motionEasingEmphasized',
+    'zIndexBase',
+    'zIndexSticky',
+    'zIndexDropdown',
+    'zIndexOverlay',
+    'zIndexModal',
+    'zIndexToast',
+    'zIndexTooltip',
+] satisfies SystemThemeKey[]
 
-    disabled: '--c-app-disabled-color',
-    disabledBg: '--c-app-disabled-bg-color',
-    disabledOpacity: '--c-app-disabled-opacity',
-
-    readonly: '--c-app-readonly-color',
-    readonlyBg: '--c-app-readonly-bg-color',
-
-    focus: '--c-app-focus-color',
-
-    errorBg: '--c-app-error-bg-color',
-
-    hover: '--c-app-hover-color',
-    overlay: '--c-app-overlay-color',
-    shadow: '--c-app-shadow-color',
-
-    border: '--c-app-border-color',
-    radius: '--c-app-border-radius',
-}
+const COLOR_THEME_KEY_SET = new Set<string>(COLOR_THEME_KEYS)
+const SYSTEM_THEME_KEY_SET = new Set<string>(SYSTEM_THEME_KEYS)
 
 function toKebabCase(str: string): string {
     return str.replace(/([A-Z])/g, (m) => `-${m.toLowerCase()}`)
 }
 
+function isCustomProperty(key: string): key is `--${string}` {
+    return key.startsWith('--')
+}
+
+function resolveThemeVar(key: string): string | undefined {
+    if (isCustomProperty(key)) {
+        return key
+    }
+
+    if (COLOR_THEME_KEY_SET.has(key)) {
+        return key === 'scheme'
+            ? '--c-sys-color-scheme'
+            : `--c-sys-color-${toKebabCase(key)}`
+    }
+
+    if (SYSTEM_THEME_KEY_SET.has(key)) {
+        return `--c-sys-${toKebabCase(key)}`
+    }
+
+    console.warn(`[VuelandUI] Unknown theme token "${key}". Use a system key or an explicit CSS custom property.`)
+    return undefined
+}
+
 export function buildVars(theme: ThemeDefinition): [string, string][] {
-    return Object.entries(theme)
-        .filter((entry): entry is [string, string] => entry[1] !== undefined)
-        .map(([key, value]) => {
-            const cssVar = SEMANTIC_VAR_MAP[key] ?? `--c-app-${toKebabCase(key)}`
-            return [cssVar, value]
-        })
+    return Object.entries(theme).reduce<[string, string][]>((vars, [key, value]) => {
+        if (value === undefined) {
+            return vars
+        }
+
+        const cssVar = resolveThemeVar(key)
+
+        if (cssVar) {
+            vars.push([cssVar, value])
+        }
+
+        return vars
+    }, [])
 }
 
 export function renderThemeStyle(theme: ThemeDefinition): string {

@@ -1,9 +1,13 @@
+@use '../../styles/mixins/functions' as *;
+
 .c-scrim {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  background: getCssVar('sys', 'color', 'scrim');
+  z-index: getCssVar('sys', 'z-index', 'overlay');
 
   &--blurred {
     backdrop-filter: blur(10px);

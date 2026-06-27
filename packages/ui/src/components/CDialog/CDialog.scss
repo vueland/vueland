@@ -1,3 +1,5 @@
+@use '../../styles/mixins/functions' as *;
+
 .c-dialog {
   position: fixed;
   top: 0;
@@ -7,4 +9,5 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: getCssVar('sys', 'z-index', 'modal');
 }

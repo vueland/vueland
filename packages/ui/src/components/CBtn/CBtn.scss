@@ -1,30 +1,31 @@
-@use 'sass:map';
-@use '../../styles/maps/colors-map' as *;
+@use '../../styles/mixins/functions' as *;
 
 .c-btn {
-  --btn-text-color: #ffffff;
-  --btn-border-radius: var(--c-app-border-radius);
-  --btn-bg-color: var(--c-app-primary-color);
-  --btn-paddings: 8px 12px;
-  --btn-min-width: 80px;
-  --btn-width: auto;
-  --btn-min-height: 24px;
-  --btn-height: auto;
-  --btn-font-size: 16px;
+  --c-btn-text-color: #{getCssVar('sys', 'color', 'on-primary')};
+  --c-btn-border-radius: #{getCssVar('sys', 'shape', 'md')};
+  --c-btn-bg-color: #{getCssVar('sys', 'color', 'primary')};
+  --c-btn-disabled-text-color: #{getCssVar('sys', 'color', 'disabled')};
+  --c-btn-disabled-bg-color: #{getCssVar('sys', 'color', 'disabled-container')};
+  --c-btn-disabled-opacity: #{getCssVar('sys', 'state', 'disabled-opacity')};
+  --c-btn-paddings: #{getCssVar('sys', 'space', '2')} #{getCssVar('sys', 'space', '3')};
+  --c-btn-min-width: 80px;
+  --c-btn-width: auto;
+  --c-btn-min-height: #{getCssVar('sys', 'control', 'height-sm')};
+  --c-btn-height: auto;
+  --c-btn-font-size: #{getCssVar('sys', 'typography', 'body-size')};
 
-  padding: var(--btn-paddings);
-  border-radius: var(--btn-border-radius);
-  color: var(--btn-text-color);
-  min-width: var(--btn-min-width);
-  width: var(--btn-width);
-  height: var(--btn-height);
-  min-height: var(--btn-min-height);
+  padding: getCssVar('btn', 'paddings');
+  border-radius: getCssVar('btn', 'border-radius');
+  color: getCssVar('btn', 'text-color');
+  min-width: getCssVar('btn', 'min-width');
+  width: getCssVar('btn', 'width');
+  height: getCssVar('btn', 'height');
+  min-height: getCssVar('btn', 'min-height');
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  //line-height: 1;
-  font-size: var(--btn-font-size);
+  font-size: getCssVar('btn', 'font-size');
   user-select: none;
   vertical-align: middle;
   text-decoration: none;
@@ -33,22 +34,23 @@
     white-space: nowrap;
   }
 
-  &:disabled {
-    background-color: map.get($grey, 'lighten-1') !important;
-    color: map.get($grey, 'lighten-3') !important;
+  &:disabled,
+  &--disabled {
+    background-color: getCssVar('btn', 'disabled-bg-color') !important;
+    color: getCssVar('btn', 'disabled-text-color') !important;
     cursor: not-allowed;
+    opacity: getCssVar('btn', 'disabled-opacity');
     pointer-events: none;
   }
 
   &--flat {
-    background-color: var(--btn-bg-color);
-    color: currentColor;
+    background-color: getCssVar('btn', 'bg-color');
   }
 
   &--outlined {
     background-color: transparent;
     border: 1px solid currentColor;
-    color: currentColor;
+    color: getCssVar('btn', 'bg-color');
 
     &:before {
       content: '';

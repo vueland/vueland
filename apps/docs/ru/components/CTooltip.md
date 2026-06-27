@@ -13,6 +13,7 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 <BasicExample />
 
 ::: details Показать код
+
 ```vue
 <template>
   <CTooltip open-on-hover close-on-leave align="bottom-center" :offset-y="6">
@@ -23,6 +24,7 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
   </CTooltip>
 </template>
 ```
+
 :::
 
 ## Позиционирование
@@ -30,6 +32,7 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 <PositioningExample />
 
 ::: details Показать код
+
 ```vue
 <CTooltip align="top-center" open-on-hover close-on-leave :offset-y="6">
   <template #activator="{ on, activator }">
@@ -38,6 +41,7 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
   Тултип сверху
 </CTooltip>
 ```
+
 :::
 
 ## Задержки
@@ -47,6 +51,7 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 <DelayExample />
 
 ::: details Показать код
+
 ```vue
 <CTooltip open-on-hover close-on-leave align="bottom-center" :offset-y="6" :open-delay="500">
   <template #activator="{ on, activator }">
@@ -55,6 +60,7 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
   Появится через 500мс
 </CTooltip>
 ```
+
 :::
 
 ## Кастомная ширина
@@ -73,6 +79,7 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 ## Доступность
 
 `CTooltip` автоматически:
+
 - Генерирует уникальный `id` для контейнера
 - Устанавливает `role="tooltip"` на контейнер
 - Добавляет `aria-describedby` с этим `id` на активатор
@@ -80,9 +87,7 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 ```html
 <!-- Результирующий HTML -->
 <button aria-describedby="c-tooltip-abc123">Наведи</button>
-<div id="c-tooltip-abc123" role="tooltip" class="c-tooltip c-menu">
-  Сохранить изменения
-</div>
+<div id="c-tooltip-abc123" role="tooltip" class="c-tooltip c-menu">Сохранить изменения</div>
 ```
 
 ---
@@ -93,28 +98,38 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 
 ### Props
 
-| Prop | Тип | По умолчанию | Описание |
-|------|-----|--------------|----------|
-| `width` | `number \| string` | `'auto'` | Ширина тултипа |
-| `openOnHover` | `boolean` | — | Открыть при наведении |
-| `closeOnLeave` | `boolean` | — | Закрыть при уходе курсора |
-| `openDelay` | `number \| string` | — | Задержка перед открытием (мс) |
-| `closeDelay` | `number \| string` | — | Задержка перед закрытием (мс) |
-| `align` | `AlignValue` | — | Сторона и выравнивание (напр. `bottom-center`, `top`, `right-center`) |
- |
- |
- |
-| `offsetX` | `number \| string` | — | Горизонтальный отступ (px) |
-| `offsetY` | `number \| string` | — | Вертикальный отступ (px) |
+| Prop           | Тип                | По умолчанию | Описание                                                              |
+| -------------- | ------------------ | ------------ | --------------------------------------------------------------------- |
+| `width`        | `number \| string` | `'auto'`     | Ширина тултипа                                                        |
+| `openOnHover`  | `boolean`          | —            | Открыть при наведении                                                 |
+| `closeOnLeave` | `boolean`          | —            | Закрыть при уходе курсора                                             |
+| `openDelay`    | `number \| string` | —            | Задержка перед открытием (мс)                                         |
+| `closeDelay`   | `number \| string` | —            | Задержка перед закрытием (мс)                                         |
+| `align`        | `AlignValue`       | —            | Сторона и выравнивание (напр. `bottom-center`, `top`, `right-center`) |
+|  |
+|  |
+|  |
+| `offsetX`      | `number \| string` | —            | Горизонтальный отступ (px)                                            |
+| `offsetY`      | `number \| string` | —            | Вертикальный отступ (px)                                              |
 
 > Все остальные props `CMenu` также принимаются.
 
+### CSS-переменные
+
+| Переменная                  | По умолчанию                                |
+| --------------------------- | ------------------------------------------- |
+| `--c-tooltip-bg-color`      | `var(--c-sys-color-surface)`                |
+| `--c-tooltip-text-color`    | `var(--c-sys-color-on-surface)`             |
+| `--c-tooltip-padding`       | `var(--c-sys-space-1) var(--c-sys-space-3)` |
+| `--c-tooltip-border-radius` | `var(--c-sys-shape-sm)`                     |
+| `--c-tooltip-elevation`     | `var(--c-sys-elevation-2)`                  |
+
 ### Slots
 
-| Slot | Props | Описание |
-|------|-------|----------|
+| Slot        | Props               | Описание                          |
+| ----------- | ------------------- | --------------------------------- |
 | `activator` | `{ on, activator }` | Элемент который показывает тултип |
-| `default` | — | Контент тултипа |
+| `default`   | —                   | Контент тултипа                   |
 
 ### Events
 

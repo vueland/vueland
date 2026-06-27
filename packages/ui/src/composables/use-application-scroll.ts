@@ -30,8 +30,8 @@ export function useApplicationScroll() {
         savedScrollTop = getScrollTop()
         savedScrollLeft = getScrollLeft()
 
-        unref(appRef)!.style.setProperty('--c-app-scroll-top', convertToUnit(-savedScrollTop))
-        unref(appRef)!.style.setProperty('--c-app-scroll-left', convertToUnit(-savedScrollLeft))
+        unref(appRef)!.style.setProperty('--c-application-scroll-top', convertToUnit(-savedScrollTop))
+        unref(appRef)!.style.setProperty('--c-application-scroll-left', convertToUnit(-savedScrollLeft))
 
         requestAnimationFrame(() => {
             state.lock = true
@@ -42,8 +42,8 @@ export function useApplicationScroll() {
         state.lock = false
 
         requestAnimationFrame(() => {
-            unref(appRef)?.style.removeProperty('--c-app-scroll-top')
-            unref(appRef)?.style.removeProperty('--c-app-scroll-left')
+            unref(appRef)?.style.removeProperty('--c-application-scroll-top')
+            unref(appRef)?.style.removeProperty('--c-application-scroll-left')
 
             window.scrollTo({
                 top: savedScrollTop,

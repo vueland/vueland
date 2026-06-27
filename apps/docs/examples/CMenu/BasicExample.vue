@@ -153,12 +153,12 @@
 <style scoped>
 .kb {
   font-size: 11px;
-  color: var(--c-app-text-secondary-color);
+  color: var(--c-sys-color-on-surface-variant);
   letter-spacing: .02em;
   flex-shrink: 0;
 }
 .text-red { color: #f44336 }
-.sep { height: 1px; background: var(--c-app-border-color); margin: 4px 0 }
+.sep { height: 1px; background: var(--c-sys-color-outline-variant); margin: 4px 0 }
 .toast-enter-active, .toast-leave-active { transition: opacity .25s, transform .25s }
 .toast-enter-from, .toast-leave-to { opacity: 0; transform: translateY(6px) }
 </style>

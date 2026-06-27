@@ -37,7 +37,7 @@ import PresetStatesExample from '../../examples/CInput/PresetStatesExample.vue'
       </div>
     </template>
     <template #details="{ errorMessage, hasError }">
-      <span :style="{ color: hasError ? 'var(--c-app-error-color)' : 'inherit' }">
+      <span :style="{ color: hasError ? 'var(--c-sys-color-error)' : 'inherit' }">
         {{ errorMessage || '4-digit PIN' }}
       </span>
     </template>
@@ -298,14 +298,14 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 
 ## CSS variables
 
-| Variable                        | Default                       | Description                 |
-| ------------------------------- | ----------------------------- | --------------------------- |
-| `--c-input-details-height`      | `24px`                        | Height of the details area  |
-| `--c-input-transition-duration` | `0.2s`                        | Color transition duration   |
-| `--c-input-primary-color`       | `var(--c-app-primary-color)`  | Text color in default state |
-| `--c-input-error-color`         | `var(--c-app-error-color)`    | Text color on error         |
-| `--c-input-disabled-color`      | `var(--c-app-disabled-color)` | Text color when disabled    |
-| `--c-input-readonly-color`      | `var(--c-app-readonly-color)` | Text color when readonly    |
+| Variable                        | Default                               | Description                 |
+| ------------------------------- | ------------------------------------- | --------------------------- |
+| `--c-input-details-height`      | `var(--c-sys-control-height-sm)`      | Height of the details area  |
+| `--c-input-transition-duration` | `var(--c-sys-motion-duration-medium)` | Color transition duration   |
+| `--c-input-primary-color`       | `var(--c-sys-color-primary)`          | Text color in default state |
+| `--c-input-error-color`         | `var(--c-sys-color-error)`            | Text color on error         |
+| `--c-input-disabled-color`      | `var(--c-sys-color-disabled)`         | Text color when disabled    |
+| `--c-input-readonly-color`      | `var(--c-sys-color-readonly)`         | Text color when readonly    |
 
 > The field background in `readonly`/`disabled` states is rendered by `CField` (`--c-field-readonly-bg-color`, `--c-field-disabled-opacity`), not `CInput`.
 

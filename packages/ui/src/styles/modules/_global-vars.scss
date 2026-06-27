@@ -1,88 +1,278 @@
 @use 'sass:map';
 @use '../maps/colors-map' as *;
+@use '../maps/elevations-map' as *;
 
-$primary-transition: cubic-bezier(0.25, 0.8, 0.5, 1);
+$primary-transition: var(--c-sys-motion-easing-standard);
 
 :root {
-  // ---- Brand ----
-  --c-app-primary-color: #{map.get($blue, 'darken-2')};
-  --c-app-on-primary-color: #{map.get($white, 'base')};
-  --c-app-secondary-color: #{map.get($blue, 'darken-3')};
-  --c-app-success-color: #{map.get($green, 'base')};
-  --c-app-error-color: #{map.get($red, 'darken-1')};
-  --c-app-warning-color: #{map.get($orange, 'base')};
-  --c-app-info-color: #{map.get($light-blue, 'darken-1')};
-  --c-app-accent-color: #{map.get($light-green, 'accent-3')};
+  color-scheme: var(--c-sys-color-scheme);
 
-  // ---- Surface & background ----
-  --c-app-background-color: #{map.get($grey, 'lighten-4')};
-  --c-app-surface-color: #{map.get($white, 'base')};
-  --c-app-surface-variant-color: #{map.get($grey, 'lighten-3')};
-  --c-app-on-surface-color: #{map.get($grey, 'darken-3')};
+  // ---- Reference: palette ----
+  --c-ref-color-white: #{map.get($white, 'base')};
+  --c-ref-color-black: #{map.get($black, 'base')};
 
-  // ---- Text ----
-  --c-app-text-color: #{map.get($grey, 'darken-3')};
-  --c-app-text-secondary-color: #{map.get($grey, 'darken-1')};
-  --c-app-placeholder-color: #{map.get($grey, 'base')};
+  --c-ref-color-neutral-0: #{map.get($white, 'base')};
+  --c-ref-color-neutral-50: #{map.get($grey, 'lighten-5')};
+  --c-ref-color-neutral-100: #{map.get($grey, 'lighten-4')};
+  --c-ref-color-neutral-200: #{map.get($grey, 'lighten-3')};
+  --c-ref-color-neutral-300: #{map.get($grey, 'lighten-2')};
+  --c-ref-color-neutral-400: #{map.get($grey, 'lighten-1')};
+  --c-ref-color-neutral-500: #{map.get($grey, 'base')};
+  --c-ref-color-neutral-600: #{map.get($grey, 'darken-1')};
+  --c-ref-color-neutral-700: #{map.get($grey, 'darken-2')};
+  --c-ref-color-neutral-800: #{map.get($grey, 'darken-3')};
+  --c-ref-color-neutral-900: #{map.get($grey, 'darken-4')};
+  --c-ref-color-neutral-950: #{map.get($black, 'base')};
 
-  // ---- States: disabled ----
-  --c-app-disabled-color: #{map.get($grey, 'lighten-1')};
-  --c-app-disabled-bg-color: #{map.get($grey, 'lighten-3')};
-  --c-app-disabled-opacity: 0.5;
+  --c-ref-color-blue-40: #{map.get($blue, 'darken-2')};
+  --c-ref-color-blue-50: #{map.get($blue, 'darken-1')};
+  --c-ref-color-blue-80: #{map.get($blue, 'lighten-3')};
+  --c-ref-color-blue-90: #{map.get($blue, 'lighten-4')};
+  --c-ref-color-blue-95: #{map.get($blue, 'lighten-5')};
 
-  // ---- States: readonly ----
-  --c-app-readonly-color: #{map.get($blue, 'darken-2')};
-  --c-app-readonly-bg-color: #{map.get($grey, 'lighten-4')};
+  --c-ref-color-green-40: #{map.get($green, 'base')};
+  --c-ref-color-green-80: #{map.get($green, 'lighten-2')};
+  --c-ref-color-green-95: #{map.get($green, 'lighten-5')};
 
-  // ---- States: focus ----
-  --c-app-focus-color: #{map.get($blue, 'darken-2')};
+  --c-ref-color-red-40: #{map.get($red, 'darken-1')};
+  --c-ref-color-red-80: #{map.get($red, 'lighten-2')};
+  --c-ref-color-red-95: #{map.get($red, 'lighten-5')};
 
-  // ---- States: error ----
-  --c-app-error-bg-color: #{map.get($red, 'lighten-5')};
+  --c-ref-color-orange-40: #{map.get($orange, 'base')};
+  --c-ref-color-orange-80: #{map.get($orange, 'lighten-2')};
+  --c-ref-color-orange-95: #{map.get($orange, 'lighten-5')};
 
-  // ---- Interactive ----
-  --c-app-hover-color: rgba(0, 0, 0, 0.06);
-  --c-app-overlay-color: rgba(0, 0, 0, 0.5);
-  --c-app-shadow-color: rgba(0, 0, 0, 0.15);
+  --c-ref-color-cyan-40: #{map.get($light-blue, 'darken-1')};
+  --c-ref-color-cyan-80: #{map.get($light-blue, 'lighten-2')};
+  --c-ref-color-cyan-95: #{map.get($light-blue, 'lighten-5')};
 
-  // ---- Misc ----
-  --c-app-border-color: #{map.get($grey, 'lighten-2')};
-  --c-app-border-radius: 8px;
+  --c-ref-color-lime-40: #{map.get($light-green, 'darken-1')};
+  --c-ref-color-lime-80: #{map.get($light-green, 'lighten-2')};
+  --c-ref-color-lime-95: #{map.get($light-green, 'lighten-5')};
+
+  // ---- System: color roles ----
+  --c-sys-color-scheme: light;
+  --c-sys-color-primary: var(--c-ref-color-blue-40);
+  --c-sys-color-on-primary: var(--c-ref-color-white);
+  --c-sys-color-primary-container: var(--c-ref-color-blue-95);
+  --c-sys-color-on-primary-container: #{map.get($blue, 'darken-4')};
+
+  --c-sys-color-secondary: #{map.get($blue, 'darken-3')};
+  --c-sys-color-on-secondary: var(--c-ref-color-white);
+  --c-sys-color-secondary-container: var(--c-ref-color-blue-90);
+  --c-sys-color-on-secondary-container: #{map.get($blue, 'darken-4')};
+
+  --c-sys-color-tertiary: var(--c-ref-color-lime-40);
+  --c-sys-color-on-tertiary: var(--c-ref-color-black);
+  --c-sys-color-tertiary-container: var(--c-ref-color-lime-95);
+  --c-sys-color-on-tertiary-container: #{map.get($light-green, 'darken-4')};
+
+  --c-sys-color-success: var(--c-ref-color-green-40);
+  --c-sys-color-on-success: var(--c-ref-color-white);
+  --c-sys-color-success-container: var(--c-ref-color-green-95);
+  --c-sys-color-on-success-container: #{map.get($green, 'darken-4')};
+
+  --c-sys-color-error: var(--c-ref-color-red-40);
+  --c-sys-color-on-error: var(--c-ref-color-white);
+  --c-sys-color-error-container: var(--c-ref-color-red-95);
+  --c-sys-color-on-error-container: #{map.get($red, 'darken-4')};
+
+  --c-sys-color-warning: var(--c-ref-color-orange-40);
+  --c-sys-color-on-warning: var(--c-ref-color-black);
+  --c-sys-color-warning-container: var(--c-ref-color-orange-95);
+  --c-sys-color-on-warning-container: #{map.get($orange, 'darken-4')};
+
+  --c-sys-color-info: var(--c-ref-color-cyan-40);
+  --c-sys-color-on-info: var(--c-ref-color-white);
+  --c-sys-color-info-container: var(--c-ref-color-cyan-95);
+  --c-sys-color-on-info-container: #{map.get($light-blue, 'darken-4')};
+
+  --c-sys-color-background: var(--c-ref-color-neutral-100);
+  --c-sys-color-on-background: var(--c-ref-color-neutral-900);
+  --c-sys-color-surface: var(--c-ref-color-neutral-0);
+  --c-sys-color-surface-dim: var(--c-ref-color-neutral-100);
+  --c-sys-color-surface-bright: var(--c-ref-color-white);
+  --c-sys-color-surface-container-lowest: var(--c-ref-color-white);
+  --c-sys-color-surface-container-low: var(--c-ref-color-neutral-50);
+  --c-sys-color-surface-container: var(--c-ref-color-neutral-100);
+  --c-sys-color-surface-container-high: var(--c-ref-color-neutral-200);
+  --c-sys-color-surface-container-highest: var(--c-ref-color-neutral-300);
+  --c-sys-color-surface-variant: var(--c-ref-color-neutral-200);
+  --c-sys-color-on-surface: var(--c-ref-color-neutral-900);
+  --c-sys-color-on-surface-variant: var(--c-ref-color-neutral-700);
+  --c-sys-color-inverse-surface: var(--c-ref-color-neutral-900);
+  --c-sys-color-inverse-on-surface: var(--c-ref-color-neutral-100);
+  --c-sys-color-outline: var(--c-ref-color-neutral-600);
+  --c-sys-color-outline-variant: var(--c-ref-color-neutral-300);
+  --c-sys-color-placeholder: var(--c-ref-color-neutral-500);
+  --c-sys-color-disabled: var(--c-ref-color-neutral-500);
+  --c-sys-color-disabled-container: var(--c-ref-color-neutral-200);
+  --c-sys-color-readonly: var(--c-sys-color-primary);
+  --c-sys-color-readonly-container: var(--c-ref-color-neutral-100);
+  --c-sys-color-focus-ring: var(--c-sys-color-primary);
+  --c-sys-color-scrim: rgba(0, 0, 0, 0.5);
+  --c-sys-color-shadow: rgba(0, 0, 0, 0.15);
+
+  // ---- System: state layers ----
+  --c-sys-state-hover-color: color-mix(in srgb, var(--c-sys-color-primary) 8%, transparent);
+  --c-sys-state-focus-color: color-mix(in srgb, var(--c-sys-color-primary) 16%, transparent);
+  --c-sys-state-pressed-color: color-mix(in srgb, var(--c-sys-color-primary) 12%, transparent);
+  --c-sys-state-selected-color: color-mix(in srgb, var(--c-sys-color-primary) 12%, transparent);
+  --c-sys-state-hover-opacity: 0.08;
+  --c-sys-state-focus-opacity: 0.16;
+  --c-sys-state-pressed-opacity: 0.12;
+  --c-sys-state-dragged-opacity: 0.16;
+  --c-sys-state-disabled-opacity: 0.5;
+  --c-sys-state-disabled-container-opacity: 0.12;
+
+  // ---- System: typography ----
+  --c-sys-typography-font-family-base: inherit;
+  --c-sys-typography-font-family-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --c-sys-typography-body-size: 1rem;
+  --c-sys-typography-body-line-height: 1.5;
+  --c-sys-typography-label-size: 0.875rem;
+  --c-sys-typography-label-line-height: 1.25rem;
+  --c-sys-typography-label-weight: 500;
+  --c-sys-typography-title-size: 1.125rem;
+  --c-sys-typography-title-line-height: 1.5rem;
+  --c-sys-typography-title-weight: 600;
+
+  // ---- System: spacing and density ----
+  --c-sys-space-0: 0;
+  --c-sys-space-1: 4px;
+  --c-sys-space-2: 8px;
+  --c-sys-space-3: 12px;
+  --c-sys-space-4: 16px;
+  --c-sys-space-5: 20px;
+  --c-sys-space-6: 24px;
+  --c-sys-space-8: 32px;
+  --c-sys-space-10: 40px;
+  --c-sys-density-scale: 0;
+  --c-sys-control-height-sm: 32px;
+  --c-sys-control-height-md: 40px;
+  --c-sys-control-height-lg: 48px;
+  --c-sys-control-padding-inline: var(--c-sys-space-3);
+  --c-sys-control-icon-size: 24px;
+
+  // ---- System: shape ----
+  --c-sys-shape-none: 0;
+  --c-sys-shape-xs: 2px;
+  --c-sys-shape-sm: 4px;
+  --c-sys-shape-md: 8px;
+  --c-sys-shape-lg: 12px;
+  --c-sys-shape-xl: 16px;
+  --c-sys-shape-pill: 9999px;
+
+  // ---- System: border ----
+  --c-sys-border-width-thin: 1px;
+  --c-sys-border-width-medium: 1.5px;
+  --c-sys-border-width-thick: 2px;
+
+  // ---- System: elevation ----
+  --c-sys-elevation-0: none;
+  --c-sys-elevation-1:
+    #{map.get($shadow-key-umbra, 1)}, #{map.get($shadow-key-penumbra, 1)},
+    #{map.get($shadow-key-ambient, 1)};
+  --c-sys-elevation-2:
+    #{map.get($shadow-key-umbra, 2)}, #{map.get($shadow-key-penumbra, 2)},
+    #{map.get($shadow-key-ambient, 2)};
+  --c-sys-elevation-3:
+    #{map.get($shadow-key-umbra, 3)}, #{map.get($shadow-key-penumbra, 3)},
+    #{map.get($shadow-key-ambient, 3)};
+  --c-sys-elevation-4:
+    #{map.get($shadow-key-umbra, 4)}, #{map.get($shadow-key-penumbra, 4)},
+    #{map.get($shadow-key-ambient, 4)};
+  --c-sys-elevation-5:
+    #{map.get($shadow-key-umbra, 5)}, #{map.get($shadow-key-penumbra, 5)},
+    #{map.get($shadow-key-ambient, 5)};
+
+  // ---- System: motion ----
+  --c-sys-motion-duration-instant: 0ms;
+  --c-sys-motion-duration-fast: 120ms;
+  --c-sys-motion-duration-medium: 200ms;
+  --c-sys-motion-duration-slow: 320ms;
+  --c-sys-motion-easing-linear: linear;
+  --c-sys-motion-easing-standard: cubic-bezier(0.25, 0.8, 0.5, 1);
+  --c-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  // ---- System: stacking ----
+  --c-sys-z-index-base: 0;
+  --c-sys-z-index-sticky: 100;
+  --c-sys-z-index-dropdown: 1000;
+  --c-sys-z-index-overlay: 2000;
+  --c-sys-z-index-modal: 3000;
+  --c-sys-z-index-toast: 4000;
+  --c-sys-z-index-tooltip: 5000;
 }
 
-// ---- Dark theme ----
 [data-theme='dark'] {
-  --c-app-primary-color: #{map.get($blue, 'lighten-3')};
-  --c-app-on-primary-color: #{map.get($grey, 'darken-4')};
-  --c-app-secondary-color: #{map.get($blue, 'lighten-2')};
-  --c-app-success-color: #{map.get($green, 'lighten-2')};
-  --c-app-error-color: #{map.get($red, 'lighten-2')};
-  --c-app-warning-color: #{map.get($orange, 'lighten-2')};
-  --c-app-info-color: #{map.get($light-blue, 'lighten-2')};
+  --c-sys-color-scheme: dark;
+  --c-sys-color-primary: var(--c-ref-color-blue-80);
+  --c-sys-color-on-primary: var(--c-ref-color-neutral-950);
+  --c-sys-color-primary-container: #{map.get($blue, 'darken-3')};
+  --c-sys-color-on-primary-container: var(--c-ref-color-blue-95);
 
-  --c-app-background-color: #{map.get($grey, 'darken-4')};
-  --c-app-surface-color: #1e1e1e;
-  --c-app-surface-variant-color: #2a2a2a;
-  --c-app-on-surface-color: #{map.get($grey, 'lighten-2')};
+  --c-sys-color-secondary: #{map.get($blue, 'lighten-2')};
+  --c-sys-color-on-secondary: var(--c-ref-color-neutral-950);
+  --c-sys-color-secondary-container: #{map.get($blue, 'darken-4')};
+  --c-sys-color-on-secondary-container: var(--c-ref-color-blue-90);
 
-  --c-app-text-color: #{map.get($grey, 'lighten-2')};
-  --c-app-text-secondary-color: #{map.get($grey, 'base')};
-  --c-app-placeholder-color: #{map.get($grey, 'darken-1')};
+  --c-sys-color-tertiary: var(--c-ref-color-lime-80);
+  --c-sys-color-on-tertiary: var(--c-ref-color-neutral-950);
+  --c-sys-color-tertiary-container: #{map.get($light-green, 'darken-4')};
+  --c-sys-color-on-tertiary-container: var(--c-ref-color-lime-95);
 
-  --c-app-disabled-color: #{map.get($grey, 'darken-2')};
-  --c-app-disabled-bg-color: #2a2a2a;
-  --c-app-disabled-opacity: 0.4;
+  --c-sys-color-success: var(--c-ref-color-green-80);
+  --c-sys-color-on-success: var(--c-ref-color-neutral-950);
+  --c-sys-color-success-container: #{map.get($green, 'darken-4')};
+  --c-sys-color-on-success-container: var(--c-ref-color-green-95);
 
-  --c-app-readonly-color: #{map.get($blue, 'lighten-3')};
-  --c-app-readonly-bg-color: #2a2a2a;
+  --c-sys-color-error: var(--c-ref-color-red-80);
+  --c-sys-color-on-error: var(--c-ref-color-neutral-950);
+  --c-sys-color-error-container: #{map.get($red, 'darken-4')};
+  --c-sys-color-on-error-container: var(--c-ref-color-red-95);
 
-  --c-app-focus-color: #{map.get($blue, 'lighten-3')};
+  --c-sys-color-warning: var(--c-ref-color-orange-80);
+  --c-sys-color-on-warning: var(--c-ref-color-neutral-950);
+  --c-sys-color-warning-container: #{map.get($orange, 'darken-4')};
+  --c-sys-color-on-warning-container: var(--c-ref-color-orange-95);
 
-  --c-app-error-bg-color: rgba(#{map.get($red, 'base')}, 0.12);
+  --c-sys-color-info: var(--c-ref-color-cyan-80);
+  --c-sys-color-on-info: var(--c-ref-color-neutral-950);
+  --c-sys-color-info-container: #{map.get($light-blue, 'darken-4')};
+  --c-sys-color-on-info-container: var(--c-ref-color-cyan-95);
 
-  --c-app-hover-color: rgba(255, 255, 255, 0.08);
-  --c-app-overlay-color: rgba(0, 0, 0, 0.7);
-  --c-app-shadow-color: rgba(0, 0, 0, 0.4);
+  --c-sys-color-background: #121212;
+  --c-sys-color-on-background: var(--c-ref-color-neutral-300);
+  --c-sys-color-surface: #1e1e1e;
+  --c-sys-color-surface-dim: #121212;
+  --c-sys-color-surface-bright: #2f2f2f;
+  --c-sys-color-surface-container-lowest: #161616;
+  --c-sys-color-surface-container-low: #202020;
+  --c-sys-color-surface-container: #242424;
+  --c-sys-color-surface-container-high: #2a2a2a;
+  --c-sys-color-surface-container-highest: #333333;
+  --c-sys-color-surface-variant: #2f2f2f;
+  --c-sys-color-on-surface: var(--c-ref-color-neutral-300);
+  --c-sys-color-on-surface-variant: var(--c-ref-color-neutral-400);
+  --c-sys-color-inverse-surface: var(--c-ref-color-neutral-300);
+  --c-sys-color-inverse-on-surface: var(--c-ref-color-neutral-900);
+  --c-sys-color-outline: var(--c-ref-color-neutral-500);
+  --c-sys-color-outline-variant: var(--c-ref-color-neutral-800);
+  --c-sys-color-placeholder: var(--c-ref-color-neutral-600);
+  --c-sys-color-disabled: var(--c-ref-color-neutral-700);
+  --c-sys-color-disabled-container: var(--c-sys-color-surface-container-high);
+  --c-sys-color-readonly: var(--c-sys-color-primary);
+  --c-sys-color-readonly-container: var(--c-sys-color-surface-container-high);
+  --c-sys-color-focus-ring: var(--c-sys-color-primary);
+  --c-sys-color-scrim: rgba(0, 0, 0, 0.7);
+  --c-sys-color-shadow: rgba(0, 0, 0, 0.4);
 
-  --c-app-border-color: #{map.get($grey, 'darken-2')};
+  --c-sys-state-hover-color: color-mix(in srgb, var(--c-sys-color-primary) 8%, transparent);
+  --c-sys-state-focus-color: color-mix(in srgb, var(--c-sys-color-primary) 16%, transparent);
+  --c-sys-state-pressed-color: color-mix(in srgb, var(--c-sys-color-primary) 12%, transparent);
+  --c-sys-state-selected-color: color-mix(in srgb, var(--c-sys-color-primary) 12%, transparent);
+  --c-sys-state-disabled-opacity: 0.4;
+  --c-sys-state-disabled-container-opacity: 0.16;
 }

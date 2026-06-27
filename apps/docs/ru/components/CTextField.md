@@ -122,7 +122,7 @@ const passwordRules = [
   <!-- Custom details slot -->
   <CTextField v-model="nickname" label="Nickname" :rules="nicknameRules" validate-on="input">
     <template #details="{ errorMessage, hasError }">
-      <span :style="{ color: hasError ? 'var(--c-app-error-color)' : 'inherit' }">
+      <span :style="{ color: hasError ? 'var(--c-sys-color-error)' : 'inherit' }">
         {{ errorMessage || `${nickname.length}/20 characters` }}
       </span>
     </template>
@@ -144,10 +144,10 @@ const passwordRules = [
 <template>
   <CTextField v-model="username" label="Username" :rules="usernameRules" validate-on="blur">
     <template #details="{ errorMessage, hasError, validating }">
-      <span v-if="validating" style="color: var(--c-app-primary-color)">
+      <span v-if="validating" style="color: var(--c-sys-color-primary)">
         Checking availability…
       </span>
-      <span v-else-if="hasError" style="color: var(--c-app-error-color)">
+      <span v-else-if="hasError" style="color: var(--c-sys-color-error)">
         {{ errorMessage }}
       </span>
       <span v-else style="opacity: .6">Must be unique</span>
@@ -328,31 +328,32 @@ type ValidateFn = (value: any) => ValidateResult | Promise<ValidateResult>
 
 ### CInput (корневой элемент)
 
-| Переменная                      | По умолчанию                  | Описание                        |
-| ------------------------------- | ----------------------------- | ------------------------------- |
-| `--c-input-details-height`      | `24px`                        | Высота блока details            |
-| `--c-input-transition-duration` | `0.2s`                        | Длительность перехода цвета     |
-| `--c-input-background-color`    | `var(--c-app-surface-color)`  | Фон компонента                  |
-| `--c-input-primary-color`       | `var(--c-app-primary-color)`  | Цвет текста в состоянии default |
-| `--c-input-error-color`         | `var(--c-app-error-color)`    | Цвет текста при ошибке          |
-| `--c-input-disabled-color`      | `var(--c-app-disabled-color)` | Цвет текста при disabled        |
-| `--c-input-readonly-color`      | `var(--c-app-readonly-color)` | Цвет текста при readonly        |
+| Переменная                      | По умолчанию                          | Описание                        |
+| ------------------------------- | ------------------------------------- | ------------------------------- |
+| `--c-input-details-height`      | `var(--c-sys-control-height-sm)`      | Высота блока details            |
+| `--c-input-transition-duration` | `var(--c-sys-motion-duration-medium)` | Длительность перехода цвета     |
+| `--c-input-primary-color`       | `var(--c-sys-color-primary)`          | Цвет текста в состоянии default |
+| `--c-input-error-color`         | `var(--c-sys-color-error)`            | Цвет текста при ошибке          |
+| `--c-input-disabled-color`      | `var(--c-sys-color-disabled)`         | Цвет текста при disabled        |
+| `--c-input-readonly-color`      | `var(--c-sys-color-readonly)`         | Цвет текста при readonly        |
 
 ### CField (рамка и лейбл)
 
-| Переменная                      | По умолчанию                     | Описание                      |
-| ------------------------------- | -------------------------------- | ----------------------------- |
-| `--c-field-min-height`          | `40px`                           | Минимальная высота поля       |
-| `--c-field-prepend-min-width`   | `40px`                           | Мин. ширина зоны prepend      |
-| `--c-field-append-min-width`    | `24px`                           | Мин. ширина зоны append       |
-| `--c-field-border-radius`       | `var(--c-app-border-radius)`     | Скругление поля               |
-| `--c-field-transition-duration` | `0.2s`                           | Длительность переходов поля   |
-| `--c-field-bg-color`            | `var(--c-app-surface-color)`     | Фон поля                      |
-| `--c-field-color`               | `var(--c-input-primary-color)`   | Цвет рамки и лейбла в default |
-| `--c-field-border-color`        | `var(--c-app-border-color)`      | Цвет рамки                    |
-| `--c-field-input-color`         | `var(--c-app-text-color)`        | Цвет вводимого текста         |
-| `--c-field-readonly-bg-color`   | `var(--c-app-readonly-bg-color)` | Фон поля при readonly         |
-| `--c-field-disabled-opacity`    | `var(--c-app-disabled-opacity)`  | Прозрачность при disabled     |
+| Переменная                       | По умолчанию                            | Описание                    |
+| -------------------------------- | --------------------------------------- | --------------------------- |
+| `--c-field-min-height`           | `var(--c-sys-control-height-md)`        | Минимальная высота поля     |
+| `--c-field-prepend-min-width`    | `var(--c-sys-control-height-md)`        | Мин. ширина зоны prepend    |
+| `--c-field-append-min-width`     | `var(--c-sys-control-icon-size)`        | Мин. ширина зоны append     |
+| `--c-field-border-radius`        | `var(--c-sys-shape-md)`                 | Скругление поля             |
+| `--c-field-transition-duration`  | `var(--c-sys-motion-duration-medium)`   | Длительность переходов поля |
+| `--c-field-bg-color`             | `var(--c-sys-color-surface)`            | Фон поля                    |
+| `--c-field-label-color`          | `var(--c-sys-color-primary)`            | Цвет лейбла                 |
+| `--c-field-focused-border-color` | `var(--c-sys-color-focus-ring)`         | Цвет рамки в фокусе         |
+| `--c-field-border-color`         | `var(--c-sys-color-outline-variant)`    | Цвет рамки                  |
+| `--c-field-input-text-color`     | `var(--c-sys-color-on-surface)`         | Цвет вводимого текста       |
+| `--c-field-placeholder-color`    | `var(--c-sys-color-placeholder)`        | Цвет placeholder            |
+| `--c-field-readonly-bg-color`    | `var(--c-sys-color-readonly-container)` | Фон поля при readonly       |
+| `--c-field-disabled-opacity`     | `var(--c-sys-state-disabled-opacity)`   | Прозрачность при disabled   |
 
 ### Пример переопределения
 

@@ -37,7 +37,7 @@ import PresetStatesExample from '../../examples/CInput/PresetStatesExample.vue'
       </div>
     </template>
     <template #details="{ errorMessage, hasError }">
-      <span :style="{ color: hasError ? 'var(--c-app-error-color)' : 'inherit' }">
+      <span :style="{ color: hasError ? 'var(--c-sys-color-error)' : 'inherit' }">
         {{ errorMessage || '4-значный PIN' }}
       </span>
     </template>
@@ -297,14 +297,14 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 
 ## CSS-переменные
 
-| Переменная                      | По умолчанию                  | Описание                        |
-| ------------------------------- | ----------------------------- | ------------------------------- |
-| `--c-input-details-height`      | `24px`                        | Высота блока details            |
-| `--c-input-transition-duration` | `0.2s`                        | Длительность перехода цвета     |
-| `--c-input-primary-color`       | `var(--c-app-primary-color)`  | Цвет текста в состоянии default |
-| `--c-input-error-color`         | `var(--c-app-error-color)`    | Цвет текста при ошибке          |
-| `--c-input-disabled-color`      | `var(--c-app-disabled-color)` | Цвет текста при disabled        |
-| `--c-input-readonly-color`      | `var(--c-app-readonly-color)` | Цвет текста при readonly        |
+| Переменная                      | По умолчанию                          | Описание                        |
+| ------------------------------- | ------------------------------------- | ------------------------------- |
+| `--c-input-details-height`      | `var(--c-sys-control-height-sm)`      | Высота блока details            |
+| `--c-input-transition-duration` | `var(--c-sys-motion-duration-medium)` | Длительность перехода цвета     |
+| `--c-input-primary-color`       | `var(--c-sys-color-primary)`          | Цвет текста в состоянии default |
+| `--c-input-error-color`         | `var(--c-sys-color-error)`            | Цвет текста при ошибке          |
+| `--c-input-disabled-color`      | `var(--c-sys-color-disabled)`         | Цвет текста при disabled        |
+| `--c-input-readonly-color`      | `var(--c-sys-color-readonly)`         | Цвет текста при readonly        |
 
 > Фон поля в состояниях `readonly`/`disabled` отрисовывает компонент `CField` (`--c-field-readonly-bg-color`, `--c-field-disabled-opacity`), а не `CInput`.
 

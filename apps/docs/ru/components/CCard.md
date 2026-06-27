@@ -14,43 +14,43 @@
 
 ## Компоненты
 
-| Компонент | Класс | Описание |
-|---|---|---|
-| `CCard` | `.c-card` | Корневой контейнер карточки |
-| `CCardHeader` | `.c-card-header` | Шапка карточки |
-| `CCardBody` | `.c-card-body` | Основная область контента |
-| `CCardFooter` | `.c-card-footer` | Подвал карточки |
+| Компонент     | Класс            | Описание                    |
+| ------------- | ---------------- | --------------------------- |
+| `CCard`       | `.c-card`        | Корневой контейнер карточки |
+| `CCardHeader` | `.c-card-header` | Шапка карточки              |
+| `CCardBody`   | `.c-card-body`   | Основная область контента   |
+| `CCardFooter` | `.c-card-footer` | Подвал карточки             |
 
 ## Props
 
 Все четыре компонента принимают одинаковый набор props:
 
-| Prop | Тип | По умолчанию | Описание |
-|---|---|---|---|
-| `tag` | `string` | `'div'` | HTML-тег корневого элемента |
+| Prop  | Тип      | По умолчанию | Описание                    |
+| ----- | -------- | ------------ | --------------------------- |
+| `tag` | `string` | `'div'`      | HTML-тег корневого элемента |
 
 ## Slots
 
-| Slot | Описание |
-|---|---|
+| Slot      | Описание                |
+| --------- | ----------------------- |
 | `default` | Произвольное содержимое |
 
 ## CSS-переменные
 
-| Переменная | Значение по умолчанию | Описание |
-|---|---|---|
-| `--card-width` | `100%` | Ширина карточки |
-| `--card-border-radius` | `8px` | Скругление углов |
-| `--card-header-padding` | `16px` | Отступ шапки |
-| `--card-body-padding` | `16px` | Отступ тела |
-| `--card-footer-padding` | `16px` | Отступ подвала |
-| `--card-background-color` | `var(--c-app-surface-color)` | Цвет фона |
-| `--card-text-color` | `var(--c-app-text-color)` | Цвет текста |
+| Переменная                  | Значение по умолчанию           | Описание         |
+| --------------------------- | ------------------------------- | ---------------- |
+| `--c-card-width`            | `100%`                          | Ширина карточки  |
+| `--c-card-border-radius`    | `var(--c-sys-shape-md)`         | Скругление углов |
+| `--c-card-header-padding`   | `var(--c-sys-space-4)`          | Отступ шапки     |
+| `--c-card-body-padding`     | `var(--c-sys-space-4)`          | Отступ тела      |
+| `--c-card-footer-padding`   | `var(--c-sys-space-4)`          | Отступ подвала   |
+| `--c-card-background-color` | `var(--c-sys-color-surface)`    | Цвет фона        |
+| `--c-card-text-color`       | `var(--c-sys-color-on-surface)` | Цвет текста      |
 
 Переменные переопределяются через CSS или inline-стили:
 
 ```vue
-<CCard style="--card-border-radius: 16px; --card-background-color: #f5f7fa">
+<CCard style="--c-card-border-radius: 16px; --c-card-background-color: #f5f7fa">
   ...
 </CCard>
 ```

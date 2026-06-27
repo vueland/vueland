@@ -84,7 +84,7 @@
                 />
             </template>
             <template #details="{ errorMessage, hasError }">
-                <span :style="{ color: hasError ? 'var(--c-app-error-color)' : 'inherit' }">
+                <span :style="{ color: hasError ? 'var(--c-sys-color-error)' : 'inherit' }">
                     {{ errorMessage || `${nickname.length}/20 characters` }}
                 </span>
             </template>
@@ -108,7 +108,7 @@
                     name="fas:check"
                     :size="16"
                     source="fa"
-                    style="color:var(--c-app-success-color, #4caf50)"
+                    style="color:var(--c-sys-color-success, #4caf50)"
                 />
             </template>
         </c-text-field>

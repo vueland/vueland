@@ -43,13 +43,13 @@
             <template #details="{ errorMessage, hasError, validating }">
                 <span
                     v-if="validating"
-                    style="color:var(--c-app-primary-color)"
+                    style="color:var(--c-sys-color-primary)"
                 >
                     Checking availability…
                 </span>
                 <span
                     v-else-if="hasError"
-                    style="color:var(--c-app-error-color)"
+                    style="color:var(--c-sys-color-error)"
                 >
                     {{ errorMessage }}
                 </span>
@@ -83,13 +83,13 @@
             <template #details="{ errorMessage, hasError, validating }">
                 <span
                     v-if="validating"
-                    style="color:var(--c-app-primary-color)"
+                    style="color:var(--c-sys-color-primary)"
                 >
                     Verifying email…
                 </span>
                 <span
                     v-else-if="hasError"
-                    style="color:var(--c-app-error-color)"
+                    style="color:var(--c-sys-color-error)"
                 >
                     {{ errorMessage }}
                 </span>

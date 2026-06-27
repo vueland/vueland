@@ -69,12 +69,12 @@
     .kbd {
         padding: 2px 6px;
         border-radius: 6px;
-        color: var(--c-app-text-secondary-color, #90a4ae);
+        color: var(--c-sys-color-on-surface-variant, #90a4ae);
         background: color-mix(in srgb, currentColor 12%, transparent);
     }
 
     .divider {
         height: 1px;
-        background: var(--c-app-border-color, rgba(0, 0, 0, 0.1));
+        background: var(--c-sys-color-outline-variant, rgba(0, 0, 0, 0.1));
     }
 </style>

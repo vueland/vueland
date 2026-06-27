@@ -16,6 +16,7 @@ import {
 import { breakpoints } from '../composables/use-display'
 import { $BREAKPOINTS_KEY } from '../constants/provide-keys'
 import { BreakpointLabels } from '../enums'
+import { buildVars } from '../helpers'
 import { VuelandUI } from '../library'
 
 function setWidth(px: number) {
@@ -48,6 +49,13 @@ function createUI(options: Parameters<VuelandUI['install']>[1]) {
 }
 
 describe('VuelandUI / install', () => {
+    afterEach(() => {
+        document.documentElement.removeAttribute('style')
+        delete document.documentElement.dataset.theme
+        vi.restoreAllMocks()
+        vi.unstubAllGlobals()
+    })
+
     it('устанавливает дефолтные брейкпоинты если не переданы', () => {
         const { ui } = createUI({ components: {} })
         expect(ui.breakpoints).toEqual(breakpoints)
@@ -183,5 +191,59 @@ describe('VuelandUI / install', () => {
 
         // applyTheme не вызывался (нет темы), но install был вызван дважды без ошибок
         expect(spy).not.toHaveBeenCalled()
+    })
+
+    describe('theme tokens', () => {
+        it('мапит короткие ключи темы в system CSS-переменные', () => {
+            expect(buildVars({
+                primary: '#1976d2',
+                onPrimary: '#ffffff',
+                surface: '#ffffff',
+                shapeMd: '8px',
+                stateHoverColor: 'rgba(0,0,0,.06)',
+                '--app-shell-width': '1200px',
+            })).toEqual([
+                ['--c-sys-color-primary', '#1976d2'],
+                ['--c-sys-color-on-primary', '#ffffff'],
+                ['--c-sys-color-surface', '#ffffff'],
+                ['--c-sys-shape-md', '8px'],
+                ['--c-sys-state-hover-color', 'rgba(0,0,0,.06)'],
+                ['--app-shell-width', '1200px'],
+            ])
+        })
+
+        it('игнорирует неизвестные короткие ключи темы', () => {
+            const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+
+            expect(buildVars({ sidebarBg: '#f0f2f5' } as any)).toEqual([])
+            expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown theme token "sidebarBg"'))
+        })
+
+        it('applyTheme выставляет data-theme и очищает переменные предыдущей темы', () => {
+            const ui = new VuelandUI()
+            ui.themes = {
+                light: {
+                    primary: '#1976d2',
+                    shapeMd: '8px',
+                },
+                dark: {
+                    primary: '#90caf9',
+                    surface: '#1e1e1e',
+                },
+            }
+
+            ui.applyTheme('light')
+
+            expect(document.documentElement.dataset.theme).toBe('light')
+            expect(document.documentElement.style.getPropertyValue('--c-sys-color-primary')).toBe('#1976d2')
+            expect(document.documentElement.style.getPropertyValue('--c-sys-shape-md')).toBe('8px')
+
+            ui.applyTheme('dark')
+
+            expect(document.documentElement.dataset.theme).toBe('dark')
+            expect(document.documentElement.style.getPropertyValue('--c-sys-color-primary')).toBe('#90caf9')
+            expect(document.documentElement.style.getPropertyValue('--c-sys-color-surface')).toBe('#1e1e1e')
+            expect(document.documentElement.style.getPropertyValue('--c-sys-shape-md')).toBe('')
+        })
     })
 })

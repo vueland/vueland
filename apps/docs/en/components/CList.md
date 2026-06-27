@@ -244,8 +244,8 @@ const folders = [
 }
 /* On a selected (primary) row the badge inverts: surface bg + primary text */
 .badge--active {
-  background: var(--c-app-on-primary-color);
-  color: var(--c-app-primary-color);
+  background: var(--c-sys-color-on-primary);
+  color: var(--c-sys-color-primary);
 }
 </style>
 ```
@@ -315,7 +315,7 @@ const actions = [
 }
 .divider {
   height: 1px;
-  background: var(--c-app-border-color, rgba(0, 0, 0, 0.1));
+  background: var(--c-sys-color-outline-variant, rgba(0, 0, 0, 0.1));
 }
 </style>
 ```
@@ -555,35 +555,38 @@ const selected = ref<string | null>(null)
 
 `CList`:
 
-| Variable                    | Default                              |
-| --------------------------- | ------------------------------------ |
-| `--c-list-bg-color`         | `var(--c-app-surface-color)`         |
-| `--c-list-color`            | `var(--c-app-text-color)`            |
-| `--c-list-border-radius`    | `var(--c-app-border-radius)`         |
-| `--c-list-padding-block`    | `0`                                  |
-| `--c-list-padding-inline`   | `0`                                  |
-| `--c-list-disabled-opacity` | `var(--c-app-disabled-opacity, 0.5)` |
+| Variable                    | Default                               |
+| --------------------------- | ------------------------------------- |
+| `--c-list-bg-color`         | `var(--c-sys-color-surface)`          |
+| `--c-list-color`            | `var(--c-sys-color-on-surface)`       |
+| `--c-list-border-radius`    | `var(--c-sys-shape-md)`               |
+| `--c-list-padding-block`    | `0`                                   |
+| `--c-list-padding-inline`   | `0`                                   |
+| `--c-list-disabled-opacity` | `var(--c-sys-state-disabled-opacity)` |
 
 `CListItem`:
 
-| Variable                             | Default                              |
-| ------------------------------------ | ------------------------------------ |
-| `--c-list-item-min-height`           | `36px`                               |
-| `--c-list-item-padding-block`        | `4px`                                |
-| `--c-list-item-padding-inline`       | `8px`                                |
-| `--c-list-item-gap`                  | `12px`                               |
-| `--c-list-item-border-radius`        | `0`                                  |
-| `--c-list-item-color`                | `currentColor`                       |
-| `--c-list-item-bg-color`             | `transparent`                        |
-| `--c-list-item-selected-bg-color`    | `var(--c-app-primary-color)`         |
-| `--c-list-item-selected-color`       | `var(--c-app-on-primary-color)`      |
-| `--c-list-item-hover-bg-color`       | `var(--c-app-primary-color)`         |
-| `--c-list-item-disabled-opacity`     | `var(--c-app-disabled-opacity, 0.5)` |
-| `--c-list-item-disabled-color`       | `var(--c-app-disabled-color)`        |
-| `--c-list-item-title-font-size`      | `1rem`                               |
-| `--c-list-item-title-line-height`    | `1.25rem`                            |
-| `--c-list-item-title-font-weight`    | `400`                                |
-| `--c-list-item-subtitle-font-size`   | `0.8rem`                             |
-| `--c-list-item-subtitle-line-height` | `1rem`                               |
-| `--c-list-item-subtitle-color`       | `currentColor`                       |
-| `--c-list-item-subtitle-opacity`     | `0.6`                                |
+| Variable                             | Default                                     |
+| ------------------------------------ | ------------------------------------------- |
+| `--c-list-item-min-height`           | `var(--c-sys-control-height-sm)`            |
+| `--c-list-item-padding-block`        | `var(--c-sys-space-1)`                      |
+| `--c-list-item-padding-inline`       | `var(--c-sys-space-2)`                      |
+| `--c-list-item-gap`                  | `var(--c-sys-space-3)`                      |
+| `--c-list-item-border-radius`        | `0`                                         |
+| `--c-list-item-color`                | `currentColor`                              |
+| `--c-list-item-bg-color`             | `transparent`                               |
+| `--c-list-item-selected-bg-color`    | `var(--c-sys-color-primary)`                |
+| `--c-list-item-selected-color`       | `var(--c-sys-color-on-primary)`             |
+| `--c-list-item-state-layer-color`    | `var(--c-sys-color-primary)`                |
+| `--c-list-item-focus-ring-color`     | `var(--c-sys-color-focus-ring)`             |
+| `--c-list-item-hover-opacity`        | `0.1`                                       |
+| `--c-list-item-focus-opacity`        | `0.3`                                       |
+| `--c-list-item-disabled-opacity`     | `var(--c-sys-state-disabled-opacity)`       |
+| `--c-list-item-disabled-color`       | `var(--c-sys-color-disabled)`               |
+| `--c-list-item-title-font-size`      | `var(--c-sys-typography-body-size)`         |
+| `--c-list-item-title-line-height`    | `var(--c-sys-typography-label-line-height)` |
+| `--c-list-item-title-font-weight`    | `400`                                       |
+| `--c-list-item-subtitle-font-size`   | `var(--c-sys-typography-label-size)`        |
+| `--c-list-item-subtitle-line-height` | `var(--c-sys-typography-label-line-height)` |
+| `--c-list-item-subtitle-color`       | `currentColor`                              |
+| `--c-list-item-subtitle-opacity`     | `0.6`                                       |

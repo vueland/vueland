@@ -164,29 +164,29 @@
 
 <style scoped>
 .canvas {
-  background: var(--c-app-surface-color);
-  border: 1.5px dashed var(--c-app-border-color);
+  background: var(--c-sys-color-surface);
+  border: 1.5px dashed var(--c-sys-color-outline-variant);
   min-height: 130px;
 }
 .file-card {
   width: 88px;
   cursor: default;
-  background: var(--c-app-surface-color);
+  background: var(--c-sys-color-surface);
   transition: transform .12s, box-shadow .12s;
 }
 .file-card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,.12) }
 .file-name {
   font-size: 10px;
-  color: var(--c-app-text-secondary-color);
+  color: var(--c-sys-color-on-surface-variant);
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
 }
-.hint { font-size: 11px; text-align: center; color: var(--c-app-text-secondary-color); font-style: italic }
+.hint { font-size: 11px; text-align: center; color: var(--c-sys-color-on-surface-variant); font-style: italic }
 .text-red { color: #f44336 }
-.sep { height: 1px; background: var(--c-app-border-color) }
+.sep { height: 1px; background: var(--c-sys-color-outline-variant) }
 .toast-enter-active, .toast-leave-active { transition: opacity .25s, transform .25s }
 .toast-enter-from, .toast-leave-to { opacity: 0; transform: translateY(6px) }
 </style>

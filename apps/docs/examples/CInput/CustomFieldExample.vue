@@ -71,7 +71,7 @@
                     </div>
                     <span
                         class="otp-hint"
-                        :style="{ color: field.hasError ? 'var(--c-app-error-color)' : '' }"
+                        :style="{ color: field.hasError ? 'var(--c-sys-color-error)' : '' }"
                     >
                         {{ field.hasError ? 'Invalid code' : 'Enter the 6-digit code from your email' }}
                     </span>
@@ -168,7 +168,7 @@
                     <div class="rich-textarea__footer">
                         <span
                             class="rich-textarea__hint"
-                            :style="{ color: field.hasError ? 'var(--c-app-error-color)' : '' }"
+                            :style="{ color: field.hasError ? 'var(--c-sys-color-error)' : '' }"
                         >
                             {{ field.hasError ? 'Maximum 200 characters' : 'Markdown supported' }}
                         </span>
@@ -197,7 +197,7 @@
 .otp-label {
   font-size: 13px;
   font-weight: 600;
-  color: var(--c-app-text-color);
+  color: var(--c-sys-color-on-surface);
 }
 .otp-cells {
   display: flex;
@@ -209,28 +209,28 @@
   text-align: center;
   font-size: 22px;
   font-weight: 700;
-  border: 1.5px solid var(--c-app-border-color);
+  border: 1.5px solid var(--c-sys-color-outline-variant);
   border-radius: 10px;
-  background: var(--c-app-surface-color);
-  color: var(--c-app-text-color);
+  background: var(--c-sys-color-surface);
+  color: var(--c-sys-color-on-surface);
   outline: none;
   transition: border-color .15s, box-shadow .15s;
   caret-color: transparent;
 }
 .otp-cell:focus {
-  border-color: var(--c-app-primary-color);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-app-primary-color) 15%, transparent);
+  border-color: var(--c-sys-color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-sys-color-primary) 15%, transparent);
 }
 .otp-cell--filled {
-  border-color: var(--c-app-primary-color);
-  background: color-mix(in srgb, var(--c-app-primary-color) 6%, transparent);
+  border-color: var(--c-sys-color-primary);
+  background: color-mix(in srgb, var(--c-sys-color-primary) 6%, transparent);
 }
 .otp-cell--error {
-  border-color: var(--c-app-error-color) !important;
+  border-color: var(--c-sys-color-error) !important;
 }
 .otp-hint {
   font-size: 12px;
-  color: var(--c-app-text-secondary-color);
+  color: var(--c-sys-color-on-surface-variant);
   transition: color .15s;
 }
 
@@ -242,38 +242,38 @@
   padding: 0 12px;
   height: 44px;
   border-radius: 999px;
-  border: 1.5px solid var(--c-app-border-color);
-  background: var(--c-app-surface-color);
+  border: 1.5px solid var(--c-sys-color-outline-variant);
+  background: var(--c-sys-color-surface);
   transition: border-color .15s, box-shadow .15s;
 }
 .search-bar--focused {
-  border-color: var(--c-app-primary-color);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-app-primary-color) 15%, transparent);
+  border-color: var(--c-sys-color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-sys-color-primary) 15%, transparent);
 }
 .search-icon {
   width: 16px;
   height: 16px;
   flex-shrink: 0;
-  color: var(--c-app-text-secondary-color);
+  color: var(--c-sys-color-on-surface-variant);
 }
 .search-input {
   flex: 1;
   border: none;
   outline: none;
   background: transparent;
-  color: var(--c-app-text-color);
+  color: var(--c-sys-color-on-surface);
   font-size: 14px;
 }
 .search-input::placeholder {
-  color: var(--c-app-text-secondary-color);
+  color: var(--c-sys-color-on-surface-variant);
 }
 .search-kbd {
   font-size: 11px;
   padding: 2px 6px;
   border-radius: 4px;
-  border: 1px solid var(--c-app-border-color);
-  color: var(--c-app-text-secondary-color);
-  background: var(--c-app-surface-variant-color);
+  border: 1px solid var(--c-sys-color-outline-variant);
+  color: var(--c-sys-color-on-surface-variant);
+  background: var(--c-sys-color-surface-variant);
   font-family: inherit;
   white-space: nowrap;
 }
@@ -284,27 +284,27 @@
   width: 20px;
   height: 20px;
   border: none;
-  background: var(--c-app-surface-variant-color);
+  background: var(--c-sys-color-surface-variant);
   border-radius: 50%;
   cursor: pointer;
-  color: var(--c-app-text-secondary-color);
+  color: var(--c-sys-color-on-surface-variant);
   flex-shrink: 0;
 }
 
 /* ---- Rich textarea ---- */
 .rich-textarea {
-  border: 1.5px solid var(--c-app-border-color);
+  border: 1.5px solid var(--c-sys-color-outline-variant);
   border-radius: 12px;
-  background: var(--c-app-surface-color);
+  background: var(--c-sys-color-surface);
   overflow: hidden;
   transition: border-color .15s, box-shadow .15s;
 }
 .rich-textarea--focused {
-  border-color: var(--c-app-primary-color);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-app-primary-color) 15%, transparent);
+  border-color: var(--c-sys-color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-sys-color-primary) 15%, transparent);
 }
 .rich-textarea--error {
-  border-color: var(--c-app-error-color);
+  border-color: var(--c-sys-color-error);
 }
 .rich-textarea__header {
   display: flex;
@@ -315,15 +315,15 @@
 .rich-textarea__label {
   font-size: 12px;
   font-weight: 600;
-  color: var(--c-app-text-secondary-color);
+  color: var(--c-sys-color-on-surface-variant);
 }
 .rich-textarea__counter {
   font-size: 11px;
-  color: var(--c-app-text-secondary-color);
+  color: var(--c-sys-color-on-surface-variant);
   transition: color .15s;
 }
-.rich-textarea__counter--warn { color: var(--c-app-warning-color); }
-.rich-textarea__counter--error { color: var(--c-app-error-color); }
+.rich-textarea__counter--warn { color: var(--c-sys-color-warning); }
+.rich-textarea__counter--error { color: var(--c-sys-color-error); }
 .rich-textarea__input {
   width: 100%;
   border: none;
@@ -331,22 +331,22 @@
   resize: none;
   padding: 4px 14px;
   background: transparent;
-  color: var(--c-app-text-color);
+  color: var(--c-sys-color-on-surface);
   font-size: 14px;
   font-family: inherit;
   line-height: 1.6;
 }
-.rich-textarea__input::placeholder { color: var(--c-app-text-secondary-color); }
+.rich-textarea__input::placeholder { color: var(--c-sys-color-on-surface-variant); }
 .rich-textarea__footer {
   display: flex;
   justify-content: space-between;
   padding: 6px 14px 10px;
-  border-top: 1px solid var(--c-app-border-color);
-  background: var(--c-app-surface-variant-color);
+  border-top: 1px solid var(--c-sys-color-outline-variant);
+  background: var(--c-sys-color-surface-variant);
 }
 .rich-textarea__hint {
   font-size: 11px;
-  color: var(--c-app-text-secondary-color);
+  color: var(--c-sys-color-on-surface-variant);
   transition: color .15s;
 }
 </style>

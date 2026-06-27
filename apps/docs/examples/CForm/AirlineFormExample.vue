@@ -547,7 +547,6 @@
   background: linear-gradient(135deg, #27d98c, #2f8cff);
   color: #fff !important;
   font-weight: 600;
-  //padding: 0 24px;
 }
 .btn-ghost {
   background: transparent !important;

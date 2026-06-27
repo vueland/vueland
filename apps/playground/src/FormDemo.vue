@@ -57,6 +57,9 @@
                             open-on-focus
                             close-on-leave
                             close-on-blur
+                            offset-y="8"
+                            strategy="reverse"
+                            class="bg-blue text-white"
                         >
                             <template #activator="{ on, activator }">
                                 <c-btn

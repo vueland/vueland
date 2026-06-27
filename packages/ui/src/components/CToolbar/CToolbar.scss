@@ -1,24 +1,25 @@
+@use '../../styles/mixins/functions' as *;
+
 $toolbar-height: 60px;
 $toolbar-logo-width: auto;
-$toolbar-logo-padding: 0 10px;
 
 .c-toolbar {
-  --toolbar-height: #{$toolbar-height};
-  --toolbar-logo-width: #{$toolbar-logo-width};
-  --toolbar-background-color: var(--c-app-surface-color);
-  --toolbar-logo-padding: #{$toolbar-logo-padding};
+  --c-toolbar-height: #{$toolbar-height};
+  --c-toolbar-logo-width: #{$toolbar-logo-width};
+  --c-toolbar-background-color: #{getCssVar('sys', 'color', 'surface')};
+  --c-toolbar-logo-padding: #{getCssVar('sys', 'space', '0')} #{getCssVar('sys', 'space', '3')};
 
   width: 100%;
   display: flex;
-  height: var(--toolbar-height);
-  background-color: var(--toolbar-background-color);
+  height: getCssVar('toolbar', 'height');
+  background-color: getCssVar('toolbar', 'background-color');
 
   &-logo {
-    width: var(--toolbar-logo-width);
+    width: getCssVar('toolbar', 'logo-width');
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: var(--toolbar-logo-padding);
+    padding: getCssVar('toolbar', 'logo-padding');
   }
 
   &--fixed {
@@ -26,6 +27,6 @@ $toolbar-logo-padding: 0 10px;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 1;
+    z-index: getCssVar('sys', 'z-index', 'sticky');
   }
 }

@@ -1,5 +1,21 @@
+@use '../../styles/mixins/functions' as *;
+
 .c-tooltip {
-  background: var(--c-app-surface-color);
-  color: var(--c-app-text-color);
-  padding: 6px 12px;
+  --c-tooltip-bg-color: #{getCssVar('sys', 'color', 'surface')};
+  --c-tooltip-text-color: #{getCssVar('sys', 'color', 'on-surface')};
+  --c-tooltip-padding: #{getCssVar('sys', 'space', '1')} #{getCssVar('sys', 'space', '3')};
+  --c-tooltip-border-radius: #{getCssVar('sys', 'shape', 'sm')};
+  --c-tooltip-elevation: #{getCssVar('sys', 'elevation', '2')};
+
+  --c-menu-bg-color: #{getCssVar('tooltip', 'bg-color')};
+  --c-menu-text-color: #{getCssVar('tooltip', 'text-color')};
+  --c-menu-border-radius: #{getCssVar('tooltip', 'border-radius')};
+  --c-menu-elevation: #{getCssVar('tooltip', 'elevation')};
+
+  background: getCssVar('tooltip', 'bg-color');
+  color: getCssVar('tooltip', 'text-color');
+  padding: getCssVar('tooltip', 'padding');
+  border-radius: getCssVar('tooltip', 'border-radius');
+  box-shadow: getCssVar('tooltip', 'elevation');
+  z-index: getCssVar('sys', 'z-index', 'tooltip');
 }

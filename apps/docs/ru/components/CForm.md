@@ -16,6 +16,7 @@ import AirlineFormExample from '../../examples/CForm/AirlineFormExample.vue'
 <BasicFormExample />
 
 ::: details Показать код
+
 ```vue
 <template>
   <CForm ref="formRef">
@@ -80,6 +81,7 @@ function handleReset() {
 }
 </script>
 ```
+
 :::
 
 ---
@@ -91,19 +93,46 @@ function handleReset() {
 <ProfileFormExample />
 
 ::: details Показать код
+
 ```vue
 <template>
   <CForm ref="formRef">
     <template #default="{ validate, reset }">
       <div class="form-grid">
-        <CTextField v-model="form.firstName" label="Имя" :rules="requiredRule" validate-on="blur" preset="input.indigo" />
-        <CTextField v-model="form.lastName" label="Фамилия" :rules="requiredRule" validate-on="blur" preset="input.indigo" />
+        <CTextField
+          v-model="form.firstName"
+          label="Имя"
+          :rules="requiredRule"
+          validate-on="blur"
+          preset="input.indigo"
+        />
+        <CTextField
+          v-model="form.lastName"
+          label="Фамилия"
+          :rules="requiredRule"
+          validate-on="blur"
+          preset="input.indigo"
+        />
 
-        <CTextField v-model="form.email" label="Email" type="email" :rules="emailRules" validate-on="blur" preset="input.indigo">
+        <CTextField
+          v-model="form.email"
+          label="Email"
+          type="email"
+          :rules="emailRules"
+          validate-on="blur"
+          preset="input.indigo"
+        >
           <template #prepend><CIcon name="fas:envelope" :size="14" source="fa" /></template>
         </CTextField>
 
-        <CTextField v-model="form.phone" label="Телефон" type="tel" :rules="phoneRules" validate-on="blur" preset="input.indigo">
+        <CTextField
+          v-model="form.phone"
+          label="Телефон"
+          type="tel"
+          :rules="phoneRules"
+          validate-on="blur"
+          preset="input.indigo"
+        >
           <template #prepend><CIcon name="fas:phone" :size="14" source="fa" /></template>
         </CTextField>
 
@@ -116,7 +145,9 @@ function handleReset() {
         </CTextField>
 
         <div>
-          <CBtn class="bg-indigo" style="color:#fff" @click="() => handleSave(validate)">Сохранить</CBtn>
+          <CBtn class="bg-indigo" style="color:#fff" @click="() => handleSave(validate)"
+            >Сохранить</CBtn
+          >
           <CBtn variant="text" @click="handleReset">Отмена</CBtn>
         </div>
       </div>
@@ -128,7 +159,13 @@ function handleReset() {
 import { ref } from 'vue'
 
 const formRef = ref()
-const form = ref({ firstName: 'Alex', lastName: 'Johnson', email: 'alex@example.com', phone: '', username: 'alexjohnson' })
+const form = ref({
+  firstName: 'Alex',
+  lastName: 'Johnson',
+  email: 'alex@example.com',
+  phone: '',
+  username: 'alexjohnson',
+})
 const original = { ...form.value }
 
 const requiredRule = [(v: string) => ({ valid: !!v?.trim(), message: 'Обязательное поле' })]
@@ -149,6 +186,7 @@ function handleReset() {
 }
 </script>
 ```
+
 :::
 
 ---
@@ -160,39 +198,108 @@ function handleReset() {
 <AirlineFormExample />
 
 ::: details Показать код
+
 ```vue
 <template>
   <CForm ref="formRef">
     <template #default="{ validate, reset }">
-
       <!-- Шаг 1: Детали рейса -->
       <div v-if="currentStep === 0">
-        <CTextField v-model="flight.from" label="Откуда" :rules="requiredRule" validate-on="blur" preset="input.blue" />
-        <CTextField v-model="flight.to" label="Куда" :rules="requiredRule" validate-on="blur" preset="input.blue" />
-        <CTextField v-model="flight.departure" label="Дата вылета" placeholder="ДД.ММ.ГГГГ" :rules="departureDateRule" validate-on="blur" preset="input.blue" />
-        <CTextField v-model="flight.passengers" label="Пассажиры" type="number" :rules="passengersRule" validate-on="blur" preset="input.blue" />
+        <CTextField
+          v-model="flight.from"
+          label="Откуда"
+          :rules="requiredRule"
+          validate-on="blur"
+          preset="input.blue"
+        />
+        <CTextField
+          v-model="flight.to"
+          label="Куда"
+          :rules="requiredRule"
+          validate-on="blur"
+          preset="input.blue"
+        />
+        <CTextField
+          v-model="flight.departure"
+          label="Дата вылета"
+          placeholder="ДД.ММ.ГГГГ"
+          :rules="departureDateRule"
+          validate-on="blur"
+          preset="input.blue"
+        />
+        <CTextField
+          v-model="flight.passengers"
+          label="Пассажиры"
+          type="number"
+          :rules="passengersRule"
+          validate-on="blur"
+          preset="input.blue"
+        />
       </div>
 
       <!-- Шаг 2: Данные пассажира -->
       <div v-if="currentStep === 1">
-        <CTextField v-model="passenger.firstName" label="Имя" :rules="requiredRule" validate-on="blur" preset="input.teal" />
-        <CTextField v-model="passenger.lastName" label="Фамилия" :rules="requiredRule" validate-on="blur" preset="input.teal" />
-        <CTextField v-model="passenger.passport" label="Номер паспорта" :rules="passportRule" validate-on="blur" preset="input.teal" />
-        <CTextField v-model="passenger.email" label="Email" type="email" :rules="emailRules" validate-on="blur" preset="input.teal" />
+        <CTextField
+          v-model="passenger.firstName"
+          label="Имя"
+          :rules="requiredRule"
+          validate-on="blur"
+          preset="input.teal"
+        />
+        <CTextField
+          v-model="passenger.lastName"
+          label="Фамилия"
+          :rules="requiredRule"
+          validate-on="blur"
+          preset="input.teal"
+        />
+        <CTextField
+          v-model="passenger.passport"
+          label="Номер паспорта"
+          :rules="passportRule"
+          validate-on="blur"
+          preset="input.teal"
+        />
+        <CTextField
+          v-model="passenger.email"
+          label="Email"
+          type="email"
+          :rules="emailRules"
+          validate-on="blur"
+          preset="input.teal"
+        />
       </div>
 
       <!-- Шаг 3: Оплата -->
       <div v-if="currentStep === 2">
-        <CTextField v-model="payment.card" label="Номер карты" :rules="cardRule" validate-on="blur" preset="input.deepPurple" />
-        <CTextField v-model="payment.expiry" label="Срок (ММ/ГГ)" :rules="expiryRule" validate-on="blur" preset="input.deepPurple" />
-        <CTextField v-model="payment.cvv" label="CVV" type="password" :rules="cvvRule" validate-on="blur" preset="input.deepPurple" />
+        <CTextField
+          v-model="payment.card"
+          label="Номер карты"
+          :rules="cardRule"
+          validate-on="blur"
+          preset="input.deepPurple"
+        />
+        <CTextField
+          v-model="payment.expiry"
+          label="Срок (ММ/ГГ)"
+          :rules="expiryRule"
+          validate-on="blur"
+          preset="input.deepPurple"
+        />
+        <CTextField
+          v-model="payment.cvv"
+          label="CVV"
+          type="password"
+          :rules="cvvRule"
+          validate-on="blur"
+          preset="input.deepPurple"
+        />
       </div>
 
       <CBtn v-if="currentStep > 0" variant="text" @click="currentStep--">Назад</CBtn>
       <CBtn @click="() => handleNext(validate)">
         {{ currentStep === 2 ? 'Оплатить и подтвердить' : 'Далее' }}
       </CBtn>
-
     </template>
   </CForm>
 </template>
@@ -226,6 +333,7 @@ async function handleNext(validate: () => Promise<boolean>) {
 }
 </script>
 ```
+
 :::
 
 ---
@@ -237,24 +345,28 @@ async function handleNext(validate: () => Promise<boolean>) {
 <AsyncFormExample />
 
 ::: details Показать код
+
 ```vue
 <template>
   <CForm>
     <template #default="{ validate, reset }">
-      <CTextField
-        v-model="form.username"
-        label="Логин"
-        :rules="usernameRules"
-        validate-on="blur"
-      >
+      <CTextField v-model="form.username" label="Логин" :rules="usernameRules" validate-on="blur">
         <template #details="{ errorMessage, hasError, validating }">
-          <span v-if="validating" style="color: var(--c-app-primary-color)">Проверяем…</span>
-          <span v-else-if="hasError" style="color: var(--c-app-error-color)">{{ errorMessage }}</span>
+          <span v-if="validating" style="color: var(--c-sys-color-primary)">Проверяем…</span>
+          <span v-else-if="hasError" style="color: var(--c-sys-color-error)">{{
+            errorMessage
+          }}</span>
           <span v-else style="opacity:.6">Только буквы и цифры</span>
         </template>
       </CTextField>
 
-      <CTextField v-model="form.email" label="Email" type="email" :rules="emailRules" validate-on="blur" />
+      <CTextField
+        v-model="form.email"
+        label="Email"
+        type="email"
+        :rules="emailRules"
+        validate-on="blur"
+      />
 
       <CBtn @click="() => handleSubmit(validate)">Зарегистрироваться</CBtn>
     </template>
@@ -268,9 +380,12 @@ const form = ref({ username: '', email: '' })
 const taken = ['admin', 'root', 'vueland']
 
 const usernameRules = [
-  (v: string) => ({ valid: /^[a-zA-Z0-9_]{3,}$/.test(v), message: 'Мин. 3 символа, буквы/цифры/_' }),
+  (v: string) => ({
+    valid: /^[a-zA-Z0-9_]{3,}$/.test(v),
+    message: 'Мин. 3 символа, буквы/цифры/_',
+  }),
   async (v: string) => {
-    await new Promise(r => setTimeout(r, 600))
+    await new Promise((r) => setTimeout(r, 600))
     return { valid: !taken.includes(v.toLowerCase()), message: `Логин "${v}" уже занят` }
   },
 ]
@@ -284,6 +399,7 @@ async function handleSubmit(validate: () => Promise<boolean>) {
 }
 </script>
 ```
+
 :::
 
 ---
@@ -292,35 +408,35 @@ async function handleSubmit(validate: () => Promise<boolean>) {
 
 ### Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `label` | `string` | — | `aria-label` для элемента `<form>`. При наличии браузер автоматически добавляет `role="form"` |
+| Prop    | Type     | Default | Description                                                                                   |
+| ------- | -------- | ------- | --------------------------------------------------------------------------------------------- |
+| `label` | `string` | —       | `aria-label` для элемента `<form>`. При наличии браузер автоматически добавляет `role="form"` |
 
 ### Slots
 
-| Slot | Описание |
-|---|---|
+| Slot      | Описание                                         |
+| --------- | ------------------------------------------------ |
 | `default` | Содержимое формы. Получает `{ validate, reset }` |
 
 #### Пропсы слота `default`
 
-| Prop | Type | Description |
-|------|------|-------------|
+| Prop       | Type                     | Description                                                                                 |
+| ---------- | ------------------------ | ------------------------------------------------------------------------------------------- |
 | `validate` | `() => Promise<boolean>` | Запускает валидацию всех зарегистрированных полей. Возвращает `true`, если все поля валидны |
-| `reset` | `() => void` | Сбрасывает состояние валидации всех зарегистрированных полей |
+| `reset`    | `() => void`             | Сбрасывает состояние валидации всех зарегистрированных полей                                |
 
 ### События
 
-| Событие | Аргументы | Описание |
-|---------|-----------|----------|
-| `submit` | `Event` | Эмитится при отправке формы. Нативный submit блокируется автоматически |
+| Событие  | Аргументы | Описание                                                               |
+| -------- | --------- | ---------------------------------------------------------------------- |
+| `submit` | `Event`   | Эмитится при отправке формы. Нативный submit блокируется автоматически |
 
 ### Expose
 
-| Метод | Сигнатура | Описание |
-|-------|-----------|----------|
-| `validate` | `() => Promise<boolean>` | Запустить валидацию всех полей |
-| `reset` | `() => void` | Сбросить состояние валидации всех полей |
+| Метод      | Сигнатура                | Описание                                |
+| ---------- | ------------------------ | --------------------------------------- |
+| `validate` | `() => Promise<boolean>` | Запустить валидацию всех полей          |
+| `reset`    | `() => void`             | Сбросить состояние валидации всех полей |
 
 ```vue
 <template>
@@ -359,11 +475,11 @@ form.validate()
 
 ## ARIA и доступность
 
-| Атрибут | Значение | Описание |
-|---------|----------|----------|
-| `novalidate` | присутствует | Отключает нативную браузерную валидацию |
-| `aria-label` | значение пропа `label` | Идентифицирует форму для скринридеров |
-| `role="form"` | авто | Назначается браузером при наличии `aria-label` |
+| Атрибут       | Значение               | Описание                                       |
+| ------------- | ---------------------- | ---------------------------------------------- |
+| `novalidate`  | присутствует           | Отключает нативную браузерную валидацию        |
+| `aria-label`  | значение пропа `label` | Идентифицирует форму для скринридеров          |
+| `role="form"` | авто                   | Назначается браузером при наличии `aria-label` |
 
 :::tip
 Передавайте осмысленный `label`, если на странице несколько форм — это позволит пользователям скринридеров различать их между собой.
