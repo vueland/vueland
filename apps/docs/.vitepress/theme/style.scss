@@ -188,7 +188,8 @@
 
 .vp-doc .vl-table {
   display: table;
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
   font-size: 14px;
   line-height: 1.55;
@@ -209,6 +210,81 @@
   padding: 13px 18px;
   text-align: left;
   vertical-align: top;
+}
+
+.vp-doc .vl-table-wrap--tokens .vl-table {
+  min-width: min(1180px, calc(100vw - 40px));
+}
+
+.vp-doc .vl-table-wrap--tokens .vl-table__cell:nth-child(1) {
+  width: 26%;
+  min-width: 260px;
+}
+
+.vp-doc .vl-table-wrap--tokens .vl-table__cell:nth-child(2) {
+  width: 18%;
+  min-width: 180px;
+}
+
+.vp-doc .vl-table-wrap--tokens .vl-table__cell:nth-child(3),
+.vp-doc .vl-table-wrap--tokens .vl-table__cell:nth-child(4) {
+  width: 18%;
+  min-width: 170px;
+}
+
+.vp-doc .vl-table-wrap--tokens .vl-table__cell:nth-child(5) {
+  width: 20%;
+  min-width: 260px;
+}
+
+.vp-doc .vl-table-wrap--tokens .vl-table__cell:nth-child(1) code,
+.vp-doc .vl-table-wrap--tokens .vl-table__cell:nth-child(2) code {
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.vp-doc .vl-table-wrap--tokens.vl-table-wrap--cols-3 .vl-table {
+  min-width: min(920px, calc(100vw - 40px));
+}
+
+.vp-doc .vl-table-wrap--tokens.vl-table-wrap--cols-3 .vl-table__cell:nth-child(1) {
+  width: 36%;
+  min-width: 300px;
+}
+
+.vp-doc .vl-table-wrap--tokens.vl-table-wrap--cols-3 .vl-table__cell:nth-child(2) {
+  width: 24%;
+  min-width: 190px;
+}
+
+.vp-doc .vl-table-wrap--tokens.vl-table-wrap--cols-3 .vl-table__cell:nth-child(3) {
+  width: 40%;
+  min-width: 300px;
+}
+
+.vp-doc .vl-table-wrap--tokens.vl-table-wrap--cols-4 .vl-table {
+  min-width: min(1040px, calc(100vw - 40px));
+}
+
+.vp-doc .vl-table-wrap--tokens.vl-table-wrap--cols-4 .vl-table__cell:nth-child(1) {
+  width: 30%;
+  min-width: 280px;
+}
+
+.vp-doc .vl-table-wrap--tokens.vl-table-wrap--cols-4 .vl-table__cell:nth-child(2) {
+  width: 18%;
+  min-width: 170px;
+}
+
+.vp-doc .vl-table-wrap--tokens.vl-table-wrap--cols-4 .vl-table__cell:nth-child(3) {
+  width: 24%;
+  min-width: 220px;
+}
+
+.vp-doc .vl-table-wrap--tokens.vl-table-wrap--cols-4 .vl-table__cell:nth-child(4) {
+  width: 28%;
+  min-width: 260px;
 }
 
 /* Шапка: заглавные приглушённые подписи + градиентная линия бренда снизу

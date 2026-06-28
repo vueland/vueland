@@ -200,23 +200,45 @@ describe('VuelandUI / install', () => {
                 onPrimary: '#ffffff',
                 surface: '#ffffff',
                 shapeMd: '8px',
+                space10: '40px',
+                elevation2: '0 2px 8px rgba(0,0,0,.2)',
                 stateHoverColor: 'rgba(0,0,0,.06)',
-                '--app-shell-width': '1200px',
+                appShellWidth: '1200px',
+                myCustomToken: '#fa5a5a',
+                '--external-token': 'passthrough',
             })).toEqual([
                 ['--c-sys-color-primary', '#1976d2'],
+                ['--c-sys-color-primary-rgb', '25, 118, 210'],
                 ['--c-sys-color-on-primary', '#ffffff'],
                 ['--c-sys-color-surface', '#ffffff'],
                 ['--c-sys-shape-md', '8px'],
+                ['--c-sys-space-10', '40px'],
+                ['--c-sys-elevation-2', '0 2px 8px rgba(0,0,0,.2)'],
                 ['--c-sys-state-hover-color', 'rgba(0,0,0,.06)'],
-                ['--app-shell-width', '1200px'],
+                ['--c-app-shell-width', '1200px'],
+                ['--c-my-custom-token', '#fa5a5a'],
+                ['--external-token', 'passthrough'],
             ])
         })
 
-        it('игнорирует неизвестные короткие ключи темы', () => {
-            const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+        it('позволяет явно задать primaryRgb если primary нельзя распарсить', () => {
+            expect(buildVars({
+                primary: 'var(--brand-primary)',
+                primaryRgb: '12, 34, 56',
+            })).toEqual([
+                ['--c-sys-color-primary', 'var(--brand-primary)'],
+                ['--c-sys-color-primary-rgb', '12, 34, 56'],
+            ])
+        })
 
-            expect(buildVars({ sidebarBg: '#f0f2f5' } as any)).toEqual([])
-            expect(warn).toHaveBeenCalledWith(expect.stringContaining('Unknown theme token "sidebarBg"'))
+        it('мапит пользовательские camelCase ключи в --c-* CSS-переменные', () => {
+            expect(buildVars({
+                sidebarBg: '#f0f2f5',
+                headerHeight: '64px',
+            })).toEqual([
+                ['--c-sidebar-bg', '#f0f2f5'],
+                ['--c-header-height', '64px'],
+            ])
         })
 
         it('applyTheme выставляет data-theme и очищает переменные предыдущей темы', () => {
@@ -236,12 +258,14 @@ describe('VuelandUI / install', () => {
 
             expect(document.documentElement.dataset.theme).toBe('light')
             expect(document.documentElement.style.getPropertyValue('--c-sys-color-primary')).toBe('#1976d2')
+            expect(document.documentElement.style.getPropertyValue('--c-sys-color-primary-rgb')).toBe('25, 118, 210')
             expect(document.documentElement.style.getPropertyValue('--c-sys-shape-md')).toBe('8px')
 
             ui.applyTheme('dark')
 
             expect(document.documentElement.dataset.theme).toBe('dark')
             expect(document.documentElement.style.getPropertyValue('--c-sys-color-primary')).toBe('#90caf9')
+            expect(document.documentElement.style.getPropertyValue('--c-sys-color-primary-rgb')).toBe('144, 202, 249')
             expect(document.documentElement.style.getPropertyValue('--c-sys-color-surface')).toBe('#1e1e1e')
             expect(document.documentElement.style.getPropertyValue('--c-sys-shape-md')).toBe('')
         })

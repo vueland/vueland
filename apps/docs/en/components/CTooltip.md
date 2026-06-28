@@ -186,7 +186,11 @@ By default, the tooltip wraps its content (`width="auto"`). Pass `width` for a f
 | `--c-tooltip-text-color`    | `var(--c-sys-color-on-surface)`             |
 | `--c-tooltip-padding`       | `var(--c-sys-space-1) var(--c-sys-space-3)` |
 | `--c-tooltip-border-radius` | `var(--c-sys-shape-sm)`                     |
+| `--c-tooltip-border-color`  | `var(--c-sys-color-outline-variant)`        |
+| `--c-tooltip-border-width`  | `var(--c-sys-border-width-thin)`            |
 | `--c-tooltip-elevation`     | `var(--c-sys-elevation-2)`                  |
+
+`CTooltip` is built on `CMenu` and forwards background, text color, border radius and elevation to the matching `--c-menu-*` variables.
 
 ### Slots
 

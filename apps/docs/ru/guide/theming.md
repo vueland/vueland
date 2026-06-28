@@ -70,7 +70,6 @@ vueland.applyTheme('dark')
 | Отступы и контролы | `space1`, `space4`, `controlHeightMd`, `controlIconSize`                   |
 | Форма и границы    | `shapeSm`, `shapeMd`, `shapePill`, `borderWidthThin`                       |
 | Тени и движение    | `elevation1`, `motionDurationMedium`, `motionEasingStandard`               |
-| Слои               | `zIndexDropdown`, `zIndexModal`, `zIndexTooltip`                           |
 
 Все токены опциональны. Переопределяйте только роли, которые меняет ваша тема.
 
@@ -78,27 +77,31 @@ vueland.applyTheme('dark')
 
 ## Пользовательские токены
 
-Пользовательские токены темы должны быть явными CSS custom properties. Короткие произвольные ключи игнорируются, чтобы устаревшие токены не создавали сломанную тему молча.
+Пользовательские токены темы описываются тем же camelCase-форматом. Если ключ не является system-токеном, Vueland создаёт CSS custom property с префиксом `--c-`: `sidebarBg` становится `--c-sidebar-bg`, `myCustomToken` становится `--c-my-custom-token`.
+
+Ключи, которые уже начинаются с `--`, передаются как есть. Это полезно только для интеграции с внешними CSS-переменными; для токенов приложения предпочтителен camelCase.
 
 ```ts
 themes: {
   light: {
     primary: '#4f6ef7',
-    '--app-sidebar-bg': '#f0f2f5',
-    '--app-header-height': '64px',
+    sidebarBg: '#f0f2f5',
+    headerHeight: '64px',
+    myCustomToken: '#fa5a5a',
   },
 }
 ```
 
 ## CSS-переменные
 
-`primary` становится `--c-sys-color-primary`, `shapeMd` становится `--c-sys-shape-md` и так далее:
+`primary` становится `--c-sys-color-primary`, `shapeMd` становится `--c-sys-shape-md`, `sidebarBg` становится `--c-sidebar-bg` и так далее:
 
 ```css
 :root {
   --c-sys-color-primary: #4f6ef7;
   --c-sys-color-background: #f5f7fa;
   --c-sys-color-on-surface: #1a1a2e;
+  --c-sidebar-bg: #f0f2f5;
 }
 ```
 

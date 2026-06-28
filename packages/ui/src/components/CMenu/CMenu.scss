@@ -3,9 +3,9 @@
 $self: '.c-menu';
 
 .c-menu {
-  --c-menu-bg-color: #{getCssVar('sys', 'color', 'surface')};
+  --c-menu-bg-color: #{getCssVar('sys', 'color', 'surface-container-high')};
   --c-menu-text-color: #{getCssVar('sys', 'color', 'on-surface')};
-  --c-menu-border-radius: #{getCssVar('sys', 'shape', 'md')};
+  --c-menu-border-radius: #{getCssVar('sys', 'shape', 'lg')};
   --c-menu-elevation: #{getCssVar('sys', 'elevation', '3')};
   --c-menu-max-height: 100%;
 
@@ -18,7 +18,6 @@ $self: '.c-menu';
   max-height: getCssVar('menu', 'max-height');
   outline: none;
   box-shadow: getCssVar('menu', 'elevation');
-  z-index: getCssVar('sys', 'z-index', 'dropdown');
 
   &__content {
     overflow-x: hidden;

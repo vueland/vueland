@@ -13,6 +13,7 @@ Toolbar, article header, and paginator — three common patterns where `CSpacer`
 <SpacerExample />
 
 ::: details Show code
+
 ```vue
 <template>
   <!-- Toolbar: logo left, links + button right -->
@@ -46,11 +47,12 @@ Toolbar, article header, and paginator — three common patterns where `CSpacer`
   </c-row>
 </template>
 ```
+
 :::
 
 ## How it works
 
-`CSpacer` renders a `<div class="c-spacer">` with `flex: 1 1 auto`, which causes it to grow and consume all remaining space in the row.
+`CSpacer` renders a `<div class="c-spacer">` with `flex-grow: 1 !important`, which causes it to grow and consume free space in the row.
 
 ## Props
 
@@ -59,6 +61,10 @@ Toolbar, article header, and paginator — three common patterns where `CSpacer`
 ## Slots
 
 `CSpacer` has no slots.
+
+## CSS variables
+
+`CSpacer` does not define its own CSS variables.
 
 ## See also
 

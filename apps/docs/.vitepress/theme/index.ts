@@ -5,10 +5,12 @@ import {
 } from '@fortawesome/free-brands-svg-icons'
 import {
     faAt,
+    faBan,
     faBell,
     faBox,
     faBriefcase,
     faCalendarAlt,
+    faCartPlus,
     faCheck,
     faChevronDown,
     faCode,
@@ -77,8 +79,10 @@ const fa = createFontAwesomeResolver({
     defaultPrefix: 'fas',
     icons: {
         'fas:user': faUser,
+        'fas:ban': faBan,
         'fas:envelope': faEnvelope,
         'fas:lock': faLock,
+        'fas:cart-plus': faCartPlus,
         'fas:phone': faPhone,
         'fas:search': faSearch,
         'fas:home': faHome,

@@ -13,6 +13,7 @@ import SpacerExample from '../../examples/CGrid/SpacerExample.vue'
 <SpacerExample />
 
 ::: details Показать код
+
 ```vue
 <template>
   <!-- Тулбар: логотип слева, ссылки + кнопка справа -->
@@ -46,11 +47,12 @@ import SpacerExample from '../../examples/CGrid/SpacerExample.vue'
   </c-row>
 </template>
 ```
+
 :::
 
 ## Как работает
 
-`CSpacer` рендерит `<div class="c-spacer">` со стилем `flex: 1 1 auto`, что позволяет ему расти и занимать всё свободное место в строке.
+`CSpacer` рендерит `<div class="c-spacer">` со стилем `flex-grow: 1 !important`, что позволяет ему расти и занимать свободное место в строке.
 
 ## Props
 
@@ -59,6 +61,10 @@ import SpacerExample from '../../examples/CGrid/SpacerExample.vue'
 ## Слоты
 
 Слотов нет.
+
+## CSS-переменные
+
+`CSpacer` не определяет собственных CSS-переменных.
 
 ## См. также
 

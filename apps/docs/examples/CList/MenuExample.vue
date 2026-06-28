@@ -70,7 +70,7 @@
         padding: 2px 6px;
         border-radius: 6px;
         color: var(--c-sys-color-on-surface-variant, #90a4ae);
-        background: color-mix(in srgb, currentColor 12%, transparent);
+        background: var(--c-sys-color-surface-variant);
     }
 
     .divider {

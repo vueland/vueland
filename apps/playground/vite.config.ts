@@ -13,7 +13,7 @@ export default defineConfig({
             breakpoints: {
                 xs: 0,
                 sm: 680,
-                md: 970,
+                md: 1024,
                 lg: 1280,
                 xl: 1920,
                 xxl: 2560,

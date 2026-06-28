@@ -67,19 +67,19 @@
                         <div class="card-desc mb-4">
                             {{ card.desc }}
                         </div>
-                        <c-card-footer class="d-flex items-center justify-space-between pa-0">
-                            <span
-                                class="font-weight-bold"
-                                style="font-size:20px"
-                            >{{ card.price }}</span>
-                            <c-btn
-                                variant="outlined"
-                                class="radius-pill"
-                            >
-                                Add →
-                            </c-btn>
-                        </c-card-footer>
                     </c-card-body>
+                    <c-card-footer class="d-flex items-center justify-space-between pa-4">
+                        <span
+                            class="font-weight-bold"
+                            style="font-size:20px"
+                        >{{ card.price }}</span>
+                        <c-btn
+                            variant="outlined"
+                            class="radius-pill"
+                        >
+                            Add →
+                        </c-btn>
+                    </c-card-footer>
                 </c-card>
             </c-col>
         </c-row>

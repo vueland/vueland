@@ -136,7 +136,12 @@
     }
 
     function unselectItem(listItem: T) {
-        if (props.disabled || props.readonly || isDisabledValue(listItem) || (!props.multiple && props.mandatory)) {
+        if (
+            props.disabled
+            || props.readonly
+            || isDisabledValue(listItem)
+            || (!props.multiple && props.mandatory)
+        ) {
             return
         }
 
@@ -271,7 +276,12 @@
             const controller = itemControllers[i]
             const value = controller?.getValue()
 
-            if (!controller || controller.isDisabled() || !hasItemValue(value) || hasSelectedItem(value, selectedItems)) {
+            if (
+                !controller
+                || controller.isDisabled()
+                || !hasItemValue(value)
+                || hasSelectedItem(value, selectedItems)
+            ) {
                 continue
             }
 
@@ -314,7 +324,12 @@
     }
 
     function activateCurrentItem() {
-        if (!unref(managed) || unref(isDisabled) || activeItemIndex < 0 || !isEnabledItemAt(activeItemIndex)) {
+        if (
+            !unref(managed)
+            || unref(isDisabled)
+            || activeItemIndex < 0
+            || !isEnabledItemAt(activeItemIndex)
+        ) {
             return
         }
 
@@ -341,8 +356,7 @@
             return
         }
 
-        // With no active item yet (e.g. a menu opened upwards), ArrowUp should
-        // enter the list from the bottom — mirroring ArrowDown entering from the top.
+        // Если идем снизу вверх
         const fromIndex = activeItemIndex < 0
             ? itemControllers.length - 1
             : activeItemIndex - 1

@@ -114,6 +114,10 @@ Breakpoint defaults: `xs` ≥ 0 px · `sm` ≥ 600 px · `md` ≥ 960 px · `lg`
 
 Custom breakpoint names configured through `@vueland/utils-jit` do not become new alignment props. Use generated utility classes instead, for example `class="tablet:justify-center tablet:items-center"`.
 
+## CSS variables
+
+`CRow` does not define its own CSS variables. Grid gutters are generated from the SCSS breakpoint map and can be changed through `@vueland/utils-jit` breakpoint configuration.
+
 ## Slots
 
 | Slot      | Description                                     |

@@ -107,6 +107,10 @@ Breakpoint defaults: `xs` ≥ 0 px · `sm` ≥ 600 px · `md` ≥ 960 px · `lg`
 
 Custom breakpoint names configured through `@vueland/utils-jit` do not become new props. Use generated classes for them, for example `class="tablet-6"` or `:class="{ 'tablet-4': compact }"`.
 
+## CSS variables
+
+`CCol` does not define its own CSS variables. Width, offset and order are controlled by generated grid classes.
+
 ## Slots
 
 | Slot      | Description    |

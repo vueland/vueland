@@ -344,14 +344,23 @@ type ValidateFn = (value: any) => ValidateResult | Promise<ValidateResult>
 | `--c-field-min-height`           | `var(--c-sys-control-height-md)`        | Minimum field height           |
 | `--c-field-prepend-min-width`    | `var(--c-sys-control-height-md)`        | Min width of the prepend zone  |
 | `--c-field-append-min-width`     | `var(--c-sys-control-icon-size)`        | Min width of the append zone   |
+| `--c-field-padding-inline`       | `var(--c-sys-control-padding-inline)`   | Horizontal field padding       |
 | `--c-field-border-radius`        | `var(--c-sys-shape-md)`                 | Field border radius            |
 | `--c-field-transition-duration`  | `var(--c-sys-motion-duration-medium)`   | Field transition duration      |
+| `--c-field-density-offset`       | `var(--c-sys-density-scale)`            | Added height offset            |
 | `--c-field-bg-color`             | `var(--c-sys-color-surface)`            | Field background               |
+| `--c-field-focused-bg-color`     | `var(--c-sys-color-surface-bright)`     | Field background on focus      |
+| `--c-field-disabled-bg-color`    | `var(--c-sys-color-surface-dim)`        | Field background when disabled |
 | `--c-field-label-color`          | `var(--c-sys-color-primary)`            | Label color                    |
 | `--c-field-focused-border-color` | `var(--c-sys-color-focus-ring)`         | Focus border color             |
-| `--c-field-border-color`         | `var(--c-sys-color-outline-variant)`    | Border color                   |
+| `--c-field-border-color`         | `var(--c-sys-color-outline)`            | Border color                   |
+| `--c-field-border-width`         | `var(--c-sys-border-width-thin)`        | Border width                   |
+| `--c-field-focused-border-width` | `var(--c-sys-border-width-medium)`      | Focus border width             |
 | `--c-field-input-text-color`     | `var(--c-sys-color-on-surface)`         | Typed text color               |
 | `--c-field-placeholder-color`    | `var(--c-sys-color-placeholder)`        | Placeholder color              |
+| `--c-field-error-bg-color`       | `var(--c-sys-color-surface)`            | Field background on error      |
+| `--c-field-error-text-color`     | `var(--c-sys-color-error)`              | Text color on error            |
+| `--c-field-error-border-color`   | `var(--c-sys-color-error)`              | Border color on error          |
 | `--c-field-readonly-bg-color`    | `var(--c-sys-color-readonly-container)` | Field background when readonly |
 | `--c-field-disabled-opacity`     | `var(--c-sys-state-disabled-opacity)`   | Opacity when disabled          |
 

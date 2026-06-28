@@ -317,6 +317,17 @@ $grey: (
   'darken-4': #212121,
 );
 
+$graphite: (
+  'base': #242424,
+  'lighten-3': #333333,
+  'lighten-2': #2f2f2f,
+  'lighten-1': #2a2a2a,
+  'darken-1': #202020,
+  'darken-2': #1e1e1e,
+  'darken-3': #161616,
+  'darken-4': #121212,
+);
+
 $colors: (
   'red': $red,
   'pink': $pink,
@@ -337,6 +348,7 @@ $colors: (
   'brown': $brown,
   'blue-grey': $blue-grey,
   'grey': $grey,
+  'graphite': $graphite,
   'white': $white,
   'black': $black,
 );

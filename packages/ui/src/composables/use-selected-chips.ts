@@ -10,10 +10,6 @@ export type SelectableProps<T> = {
     mandatory?: boolean
 }
 
-export type SelectableEventProps<T> = {
-    'onUpdate:modelValue'?: (value: T | T[] | undefined) => void
-}
-
 export function useSelectedChips<T>(props: IterableItemsProps<T> & SelectableProps<T>) {
     const instance = getCurrentInstance()!
 
@@ -28,13 +24,13 @@ export function useSelectedChips<T>(props: IterableItemsProps<T> & SelectablePro
     const chips = computed(() => {
         if (props.multiple) {
             return ((props.modelValue as T[] | undefined) ?? []).map(
-                (it: T) => (it as any)?.[titleKey] ?? it,
+                (it: T) => (it as T)?.[titleKey] ?? it,
             )
         }
 
         const value = props.modelValue as T | undefined
 
-        return [value ? `${(value as any)?.[titleKey] ?? value}` : '']
+        return [value ? `${(value as T)?.[titleKey] ?? value}` : '']
     })
 
     function select(value: T) {

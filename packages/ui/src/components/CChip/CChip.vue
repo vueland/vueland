@@ -1,18 +1,26 @@
 <script setup lang="ts" generic="T">
+    import { computed } from 'vue'
+
     import { IconAliases } from '@/enums'
 
-    defineProps<{
+    const props = defineProps<{
         closable?: boolean
+        color?: 'primary' | 'secondary' | 'tertiary' | 'success' | 'error' | 'warning' | 'info'
         value?: T
     }>()
 
     defineEmits<{
-        (e: 'close'): void
+        (e: 'close', value?: T): void
     }>()
+
+    const classes = computed(() => `c-chip--${props.color ?? 'primary'}`)
 </script>
 
 <template>
-    <div class="c-chip">
+    <div
+        class="c-chip"
+        :class="classes"
+    >
         <div class="c-chip__content">
             <slot></slot>
         </div>
@@ -21,8 +29,9 @@
             class="c-chip__close"
         >
             <c-icon
-                size="24"
+                size="22"
                 :name="IconAliases.CLOSE"
+                @click="$emit('close', value)"
             />
         </div>
     </div>

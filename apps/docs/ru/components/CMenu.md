@@ -344,9 +344,6 @@ CMenu не добавляет ARIA-атрибуты самостоятельно
 | `closeOnClickOutside` | `boolean`                                                  | —                 | Закрыть при клике вне меню                                            |
 | `closeOnContentClick` | `boolean`                                                  | —                 | Закрыть при клике внутри контента                                     |
 | `align`               | `AlignValue`                                               | —                 | Сторона и выравнивание (напр. `bottom`, `top-center`, `right-center`) |
-|                       |
-|                       |
-|                       |
 | `offsetX`             | `number \| string`                                         | —                 | Горизонтальный отступ (px)                                            |
 | `offsetY`             | `number \| string`                                         | —                 | Вертикальный отступ (px)                                              |
 | `positionX`           | `number`                                                   | —                 | Фиксированная координата X                                            |
@@ -363,6 +360,16 @@ CMenu не добавляет ARIA-атрибуты самостоятельно
 | `transition`          | `string`                                                   | `'fade'`          | Имя Vue-перехода                                                      |
 | `ssr`                 | `boolean`                                                  | —                 | Пре-рендер на сервере                                                 |
 | `activator`           | `Element \| ComponentPublicInstance \| 'parent' \| string` | —                 | Внешний активатор, CSS-селектор или родительский элемент              |
+
+### CSS-переменные
+
+| Переменная               | Значение по умолчанию                       | Описание                 |
+| ------------------------ | ------------------------------------------- | ------------------------ |
+| `--c-menu-bg-color`      | `var(--c-sys-color-surface-container-high)` | Фон меню                 |
+| `--c-menu-text-color`    | `var(--c-sys-color-on-surface)`             | Цвет текста              |
+| `--c-menu-border-radius` | `var(--c-sys-shape-lg)`                     | Скругление контейнера    |
+| `--c-menu-elevation`     | `var(--c-sys-elevation-3)`                  | Тень контейнера          |
+| `--c-menu-max-height`    | `100%`                                      | Максимальная высота меню |
 
 ### Slots
 

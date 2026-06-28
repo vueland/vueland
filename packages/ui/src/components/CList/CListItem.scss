@@ -17,9 +17,13 @@ $self: '.c-list-item';
   --c-list-item-disabled-opacity: #{$list-item-disabled-opacity};
   --c-list-item-disabled-color: #{$list-item-disabled-color};
   --c-list-item-state-layer-color: #{$list-item-state-layer-color};
+  --c-list-item-hover-bg-color: #{$list-item-hover-bg-color};
+  --c-list-item-focus-bg-color: #{$list-item-focus-bg-color};
+  --c-list-item-pressed-bg-color: #{$list-item-pressed-bg-color};
   --c-list-item-focus-ring-color: #{$list-item-focus-ring-color};
   --c-list-item-hover-opacity: #{$list-item-hover-opacity};
   --c-list-item-focus-opacity: #{$list-item-focus-opacity};
+  --c-list-item-dragged-opacity: #{$list-item-dragged-opacity};
   --c-list-item-title-font-size: #{$list-item-title-font-size};
   --c-list-item-title-line-height: #{$list-item-title-line-height};
   --c-list-item-title-font-weight: #{$list-item-title-font-weight};
@@ -78,14 +82,27 @@ $self: '.c-list-item';
     outline-offset: -1px;
 
     &::before {
-      opacity: getCssVar('list-item', 'focus-opacity');
+      background: getCssVar('list-item', 'focus-bg-color');
+      opacity: 1;
     }
   }
 
   &:hover {
     &::before {
-      opacity: getCssVar('list-item', 'hover-opacity');
+      background: getCssVar('list-item', 'hover-bg-color');
+      opacity: 1;
     }
+  }
+
+  &:active {
+    &::before {
+      background: getCssVar('list-item', 'pressed-bg-color');
+      opacity: 1;
+    }
+  }
+
+  &[draggable='true']:active {
+    opacity: getCssVar('list-item', 'dragged-opacity');
   }
 
   &--disabled {
@@ -96,7 +113,11 @@ $self: '.c-list-item';
   }
 
   &--selected {
-    background: getCssVar('list-item', 'selected-bg-color');
     color: getCssVar('list-item', 'selected-color');
+
+    &::before {
+      background-color: getCssVar('list-item', 'selected-bg-color');
+      opacity: 0.2;
+    }
   }
 }

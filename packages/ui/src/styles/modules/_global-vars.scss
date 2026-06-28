@@ -1,4 +1,5 @@
 @use 'sass:map';
+@use 'sass:color';
 @use '../maps/colors-map' as *;
 @use '../maps/elevations-map' as *;
 
@@ -53,6 +54,10 @@ $primary-transition: var(--c-sys-motion-easing-standard);
   // ---- System: color roles ----
   --c-sys-color-scheme: light;
   --c-sys-color-primary: var(--c-ref-color-blue-40);
+  --c-sys-color-primary-rgb:
+    #{color.channel(map.get($blue, 'darken-2'), 'red', $space: rgb)},
+    #{color.channel(map.get($blue, 'darken-2'), 'green', $space: rgb)},
+    #{color.channel(map.get($blue, 'darken-2'), 'blue', $space: rgb)};
   --c-sys-color-on-primary: var(--c-ref-color-white);
   --c-sys-color-primary-container: var(--c-ref-color-blue-95);
   --c-sys-color-on-primary-container: #{map.get($blue, 'darken-4')};
@@ -110,20 +115,26 @@ $primary-transition: var(--c-sys-motion-easing-standard);
   --c-sys-color-readonly: var(--c-sys-color-primary);
   --c-sys-color-readonly-container: var(--c-ref-color-neutral-100);
   --c-sys-color-focus-ring: var(--c-sys-color-primary);
-  --c-sys-color-scrim: rgba(0, 0, 0, 0.5);
-  --c-sys-color-shadow: rgba(0, 0, 0, 0.15);
+  --c-sys-color-scrim: #{rgba(map.get($black, 'base'), 0.5)};
+  --c-sys-color-shadow: #{rgba(map.get($black, 'base'), 0.15)};
 
   // ---- System: state layers ----
-  --c-sys-state-hover-color: color-mix(in srgb, var(--c-sys-color-primary) 8%, transparent);
-  --c-sys-state-focus-color: color-mix(in srgb, var(--c-sys-color-primary) 16%, transparent);
-  --c-sys-state-pressed-color: color-mix(in srgb, var(--c-sys-color-primary) 12%, transparent);
-  --c-sys-state-selected-color: color-mix(in srgb, var(--c-sys-color-primary) 12%, transparent);
   --c-sys-state-hover-opacity: 0.08;
   --c-sys-state-focus-opacity: 0.16;
   --c-sys-state-pressed-opacity: 0.12;
   --c-sys-state-dragged-opacity: 0.16;
   --c-sys-state-disabled-opacity: 0.5;
   --c-sys-state-disabled-container-opacity: 0.12;
+  --c-sys-state-hover-color: rgba(var(--c-sys-color-primary-rgb), var(--c-sys-state-hover-opacity));
+  --c-sys-state-focus-color: rgba(var(--c-sys-color-primary-rgb), var(--c-sys-state-focus-opacity));
+  --c-sys-state-pressed-color: rgba(
+    var(--c-sys-color-primary-rgb),
+    var(--c-sys-state-pressed-opacity)
+  );
+  --c-sys-state-selected-color: rgba(
+    var(--c-sys-color-primary-rgb),
+    var(--c-sys-state-pressed-opacity)
+  );
 
   // ---- System: typography ----
   --c-sys-typography-font-family-base: inherit;
@@ -148,9 +159,9 @@ $primary-transition: var(--c-sys-motion-easing-standard);
   --c-sys-space-6: 24px;
   --c-sys-space-8: 32px;
   --c-sys-space-10: 40px;
-  --c-sys-density-scale: 0;
+  --c-sys-density-scale: 0px;
   --c-sys-control-height-sm: 32px;
-  --c-sys-control-height-md: 40px;
+  --c-sys-control-height-md: 42px;
   --c-sys-control-height-lg: 48px;
   --c-sys-control-padding-inline: var(--c-sys-space-3);
   --c-sys-control-icon-size: 24px;
@@ -195,20 +206,15 @@ $primary-transition: var(--c-sys-motion-easing-standard);
   --c-sys-motion-easing-linear: linear;
   --c-sys-motion-easing-standard: cubic-bezier(0.25, 0.8, 0.5, 1);
   --c-sys-motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
-
-  // ---- System: stacking ----
-  --c-sys-z-index-base: 0;
-  --c-sys-z-index-sticky: 100;
-  --c-sys-z-index-dropdown: 1000;
-  --c-sys-z-index-overlay: 2000;
-  --c-sys-z-index-modal: 3000;
-  --c-sys-z-index-toast: 4000;
-  --c-sys-z-index-tooltip: 5000;
 }
 
 [data-theme='dark'] {
   --c-sys-color-scheme: dark;
   --c-sys-color-primary: var(--c-ref-color-blue-80);
+  --c-sys-color-primary-rgb:
+    #{color.channel(map.get($blue, 'lighten-3'), 'red', $space: rgb)},
+    #{color.channel(map.get($blue, 'lighten-3'), 'green', $space: rgb)},
+    #{color.channel(map.get($blue, 'lighten-3'), 'blue', $space: rgb)};
   --c-sys-color-on-primary: var(--c-ref-color-neutral-950);
   --c-sys-color-primary-container: #{map.get($blue, 'darken-3')};
   --c-sys-color-on-primary-container: var(--c-ref-color-blue-95);
@@ -243,17 +249,17 @@ $primary-transition: var(--c-sys-motion-easing-standard);
   --c-sys-color-info-container: #{map.get($light-blue, 'darken-4')};
   --c-sys-color-on-info-container: var(--c-ref-color-cyan-95);
 
-  --c-sys-color-background: #121212;
+  --c-sys-color-background: #{map.get($graphite, 'darken-4')};
   --c-sys-color-on-background: var(--c-ref-color-neutral-300);
-  --c-sys-color-surface: #1e1e1e;
-  --c-sys-color-surface-dim: #121212;
-  --c-sys-color-surface-bright: #2f2f2f;
-  --c-sys-color-surface-container-lowest: #161616;
-  --c-sys-color-surface-container-low: #202020;
-  --c-sys-color-surface-container: #242424;
-  --c-sys-color-surface-container-high: #2a2a2a;
-  --c-sys-color-surface-container-highest: #333333;
-  --c-sys-color-surface-variant: #2f2f2f;
+  --c-sys-color-surface: #{map.get($graphite, 'darken-2')};
+  --c-sys-color-surface-dim: #{map.get($graphite, 'darken-4')};
+  --c-sys-color-surface-bright: #{map.get($graphite, 'lighten-2')};
+  --c-sys-color-surface-container-lowest: #{map.get($graphite, 'darken-3')};
+  --c-sys-color-surface-container-low: #{map.get($graphite, 'darken-1')};
+  --c-sys-color-surface-container: #{map.get($graphite, 'base')};
+  --c-sys-color-surface-container-high: #{map.get($graphite, 'lighten-1')};
+  --c-sys-color-surface-container-highest: #{map.get($graphite, 'lighten-3')};
+  --c-sys-color-surface-variant: #{map.get($graphite, 'lighten-2')};
   --c-sys-color-on-surface: var(--c-ref-color-neutral-300);
   --c-sys-color-on-surface-variant: var(--c-ref-color-neutral-400);
   --c-sys-color-inverse-surface: var(--c-ref-color-neutral-300);
@@ -266,13 +272,9 @@ $primary-transition: var(--c-sys-motion-easing-standard);
   --c-sys-color-readonly: var(--c-sys-color-primary);
   --c-sys-color-readonly-container: var(--c-sys-color-surface-container-high);
   --c-sys-color-focus-ring: var(--c-sys-color-primary);
-  --c-sys-color-scrim: rgba(0, 0, 0, 0.7);
-  --c-sys-color-shadow: rgba(0, 0, 0, 0.4);
+  --c-sys-color-scrim: #{rgba(map.get($black, 'base'), 0.7)};
+  --c-sys-color-shadow: #{rgba(map.get($black, 'base'), 0.4)};
 
-  --c-sys-state-hover-color: color-mix(in srgb, var(--c-sys-color-primary) 8%, transparent);
-  --c-sys-state-focus-color: color-mix(in srgb, var(--c-sys-color-primary) 16%, transparent);
-  --c-sys-state-pressed-color: color-mix(in srgb, var(--c-sys-color-primary) 12%, transparent);
-  --c-sys-state-selected-color: color-mix(in srgb, var(--c-sys-color-primary) 12%, transparent);
   --c-sys-state-disabled-opacity: 0.4;
   --c-sys-state-disabled-container-opacity: 0.16;
 }
