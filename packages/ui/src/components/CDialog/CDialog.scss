@@ -1,6 +1,17 @@
 @use '../../styles/mixins/functions' as *;
 
 .c-dialog {
+  --c-dialog-padding: #{getCssVar('sys', 'space', '6')};
+  --c-dialog-max-width-offset: #{getCssVar('sys', 'space', '8')};
+  --c-dialog-max-height-offset: #{getCssVar('sys', 'space', '10')};
+  --c-dialog-content-bg-color: #{getCssVar('sys', 'color', 'surface-container-highest')};
+  --c-dialog-content-text-color: #{getCssVar('sys', 'color', 'on-surface')};
+  --c-dialog-content-border-radius: #{getCssVar('sys', 'shape', 'xl')};
+  --c-dialog-content-elevation: #{getCssVar('sys', 'elevation', '5')};
+  --c-dialog-content-shadow-color: #{getCssVar('sys', 'color', 'shadow')};
+  --c-dialog-transition-duration: #{getCssVar('sys', 'motion', 'duration-slow')};
+  --c-dialog-transition-easing: #{getCssVar('sys', 'motion', 'easing-emphasized')};
+
   position: fixed;
   top: 0;
   left: 0;
@@ -9,5 +20,21 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: getCssVar('sys', 'z-index', 'modal');
+  padding: getCssVar('dialog', 'padding');
+
+  &__content {
+    max-width: calc(100vw - getCssVar('dialog', 'max-width-offset'));
+    max-height: calc(100vh - getCssVar('dialog', 'max-height-offset'));
+    overflow: auto;
+    background: getCssVar('dialog', 'content-bg-color');
+    color: getCssVar('dialog', 'content-text-color');
+    border-radius: getCssVar('dialog', 'content-border-radius');
+    box-shadow:
+      getCssVar('dialog', 'content-elevation'),
+      0 8px 24px getCssVar('dialog', 'content-shadow-color');
+    transition:
+      box-shadow getCssVar('dialog', 'transition-duration') getCssVar('dialog', 'transition-easing'),
+      background-color getCssVar('dialog', 'transition-duration')
+        getCssVar('dialog', 'transition-easing');
+  }
 }

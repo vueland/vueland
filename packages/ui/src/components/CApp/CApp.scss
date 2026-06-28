@@ -17,6 +17,11 @@
     font-family: getCssVar('sys', 'typography', 'font-family', 'base');
     font-size: getCssVar('sys', 'typography', 'body-size');
     line-height: getCssVar('sys', 'typography', 'body-line-height');
+
+    ::selection {
+      background: getCssVar('sys', 'color', 'inverse-surface');
+      color: getCssVar('sys', 'color', 'inverse-on-surface');
+    }
   }
 
   &--block-scroll {

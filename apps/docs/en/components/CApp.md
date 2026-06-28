@@ -23,10 +23,10 @@ import { useApplication } from '@vueland/ui/composables'
 
 const app = useApplication()
 
-app?.lockScroll()    // lock scroll
-app?.unlockScroll()  // restore scroll
-app?.getScrollTop()   // current scroll Y
-app?.getScrollLeft()  // current scroll X
+app?.lockScroll() // lock scroll
+app?.unlockScroll() // restore scroll
+app?.getScrollTop() // current scroll Y
+app?.getScrollLeft() // current scroll X
 ```
 
 ---
@@ -39,8 +39,8 @@ app?.getScrollLeft()  // current scroll X
 
 ### Slots
 
-| Slot | Description |
-|------|-------------|
+| Slot      | Description         |
+| --------- | ------------------- |
 | `default` | Application content |
 
 ### Events
@@ -53,10 +53,22 @@ app?.getScrollLeft()  // current scroll X
 
 ### CSS classes
 
-| Class | Description |
-|-------|-------------|
-| `c-app` | Root element |
-| `c-app__wrapper` | Inner wrapper for scroll content |
+| Class                 | Description                      |
+| --------------------- | -------------------------------- |
+| `c-app`               | Root element                     |
+| `c-app__wrapper`      | Inner wrapper for scroll content |
+| `c-app--block-scroll` | Internal scroll-lock state       |
+
+### CSS variables
+
+`CApp` does not define customizable component tokens. When scroll is locked, it temporarily writes runtime variables to the root element:
+
+| Variable                      | When it appears      | Description                      |
+| ----------------------------- | -------------------- | -------------------------------- |
+| `--c-application-scroll-top`  | After `lockScroll()` | Negative saved Y scroll position |
+| `--c-application-scroll-left` | After `lockScroll()` | Negative saved X scroll position |
+
+These values are managed by `useApplicationScroll` and removed after `unlockScroll()`.
 
 ### Accessibility
 

@@ -1,12 +1,67 @@
+@use 'sass:map';
 @use '../../styles/mixins/functions' as *;
+
+$btn-colors: (
+  primary: (
+    color: getCssVar('sys', 'color', 'primary'),
+    on-color: getCssVar('sys', 'color', 'on-primary'),
+    container: getCssVar('sys', 'color', 'primary-container'),
+    on-container: getCssVar('sys', 'color', 'on-primary-container'),
+  ),
+  secondary: (
+    color: getCssVar('sys', 'color', 'secondary'),
+    on-color: getCssVar('sys', 'color', 'on-secondary'),
+    container: getCssVar('sys', 'color', 'secondary-container'),
+    on-container: getCssVar('sys', 'color', 'on-secondary-container'),
+  ),
+  tertiary: (
+    color: getCssVar('sys', 'color', 'tertiary'),
+    on-color: getCssVar('sys', 'color', 'on-tertiary'),
+    container: getCssVar('sys', 'color', 'tertiary-container'),
+    on-container: getCssVar('sys', 'color', 'on-tertiary-container'),
+  ),
+  success: (
+    color: getCssVar('sys', 'color', 'success'),
+    on-color: getCssVar('sys', 'color', 'on-success'),
+    container: getCssVar('sys', 'color', 'success-container'),
+    on-container: getCssVar('sys', 'color', 'on-success-container'),
+  ),
+  error: (
+    color: getCssVar('sys', 'color', 'error'),
+    on-color: getCssVar('sys', 'color', 'on-error'),
+    container: getCssVar('sys', 'color', 'error-container'),
+    on-container: getCssVar('sys', 'color', 'on-error-container'),
+  ),
+  warning: (
+    color: getCssVar('sys', 'color', 'warning'),
+    on-color: getCssVar('sys', 'color', 'on-warning'),
+    container: getCssVar('sys', 'color', 'warning-container'),
+    on-container: getCssVar('sys', 'color', 'on-warning-container'),
+  ),
+  info: (
+    color: getCssVar('sys', 'color', 'info'),
+    on-color: getCssVar('sys', 'color', 'on-info'),
+    container: getCssVar('sys', 'color', 'info-container'),
+    on-container: getCssVar('sys', 'color', 'on-info-container'),
+  ),
+);
 
 .c-btn {
   --c-btn-text-color: #{getCssVar('sys', 'color', 'on-primary')};
   --c-btn-border-radius: #{getCssVar('sys', 'shape', 'md')};
   --c-btn-bg-color: #{getCssVar('sys', 'color', 'primary')};
+  --c-btn-container-color: #{getCssVar('sys', 'color', 'primary-container')};
+  --c-btn-on-container-color: #{getCssVar('sys', 'color', 'on-primary-container')};
+  --c-btn-border-color: #{getCssVar('sys', 'color', 'primary')};
+  --c-btn-border-width: #{getCssVar('sys', 'border-width', 'thin')};
+  --c-btn-hover-bg-color: #{getCssVar('sys', 'state', 'hover-color')};
+  --c-btn-focus-bg-color: #{getCssVar('sys', 'state', 'focus-color')};
+  --c-btn-pressed-bg-color: #{getCssVar('sys', 'state', 'pressed-color')};
+  --c-btn-transition-duration: #{getCssVar('sys', 'motion', 'duration-fast')};
   --c-btn-disabled-text-color: #{getCssVar('sys', 'color', 'disabled')};
   --c-btn-disabled-bg-color: #{getCssVar('sys', 'color', 'disabled-container')};
   --c-btn-disabled-opacity: #{getCssVar('sys', 'state', 'disabled-opacity')};
+  --c-btn-disabled-container-opacity: #{getCssVar('sys', 'state', 'disabled-container-opacity')};
   --c-btn-paddings: #{getCssVar('sys', 'space', '2')} #{getCssVar('sys', 'space', '3')};
   --c-btn-min-width: 80px;
   --c-btn-width: auto;
@@ -29,8 +84,47 @@
   user-select: none;
   vertical-align: middle;
   text-decoration: none;
+  overflow: hidden;
+  transition:
+    background-color getCssVar('btn', 'transition-duration')
+      getCssVar('sys', 'motion', 'easing-standard'),
+    color getCssVar('btn', 'transition-duration') getCssVar('sys', 'motion', 'easing-standard'),
+    border-color getCssVar('btn', 'transition-duration')
+      getCssVar('sys', 'motion', 'easing-standard');
+
+  @each $name, $tokens in $btn-colors {
+    &--#{$name} {
+      --c-btn-bg-color: #{map.get($tokens, color)};
+      --c-btn-text-color: #{map.get($tokens, on-color)};
+      --c-btn-container-color: #{map.get($tokens, container)};
+      --c-btn-on-container-color: #{map.get($tokens, on-container)};
+      --c-btn-border-color: #{map.get($tokens, color)};
+    }
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: transparent;
+  }
+
+  &:hover::before {
+    background: getCssVar('btn', 'hover-bg-color');
+  }
+
+  &:active::before {
+    background: getCssVar('btn', 'pressed-bg-color');
+  }
+
+  &:focus-visible::before {
+    background: getCssVar('btn', 'focus-bg-color');
+  }
 
   &__label {
+    position: relative;
     white-space: nowrap;
   }
 
@@ -41,25 +135,32 @@
     cursor: not-allowed;
     opacity: getCssVar('btn', 'disabled-opacity');
     pointer-events: none;
+    box-shadow: getCssVar('sys', 'elevation', '0');
+
+    &::before {
+      background: getCssVar('btn', 'disabled-bg-color');
+      opacity: getCssVar('btn', 'disabled-container-opacity');
+    }
   }
 
   &--flat {
     background-color: getCssVar('btn', 'bg-color');
+    box-shadow: getCssVar('sys', 'elevation', '2');
+
+    &:active {
+      box-shadow: getCssVar('sys', 'elevation', '0');
+    }
   }
 
   &--outlined {
     background-color: transparent;
-    border: 1px solid currentColor;
     color: getCssVar('btn', 'bg-color');
+    border: getCssVar('btn', 'border-width') solid getCssVar('btn', 'border-color');
 
-    &:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      pointer-events: none;
+    &:hover,
+    &:focus-visible {
+      color: getCssVar('btn', 'on-container-color');
+      background-color: getCssVar('btn', 'container-color');
     }
   }
 

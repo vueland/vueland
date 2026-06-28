@@ -4,15 +4,22 @@ $card-width: 100%;
 
 .c-card {
   --c-card-width: #{$card-width};
-  --c-card-header-padding: #{getCssVar('sys', 'space', '4')};
+  --c-card-header-padding: #{getCssVar('sys', 'space', '5')};
   --c-card-body-padding: #{getCssVar('sys', 'space', '4')};
   --c-card-footer-padding: #{getCssVar('sys', 'space', '4')};
-  --c-card-border-radius: #{getCssVar('sys', 'shape', 'md')};
-  --c-card-background-color: #{getCssVar('sys', 'color', 'surface')};
+  --c-card-border-radius: #{getCssVar('sys', 'shape', 'lg')};
+  --c-card-background-color: #{getCssVar('sys', 'color', 'surface-container-low')};
+  --c-card-header-background-color: #{getCssVar('sys', 'color', 'surface-container')};
+  --c-card-footer-background-color: #{getCssVar('sys', 'color', 'surface-container-lowest')};
   --c-card-text-color: #{getCssVar('sys', 'color', 'on-surface')};
+  --c-card-muted-text-color: #{getCssVar('sys', 'color', 'on-surface-variant')};
+  --c-card-border-color: #{getCssVar('sys', 'color', 'outline')};
+  --c-card-border-width: #{getCssVar('sys', 'border-width', 'thin')};
+  --c-card-elevation: #{getCssVar('sys', 'elevation', '1')};
 
   width: getCssVar('card', 'width');
   border-radius: getCssVar('card', 'border-radius');
+  box-shadow: getCssVar('card', 'elevation');
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -21,15 +28,20 @@ $card-width: 100%;
 
   &-header {
     padding: getCssVar('card', 'header-padding');
+    background-color: getCssVar('card', 'header-background-color');
+    color: getCssVar('card', 'muted-text-color');
     flex-grow: 0;
   }
 
   &-body {
     padding: getCssVar('card', 'body-padding');
+    flex-grow: 1;
   }
 
   &-footer {
     flex-grow: 0;
     padding: getCssVar('card', 'footer-padding');
+    background-color: getCssVar('card', 'footer-background-color');
+    color: getCssVar('card', 'muted-text-color');
   }
 }

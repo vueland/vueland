@@ -29,10 +29,11 @@
     const activeDescendant = shallowRef()
 
     const listId = useId(undefined, { prefix: 'c-select-list' })
+
     const normalizedItems = useNormalizedItems(props)
 
     const {
-        chips,
+        chips: selects,
         hasValue,
         select
     } = useSelectedChips(props)
@@ -48,12 +49,13 @@
             Escape: () => {
                 menu.value = false
                 unref(cTextFieldRef).blur()
-            },
+            }
         },
-        { prevent: ['ArrowDown', 'ArrowUp'] },
+        { prevent: ['ArrowDown', 'ArrowUp', 'Enter'] },
     )
 
     function onBlur() {
+        clearActiveDescendant()
         unref(cTextFieldRef).blur()
     }
 
@@ -65,14 +67,25 @@
         model.value = props.multiple ? [] : undefined
     }
 
+    function onCloseChip(value: T) {
+        const { valueKey, titleKey } = props
+        const key = valueKey ?? titleKey
+
+        model.value = props.multiple ? (model.value as T[]).filter(it => {
+            if(key) {
+                return it[key as string] !== value
+            }
+
+            return it !== value
+        }) : undefined
+    }
+
     function setActiveDescendant(id: string) {
         activeDescendant.value = id
     }
 
-    function clearActiveDescendant(id: string) {
-        if (activeDescendant.value === id) {
-            activeDescendant.value = undefined
-        }
+    function clearActiveDescendant() {
+        activeDescendant.value = undefined
     }
 </script>
 
@@ -86,6 +99,7 @@
         :aria-activedescendant="activeDescendant"
         :dirty="hasValue"
         v-bind="$attrs"
+        :value="selects.join(', ')"
         @beforeinput.prevent
         @paste.prevent
         @drop.prevent
@@ -96,15 +110,31 @@
         <template #before>
             <slot
                 name="selects"
-                :items="chips"
+                :items="selects"
             >
-                <div
-                    v-for="(it, i) in chips"
-                    :key="it"
-                    class="c-select__chip"
-                >
-                    {{ `${it}` + (i + 1 !== chips.length ? ',' : '') }}
-                </div>
+                <template v-if="selects.length">
+                    <div
+                        v-if="!chips"
+                        class="c-select__items"
+                    >
+                        {{ selects.join(', ') }}
+                    </div>
+                    <div
+                        v-else
+                        class="c-select__chips"
+                    >
+                        <c-chip
+                            v-for="it in selects"
+                            :key="it"
+                            :value="it"
+                            color="info"
+                            closable
+                            @close="onCloseChip"
+                        >
+                            {{ it }}
+                        </c-chip>
+                    </div>
+                </template>
             </slot>
         </template>
         <template #append>
@@ -148,6 +178,7 @@
                             v-model="model"
                             variant="listbox"
                             class="c-select__listbox"
+                            item-key="name"
                             aria-live="polite"
                             :multiple
                             :mandatory
@@ -157,7 +188,6 @@
                                 :key="item.key"
                                 :value="item.value ?? item.raw"
                                 @active="setActiveDescendant"
-                                @inactive="clearActiveDescendant"
                             >
                                 <c-list-item-title>
                                     {{ item.title }}

@@ -1,22 +1,81 @@
+@use 'sass:map';
 @use '../../styles/mixins/functions' as *;
 
+$chip-colors: (
+  primary: (
+    color: getCssVar('sys', 'color', 'primary'),
+    container: getCssVar('sys', 'color', 'primary-container'),
+    on-container: getCssVar('sys', 'color', 'on-primary-container'),
+  ),
+  secondary: (
+    color: getCssVar('sys', 'color', 'secondary'),
+    container: getCssVar('sys', 'color', 'secondary-container'),
+    on-container: getCssVar('sys', 'color', 'on-secondary-container'),
+  ),
+  tertiary: (
+    color: getCssVar('sys', 'color', 'tertiary'),
+    container: getCssVar('sys', 'color', 'tertiary-container'),
+    on-container: getCssVar('sys', 'color', 'on-tertiary-container'),
+  ),
+  success: (
+    color: getCssVar('sys', 'color', 'success'),
+    container: getCssVar('sys', 'color', 'success-container'),
+    on-container: getCssVar('sys', 'color', 'on-success-container'),
+  ),
+  error: (
+    color: getCssVar('sys', 'color', 'error'),
+    container: getCssVar('sys', 'color', 'error-container'),
+    on-container: getCssVar('sys', 'color', 'on-error-container'),
+  ),
+  warning: (
+    color: getCssVar('sys', 'color', 'warning'),
+    container: getCssVar('sys', 'color', 'warning-container'),
+    on-container: getCssVar('sys', 'color', 'on-warning-container'),
+  ),
+  info: (
+    color: getCssVar('sys', 'color', 'info'),
+    container: getCssVar('sys', 'color', 'info-container'),
+    on-container: getCssVar('sys', 'color', 'on-info-container'),
+  ),
+);
+
 .c-chip {
+  --c-chip-text-color: #{getCssVar('sys', 'color', 'on-primary-container')};
+  --c-chip-bg-color: #{getCssVar('sys', 'color', 'primary-container')};
+  --c-chip-border-color: #{getCssVar('sys', 'color', 'primary')};
+  --c-chip-border-width: #{getCssVar('sys', 'border-width', 'thin')};
+  --c-chip-elevation: #{getCssVar('sys', 'elevation', '0')};
+  --c-chip-font-size: #{getCssVar('sys', 'typography', 'label-size')};
+  --c-chip-font-weight: #{getCssVar('sys', 'typography', 'label-weight')};
+  --c-chip-line-height: #{getCssVar('sys', 'typography', 'label-line-height')};
+
   display: inline-flex;
   align-items: center;
   padding: getCssVar('sys', 'space', '1') getCssVar('sys', 'space', '2');
   border-radius: getCssVar('sys', 'shape', 'pill');
-  color: getCssVar('sys', 'color', 'on-primary');
-  background-color: getCssVar('sys', 'color', 'primary');
+  color: getCssVar('chip', 'text-color');
+  background-color: getCssVar('chip', 'bg-color');
+  border: getCssVar('chip', 'border-width') solid getCssVar('chip', 'border-color');
+  box-shadow: getCssVar('chip', 'elevation');
+  font-size: getCssVar('chip', 'font-size');
+  font-weight: getCssVar('chip', 'font-weight');
+  line-height: getCssVar('chip', 'line-height');
   overflow: hidden;
   min-width: 60px;
   min-height: 24px;
-
   cursor: pointer;
+
+  @each $name, $tokens in $chip-colors {
+    &--#{$name} {
+      --c-chip-text-color: #{map.get($tokens, on-container)};
+      --c-chip-bg-color: #{map.get($tokens, container)};
+      --c-chip-border-color: #{map.get($tokens, color)};
+    }
+  }
 
   &__content {
     flex: 1 0;
     text-align: center;
-    line-height: 1;
     padding-bottom: 1.5px;
   }
 
@@ -26,7 +85,7 @@
     justify-content: center;
     align-items: center;
     padding: 0 0 0 5px;
-    min-width: 24px;
+    min-width: 22px;
     color: currentColor;
   }
 }

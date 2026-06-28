@@ -114,6 +114,10 @@ import DashboardLayoutExample from '../../examples/CGrid/DashboardLayoutExample.
 
 Кастомные имена брейкпоинтов, настроенные через `@vueland/utils-jit`, не становятся новыми пропами выравнивания. Для них используйте сгенерированные utility-классы, например `class="tablet:justify-center tablet:items-center"`.
 
+## CSS-переменные
+
+`CRow` не определяет собственных CSS-переменных. Отступы сетки генерируются из SCSS-карты брейкпоинтов и могут быть изменены через настройку брейкпоинтов `@vueland/utils-jit`.
+
 ## Слоты
 
 | Слот      | Описание                                             |

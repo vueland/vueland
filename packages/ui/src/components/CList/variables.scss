@@ -13,19 +13,23 @@ $list-item-min-height: getCssVar('sys', 'control', 'height-sm');
 $list-item-padding-block: getCssVar('sys', 'space', '1');
 $list-item-padding-inline: getCssVar('sys', 'space', '2');
 $list-item-gap: getCssVar('sys', 'space', '3');
-$list-item-border-radius: 0;
+$list-item-border-radius: getCssVar('sys', 'shape', 'none');
 
 // List item colors
 $list-item-color: currentColor;
 $list-item-bg-color: transparent;
-$list-item-selected-bg-color: getCssVar('sys', 'color', 'primary');
-$list-item-selected-color: getCssVar('sys', 'color', 'on-primary');
+$list-item-selected-bg-color: getCssVar('sys', 'color', 'secondary-container');
+$list-item-selected-color: getCssVar('sys', 'color', 'primary');
 $list-item-disabled-opacity: getCssVar('sys', 'state', 'disabled-opacity');
 $list-item-disabled-color: getCssVar('sys', 'color', 'disabled');
-$list-item-state-layer-color: getCssVar('sys', 'color', 'primary');
+$list-item-state-layer-color: transparent;
+$list-item-hover-bg-color: getCssVar('sys', 'state', 'hover-color');
+$list-item-focus-bg-color: getCssVar('sys', 'state', 'focus-color');
+$list-item-pressed-bg-color: getCssVar('sys', 'state', 'pressed-color');
 $list-item-focus-ring-color: getCssVar('sys', 'color', 'focus-ring');
 $list-item-hover-opacity: 0.1;
 $list-item-focus-opacity: 0.3;
+$list-item-dragged-opacity: getCssVar('sys', 'state', 'dragged-opacity');
 
 // List item typography
 $list-item-title-font-size: getCssVar('sys', 'typography', 'body-size');
@@ -33,5 +37,5 @@ $list-item-title-line-height: getCssVar('sys', 'typography', 'label-line-height'
 $list-item-title-font-weight: 400;
 $list-item-subtitle-font-size: getCssVar('sys', 'typography', 'label-size');
 $list-item-subtitle-line-height: getCssVar('sys', 'typography', 'label-line-height');
-$list-item-subtitle-color: currentColor;
+$list-item-subtitle-color: getCssVar('sys', 'color', 'on-surface-variant');
 $list-item-subtitle-opacity: 0.6;

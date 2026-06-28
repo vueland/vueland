@@ -455,6 +455,10 @@ const formRef = ref()
 </script>
 ```
 
+### CSS variables
+
+`CForm` does not define its own CSS variables. Its base style is `width: 100%` on the `.c-form` class.
+
 ---
 
 ## How it works

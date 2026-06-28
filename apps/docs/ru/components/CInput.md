@@ -306,7 +306,7 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 | `--c-input-disabled-color`      | `var(--c-sys-color-disabled)`         | Цвет текста при disabled        |
 | `--c-input-readonly-color`      | `var(--c-sys-color-readonly)`         | Цвет текста при readonly        |
 
-> Фон поля в состояниях `readonly`/`disabled` отрисовывает компонент `CField` (`--c-field-readonly-bg-color`, `--c-field-disabled-opacity`), а не `CInput`.
+> Фон поля в состояниях `focused`/`readonly`/`disabled`/`error` отрисовывает компонент `CField` (`--c-field-focused-bg-color`, `--c-field-readonly-bg-color`, `--c-field-disabled-bg-color`, `--c-field-error-bg-color`), а не `CInput`.
 
 ---
 

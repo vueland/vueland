@@ -311,7 +311,7 @@ const actions = [
   padding: 2px 6px;
   border-radius: 6px;
   font-size: 12px;
-  background: color-mix(in srgb, currentColor 12%, transparent);
+  background: var(--c-sys-color-surface-variant);
 }
 .divider {
   height: 1px;
@@ -572,21 +572,25 @@ const selected = ref<string | null>(null)
 | `--c-list-item-padding-block`        | `var(--c-sys-space-1)`                      |
 | `--c-list-item-padding-inline`       | `var(--c-sys-space-2)`                      |
 | `--c-list-item-gap`                  | `var(--c-sys-space-3)`                      |
-| `--c-list-item-border-radius`        | `0`                                         |
+| `--c-list-item-border-radius`        | `var(--c-sys-shape-none)`                   |
 | `--c-list-item-color`                | `currentColor`                              |
 | `--c-list-item-bg-color`             | `transparent`                               |
-| `--c-list-item-selected-bg-color`    | `var(--c-sys-color-primary)`                |
-| `--c-list-item-selected-color`       | `var(--c-sys-color-on-primary)`             |
-| `--c-list-item-state-layer-color`    | `var(--c-sys-color-primary)`                |
+| `--c-list-item-selected-bg-color`    | `var(--c-sys-color-secondary-container)`    |
+| `--c-list-item-selected-color`       | `var(--c-sys-color-primary)`                |
+| `--c-list-item-state-layer-color`    | `transparent`                               |
+| `--c-list-item-hover-bg-color`       | `var(--c-sys-state-hover-color)`            |
+| `--c-list-item-focus-bg-color`       | `var(--c-sys-state-focus-color)`            |
+| `--c-list-item-pressed-bg-color`     | `var(--c-sys-state-pressed-color)`          |
 | `--c-list-item-focus-ring-color`     | `var(--c-sys-color-focus-ring)`             |
 | `--c-list-item-hover-opacity`        | `0.1`                                       |
 | `--c-list-item-focus-opacity`        | `0.3`                                       |
 | `--c-list-item-disabled-opacity`     | `var(--c-sys-state-disabled-opacity)`       |
 | `--c-list-item-disabled-color`       | `var(--c-sys-color-disabled)`               |
+| `--c-list-item-dragged-opacity`      | `var(--c-sys-state-dragged-opacity)`        |
 | `--c-list-item-title-font-size`      | `var(--c-sys-typography-body-size)`         |
 | `--c-list-item-title-line-height`    | `var(--c-sys-typography-label-line-height)` |
 | `--c-list-item-title-font-weight`    | `400`                                       |
 | `--c-list-item-subtitle-font-size`   | `var(--c-sys-typography-label-size)`        |
 | `--c-list-item-subtitle-line-height` | `var(--c-sys-typography-label-line-height)` |
-| `--c-list-item-subtitle-color`       | `currentColor`                              |
+| `--c-list-item-subtitle-color`       | `var(--c-sys-color-on-surface-variant)`     |
 | `--c-list-item-subtitle-opacity`     | `0.6`                                       |

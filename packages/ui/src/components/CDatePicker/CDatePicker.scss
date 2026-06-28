@@ -5,49 +5,71 @@ $self: '.c-date-picker';
 
 #{$self} {
   --c-date-picker-width: 320px;
+  --c-date-picker-elevation: #{getCssVar('sys', 'elevation', '4')};
   --c-date-picker-display-bg: #{getCssVar('sys', 'color', 'primary')};
   --c-date-picker-display-color: #{getCssVar('sys', 'color', 'on-primary')};
-  --c-date-picker-cell-size: 36px;
+  --c-date-picker-display-min-height: #{getCssVar('sys', 'control', 'height-lg')};
+  --c-date-picker-header-bg: #{getCssVar('sys', 'color', 'surface-container')};
+  --c-date-picker-body-bg: #{getCssVar('sys', 'color', 'surface')};
+  --c-date-picker-weekday-color: #{getCssVar('sys', 'color', 'on-surface-variant')};
+  --c-date-picker-cell-size: #{getCssVar('sys', 'control', 'height-md')};
+  --c-date-picker-cell-border-width: #{getCssVar('sys', 'border-width', 'medium')};
+  --c-date-picker-cell-border-radius: #{getCssVar('sys', 'shape', 'pill')};
+  --c-date-picker-panel-border-radius: #{getCssVar('sys', 'shape', 'md')};
+  --c-date-picker-control-border-radius: #{getCssVar('sys', 'shape', 'sm')};
+  --c-date-picker-caption-border-radius: #{getCssVar('sys', 'shape', 'xs')};
   --c-date-picker-selected-bg: #{getCssVar('sys', 'color', 'primary-container')};
-  --c-date-picker-selected-color: #{getCssVar('sys', 'color', 'primary')};
+  --c-date-picker-selected-color: #{getCssVar('sys', 'color', 'on-primary-container')};
   --c-date-picker-today-color: #{getCssVar('sys', 'color', 'primary')};
   --c-date-picker-hover-bg: #{getCssVar('sys', 'state', 'hover-color')};
   --c-date-picker-hover-color: #{getCssVar('sys', 'color', 'on-surface')};
   --c-date-picker-disabled-color: #{getCssVar('sys', 'color', 'disabled')};
   --c-date-picker-highlighted-bg: #{getCssVar('sys', 'state', 'selected-color')};
   --c-date-picker-highlighted-color: #{getCssVar('sys', 'color', 'primary')};
+  --c-date-picker-transition-duration: #{getCssVar('sys', 'motion', 'duration-fast')};
+  --c-date-picker-view-transition-duration: #{getCssVar('sys', 'motion', 'duration-medium')};
+  --c-date-picker-transition-easing: #{getCssVar('sys', 'motion', 'easing-standard')};
+  --c-date-picker-reduced-transition-duration: #{getCssVar('sys', 'motion', 'duration-instant')};
 
   width: getCssVar('date-picker', 'width');
-  background: getCssVar('sys', 'color', 'surface');
+  background: getCssVar('date-picker', 'body-bg');
   color: getCssVar('sys', 'color', 'on-surface');
   border-radius: getCssVar('sys', 'shape', 'md');
+  box-shadow: getCssVar('date-picker', 'elevation');
   overflow: hidden;
   user-select: none;
 
   &__display {
     background: getCssVar('date-picker', 'display-bg');
     color: getCssVar('date-picker', 'display-color');
-    padding: 16px 20px 12px;
+    min-height: getCssVar('date-picker', 'display-min-height');
+    padding: getCssVar('sys', 'space', '4') getCssVar('sys', 'space', '5')
+      getCssVar('sys', 'space', '3');
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: getCssVar('sys', 'space', '1');
   }
 
   &__display-year {
-    font-size: 13px;
+    width: fit-content;
+    border-radius: getCssVar('date-picker', 'caption-border-radius');
+    font-size: getCssVar('sys', 'typography', 'label-size');
+    font-weight: getCssVar('sys', 'typography', 'label-weight');
+    line-height: getCssVar('sys', 'typography', 'label-line-height');
     opacity: 0.75;
     cursor: pointer;
   }
 
   &__display-date {
-    font-size: 22px;
-    font-weight: 600;
-    line-height: 1.2;
+    font-size: getCssVar('sys', 'typography', 'title-size');
+    font-weight: getCssVar('sys', 'typography', 'title-weight');
+    line-height: getCssVar('sys', 'typography', 'title-line-height');
   }
 
   &__header {
     display: flex;
     flex-direction: column;
+    background: getCssVar('date-picker', 'header-bg');
     border-bottom: getCssVar('sys', 'border-width', 'thin') solid
       getCssVar('sys', 'color', 'outline-variant');
   }
@@ -56,20 +78,23 @@ $self: '.c-date-picker';
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 4px 4px;
+    padding: getCssVar('sys', 'space', '2') getCssVar('sys', 'space', '1')
+      getCssVar('sys', 'space', '1');
   }
 
   &__header-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: getCssVar('sys', 'control', 'height-sm');
+    height: getCssVar('sys', 'control', 'height-sm');
     border: none;
+    border-radius: getCssVar('date-picker', 'cell-border-radius');
     background: transparent;
     cursor: pointer;
     color: inherit;
-    transition: background 0.15s;
+    transition: background getCssVar('date-picker', 'transition-duration')
+      getCssVar('date-picker', 'transition-easing');
 
     &:hover {
       background: getCssVar('date-picker', 'hover-bg');
@@ -84,12 +109,14 @@ $self: '.c-date-picker';
   }
 
   &__header-display {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: getCssVar('sys', 'typography', 'label-size');
+    font-weight: getCssVar('sys', 'typography', 'label-weight');
+    line-height: getCssVar('sys', 'typography', 'label-line-height');
     cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 4px;
-    transition: background 0.15s;
+    padding: getCssVar('sys', 'space', '1') getCssVar('sys', 'space', '2');
+    border-radius: getCssVar('date-picker', 'control-border-radius');
+    transition: background getCssVar('date-picker', 'transition-duration')
+      getCssVar('date-picker', 'transition-easing');
 
     &:hover {
       background: getCssVar('date-picker', 'hover-bg');
@@ -97,7 +124,9 @@ $self: '.c-date-picker';
   }
 
   &__body {
-    padding: 4px 8px 8px;
+    background: getCssVar('date-picker', 'body-bg');
+    padding: getCssVar('sys', 'space', '1') getCssVar('sys', 'space', '2')
+      getCssVar('sys', 'space', '2');
     min-height: 240px;
   }
 }
@@ -108,16 +137,18 @@ $self: '.c-date-picker';
   &__week {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    margin-bottom: 4px;
+    margin-bottom: getCssVar('sys', 'space', '1');
   }
 
   &__day {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 32px;
-    font-size: 11px;
-    font-weight: 600;
+    height: getCssVar('sys', 'control', 'height-sm');
+    color: getCssVar('date-picker', 'weekday-color');
+    font-size: getCssVar('sys', 'typography', 'label-size');
+    font-weight: getCssVar('sys', 'typography', 'label-weight');
+    line-height: getCssVar('sys', 'typography', 'label-line-height');
     opacity: 0.5;
     text-transform: uppercase;
   }
@@ -139,10 +170,12 @@ $self: '.c-date-picker';
     width: getCssVar('date-picker', 'cell-size');
     height: getCssVar('date-picker', 'cell-size');
     margin: 1px auto;
-    border-radius: 50%;
-    font-size: 13px;
+    border-radius: getCssVar('date-picker', 'cell-border-radius');
+    font-family: getCssVar('sys', 'typography', 'font-family', 'mono');
+    font-size: getCssVar('sys', 'typography', 'label-size');
     cursor: pointer;
-    transition: background 0.12s;
+    transition: background getCssVar('date-picker', 'transition-duration')
+      getCssVar('date-picker', 'transition-easing');
 
     &:hover {
       background: getCssVar('date-picker', 'hover-bg');
@@ -163,14 +196,14 @@ $self: '.c-date-picker';
     }
 
     &--selected {
-      border: thin solid getCssVar('date-picker', 'selected-bg');
+      border: getCssVar('sys', 'border-width', 'thin') solid getCssVar('date-picker', 'selected-bg');
       color: getCssVar('date-picker', 'selected-color');
-      font-weight: 600;
+      font-weight: getCssVar('sys', 'typography', 'label-weight');
     }
 
     &--today {
       color: getCssVar('date-picker', 'today-color');
-      font-weight: 700;
+      font-weight: getCssVar('sys', 'typography', 'title-weight');
     }
 
     &--disabled {
@@ -182,7 +215,7 @@ $self: '.c-date-picker';
     &--highlighted {
       background: getCssVar('date-picker', 'highlighted-bg');
       color: getCssVar('date-picker', 'highlighted-color');
-      font-weight: 600;
+      font-weight: getCssVar('sys', 'typography', 'label-weight');
     }
   }
 }
@@ -190,13 +223,13 @@ $self: '.c-date-picker';
 // ---- Months ----
 
 .c-date-picker-months {
-  padding: 8px 0;
+  padding: getCssVar('sys', 'space', '2') 0;
 
   &__row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 4px;
-    margin-bottom: 4px;
+    gap: getCssVar('sys', 'space', '1');
+    margin-bottom: getCssVar('sys', 'space', '1');
   }
 
   &__cell {
@@ -204,11 +237,12 @@ $self: '.c-date-picker';
     align-items: center;
     justify-content: center;
     height: 52px;
-    border-radius: 6px;
-    font-size: 13px;
+    border-radius: getCssVar('date-picker', 'panel-border-radius');
+    font-size: getCssVar('sys', 'typography', 'label-size');
     cursor: pointer;
-    transition: background 0.12s;
-    border: 1.5px solid transparent;
+    transition: background getCssVar('date-picker', 'transition-duration')
+      getCssVar('date-picker', 'transition-easing');
+    border: getCssVar('date-picker', 'cell-border-width') solid transparent;
 
     &:hover {
       background: getCssVar('date-picker', 'hover-bg');
@@ -217,11 +251,11 @@ $self: '.c-date-picker';
     &--selected {
       border-color: getCssVar('date-picker', 'selected-bg');
       color: getCssVar('date-picker', 'today-color');
-      font-weight: 600;
+      font-weight: getCssVar('sys', 'typography', 'label-weight');
     }
 
     &--current {
-      font-weight: 600;
+      font-weight: getCssVar('sys', 'typography', 'label-weight');
     }
 
     &--disabled {
@@ -235,7 +269,7 @@ $self: '.c-date-picker';
 // ---- Years ----
 
 .c-date-picker-years {
-  padding: 8px 0;
+  padding: getCssVar('sys', 'space', '2') 0;
 
   &__grid {
     display: flex;
@@ -245,8 +279,8 @@ $self: '.c-date-picker';
   &__row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 4px;
-    margin-bottom: 4px;
+    gap: getCssVar('sys', 'space', '1');
+    margin-bottom: getCssVar('sys', 'space', '1');
   }
 
   &__cell {
@@ -254,11 +288,12 @@ $self: '.c-date-picker';
     align-items: center;
     justify-content: center;
     height: 44px;
-    border-radius: 6px;
-    font-size: 13px;
+    border-radius: getCssVar('date-picker', 'panel-border-radius');
+    font-size: getCssVar('sys', 'typography', 'label-size');
     cursor: pointer;
-    transition: background 0.12s;
-    border: 1.5px solid transparent;
+    transition: background getCssVar('date-picker', 'transition-duration')
+      getCssVar('date-picker', 'transition-easing');
+    border: getCssVar('date-picker', 'cell-border-width') solid transparent;
 
     &:hover {
       background: getCssVar('date-picker', 'hover-bg');
@@ -267,13 +302,13 @@ $self: '.c-date-picker';
     &--selected {
       background: getCssVar('date-picker', 'selected-bg');
       color: getCssVar('date-picker', 'selected-color');
-      font-weight: 600;
+      font-weight: getCssVar('sys', 'typography', 'label-weight');
     }
 
     &--current {
       border-color: getCssVar('date-picker', 'selected-bg');
       color: getCssVar('date-picker', 'today-color');
-      font-weight: 600;
+      font-weight: getCssVar('sys', 'typography', 'label-weight');
     }
 
     &--disabled {
@@ -294,7 +329,8 @@ $self: '.c-date-picker';
 .c-date-slide-up-leave-active,
 .c-date-slide-down-enter-active,
 .c-date-slide-down-leave-active {
-  transition: all 0.2s $primary-transition;
+  transition: all getCssVar('date-picker', 'view-transition-duration')
+    getCssVar('date-picker', 'transition-easing');
   overflow: hidden;
 }
 
@@ -340,10 +376,26 @@ $self: '.c-date-picker';
 
 .c-date-fade-enter-active,
 .c-date-fade-leave-active {
-  transition: opacity 0.15s;
+  transition: opacity getCssVar('date-picker', 'transition-duration')
+    getCssVar('date-picker', 'transition-easing');
 }
 
 .c-date-fade-enter-from,
 .c-date-fade-leave-to {
   opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-date-slide-left-enter-active,
+  .c-date-slide-left-leave-active,
+  .c-date-slide-right-enter-active,
+  .c-date-slide-right-leave-active,
+  .c-date-slide-up-enter-active,
+  .c-date-slide-up-leave-active,
+  .c-date-slide-down-enter-active,
+  .c-date-slide-down-leave-active,
+  .c-date-fade-enter-active,
+  .c-date-fade-leave-active {
+    transition-duration: getCssVar('date-picker', 'reduced-transition-duration');
+  }
 }

@@ -1,25 +1,14 @@
 <script setup lang="ts">
-    import {
-        shallowRef,
-        unref,
-        watchEffect
-    } from 'vue'
-
-    import { useBreakpoints } from '@/composables'
-
-    const display = useBreakpoints()
+    import { shallowRef } from 'vue'
 
     const value = shallowRef([])
+    const email = shallowRef()
 
     const items = [
         { name: 'Alex', email: 'aaa@mail.ru' },
         { name: 'Vitaly', email: 'vvv@mail.ru' },
         { name: 'Mikhail', email: 'mmm@mail.ru' },
     ]
-
-    watchEffect(() => {{
-        Object.keys(display).forEach(key => unref(display[key]))
-    }})
 </script>
 
 <template>
@@ -32,7 +21,7 @@
                 xl="3"
                 lg="3"
                 md="6"
-                class="h-[250px] pa-1 md:pa-4 lg:pa-1 d-flex"
+                class="min-h-[250px] pa-1 md:pa-4 lg:pa-1 d-flex"
             >
                 <c-card class="elevation-2 align-self-stretch">
                     <c-card-header>
@@ -44,6 +33,7 @@
                             label="Select user"
                             clearable
                             multiple
+                            chips
                             title-key="name"
                             :items
                             :options="{
@@ -51,6 +41,12 @@
                             }"
                         />
 
+                        <c-text-field
+                            v-model="email"
+                            label="Email address"
+                        />
+                    </c-card-body>
+                    <c-card-footer>
                         <c-tooltip
                             align="top-center"
                             open-on-hover
@@ -59,11 +55,13 @@
                             close-on-blur
                             offset-y="8"
                             strategy="reverse"
-                            class="bg-blue text-white"
+                            class="radius-8 px-4 py-2"
                         >
                             <template #activator="{ on, activator }">
                                 <c-btn
                                     v-bind="activator"
+                                    variant="flat"
+                                    color="success"
                                     v-on="on"
                                 >
                                     tooltip
@@ -71,7 +69,7 @@
                             </template>
                             <span>some text</span>
                         </c-tooltip>
-                    </c-card-body>
+                    </c-card-footer>
                 </c-card>
             </c-col>
         </c-row>
