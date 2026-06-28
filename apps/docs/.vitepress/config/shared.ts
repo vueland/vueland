@@ -31,8 +31,41 @@ export const sharedConfig: UserConfig = {
                 return style ? ` style="${style}"` : ''
             }
 
-            md.renderer.rules.table_open = () =>
-                '<div class="vl-table-wrap"><div class="vl-table" role="table">'
+            const getTableHeaders = (tokens: any[], idx: number) => {
+                const headers: string[] = []
+
+                for (let i = idx + 1; i < tokens.length; i++) {
+                    const token = tokens[i]
+
+                    if (token.type === 'tbody_open' || token.type === 'table_close') {
+                        break
+                    }
+
+                    if (token.type === 'inline' && tokens[i - 1]?.type === 'th_open') {
+                        headers.push(String(token.content).trim().toLowerCase())
+                    }
+                }
+
+                return headers
+            }
+
+            const tableClasses = (tokens: any[], idx: number) => {
+                const headers = getTableHeaders(tokens, idx)
+                const classes = ['vl-table-wrap']
+
+                if (headers.length > 0) {
+                    classes.push(`vl-table-wrap--cols-${headers.length}`)
+                }
+
+                if (headers.some((header) => header === 'variable' || header === 'переменная')) {
+                    classes.push('vl-table-wrap--tokens')
+                }
+
+                return classes.join(' ')
+            }
+
+            md.renderer.rules.table_open = (tokens: any[], idx: number) =>
+                `<div class="${tableClasses(tokens, idx)}"><div class="vl-table" role="table">`
             md.renderer.rules.table_close = () => '</div></div>'
             md.renderer.rules.thead_open = () => '<div class="vl-table__head" role="rowgroup">'
             md.renderer.rules.thead_close = () => '</div>'

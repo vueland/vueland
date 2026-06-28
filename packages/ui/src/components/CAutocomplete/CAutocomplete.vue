@@ -170,6 +170,7 @@
                                             v-for="it in chips"
                                             :key="it"
                                             class="c-autocomplete__chip"
+                                            color="info"
                                         >
                                             {{ it }}
                                         </c-chip>

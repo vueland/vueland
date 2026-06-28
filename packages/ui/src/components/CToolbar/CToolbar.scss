@@ -8,6 +8,7 @@ $toolbar-logo-width: auto;
   --c-toolbar-logo-width: #{$toolbar-logo-width};
   --c-toolbar-background-color: #{getCssVar('sys', 'color', 'surface')};
   --c-toolbar-logo-padding: #{getCssVar('sys', 'space', '0')} #{getCssVar('sys', 'space', '3')};
+  --c-toolbar-z-index: 1;
 
   width: 100%;
   display: flex;
@@ -27,6 +28,6 @@ $toolbar-logo-width: auto;
     top: 0;
     left: 0;
     right: 0;
-    z-index: getCssVar('sys', 'z-index', 'sticky');
+    z-index: getCssVar('toolbar', 'z-index');
   }
 }

@@ -5,6 +5,7 @@ type SystemThemeKey = keyof SystemThemeTokens
 const COLOR_THEME_KEYS = [
     'scheme',
     'primary',
+    'primaryRgb',
     'onPrimary',
     'primaryContainer',
     'onPrimaryContainer',
@@ -118,27 +119,68 @@ const SYSTEM_THEME_KEYS = [
     'motionEasingLinear',
     'motionEasingStandard',
     'motionEasingEmphasized',
-    'zIndexBase',
-    'zIndexSticky',
-    'zIndexDropdown',
-    'zIndexOverlay',
-    'zIndexModal',
-    'zIndexToast',
-    'zIndexTooltip',
 ] satisfies SystemThemeKey[]
 
 const COLOR_THEME_KEY_SET = new Set<string>(COLOR_THEME_KEYS)
 const SYSTEM_THEME_KEY_SET = new Set<string>(SYSTEM_THEME_KEYS)
 
 function toKebabCase(str: string): string {
-    return str.replace(/([A-Z])/g, (m) => `-${m.toLowerCase()}`)
+    return str
+        .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+        .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
+        .replace(/([a-zA-Z])([0-9])/g, '$1-$2')
+        .replace(/[_\s]+/g, '-')
+        .toLowerCase()
 }
 
 function isCustomProperty(key: string): key is `--${string}` {
     return key.startsWith('--')
 }
 
-function resolveThemeVar(key: string): string | undefined {
+function parseHexColorChannels(value: string): string | undefined {
+    const match = value.trim().match(/^#([\da-f]{3,4}|[\da-f]{6}|[\da-f]{8})$/i)
+
+    if (!match) {
+        return undefined
+    }
+
+    const hex = match[1]
+    const rgbHex = hex.length <= 4
+        ? hex.slice(0, 3).split('').map((part) => part + part).join('')
+        : hex.slice(0, 6)
+
+    return [0, 2, 4]
+        .map((start) => parseInt(rgbHex.slice(start, start + 2), 16))
+        .join(', ')
+}
+
+function parseRgbColorChannels(value: string): string | undefined {
+    const match = value.trim().match(/^rgba?\((.+)\)$/i)
+
+    if (!match) {
+        return undefined
+    }
+
+    const channels = match[1].split('/')[0].includes(',')
+        ? match[1].split('/')[0].split(',').slice(0, 3)
+        : match[1].split('/')[0].trim().split(/\s+/).slice(0, 3)
+
+    if (channels.length !== 3) {
+        return undefined
+    }
+
+    const normalized = channels.map((channel) => channel.trim())
+
+    return normalized.every((channel) => /^\d+(?:\.\d+)?%?$/.test(channel))
+        ? normalized.join(', ')
+        : undefined
+}
+
+function getRgbChannels(value: string): string | undefined {
+    return parseHexColorChannels(value) ?? parseRgbColorChannels(value)
+}
+
+function resolveThemeVar(key: string): string {
     if (isCustomProperty(key)) {
         return key
     }
@@ -153,20 +195,26 @@ function resolveThemeVar(key: string): string | undefined {
         return `--c-sys-${toKebabCase(key)}`
     }
 
-    console.warn(`[VuelandUI] Unknown theme token "${key}". Use a system key or an explicit CSS custom property.`)
-    return undefined
+    return `--c-${toKebabCase(key)}`
 }
 
 export function buildVars(theme: ThemeDefinition): [string, string][] {
+    const shouldInferPrimaryRgb = theme.primaryRgb === undefined
+        && theme['--c-sys-color-primary-rgb'] === undefined
+
     return Object.entries(theme).reduce<[string, string][]>((vars, [key, value]) => {
         if (value === undefined) {
             return vars
         }
 
-        const cssVar = resolveThemeVar(key)
+        vars.push([resolveThemeVar(key), value])
 
-        if (cssVar) {
-            vars.push([cssVar, value])
+        if (key === 'primary' && shouldInferPrimaryRgb) {
+            const channels = getRgbChannels(value)
+
+            if (channels) {
+                vars.push(['--c-sys-color-primary-rgb', channels])
+            }
         }
 
         return vars

@@ -1,21 +1,22 @@
 # Colors
 
-Vueland UI provides a full Material Design color palette. Each color is available in `lighten-5` → `darken-4` variants and four accents.
+Vueland UI generates color utilities from `colors-map.scss`. The main palette follows Material Design: most colors are available in `lighten-5` → `darken-4` variants and four accents. Additional palettes expose the variants defined by their map.
 
 ## Classes
 
-| Class | CSS property |
-|-------|-------------|
-| `bg-{color}` | `background-color` (base) |
-| `bg-{color}-{variant}` | `background-color` (variant) |
-| `text-{color}` | `color` (base) |
-| `text-{color}-{variant}` | `color` (variant) |
-| `hover:bg-{color}` | `background-color` on hover |
-| `active:bg-{color}` | `background-color` on press |
+| Class                    | CSS property                 |
+| ------------------------ | ---------------------------- |
+| `bg-{color}`             | `background-color` (base)    |
+| `bg-{color}-{variant}`   | `background-color` (variant) |
+| `text-{color}`           | `color` (base)               |
+| `text-{color}-{variant}` | `color` (variant)            |
+| `hover:bg-{color}`       | `background-color` on hover  |
+| `active:bg-{color}`      | `background-color` on press  |
 
 ```html
 <div class="bg-blue">blue bg</div>
 <div class="bg-red-lighten-3">light red bg</div>
+<div class="bg-graphite-lighten-2">graphite bg</div>
 <div class="text-teal">teal text color</div>
 <div class="hover:bg-green pa-4">green on hover</div>
 ```
@@ -469,5 +470,21 @@ Vueland UI provides a full Material Design color palette. Each color is availabl
 <div class="cs lt" style="background:#616161"><b>darken-2</b><span>#616161</span></div>
 <div class="cs lt" style="background:#424242"><b>darken-3</b><span>#424242</span></div>
 <div class="cs lt" style="background:#212121"><b>darken-4</b><span>#212121</span></div>
+</div>
+</div>
+
+<div class="cp-sep"></div>
+
+<div class="cp">
+<div class="cp-name">Graphite</div>
+<div class="cp-row">
+<div class="cs lt" style="background:#333333"><b>lighten-3</b><span>#333333</span></div>
+<div class="cs lt" style="background:#2F2F2F"><b>lighten-2</b><span>#2F2F2F</span></div>
+<div class="cs lt" style="background:#2A2A2A"><b>lighten-1</b><span>#2A2A2A</span></div>
+<div class="cs lt" style="background:#242424"><b>base</b><span>#242424</span></div>
+<div class="cs lt" style="background:#202020"><b>darken-1</b><span>#202020</span></div>
+<div class="cs lt" style="background:#1E1E1E"><b>darken-2</b><span>#1E1E1E</span></div>
+<div class="cs lt" style="background:#161616"><b>darken-3</b><span>#161616</span></div>
+<div class="cs lt" style="background:#121212"><b>darken-4</b><span>#121212</span></div>
 </div>
 </div>

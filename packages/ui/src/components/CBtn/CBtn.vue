@@ -13,6 +13,7 @@
     const preset = useButtonPresets({ props })
 
     const classes = computed(() => [
+        `c-btn--${props.color ?? 'primary'}`,
         {
             'c-btn--flat': !props.variant || props.variant === 'flat',
             'c-btn--outlined': props.variant === 'outlined',

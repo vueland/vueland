@@ -219,11 +219,11 @@
 }
 .otp-cell:focus {
   border-color: var(--c-sys-color-primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-sys-color-primary) 15%, transparent);
+  box-shadow: 0 0 0 3px var(--c-sys-state-focus-color);
 }
 .otp-cell--filled {
   border-color: var(--c-sys-color-primary);
-  background: color-mix(in srgb, var(--c-sys-color-primary) 6%, transparent);
+  background: var(--c-sys-state-hover-color);
 }
 .otp-cell--error {
   border-color: var(--c-sys-color-error) !important;
@@ -248,7 +248,7 @@
 }
 .search-bar--focused {
   border-color: var(--c-sys-color-primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-sys-color-primary) 15%, transparent);
+  box-shadow: 0 0 0 3px var(--c-sys-state-focus-color);
 }
 .search-icon {
   width: 16px;
@@ -301,7 +301,7 @@
 }
 .rich-textarea--focused {
   border-color: var(--c-sys-color-primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--c-sys-color-primary) 15%, transparent);
+  box-shadow: 0 0 0 3px var(--c-sys-state-focus-color);
 }
 .rich-textarea--error {
   border-color: var(--c-sys-color-error);

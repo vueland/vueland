@@ -9,6 +9,7 @@ export const FIELD_ATTRS = new Set([
     'min',
     'max',
     'step',
+    'value',
     'minlength',
     'maxlength',
     'readonly',

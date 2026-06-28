@@ -70,7 +70,6 @@ Use concise camelCase keys. Color roles map to `--c-sys-color-*`; other groups m
 | Spacing and controls | `space1`, `space4`, `controlHeightMd`, `controlIconSize`                   |
 | Shape and borders    | `shapeSm`, `shapeMd`, `shapePill`, `borderWidthThin`                       |
 | Elevation and motion | `elevation1`, `motionDurationMedium`, `motionEasingStandard`               |
-| Stacking             | `zIndexDropdown`, `zIndexModal`, `zIndexTooltip`                           |
 
 All tokens are optional. Override only the roles your theme changes.
 
@@ -78,27 +77,31 @@ Interactive state colors derive from `primary` by default, and surface-like comp
 
 ## Custom Tokens
 
-Custom theme tokens must be explicit CSS custom properties. Short arbitrary keys are ignored, so accidental stale tokens do not silently create a broken theme.
+Custom theme tokens use the same camelCase format. If a key is not a system token, Vueland creates a CSS custom property with the `--c-` prefix: `sidebarBg` becomes `--c-sidebar-bg`, `myCustomToken` becomes `--c-my-custom-token`.
+
+Keys that already start with `--` are passed through unchanged. Use that only when integrating with external CSS variables; prefer camelCase for application tokens.
 
 ```ts
 themes: {
   light: {
     primary: '#4f6ef7',
-    '--app-sidebar-bg': '#f0f2f5',
-    '--app-header-height': '64px',
+    sidebarBg: '#f0f2f5',
+    headerHeight: '64px',
+    myCustomToken: '#fa5a5a',
   },
 }
 ```
 
 ## CSS Variables
 
-`primary` becomes `--c-sys-color-primary`, `shapeMd` becomes `--c-sys-shape-md`, and so on:
+`primary` becomes `--c-sys-color-primary`, `shapeMd` becomes `--c-sys-shape-md`, `sidebarBg` becomes `--c-sidebar-bg`, and so on:
 
 ```css
 :root {
   --c-sys-color-primary: #4f6ef7;
   --c-sys-color-background: #f5f7fa;
   --c-sys-color-on-surface: #1a1a2e;
+  --c-sidebar-bg: #f0f2f5;
 }
 ```
 

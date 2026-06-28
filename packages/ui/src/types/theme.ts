@@ -2,6 +2,7 @@ export type SystemThemeTokens = {
     // Color roles
     scheme?: string
     primary?: string
+    primaryRgb?: string
     onPrimary?: string
     primaryContainer?: string
     onPrimaryContainer?: string
@@ -126,21 +127,12 @@ export type SystemThemeTokens = {
     motionEasingLinear?: string
     motionEasingStandard?: string
     motionEasingEmphasized?: string
-
-    // Stacking
-    zIndexBase?: string
-    zIndexSticky?: string
-    zIndexDropdown?: string
-    zIndexOverlay?: string
-    zIndexModal?: string
-    zIndexToast?: string
-    zIndexTooltip?: string
 }
 
-export type ThemeCustomProperties = {
-    [key: `--${string}`]: string | undefined
+export type ThemeCustomTokens = {
+    [key: string]: string | undefined
 }
 
-export type ThemeDefinition = Partial<SystemThemeTokens> & ThemeCustomProperties
+export type ThemeDefinition = Partial<SystemThemeTokens> & ThemeCustomTokens
 
 export type ThemesOptions = Record<string, ThemeDefinition>

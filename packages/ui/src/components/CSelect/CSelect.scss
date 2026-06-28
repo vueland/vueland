@@ -1,19 +1,35 @@
+@use '../../styles/mixins/functions' as *;
+
 .c-select {
+  --c-select-chips-gap: 4px;
+
   flex: 1 1;
 
   &__listbox {
     padding: 5px 0;
   }
 
+  &__chips {
+    display: flex;
+    gap: getCssVar('select', 'chips-gap');
+    flex-wrap: wrap;
+
+    & > .c-chip {
+      --c-chip-elevation: #{getCssVar('sys', 'elevation', '2')};
+    }
+  }
+
   & > .c-input__field > .c-text-field > .c-field > .c-field__append {
-    transition: transform 0.1s linear;
+    transition: transform getCssVar('sys', 'motion', 'duration-fast')
+      getCssVar('sys', 'motion', 'easing-linear');
   }
 
   & > .c-input__field > .c-text-field > .c-field--focused > .c-field__append {
     transform: rotate(180deg);
   }
 
-  & > .c-input__field > .c-text-field > .c-field--focused > .c-field__core > .c-field-input {
+  & > .c-input__field > .c-text-field > .c-field > .c-field__core > .c-field-input {
     caret-color: transparent;
+    color: transparent;
   }
 }

@@ -33,19 +33,25 @@ function getByPath(item: unknown, path: string): unknown {
     return path.split('.').reduce<any>((acc, key) => acc?.[key], item)
 }
 
-export function useNormalizedItems<T>(props: IterableItemsProps<T>) {
-    return computed<NormalizedItem<T>[]>(() => {
-        return props.items.map((item, index) => {
-            const title = props.titleKey ? getByPath(item, props.titleKey) : item
+export function normalizeItems<T>(items: T[], titleKey?: LoosePath<T>, valueKey?: LoosePath<T>): NormalizedItem<T>[] {
+    return items.map((item, index) => {
+        const title = titleKey ? getByPath(item, titleKey) : item
 
-            const value = props.valueKey ? getByPath(item, props.valueKey) : item
+        const value = valueKey ? getByPath(item, valueKey) : item
 
-            return {
-                raw: item,
-                title,
-                value,
-                key: `${title ?? index}`,
-            }
-        })
+        return {
+            raw: item,
+            title,
+            value,
+            key: `${title ?? index}`,
+        }
     })
+}
+
+export function useNormalizedItems<T>(props: IterableItemsProps<T>) {
+    return computed(() => normalizeItems(
+        props.items as T[],
+        props.titleKey,
+        props.valueKey,
+    ))
 }

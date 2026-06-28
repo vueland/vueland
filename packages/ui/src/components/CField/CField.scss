@@ -8,16 +8,25 @@ $self: '.c-field';
   --c-field-min-height: #{getCssVar('sys', 'control', 'height-md')};
   --c-field-prepend-min-width: #{getCssVar('sys', 'control', 'height-md')};
   --c-field-append-min-width: #{getCssVar('sys', 'control', 'icon-size')};
+  --c-field-padding-inline: #{getCssVar('sys', 'control', 'padding-inline')};
   --c-field-border-radius: #{getCssVar('sys', 'shape', 'md')};
   --c-field-transition-duration: #{getCssVar('sys', 'motion', 'duration-medium')};
+  --c-field-density-offset: #{getCssVar('sys', 'density-scale')};
 
   // Colors
   --c-field-bg-color: #{getCssVar('sys', 'color', 'surface')};
+  --c-field-focused-bg-color: #{getCssVar('sys', 'color', 'surface-bright')};
+  --c-field-disabled-bg-color: #{getCssVar('sys', 'color', 'surface-dim')};
   --c-field-label-color: #{getCssVar('sys', 'color', 'primary')};
   --c-field-focused-border-color: #{getCssVar('sys', 'color', 'focus-ring')};
-  --c-field-border-color: #{getCssVar('sys', 'color', 'outline-variant')};
+  --c-field-border-color: #{getCssVar('sys', 'color', 'outline')};
+  --c-field-border-width: #{getCssVar('sys', 'border-width', 'thin')};
+  --c-field-focused-border-width: #{getCssVar('sys', 'border-width', 'medium')};
   --c-field-input-text-color: #{getCssVar('sys', 'color', 'on-surface')};
   --c-field-placeholder-color: #{getCssVar('sys', 'color', 'placeholder')};
+  --c-field-error-bg-color: #{getCssVar('sys', 'color', 'surface')};
+  --c-field-error-border-color: #{getCssVar('sys', 'color', 'error')};
+  --c-field-error-text-color: #{getCssVar('sys', 'color', 'error')};
   --c-field-readonly-bg-color: #{getCssVar('sys', 'color', 'readonly-container')};
   --c-field-disabled-opacity: #{getCssVar('sys', 'state', 'disabled-opacity')};
 
@@ -26,10 +35,10 @@ $self: '.c-field';
   display: flex;
   align-items: center;
   background: getCssVar('field', 'bg-color');
-  min-height: getCssVar('field', 'min-height');
-  padding: 1px 8px;
+  min-height: calc(#{getCssVar('field', 'min-height')} + #{getCssVar('field', 'density-offset')});
+  padding: 1px getCssVar('field', 'padding-inline');
   border-radius: getCssVar('field', 'border-radius');
-  border: getCssVar('sys', 'border-width', 'thin') solid;
+  border: getCssVar('field', 'border-width') solid;
   transition:
     color getCssVar('field', 'transition-duration') $primary-transition,
     opacity getCssVar('field', 'transition-duration') $primary-transition;
@@ -132,6 +141,9 @@ $self: '.c-field';
   }
 
   &--focused {
+    background-color: getCssVar('field', 'focused-bg-color');
+    //border-width: getCssVar('field', 'focused-border-width');
+
     #{$self}-input::placeholder {
       opacity: 1;
     }
@@ -167,9 +179,16 @@ $self: '.c-field';
   }
 
   &--disabled {
+    background-color: getCssVar('field', 'disabled-bg-color');
     opacity: getCssVar('field', 'disabled-opacity');
     pointer-events: none;
     cursor: not-allowed;
+  }
+
+  &--error {
+    background-color: getCssVar('field', 'error-bg-color');
+    border-color: getCssVar('field', 'error-border-color');
+    color: getCssVar('field', 'error-text-color');
   }
 
   &--readonly {

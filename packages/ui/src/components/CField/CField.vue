@@ -1,9 +1,11 @@
 <script setup lang="ts">
     import {
         computed,
+        h,
         onMounted,
         shallowRef,
         unref,
+        useAttrs,
         useSlots
     } from 'vue'
 
@@ -30,6 +32,7 @@
     const inputRef = shallowRef<HTMLElement>()
 
     const slots = useSlots()
+    const attrs = useAttrs()
 
     const presets = useFieldPresets({
         slots,
@@ -81,6 +84,16 @@
         }
     }
 
+    const element = () => h(props.tag ?? 'input', {
+        ...attrs,
+        ref: inputRef,
+        disabled: props.disabled,
+        readonly: props.readonly,
+        value: unref(value),
+        class: ["c-field-input", ...unref(presets).input, attrs.class],
+        onInput,
+    })
+
     defineExpose({
         blur: () => unref(inputRef)?.blur(),
         focus: () => unref(inputRef)?.focus()
@@ -124,17 +137,7 @@
 
             <slot name="before"></slot>
 
-            <component
-                :is="tag ?? 'input'"
-                v-bind="$attrs"
-                ref="inputRef"
-                :value="value"
-                :disabled="disabled"
-                :readonly="readonly"
-                class="c-field-input"
-                :class="presets.input"
-                @input="onInput"
-            />
+            <element />
 
             <slot name="after"></slot>
         </div>

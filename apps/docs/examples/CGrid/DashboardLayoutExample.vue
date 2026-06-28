@@ -1,9 +1,9 @@
 <script setup lang="ts">
     const stats = [
-        { icon: '💰', label: 'Revenue', value: '$24.8k', delta: '12%', up: true,  bgClass: 'bg-teal' },
-        { icon: '🛒', label: 'Orders',  value: '1 204',  delta: '8%',  up: true,  bgClass: 'bg-pink' },
-        { icon: '👤', label: 'Users',   value: '8 391',  delta: '3%',  up: true,  bgClass: 'bg-indigo' },
-        { icon: '↩️', label: 'Returns', value: '37',     delta: '2%',  up: false, bgClass: 'bg-amber' },
+        { icon: 'fas:dollar-sign', label: 'Revenue', value: '$24.8k', delta: '12%', up: true,  bgClass: 'bg-teal' },
+        { icon: 'fas:cart-plus', label: 'Orders',  value: '1 204',  delta: '8%',  up: true,  bgClass: 'bg-pink' },
+        { icon: 'fas:user', label: 'Users',   value: '8 391',  delta: '3%',  up: true,  bgClass: 'bg-indigo' },
+        { icon: 'fas:ban', label: 'Returns', value: '37',     delta: '2%',  up: false, bgClass: 'bg-amber' },
     ]
 
     const bars = [
@@ -39,7 +39,12 @@
                         class="d-flex items-center justify-center py-4"
                         :class="stat.bgClass"
                     >
-                        <span style="font-size:28px">{{ stat.icon }}</span>
+                        <c-icon
+                            :name="stat.icon"
+                            class="text-white"
+                            size="28"
+                            source="fa"
+                        />
                     </c-card-header>
                     <c-card-body class="pa-3">
                         <div

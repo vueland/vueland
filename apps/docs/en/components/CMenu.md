@@ -409,6 +409,16 @@ type AlignValue =
   | 'right-center'
 ```
 
+### CSS variables
+
+| Variable                 | Default                                     | Description             |
+| ------------------------ | ------------------------------------------- | ----------------------- |
+| `--c-menu-bg-color`      | `var(--c-sys-color-surface-container-high)` | Menu background         |
+| `--c-menu-text-color`    | `var(--c-sys-color-on-surface)`             | Text color              |
+| `--c-menu-border-radius` | `var(--c-sys-shape-lg)`                     | Container border radius |
+| `--c-menu-elevation`     | `var(--c-sys-elevation-3)`                  | Container shadow        |
+| `--c-menu-max-height`    | `100%`                                      | Maximum menu height     |
+
 ### Slots
 
 | Slot        | Props               | Description           |

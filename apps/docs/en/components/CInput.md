@@ -307,7 +307,7 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 | `--c-input-disabled-color`      | `var(--c-sys-color-disabled)`         | Text color when disabled    |
 | `--c-input-readonly-color`      | `var(--c-sys-color-readonly)`         | Text color when readonly    |
 
-> The field background in `readonly`/`disabled` states is rendered by `CField` (`--c-field-readonly-bg-color`, `--c-field-disabled-opacity`), not `CInput`.
+> Field backgrounds for `focused`/`readonly`/`disabled`/`error` states are rendered by `CField` (`--c-field-focused-bg-color`, `--c-field-readonly-bg-color`, `--c-field-disabled-bg-color`, `--c-field-error-bg-color`), not `CInput`.
 
 ---
 

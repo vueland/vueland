@@ -5,6 +5,8 @@
   --c-tooltip-text-color: #{getCssVar('sys', 'color', 'on-surface')};
   --c-tooltip-padding: #{getCssVar('sys', 'space', '1')} #{getCssVar('sys', 'space', '3')};
   --c-tooltip-border-radius: #{getCssVar('sys', 'shape', 'sm')};
+  --c-tooltip-border-color: #{getCssVar('sys', 'color', 'outline-variant')};
+  --c-tooltip-border-width: #{getCssVar('sys', 'border-width', 'thin')};
   --c-tooltip-elevation: #{getCssVar('sys', 'elevation', '2')};
 
   --c-menu-bg-color: #{getCssVar('tooltip', 'bg-color')};
@@ -16,6 +18,6 @@
   color: getCssVar('tooltip', 'text-color');
   padding: getCssVar('tooltip', 'padding');
   border-radius: getCssVar('tooltip', 'border-radius');
+  border: getCssVar('tooltip', 'border-width') solid getCssVar('tooltip', 'border-color');
   box-shadow: getCssVar('tooltip', 'elevation');
-  z-index: getCssVar('sys', 'z-index', 'tooltip');
 }

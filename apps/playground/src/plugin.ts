@@ -30,7 +30,7 @@ export const ui = createVuelandUI({
     theme: 'light',
     themes: {
         light: {
-            primary: '#1976d2',
+            primary: '#248bfd',
             onPrimary: '#ffffff',
             secondary: '#1565c0',
             success: '#4caf50',
@@ -45,6 +45,7 @@ export const ui = createVuelandUI({
             disabled: '#c8c8c8',
             outlineVariant: '#e5e5e5',
             shapeMd: '8px',
+            myCustomToken: '#fa5a5a',
         },
         dark: {
             primary: '#90caf9',

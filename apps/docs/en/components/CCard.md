@@ -37,15 +37,21 @@ All four components accept the same props:
 
 ## CSS variables
 
-| Variable                    | Default                         | Description      |
-| --------------------------- | ------------------------------- | ---------------- |
-| `--c-card-width`            | `100%`                          | Card width       |
-| `--c-card-border-radius`    | `var(--c-sys-shape-md)`         | Border radius    |
-| `--c-card-header-padding`   | `var(--c-sys-space-4)`          | Header padding   |
-| `--c-card-body-padding`     | `var(--c-sys-space-4)`          | Body padding     |
-| `--c-card-footer-padding`   | `var(--c-sys-space-4)`          | Footer padding   |
-| `--c-card-background-color` | `var(--c-sys-color-surface)`    | Background color |
-| `--c-card-text-color`       | `var(--c-sys-color-on-surface)` | Text color       |
+| Variable                           | Default                                       | Description              |
+| ---------------------------------- | --------------------------------------------- | ------------------------ |
+| `--c-card-width`                   | `100%`                                        | Card width               |
+| `--c-card-border-radius`           | `var(--c-sys-shape-lg)`                       | Border radius            |
+| `--c-card-header-padding`          | `var(--c-sys-space-5)`                        | Header padding           |
+| `--c-card-body-padding`            | `var(--c-sys-space-4)`                        | Body padding             |
+| `--c-card-footer-padding`          | `var(--c-sys-space-4)`                        | Footer padding           |
+| `--c-card-background-color`        | `var(--c-sys-color-surface-container-low)`    | Background color         |
+| `--c-card-header-background-color` | `var(--c-sys-color-surface-container)`        | Header background color  |
+| `--c-card-footer-background-color` | `var(--c-sys-color-surface-container-lowest)` | Footer background color  |
+| `--c-card-text-color`              | `var(--c-sys-color-on-surface)`               | Text color               |
+| `--c-card-muted-text-color`        | `var(--c-sys-color-on-surface-variant)`       | Header/footer text color |
+| `--c-card-border-color`            | `var(--c-sys-color-outline)`                  | Border color             |
+| `--c-card-border-width`            | `var(--c-sys-border-width-thin)`              | Border width             |
+| `--c-card-elevation`               | `var(--c-sys-elevation-1)`                    | Box shadow               |
 
 Variables can be overridden via CSS or inline styles:
 

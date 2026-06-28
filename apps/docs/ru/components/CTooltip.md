@@ -106,9 +106,6 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 | `openDelay`    | `number \| string` | —            | Задержка перед открытием (мс)                                         |
 | `closeDelay`   | `number \| string` | —            | Задержка перед закрытием (мс)                                         |
 | `align`        | `AlignValue`       | —            | Сторона и выравнивание (напр. `bottom-center`, `top`, `right-center`) |
-|  |
-|  |
-|  |
 | `offsetX`      | `number \| string` | —            | Горизонтальный отступ (px)                                            |
 | `offsetY`      | `number \| string` | —            | Вертикальный отступ (px)                                              |
 
@@ -122,7 +119,11 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 | `--c-tooltip-text-color`    | `var(--c-sys-color-on-surface)`             |
 | `--c-tooltip-padding`       | `var(--c-sys-space-1) var(--c-sys-space-3)` |
 | `--c-tooltip-border-radius` | `var(--c-sys-shape-sm)`                     |
+| `--c-tooltip-border-color`  | `var(--c-sys-color-outline-variant)`        |
+| `--c-tooltip-border-width`  | `var(--c-sys-border-width-thin)`            |
 | `--c-tooltip-elevation`     | `var(--c-sys-elevation-2)`                  |
+
+`CTooltip` построен на `CMenu` и прокидывает фон, цвет текста, скругление и тень в соответствующие `--c-menu-*` переменные.
 
 ### Slots
 
