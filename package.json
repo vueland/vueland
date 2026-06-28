@@ -19,7 +19,7 @@
     "apps/*"
   ],
   "scripts": {
-    "build:all": "npm run build:jit && npm run build:lib && npm run build:docs && npm run build:eslint",
+    "build:all": "pnpm run build:jit && pnpm run build:lib && pnpm run build:docs && pnpm run build:eslint",
     "build:packages": "pnpm run build:jit && pnpm run build:lib && pnpm run build:eslint",
     "build:eslint": "pnpm --filter @vueland/eslint-script-setup run build",
     "build:lib": "pnpm run -r build-lib",

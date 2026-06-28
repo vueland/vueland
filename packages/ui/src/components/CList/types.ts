@@ -1,4 +1,4 @@
-import type { ComputedRef, VNode } from 'vue'
+import type { VNode } from 'vue'
 
 import type { AriaListRole, AriaListVariant } from '@/composables/use-aria-listbox'
 
@@ -34,9 +34,7 @@ export type ListItemController<T = any> = {
 }
 
 export type ListAPI<T = any> = {
-    role: ComputedRef<CListRole>
-    managed: ComputedRef<boolean>
-    disabled: ComputedRef<boolean>
+    role: CListRole
     registerItem(controller: ListItemController<T>): void
     unregisterItem(controller: ListItemController<T>): void
     setCurrentItem(controller: ListItemController<T>): void

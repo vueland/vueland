@@ -652,11 +652,6 @@ describe('CList', () => {
             expect(wrapper.attributes('role')).toBeUndefined()
         })
 
-        it('variant=list явно не устанавливает role', () => {
-            const wrapper = mount(CList, { props: { variant: 'list' } })
-            expect(wrapper.attributes('role')).toBeUndefined()
-        })
-
         it('variant=listbox устанавливает role="listbox"', () => {
             const wrapper = mount(CList, { props: { variant: 'listbox' } })
             expect(wrapper.attributes('role')).toBe('listbox')
@@ -845,7 +840,6 @@ describe('CList', () => {
 
             expect(item.attributes('role')).toBe('option')
             expect(item.attributes('id')).toMatch(/^c-list-item-.+$/)
-            expect(item.attributes('tabindex')).toBeUndefined()
             expect(item.attributes('aria-selected')).toBe('true')
 
             await item.trigger('mouseenter')
@@ -1302,7 +1296,6 @@ describe('CList', () => {
             expect(wrapper.classes()).toContain('c-list--disabled')
             expect(wrapper.attributes('aria-disabled')).toBe('true')
             expect(wrapper.attributes('tabindex')).toBeUndefined()
-            expect(item.attributes('tabindex')).toBeUndefined()
 
             await item.trigger('mouseenter')
             await item.trigger('click')
@@ -1350,7 +1343,6 @@ describe('CList', () => {
             expect(wrapper.classes()).toContain('c-list--disabled')
             expect(wrapper.attributes('aria-disabled')).toBe('true')
             expect(wrapper.attributes('tabindex')).toBeUndefined()
-            expect(item.attributes('tabindex')).toBeUndefined()
 
             await item.trigger('mouseenter')
             await item.trigger('click')

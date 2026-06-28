@@ -28,6 +28,16 @@ export default defineConfig({
                         '--c-sys-shape-md': `${value}`,
                     }),
                 }),
+                defineRule({
+                    name: 'flex-center',
+                    matcher: /^flex-center$/,
+                    validate: v => !!v,
+                    declaration: () => ({
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                    }),
+                }),
             ],
             variants: {
                 tablet: {

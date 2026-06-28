@@ -34,11 +34,7 @@
 
     const attrs = useAttrs()
 
-    const {
-        aria,
-        managed,
-        role,
-    } = useAriaListbox(props)
+    const aria = useAriaListbox(props)
 
     const { onKeydown } = useKeyboard({
         ArrowDown: navigateDown,
@@ -65,14 +61,13 @@
     const rootClasses = computed(() => ({
         'c-list--disabled': props.disabled,
         'c-list--readonly': props.readonly,
+        'c-list--default': !props.variant,
     }))
-
-    const isDisabled = computed(() => props.disabled)
 
     const tabIndex = computed<number | undefined>(() => {
         if (attrs.tabindex != null) return attrs.tabindex as number
-        if (unref(isDisabled)) return undefined
-        if (unref(managed)) return 0
+        if (props.disabled) return undefined
+        if (props.variant) return 0
 
         return undefined
     })
@@ -219,7 +214,7 @@
     }
 
     function focus() {
-        if (!unref(managed) || unref(isDisabled)) {
+        if (!props.variant || props.disabled) {
             return
         }
 
@@ -260,7 +255,7 @@
     }
 
     function isListboxMultiple() {
-        return unref(role) === 'listbox' && props.multiple
+        return props.variant === 'listbox' && props.multiple
     }
 
     function selectItemRange(fromIndex: number, toIndex: number) {
@@ -325,8 +320,8 @@
 
     function activateCurrentItem() {
         if (
-            !unref(managed)
-            || unref(isDisabled)
+            !props.variant
+            || props.disabled
             || activeItemIndex < 0
             || !isEnabledItemAt(activeItemIndex)
         ) {
@@ -338,7 +333,7 @@
     }
 
     function navigateDown(event?: KeyboardEvent) {
-        if (!unref(managed) || unref(isDisabled) || !itemControllers.length) {
+        if (!props.variant || props.disabled || !itemControllers.length) {
             return
         }
 
@@ -352,7 +347,7 @@
     }
 
     function navigateUp(event?: KeyboardEvent) {
-        if (!unref(managed) || unref(isDisabled) || !itemControllers.length) {
+        if (!props.variant || props.disabled || !itemControllers.length) {
             return
         }
 
@@ -371,7 +366,7 @@
     }
 
     function navigateFirst() {
-        if (!unref(managed) || unref(isDisabled) || !itemControllers.length) {
+        if (!props.variant || props.disabled || !itemControllers.length) {
             return
         }
 
@@ -385,7 +380,7 @@
     }
 
     function navigateLast() {
-        if (!unref(managed) || unref(isDisabled) || !itemControllers.length) {
+        if (!props.variant || props.disabled || !itemControllers.length) {
             return
         }
 
@@ -497,7 +492,7 @@
     }
 
     function onListKeydown(event: KeyboardEvent) {
-        if (!unref(managed) || unref(isDisabled)) {
+        if (!props.variant || props.disabled) {
             return
         }
 
@@ -519,9 +514,7 @@
     })
 
     provide($LIST_API_KEY, {
-        role,
-        managed,
-        disabled: isDisabled,
+        role: props.variant,
         registerItem,
         unregisterItem,
         setCurrentItem,

@@ -27,8 +27,8 @@
     const menu = shallowRef(false)
 
     const activeDescendant = shallowRef()
-    const listId = useId(undefined, { prefix: 'c-select-list' })
 
+    const listId = useId(undefined, { prefix: 'c-select-list' })
     const normalizedItems = useNormalizedItems(props)
 
     const {
@@ -48,10 +48,8 @@
             Escape: () => {
                 menu.value = false
                 unref(cTextFieldRef).blur()
-            }
-        },
-        { prevent: ['ArrowDown', 'ArrowUp', 'Enter'] },
-    )
+            },
+        }, { prevent: ['ArrowDown', 'ArrowUp'] })
 
     function onBlur() {
         clearActiveDescendant()
@@ -123,7 +121,6 @@
                             :key="it"
                             :value="it"
                             color="info"
-                            closable
                             @close="onCloseChip"
                         >
                             {{ it }}

@@ -14,15 +14,13 @@
   background-color: getCssVar('list', 'bg-color');
   color: getCssVar('list', 'color');
 
-  &--readonly {
+  &--readonly,
+  &--default {
     pointer-events: none;
   }
 
   &--disabled {
     opacity: getCssVar('list', 'disabled-opacity');
     pointer-events: none;
-  }
-
-  &:first-child {
   }
 }

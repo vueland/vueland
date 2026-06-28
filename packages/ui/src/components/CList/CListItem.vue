@@ -35,25 +35,17 @@
 
     const itemId = useId(undefined, { prefix: 'c-list-item' })
 
-    const listState = computed(() => {
-        const managed = unref(list?.managed)
-        const listDisabled = unref(list?.disabled)
-        const role = unref(list?.role)
-        const interactive = managed && !listDisabled && !props.disabled
+    const isInteractive = computed(() => !!list?.role && !props.disabled)
 
-        return {
-            managed,
-            listDisabled,
-            role,
-            interactive,
-            listbox: role === 'listbox',
-            menu: role === 'menu',
-            tabIndex: interactive ? -1 : undefined,
-        }
-    })
+    const listState = computed(() => ({
+        role: list?.role,
+        listbox: list?.role === 'listbox',
+        menu: list?.role === 'menu',
+        tabIndex: unref(isInteractive) ? -1 : undefined,
+    }))
 
     const ariaAttrs = useAriaListboxItem(() => ({
-        role: unref(listState).managed ? unref(listState).role : undefined,
+        role: unref(listState).role,
         id: itemId,
         selected: unref(isSelected),
         disabled: props.disabled,
@@ -72,7 +64,7 @@
     const itemListeners = computed(() => {
         const state = unref(listState)
 
-        if (!state.interactive) {
+        if (!unref(isInteractive)) {
             return {}
         }
 
@@ -83,7 +75,7 @@
     })
 
     const isSelected = computed(() => {
-        if (!unref(listState).managed || !isDef(props.value)) {
+        if (!unref(listState).role || !isDef(props.value)) {
             return false
         }
 
@@ -93,13 +85,13 @@
     const itemClasses = computed(() => ({
         'c-list-item--disabled': props.disabled,
         'c-list-item--selected': unref(isSelected),
-        'c-list-item--focused': unref(isFocused) && unref(listState).interactive,
+        'c-list-item--focused': unref(isFocused) && unref(isInteractive),
     }))
 
     function toggleSelection() {
         const state = unref(listState)
 
-        if (!state.interactive || !state.listbox || !list || !isDef(props.value)) {
+        if (!unref(isInteractive) || !state.listbox || !list || !isDef(props.value)) {
             return
         }
 
@@ -115,7 +107,7 @@
     function activateCurrentItem() {
         const state = unref(listState)
 
-        if (!state.interactive) {
+        if (!unref(isInteractive)) {
             return
         }
 
@@ -130,7 +122,7 @@
     }
 
     function focusItem() {
-        if (!unref(listState).interactive) {
+        if (!unref(isInteractive)) {
             return
         }
 
@@ -158,7 +150,7 @@
     }
 
     function activateItem() {
-        if (!unref(listState).interactive) {
+        if (!unref(isInteractive)) {
             return
         }
 
@@ -167,7 +159,7 @@
     }
 
     function deactivateItem() {
-        if (!unref(listState).interactive) {
+        if (!unref(isInteractive)) {
             return
         }
 
@@ -188,13 +180,13 @@
     }
 
     onMounted(() => {
-        if (unref(listState).managed) {
+        if (unref(listState).role) {
             list!.registerItem(itemController)
         }
     })
 
     onBeforeUnmount(() => {
-        if (unref(listState).managed) {
+        if (unref(listState).role) {
             list!.unregisterItem(itemController)
         }
     })

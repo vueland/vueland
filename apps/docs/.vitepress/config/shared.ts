@@ -12,6 +12,16 @@ export const sharedConfig: UserConfig = {
         plugins: [
             utilsJIT() as any,
         ],
+        css: {
+            preprocessorOptions: {
+                sass: {
+                    api: 'modern',
+                },
+                scss: {
+                    api: 'modern',
+                },
+            },
+        },
     },
     markdown: {
         theme: {
@@ -77,7 +87,7 @@ export const sharedConfig: UserConfig = {
                 `<div class="vl-table__cell vl-table__cell--head" role="columnheader"${align(tokens[idx])}>`
             md.renderer.rules.th_close = () => '</div>'
             md.renderer.rules.td_open = (tokens: any[], idx: number) =>
-                `<div class="vl-table__cell" role="cell"${align(tokens[idx])}>`
+                `<div class="vl-table__cell" role="cell" ${align(tokens[idx])}>`
             md.renderer.rules.td_close = () => '</div>'
         },
     },
