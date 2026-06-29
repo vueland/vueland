@@ -1,4 +1,5 @@
 import * as fs from 'node:fs'
+import * as fsPromises from 'node:fs/promises'
 import * as path from 'node:path'
 
 import {
@@ -19,6 +20,14 @@ export function isSameFile(a: string, b: string): boolean {
 export function readFileSafe(file: string): string | null {
     try {
         return fs.readFileSync(file, 'utf8')
+    } catch {
+        return null
+    }
+}
+
+export async function readFileSafeAsync(file: string): Promise<string | null> {
+    try {
+        return await fsPromises.readFile(file, 'utf8')
     } catch {
         return null
     }
@@ -68,6 +77,55 @@ export function collectProjectFiles(
     }
 
     walk(root)
+
+    return files
+}
+
+export async function collectProjectFilesAsync(
+    root: string,
+    include: ResolvedJitOptions['include'],
+    exclude: ResolvedJitOptions['exclude'],
+    outFile: string,
+): Promise<string[]> {
+    const files: string[] = []
+    const dirs = [root]
+
+    for (let index = 0; index < dirs.length; index++) {
+        const dir = dirs[index]
+
+        if (isExcluded(dir, exclude)) {
+            continue
+        }
+
+        let entries: fs.Dirent[]
+
+        try {
+            entries = await fsPromises.readdir(dir, { withFileTypes: true })
+        } catch {
+            continue
+        }
+
+        for (const entry of entries) {
+            const fullPath = path.join(dir, entry.name)
+
+            if (entry.isDirectory()) {
+                dirs.push(fullPath)
+                continue
+            }
+
+            if (!entry.isFile()) {
+                continue
+            }
+
+            if (isSameFile(fullPath, outFile)) {
+                continue
+            }
+
+            if (shouldProcess(fullPath, include, exclude)) {
+                files.push(fullPath)
+            }
+        }
+    }
 
     return files
 }

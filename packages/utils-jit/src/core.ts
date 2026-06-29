@@ -25,6 +25,7 @@ export const DEFAULT_EXCLUDE: Pattern[] = [
     /(^|[/\\])\.generated([/\\]|$)/,
     /(^|[/\\])storybook-static([/\\]|$)/,
     /(^|[/\\])playwright-report([/\\]|$)/,
+    /(^|[/\\])vite\.config\.[cm]?[jt]s$/,
 ]
 
 // Совпадают с $grid-breakpoints (maps/grids.scss) и use-display, чтобы без явного
