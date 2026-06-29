@@ -1,7 +1,7 @@
 {
   "name": "@vueland/utils-jit",
   "description": "Framework-agnostic JIT utility CSS engine for Vite",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "license": "MIT",
   "type": "module",
   "private": false,

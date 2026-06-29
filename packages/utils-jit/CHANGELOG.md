@@ -1,5 +1,16 @@
 # @vueland/utils-jit
 
+## 1.0.0
+
+### Major Changes
+
+- [#78](https://github.com/vueland/vueland/pull/78) [`9b1a4d6`](https://github.com/vueland/vueland/commit/9b1a4d6e3566bd79fbcda85e7fbb4d90d5aac3f8) Thanks [@wiseadme](https://github.com/wiseadme)! - Release `@vueland/utils-jit` as a stable 1.0.0 package.
+
+  The plugin now has a stable public API for arbitrary utilities, custom `defineRule`
+  utilities, responsive variants, Svelte and Astro source scanning, React
+  `className` string literals, and optional Vueland UI integration. It can be used
+  as a framework-agnostic Vite utility CSS engine outside of Vueland as well.
+
 ## 0.3.0
 
 ### Minor Changes
