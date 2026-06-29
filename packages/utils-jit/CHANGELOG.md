@@ -1,5 +1,24 @@
 # @vueland/utils-jit
 
+## 1.0.1
+
+### Patch Changes
+
+- [#80](https://github.com/vueland/vueland/pull/80) [`3d19680`](https://github.com/vueland/vueland/commit/3d196804e73dceec9a27324bc427c2ab14b4040a) Thanks [@wiseadme](https://github.com/wiseadme)! - Improve startup scanning and package metadata.
+
+  The initial project scan now uses async filesystem traversal and bounded async
+  file reads, reducing event-loop blocking during Vite startup in larger
+  workspaces.
+
+  Vite config files are now excluded from the default scan, preventing custom rule
+  names declared in `vite.config.*` from being treated as used utility classes.
+
+  The package now exposes separate ESM and CJS declaration files through
+  conditional exports and declares public npm access explicitly for scoped
+  publishing.
+
+- [#80](https://github.com/vueland/vueland/pull/80) [`3d19680`](https://github.com/vueland/vueland/commit/3d196804e73dceec9a27324bc427c2ab14b4040a) Thanks [@wiseadme](https://github.com/wiseadme)! - async startup scanning
+
 ## 1.0.0
 
 ### Major Changes
