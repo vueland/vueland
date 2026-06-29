@@ -12,8 +12,10 @@ import {
 import { DEFAULT_EXCLUDE, DEFAULT_INCLUDE } from '../src/core'
 import {
     collectProjectFiles,
+    collectProjectFilesAsync,
     isSameFile,
     readFileSafe,
+    readFileSafeAsync,
 } from '../src/project-scan'
 
 function createTempProject() {
@@ -70,6 +72,16 @@ describe('readFileSafe', () => {
     it('возвращает null для несуществующего файла', () => {
         expect(readFileSafe('/nonexistent/path/file.vue')).toBeNull()
     })
+
+    it('асинхронно читает существующий файл', async () => {
+        const file = project.write('src/App.vue', 'hello')
+
+        await expect(readFileSafeAsync(file)).resolves.toBe('hello')
+    })
+
+    it('асинхронно возвращает null для несуществующего файла', async () => {
+        await expect(readFileSafeAsync('/nonexistent/path/file.vue')).resolves.toBeNull()
+    })
 })
 
 // ─── collectProjectFiles ──────────────────────────────────────────────────────
@@ -82,6 +94,15 @@ describe('collectProjectFiles', () => {
 
     function scan(root: string, outFile: string, extraExclude: RegExp[] = []) {
         return collectProjectFiles(
+            root,
+            DEFAULT_INCLUDE,
+            [...DEFAULT_EXCLUDE, ...extraExclude],
+            outFile,
+        )
+    }
+
+    function scanAsync(root: string, outFile: string, extraExclude: RegExp[] = []) {
+        return collectProjectFilesAsync(
             root,
             DEFAULT_INCLUDE,
             [...DEFAULT_EXCLUDE, ...extraExclude],
@@ -140,6 +161,17 @@ describe('collectProjectFiles', () => {
         expect(names).not.toContain('Hidden.vue')
     })
 
+    it('пропускает vite config, чтобы имена custom rules не становились utilities', () => {
+        project.write('src/App.vue')
+        project.write('vite.config.ts', "defineRule({ name: 'flex-center', matcher: /^flex-center$/ })")
+
+        const names = scan(project.root, path.join(project.root, 'src/.generated/utils-jit.css'))
+            .map((f) => path.basename(f))
+
+        expect(names).toContain('App.vue')
+        expect(names).not.toContain('vite.config.ts')
+    })
+
     it('рекурсивно обходит вложенные директории', () => {
         project.write('src/components/ui/Button.vue')
         project.write('src/pages/Home.vue')
@@ -164,5 +196,29 @@ describe('collectProjectFiles', () => {
                 path.join(project.root, 'src/.generated/utils-jit.css'),
             )
         }).not.toThrow()
+    })
+
+    it('асинхронно собирает тот же набор файлов', async () => {
+        project.write('src/App.vue')
+        project.write('src/main.ts')
+        project.write('src/style.css')
+        project.write('node_modules/lib/index.vue')
+
+        const names = (await scanAsync(
+            project.root,
+            path.join(project.root, 'src/.generated/utils-jit.css'),
+        )).map((f) => path.basename(f))
+
+        expect(names).toContain('App.vue')
+        expect(names).toContain('main.ts')
+        expect(names).not.toContain('style.css')
+        expect(names).not.toContain('index.vue')
+    })
+
+    it('асинхронно возвращает пустой массив для недоступной директории', async () => {
+        await expect(scanAsync(
+            path.join(project.root, 'nonexistent'),
+            path.join(project.root, 'src/.generated/utils-jit.css'),
+        )).resolves.toEqual([])
     })
 })

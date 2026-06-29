@@ -21,6 +21,7 @@ import {
 } from '../src'
 
 type HookPlugin = Plugin & {
+    buildStart: NonNullable<Plugin['buildStart']>
     configResolved: NonNullable<Plugin['configResolved']>
     configureServer: NonNullable<Plugin['configureServer']>
     resolveId: NonNullable<Plugin['resolveId']>
@@ -51,6 +52,15 @@ function callHook<T extends(...args: any[]) => any>(
 
 function callConfigResolved(plugin: HookPlugin, root: string): void {
     callHook(plugin.configResolved as any, createConfig(root))
+}
+
+async function callBuildStart(plugin: HookPlugin): Promise<void> {
+    await callHook(plugin.buildStart as any, {} as any)
+}
+
+async function startPlugin(plugin: HookPlugin, root: string): Promise<void> {
+    callConfigResolved(plugin, root)
+    await callBuildStart(plugin)
 }
 
 function callConfigureServer(plugin: HookPlugin, server: ReturnType<typeof createDevServer>): void {
@@ -148,6 +158,7 @@ describe('plugins / base shape', () => {
 
         expect(plugin.name).toBe('utils-jit')
         expect(plugin.enforce).toBe('pre')
+        expect(plugin.buildStart).toBeTypeOf('function')
         expect(plugin.configResolved).toBeTypeOf('function')
         expect(plugin.configureServer).toBeTypeOf('function')
         expect(plugin.resolveId).toBeTypeOf('function')
@@ -268,17 +279,17 @@ describe('plugins / filesystem integration', () => {
         vi.restoreAllMocks()
     })
 
-    it('виртуальный модуль отдаёт плейсхолдер, если utilities не найдены', () => {
+    it('виртуальный модуль отдаёт плейсхолдер, если utilities не найдены', async () => {
         const plugin = asHookPlugin(utilsJIT())
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         expect(getCss(plugin)).toBe(
             '/* @vueland/utils-jit: no utilities found */\n',
         )
     })
 
-    it('сканирует проект и создаёт css для найденных utilities', () => {
+    it('сканирует проект и создаёт css для найденных utilities', async () => {
         project.write(
             'src/App.vue',
             `
@@ -290,7 +301,7 @@ describe('plugins / filesystem integration', () => {
 
         const plugin = asHookPlugin(utilsJIT())
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         const css = getCss(plugin)
 
@@ -300,7 +311,7 @@ describe('plugins / filesystem integration', () => {
         expect(css).toContain('.hover\\:bg-\\[\\#fff\\]:hover{background-color: #fff !important;}')
     })
 
-    it('сортирует css rules стабильно по token', () => {
+    it('сортирует css rules стабильно по token', async () => {
         project.write(
             'src/App.vue',
             `
@@ -312,7 +323,7 @@ describe('plugins / filesystem integration', () => {
 
         const plugin = asHookPlugin(utilsJIT())
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         const css = getCss(plugin)
         const hIndex = css.indexOf('.h-\\[40px\\]')
@@ -326,7 +337,7 @@ describe('plugins / filesystem integration', () => {
         expect(maIndex).toBeLessThan(wIndex)
     })
 
-    it('emitFile пишет дебаг-файл в кастомный outFile', () => {
+    it('emitFile пишет дебаг-файл в кастомный outFile', async () => {
         project.write(
             'src/App.vue',
             `
@@ -340,14 +351,14 @@ describe('plugins / filesystem integration', () => {
             utilsJIT({ emitFile: true, outFile: 'src/styles/generated.css' }),
         )
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         expect(project.read('src/styles/generated.css')).toContain(
             '.w-\\[100px\\]{width: 100px !important;}',
         )
     })
 
-    it('без emitFile дебаг-файл не пишется (только виртуальный модуль)', () => {
+    it('без emitFile дебаг-файл не пишется (только виртуальный модуль)', async () => {
         project.write(
             'src/App.vue',
             `
@@ -359,13 +370,13 @@ describe('plugins / filesystem integration', () => {
 
         const plugin = asHookPlugin(utilsJIT())
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         expect(project.exists('src/.generated/utils-jit.css')).toBe(false)
         expect(getCss(plugin)).toContain('.w-\\[100px\\]{width: 100px !important;}')
     })
 
-    it('использует кастомный banner', () => {
+    it('использует кастомный banner', async () => {
         project.write(
             'src/App.vue',
             `
@@ -377,22 +388,22 @@ describe('plugins / filesystem integration', () => {
 
         const plugin = asHookPlugin(utilsJIT({ banner: '/* custom banner */' }))
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         expect(getCss(plugin).startsWith('/* custom banner */')).toBe(
             true,
         )
     })
 
-    it('отдаёт пустой css при emitEmptyFile=false', () => {
+    it('отдаёт пустой css при emitEmptyFile=false', async () => {
         const plugin = asHookPlugin(utilsJIT({ emitEmptyFile: false }))
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         expect(getCss(plugin)).toBe('')
     })
 
-    it('учитывает custom breakpoints', () => {
+    it('учитывает custom breakpoints', async () => {
         project.write(
             'src/App.vue',
             `
@@ -404,14 +415,14 @@ describe('plugins / filesystem integration', () => {
 
         const plugin = asHookPlugin(utilsJIT({ breakpoints: { tablet: 900 } }))
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         expect(getCss(plugin)).toContain(
             '@media (min-width: 900px) { .tablet\\:w-\\[100px\\]{width: 100px !important;} }',
         )
     })
 
-    it('учитывает custom selector variants', () => {
+    it('учитывает custom selector variants', async () => {
         project.write(
             'src/App.vue',
             `
@@ -432,14 +443,14 @@ describe('plugins / filesystem integration', () => {
             }),
         )
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         expect(getCss(plugin)).toContain(
             '.hocus\\:w-\\[100px\\]:hover,.hocus\\:w-\\[100px\\]:focus{width: 100px !important;}',
         )
     })
 
-    it('подключает custom rules', () => {
+    it('подключает custom rules', async () => {
         project.write(
             'src/App.vue',
             `
@@ -489,7 +500,7 @@ describe('plugins / filesystem integration', () => {
             }),
         )
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         const css = getCss(plugin)
 
@@ -509,7 +520,7 @@ describe('plugins / filesystem integration', () => {
         )
     })
 
-    it('не генерирует false-positive css из большого файла со строковым шумом', () => {
+    it('не генерирует false-positive css из большого файла со строковым шумом', async () => {
         const noisyStrings = Array.from({ length: 2500 }, (_, index) => {
             return [
                 `const label${index} = 'copy-token-${index}'`,
@@ -548,7 +559,7 @@ describe('plugins / filesystem integration', () => {
             }),
         )
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         const css = getCss(plugin)
 
@@ -565,7 +576,7 @@ describe('plugins / filesystem integration', () => {
         expect(css.split('\n').filter((line) => line.includes('{')).length).toBe(3)
     })
 
-    it('игнорирует excluded files при полном сканировании', () => {
+    it('игнорирует excluded files при полном сканировании', async () => {
         project.write(
             'src/App.vue',
             `
@@ -586,7 +597,7 @@ describe('plugins / filesystem integration', () => {
 
         const plugin = asHookPlugin(utilsJIT({ exclude: [/src\/ignored/] }))
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         const css = getCss(plugin)
 
@@ -594,7 +605,7 @@ describe('plugins / filesystem integration', () => {
         expect(css).not.toContain('.h-\\[999px\\]')
     })
 
-    it('игнорирует generated css file при полном сканировании', () => {
+    it('игнорирует generated css file при полном сканировании', async () => {
         project.write(
             'src/.generated/utils-jit.css',
             `
@@ -613,7 +624,7 @@ describe('plugins / filesystem integration', () => {
 
         const plugin = asHookPlugin(utilsJIT())
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         const css = getCss(plugin)
 
@@ -621,7 +632,40 @@ describe('plugins / filesystem integration', () => {
         expect(css).not.toContain('.w-\\[999px\\]')
     })
 
-    it('transform добавляет новые utilities инкрементально', () => {
+    it('игнорирует vite config при полном сканировании', async () => {
+        project.write(
+            'vite.config.ts',
+            `
+            defineRule({
+                name: 'flex-center',
+                matcher: /^flex-center$/,
+                declaration: () => ({ display: 'flex' }),
+            })
+        `,
+        )
+
+        const plugin = asHookPlugin(
+            utilsJIT({
+                rules: [
+                    defineRule({
+                        name: 'flex-center',
+                        matcher: /^flex-center$/,
+                        declaration: () => ({
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }),
+                    }),
+                ],
+            }),
+        )
+
+        await startPlugin(plugin, project.root)
+
+        expect(getCss(plugin)).toBe('/* @vueland/utils-jit: no utilities found */\n')
+    })
+
+    it('transform добавляет новые utilities инкрементально', async () => {
         project.write(
             'src/App.vue',
             `
@@ -634,7 +678,7 @@ describe('plugins / filesystem integration', () => {
         const plugin = asHookPlugin(utilsJIT())
         const file = project.file('src/App.vue')
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         callTransform(
             plugin,
@@ -652,7 +696,7 @@ describe('plugins / filesystem integration', () => {
         expect(css).toContain('.h-\\[40px\\]{height: 40px !important;}')
     })
 
-    it('transform удаляет utility, если он исчез из файла', () => {
+    it('transform удаляет utility, если он исчез из файла', async () => {
         project.write(
             'src/App.vue',
             `
@@ -665,7 +709,7 @@ describe('plugins / filesystem integration', () => {
         const plugin = asHookPlugin(utilsJIT())
         const file = project.file('src/App.vue')
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         callTransform(
             plugin,
@@ -696,7 +740,7 @@ describe('plugins / filesystem integration', () => {
         const plugin = asHookPlugin(utilsJIT())
         const server = createDevServer()
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
         callConfigureServer(plugin, server)
 
         const changed = `
@@ -713,7 +757,7 @@ describe('plugins / filesystem integration', () => {
         expect(server.reloadModule).toHaveBeenCalledTimes(1)
     })
 
-    it('transform игнорирует под-запросы (?vue&type=...) и не затирает токены файла', () => {
+    it('transform игнорирует под-запросы (?vue&type=...) и не затирает токены файла', async () => {
         project.write(
             'src/App.vue',
             `
@@ -725,7 +769,7 @@ describe('plugins / filesystem integration', () => {
 
         const plugin = asHookPlugin(utilsJIT())
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         // Vite прогоняет через pre-transform под-блоки .vue с фрагментом кода.
         // style-блок без utility-классов НЕ должен удалять токены файла.
@@ -740,7 +784,7 @@ describe('plugins / filesystem integration', () => {
         expect(css).toContain('.w-\\[100px\\]{width: 100px !important;}')
     })
 
-    it('не удаляет utility, если он ещё используется в другом файле', () => {
+    it('не удаляет utility, если он ещё используется в другом файле', async () => {
         project.write(
             'src/App.vue',
             `
@@ -761,7 +805,7 @@ describe('plugins / filesystem integration', () => {
 
         const plugin = asHookPlugin(utilsJIT())
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         callTransform(
             plugin,
@@ -792,7 +836,7 @@ describe('plugins / filesystem integration', () => {
         const plugin = asHookPlugin(utilsJIT())
         const server = createDevServer()
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
         callConfigureServer(plugin, server)
 
         await callHandleHotUpdate(
@@ -827,7 +871,7 @@ describe('plugins / filesystem integration', () => {
         const plugin = asHookPlugin(utilsJIT({ exclude: [/Hidden\.vue$/] }))
         const server = createDevServer()
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
         callConfigureServer(plugin, server)
 
         await callHandleHotUpdate(
@@ -849,7 +893,7 @@ describe('plugins / filesystem integration', () => {
         expect(server.reloadModule).not.toHaveBeenCalled()
     })
 
-    it('watchChange delete удаляет tokens файла', () => {
+    it('watchChange delete удаляет tokens файла', async () => {
         const file = project.write(
             'src/App.vue',
             `
@@ -862,7 +906,7 @@ describe('plugins / filesystem integration', () => {
         const plugin = asHookPlugin(utilsJIT())
         const server = createDevServer()
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
         callConfigureServer(plugin, server)
 
         callWatchChange(plugin, file, { event: 'delete' })
@@ -873,7 +917,7 @@ describe('plugins / filesystem integration', () => {
         expect(server.reloadModule).toHaveBeenCalledTimes(1)
     })
 
-    it('watchChange update перечитывает файл с диска', () => {
+    it('watchChange update перечитывает файл с диска', async () => {
         const file = project.write(
             'src/App.vue',
             `
@@ -886,7 +930,7 @@ describe('plugins / filesystem integration', () => {
         const plugin = asHookPlugin(utilsJIT())
         const server = createDevServer()
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
         callConfigureServer(plugin, server)
 
         fs.writeFileSync(
@@ -907,7 +951,7 @@ describe('plugins / filesystem integration', () => {
         expect(css).toContain('.h-\\[40px\\]{height: 40px !important;}')
     })
 
-    it('повторный configResolved пересканирует проект полностью', () => {
+    it('повторный buildStart пересканирует проект полностью', async () => {
         project.write(
             'src/App.vue',
             `
@@ -919,7 +963,7 @@ describe('plugins / filesystem integration', () => {
 
         const plugin = asHookPlugin(utilsJIT())
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         project.write(
             'src/App.vue',
@@ -930,7 +974,7 @@ describe('plugins / filesystem integration', () => {
         `,
         )
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         const css = getCss(plugin)
 
@@ -938,7 +982,7 @@ describe('plugins / filesystem integration', () => {
         expect(css).toContain('.h-\\[40px\\]{height: 40px !important;}')
     })
 
-    it('не падает, если файл удалить до watchChange update', () => {
+    it('не падает, если файл удалить до watchChange update', async () => {
         const file = project.write(
             'src/App.vue',
             `
@@ -950,7 +994,7 @@ describe('plugins / filesystem integration', () => {
 
         const plugin = asHookPlugin(utilsJIT())
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
 
         fs.rmSync(file)
 
@@ -963,7 +1007,7 @@ describe('plugins / filesystem integration', () => {
         expect(css).toContain('.w-\\[100px\\]{width: 100px !important;}')
     })
 
-    it('не инвалидирует модуль, если css не изменился', () => {
+    it('не инвалидирует модуль, если css не изменился', async () => {
         project.write(
             'src/App.vue',
             `
@@ -976,7 +1020,7 @@ describe('plugins / filesystem integration', () => {
         const plugin = asHookPlugin(utilsJIT())
         const server = createDevServer()
 
-        callConfigResolved(plugin, project.root)
+        await startPlugin(plugin, project.root)
         callConfigureServer(plugin, server)
 
         callTransform(

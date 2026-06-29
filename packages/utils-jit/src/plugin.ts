@@ -16,9 +16,10 @@ import {
     VIRTUAL_CSS_ID,
 } from './css-output'
 import {
-    collectProjectFiles,
+    collectProjectFilesAsync,
     isSameFile,
     readFileSafe,
+    readFileSafeAsync,
 } from './project-scan'
 import { defaultRules } from './rules'
 import { createScssBreakpointInjector } from './scss-injection'
@@ -28,6 +29,34 @@ import type {
     ResolvedJitOptions,
     UtilityRule,
 } from './types'
+
+const INITIAL_READ_CONCURRENCY = 32
+
+async function mapConcurrent<T, R>(
+    items: T[],
+    limit: number,
+    mapper: (item: T) => Promise<R>,
+): Promise<R[]> {
+    const results: R[] = new Array(items.length)
+    let nextIndex = 0
+
+    async function worker(): Promise<void> {
+        while (nextIndex < items.length) {
+            const index = nextIndex++
+
+            results[index] = await mapper(items[index])
+        }
+    }
+
+    await Promise.all(
+        Array.from(
+            { length: Math.min(limit, items.length) },
+            () => worker(),
+        ),
+    )
+
+    return results
+}
 
 function resolveOptions(options: JitOptions = {}): ResolvedJitOptions {
     return {
@@ -89,29 +118,33 @@ export function utilsJIT(options?: JitOptions): Plugin {
         cssOutput.update(registry.buildCss(), notify)
     }
 
-    function rebuildAll(notify: boolean): void {
+    async function rebuildAll(notify: boolean): Promise<void> {
         contentCache.clear()
 
-        const filePaths = collectProjectFiles(
+        const filePaths = await collectProjectFilesAsync(
             root,
             resolvedOptions.include,
             resolvedOptions.exclude,
             outFileAbs,
         )
 
-        const files = filePaths.flatMap((filePath) => {
-            const code = readFileSafe(filePath)
+        const files = (await mapConcurrent(
+            filePaths,
+            INITIAL_READ_CONCURRENCY,
+            async (filePath) => {
+                const code = await readFileSafeAsync(filePath)
 
-            if (code === null) {
-                return []
-            }
+                if (code === null) {
+                    return null
+                }
 
-            // Запоминаем хэш, чтобы последующий transform по этому файлу не
-            // токенизировал повторно тот же контент (двойной обход на старте).
-            contentCache.changed(filePath, code)
+                // Запоминаем хэш, чтобы последующий transform по этому файлу не
+                // токенизировал повторно тот же контент (двойной обход на старте).
+                contentCache.changed(filePath, code)
 
-            return [{ path: filePath, tokens: tokenize(code) }]
-        })
+                return { path: filePath, tokens: tokenize(code) }
+            },
+        )).filter((file): file is { path: string; tokens: Set<string> } => file !== null)
 
         registry.rebuildAll(files)
         flushCss(notify)
@@ -176,12 +209,15 @@ export function utilsJIT(options?: JitOptions): Plugin {
             root = config.root
             outFileAbs = path.resolve(root, resolvedOptions.outFile)
             cssOutput.setOutFile(outFileAbs)
+        },
 
-            // Полный обход проекта — ровно один раз. configResolved срабатывает
-            // до transform/импортов и в dev, и в build, поэтому CSS готов
-            // заранее (его отдаст load); инкрементальные изменения дальше идут
-            // через transform/handleHotUpdate/watchChange.
-            rebuildAll(false)
+        async buildStart() {
+            // Полный обход проекта — ровно один раз. buildStart срабатывает до
+            // transform/импортов и в dev, и в build, поэтому Vite/Rollup дождутся
+            // async FS, а CSS будет готов заранее (его отдаст load).
+            // Инкрементальные изменения дальше идут через transform,
+            // handleHotUpdate и watchChange.
+            await rebuildAll(false)
         },
 
         configureServer(server: ViteDevServer) {
