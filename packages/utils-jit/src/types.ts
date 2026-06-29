@@ -22,6 +22,8 @@ export type JitOptions = {
      * - .jsx
      * - .tsx
      * - .html
+     * - .svelte
+     * - .astro
      */
     include?: Pattern[]
 
@@ -122,6 +124,8 @@ export type DeclarationValue = string | number
 
 export type DeclarationMap = Record<string, DeclarationValue>
 
+export type DeclarationResult = DeclarationMap | string[]
+
 export type RuleOptions = {
     /**
      * Название rule для отладки и читаемости.
@@ -131,19 +135,26 @@ export type RuleOptions = {
     /**
      * Matcher utility-части без variants.
      *
-     * Пример:
-     * class: hover:bg-[#fff]
-     * matcher получает: bg-[#fff]
+     * Примеры:
+     * - class: hover:bg-[#fff] → matcher получает bg-[#fff]
+     * - class: grid-cols-3 → matcher получает grid-cols-3
+     * - class: flex-center → matcher получает flex-center
      */
     matcher: RegExp
 
     /**
-     * Проверка значения внутри [].
+     * Проверка value.
+     *
+     * Если matcher содержит capture group, value равен первой группе.
+     * Если capture group нет, value равен utility.
      */
-    validate?: (value: string) => boolean
+    validate?: (value: string, match: RegExpMatchArray) => boolean
 
     /**
      * Генерация CSS declarations.
+     *
+     * Если matcher содержит capture group, value равен первой группе.
+     * Если capture group нет, value равен utility.
      *
      * Можно возвращать JS-style object:
      * {
@@ -161,7 +172,7 @@ export type RuleOptions = {
      *   `background-color: ${value};`
      * ]
      */
-    declaration: (value: string) => DeclarationMap | string[]
+    declaration: (value: string, match: RegExpMatchArray) => DeclarationResult
 
     /**
      * Добавлять ли !important к object-based declarations.

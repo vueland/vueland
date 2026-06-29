@@ -9,6 +9,7 @@
         }
     },
     "include": [
+        "env.d.ts",
         ".vitepress/**/*.ts",
         ".vitepress/**/*.vue",
         "examples/**/*.vue",

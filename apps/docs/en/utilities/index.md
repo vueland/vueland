@@ -3,7 +3,7 @@
 Vueland UI provides two complementary layers of CSS utilities:
 
 - **Predefined utilities** — a set of ready-made classes for spacing, colors, typography, layout and more. Compiled from SCSS and shipped with the library.
-- **JIT utilities** — arbitrary-value classes generated on demand by the `@vueland/utils-jit` Vite plugin, based on classes actually used in your source files.
+- **JIT utilities** — arbitrary-value classes and custom generated utilities from the `@vueland/utils-jit` Vite plugin, based on classes actually used in your source files.
 
 Both layers support **responsive variants** and share the same breakpoint configuration when `@vueland/utils-jit` is used.
 
@@ -34,7 +34,7 @@ Most utilities support responsive prefixes that apply styles from the given brea
 <div class="pa-2 md:pa-6 lg:pa-10">Responsive padding</div>
 ```
 
-## JIT utilities (arbitrary values)
+## JIT utilities
 
 The `@vueland/utils-jit` Vite plugin extends the utility layer with arbitrary values in square brackets:
 
@@ -43,6 +43,8 @@ The `@vueland/utils-jit` Vite plugin extends the utility layer with arbitrary va
 ```
 
 JIT classes are generated on demand — only the classes actually used in your source files end up in the CSS bundle. Nothing is shipped upfront.
+
+It can also generate project-specific static or parameterized utilities such as `flex-center` or `grid-cols-3` through [`defineRule`](/en/plugins/utils-jit/custom-rules).
 
 ### Setup
 
@@ -71,7 +73,7 @@ JIT classes support the same responsive prefixes as predefined utilities:
 ### Hover and focus variants
 
 ```html
-<button class="bg-[#42b883] hover:bg-[#33a06f] focus:outline-[2px]">Button</button>
+<button class="bg-[#42b883] hover:bg-[#33a06f] focus:px-[24px]">Button</button>
 ```
 
 ## Syncing breakpoints across both layers
@@ -92,7 +94,7 @@ utilsJIT({
 })
 ```
 
-After this, `sm:d-flex` (predefined) and `sm:w-[960px]` (JIT) both activate at exactly `600px`. The reactive `useDisplay` composable in JS uses the same values as well. See [Breakpoints](/en/guide/breakpoints) for details.
+After this, `sm:d-flex` (predefined) and `sm:w-[960px]` (JIT) both activate at exactly `600px`. The reactive `useBreakpoints` composable in JS uses the same values as well. See [Breakpoints](/en/guide/breakpoints) for details.
 
 ## Sections
 

@@ -113,8 +113,19 @@ describe('core / tokenize', () => {
         expect([...tokenize('a-[]')]).toEqual([])
     })
 
-    it('игнорирует токены без arbitrary value', () => {
-        expect([...tokenize('<div class="foo bar baz"></div>')]).toEqual([])
+    it('находит обычные utility classes', () => {
+        expect([...tokenize('<div class="flex-center hover:flex-center"></div>')]).toEqual([
+            'flex-center',
+            'hover:flex-center',
+        ])
+    })
+
+    it('находит arbitrary и обычные utilities вместе', () => {
+        expect([...tokenize('<div class="flex-center w-[100px] hover:flex-center"></div>')]).toEqual([
+            'w-[100px]',
+            'flex-center',
+            'hover:flex-center',
+        ])
     })
 
     it('игнорирует комментарии', () => {
@@ -130,6 +141,12 @@ describe('core / tokenize', () => {
         const code = 'const classes = [\'w-[100px]\', condition && \'h-[40px]\']'
 
         expect([...tokenize(code)]).toEqual(['w-[100px]', 'h-[40px]'])
+    })
+
+    it('умеет находить обычный utility вне class fallback-сканированием', () => {
+        const code = 'const classes = [\'flex-center\', condition && \'hover:flex-center\']'
+
+        expect([...tokenize(code)]).toEqual(['flex-center', 'hover:flex-center'])
     })
 })
 
@@ -158,8 +175,24 @@ describe('core / parseToken', () => {
         })
     })
 
-    it('возвращает null для обычного class', () => {
-        expect(parseToken('button-primary')).toBeNull()
+    it('парсит обычный utility class', () => {
+        expect(parseToken('button-primary')).toEqual({
+            raw: 'button-primary',
+            variants: [],
+            utility: 'button-primary',
+        })
+    })
+
+    it('парсит обычный utility class с variants', () => {
+        expect(parseToken('hover:button-primary')).toEqual({
+            raw: 'hover:button-primary',
+            variants: ['hover'],
+            utility: 'button-primary',
+        })
+    })
+
+    it('возвращает null для некорректного class-like token', () => {
+        expect(parseToken('button-')).toBeNull()
     })
 })
 
@@ -331,6 +364,44 @@ describe('core / defineRule', () => {
         })
 
         expect(rule.match('bg-[red;color:blue]')).toBeNull()
+    })
+
+    it('создаёт обычный utility class без value в []', () => {
+        const rule = defineRule({
+            name: 'flex-center',
+            matcher: /^flex-center$/,
+            declaration: () => ({
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+            }),
+        })
+
+        expect(rule.match('flex-center')).toEqual({
+            declarations: [
+                'display: flex !important;',
+                'justify-content: center !important;',
+                'align-items: center !important;',
+            ],
+        })
+    })
+
+    it('создаёт parameterized utility class через capture group', () => {
+        const rule = defineRule({
+            name: 'grid-cols',
+            matcher: /^grid-cols-(\d+)$/,
+            validate: value => Number(value) > 0,
+            declaration: value => ({
+                gridTemplateColumns: `repeat(${value}, minmax(0, 1fr))`,
+            }),
+        })
+
+        expect(rule.match('grid-cols-3')).toEqual({
+            declarations: [
+                'grid-template-columns: repeat(3, minmax(0, 1fr)) !important;',
+            ],
+        })
+        expect(rule.match('grid-cols-0')).toBeNull()
     })
 })
 

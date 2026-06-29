@@ -18,27 +18,27 @@
 
 Определяет количество равных колонок на дробных единицах.
 
-| Класс | CSS |
-|-------|-----|
-| `grid-cols-1` | `grid-template-columns: repeat(1, minmax(0, 1fr))` |
-| `grid-cols-2` | `grid-template-columns: repeat(2, minmax(0, 1fr))` |
-| `grid-cols-3` | `grid-template-columns: repeat(3, minmax(0, 1fr))` |
-| `grid-cols-4` | `grid-template-columns: repeat(4, minmax(0, 1fr))` |
-| `grid-cols-6` | `grid-template-columns: repeat(6, minmax(0, 1fr))` |
-| `grid-cols-12` | `grid-template-columns: repeat(12, minmax(0, 1fr))` |
-| `grid-cols-none` | `grid-template-columns: none` |
+| Класс            | CSS                                                 |
+| ---------------- | --------------------------------------------------- |
+| `grid-cols-1`    | `grid-template-columns: repeat(1, minmax(0, 1fr))`  |
+| `grid-cols-2`    | `grid-template-columns: repeat(2, minmax(0, 1fr))`  |
+| `grid-cols-3`    | `grid-template-columns: repeat(3, minmax(0, 1fr))`  |
+| `grid-cols-4`    | `grid-template-columns: repeat(4, minmax(0, 1fr))`  |
+| `grid-cols-6`    | `grid-template-columns: repeat(6, minmax(0, 1fr))`  |
+| `grid-cols-12`   | `grid-template-columns: repeat(12, minmax(0, 1fr))` |
+| `grid-cols-none` | `grid-template-columns: none`                       |
 
 Генерируются классы от 1 до 12.
 
 ## grid-template-rows
 
-| Класс | CSS |
-|-------|-----|
-| `grid-rows-1` | `grid-template-rows: repeat(1, minmax(0, 1fr))` |
-| `grid-rows-2` | `grid-template-rows: repeat(2, minmax(0, 1fr))` |
-| `grid-rows-3` | `grid-template-rows: repeat(3, minmax(0, 1fr))` |
-| `grid-rows-6` | `grid-template-rows: repeat(6, minmax(0, 1fr))` |
-| `grid-rows-none` | `grid-template-rows: none` |
+| Класс            | CSS                                             |
+| ---------------- | ----------------------------------------------- |
+| `grid-rows-1`    | `grid-template-rows: repeat(1, minmax(0, 1fr))` |
+| `grid-rows-2`    | `grid-template-rows: repeat(2, minmax(0, 1fr))` |
+| `grid-rows-3`    | `grid-template-rows: repeat(3, minmax(0, 1fr))` |
+| `grid-rows-6`    | `grid-template-rows: repeat(6, minmax(0, 1fr))` |
+| `grid-rows-none` | `grid-template-rows: none`                      |
 
 Генерируются классы от 1 до 6.
 
@@ -46,13 +46,13 @@
 
 Управляет тем, сколько колонок занимает элемент.
 
-| Класс | CSS |
-|-------|-----|
-| `col-span-1` | `grid-column: span 1 / span 1` |
-| `col-span-2` | `grid-column: span 2 / span 2` |
-| `col-span-6` | `grid-column: span 6 / span 6` |
-| `col-span-12` | `grid-column: span 12 / span 12` |
-| `col-span-full` | `grid-column: 1 / -1` |
+| Класс           | CSS                              |
+| --------------- | -------------------------------- |
+| `col-span-1`    | `grid-column: span 1 / span 1`   |
+| `col-span-2`    | `grid-column: span 2 / span 2`   |
+| `col-span-6`    | `grid-column: span 6 / span 6`   |
+| `col-span-12`   | `grid-column: span 12 / span 12` |
+| `col-span-full` | `grid-column: 1 / -1`            |
 
 ```html
 <div class="d-grid grid-cols-12 gap-4">
@@ -63,11 +63,11 @@
 
 ## Растяжение по строкам (row-span)
 
-| Класс | CSS |
-|-------|-----|
-| `row-span-1` | `grid-row: span 1 / span 1` |
-| `row-span-2` | `grid-row: span 2 / span 2` |
-| `row-span-full` | `grid-row: 1 / -1` |
+| Класс           | CSS                         |
+| --------------- | --------------------------- |
+| `row-span-1`    | `grid-row: span 1 / span 1` |
+| `row-span-2`    | `grid-row: span 2 / span 2` |
+| `row-span-full` | `grid-row: 1 / -1`          |
 
 Генерируются классы от 1 до 6.
 
@@ -75,85 +75,85 @@
 
 Явное размещение элемента по линиям сетки.
 
-| Класс | CSS |
-|-------|-----|
-| `col-start-1` … `col-start-13` | `grid-column-start: N` |
-| `col-end-1` … `col-end-13` | `grid-column-end: N` |
-| `col-start-auto` | `grid-column-start: auto` |
-| `col-end-auto` | `grid-column-end: auto` |
+| Класс                          | CSS                       |
+| ------------------------------ | ------------------------- |
+| `col-start-1` … `col-start-13` | `grid-column-start: N`    |
+| `col-end-1` … `col-end-13`     | `grid-column-end: N`      |
+| `col-start-auto`               | `grid-column-start: auto` |
+| `col-end-auto`                 | `grid-column-end: auto`   |
 
 ## Позиция по строкам (row-start / row-end)
 
-| Класс | CSS |
-|-------|-----|
-| `row-start-1` … `row-start-7` | `grid-row-start: N` |
-| `row-end-1` … `row-end-7` | `grid-row-end: N` |
-| `row-start-auto` | `grid-row-start: auto` |
-| `row-end-auto` | `grid-row-end: auto` |
+| Класс                         | CSS                    |
+| ----------------------------- | ---------------------- |
+| `row-start-1` … `row-start-7` | `grid-row-start: N`    |
+| `row-end-1` … `row-end-7`     | `grid-row-end: N`      |
+| `row-start-auto`              | `grid-row-start: auto` |
+| `row-end-auto`                | `grid-row-end: auto`   |
 
 ## grid-auto-flow
 
 Управляет направлением авто-размещения элементов.
 
-| Класс | CSS |
-|-------|-----|
-| `grid-flow-row` | `grid-auto-flow: row` |
-| `grid-flow-col` | `grid-auto-flow: column` |
-| `grid-flow-dense` | `grid-auto-flow: dense` |
-| `grid-flow-row-dense` | `grid-auto-flow: row dense` |
+| Класс                 | CSS                            |
+| --------------------- | ------------------------------ |
+| `grid-flow-row`       | `grid-auto-flow: row`          |
+| `grid-flow-col`       | `grid-auto-flow: column`       |
+| `grid-flow-dense`     | `grid-auto-flow: dense`        |
+| `grid-flow-row-dense` | `grid-auto-flow: row dense`    |
 | `grid-flow-col-dense` | `grid-auto-flow: column dense` |
 
 ## grid-auto-columns / grid-auto-rows
 
 Размер неявно создаваемых треков.
 
-| Класс | CSS |
-|-------|-----|
-| `auto-cols-auto` | `grid-auto-columns: auto` |
-| `auto-cols-min` | `grid-auto-columns: min-content` |
-| `auto-cols-max` | `grid-auto-columns: max-content` |
-| `auto-cols-fr` | `grid-auto-columns: minmax(0, 1fr)` |
-| `auto-rows-auto` | `grid-auto-rows: auto` |
-| `auto-rows-min` | `grid-auto-rows: min-content` |
-| `auto-rows-max` | `grid-auto-rows: max-content` |
-| `auto-rows-fr` | `grid-auto-rows: minmax(0, 1fr)` |
+| Класс            | CSS                                 |
+| ---------------- | ----------------------------------- |
+| `auto-cols-auto` | `grid-auto-columns: auto`           |
+| `auto-cols-min`  | `grid-auto-columns: min-content`    |
+| `auto-cols-max`  | `grid-auto-columns: max-content`    |
+| `auto-cols-fr`   | `grid-auto-columns: minmax(0, 1fr)` |
+| `auto-rows-auto` | `grid-auto-rows: auto`              |
+| `auto-rows-min`  | `grid-auto-rows: min-content`       |
+| `auto-rows-max`  | `grid-auto-rows: max-content`       |
+| `auto-rows-fr`   | `grid-auto-rows: minmax(0, 1fr)`    |
 
 ## place-items
 
 Шорткат для `align-items` + `justify-items`.
 
-| Класс | Значение |
-|-------|----------|
-| `place-items-start` | `start` |
-| `place-items-end` | `end` |
-| `place-items-center` | `center` |
-| `place-items-stretch` | `stretch` |
+| Класс                  | Значение   |
+| ---------------------- | ---------- |
+| `place-items-start`    | `start`    |
+| `place-items-end`      | `end`      |
+| `place-items-center`   | `center`   |
+| `place-items-stretch`  | `stretch`  |
 | `place-items-baseline` | `baseline` |
 
 ## place-content
 
 Шорткат для `align-content` + `justify-content`.
 
-| Класс | Значение |
-|-------|----------|
-| `place-content-start` | `start` |
-| `place-content-end` | `end` |
-| `place-content-center` | `center` |
-| `place-content-stretch` | `stretch` |
+| Класс                   | Значение        |
+| ----------------------- | --------------- |
+| `place-content-start`   | `start`         |
+| `place-content-end`     | `end`           |
+| `place-content-center`  | `center`        |
+| `place-content-stretch` | `stretch`       |
 | `place-content-between` | `space-between` |
-| `place-content-around` | `space-around` |
-| `place-content-evenly` | `space-evenly` |
+| `place-content-around`  | `space-around`  |
+| `place-content-evenly`  | `space-evenly`  |
 
 ## place-self
 
 Шорткат для `align-self` + `justify-self` отдельного элемента.
 
-| Класс | Значение |
-|-------|----------|
-| `place-self-auto` | `auto` |
-| `place-self-start` | `start` |
-| `place-self-end` | `end` |
-| `place-self-center` | `center` |
+| Класс                | Значение  |
+| -------------------- | --------- |
+| `place-self-auto`    | `auto`    |
+| `place-self-start`   | `start`   |
+| `place-self-end`     | `end`     |
+| `place-self-center`  | `center`  |
 | `place-self-stretch` | `stretch` |
 
 ## Адаптивные варианты
@@ -210,4 +210,4 @@
 </div>
 ```
 
-> Для произвольных значений вроде `grid-template-columns: repeat(5, 120px)` используйте JIT-классы `@vueland/utils-jit`: `grid-cols-[repeat(5,120px)]`.
+> Для нестандартных grid templates вроде `grid-template-columns: repeat(5, 120px)` добавьте проектное правило через [`defineRule`](/ru/plugins/utils-jit/custom-rules) в `@vueland/utils-jit`, например utility `grid-cols-[...]` или `grid-template-[...]`.
