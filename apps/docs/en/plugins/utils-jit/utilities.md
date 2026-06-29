@@ -1,47 +1,49 @@
 # Utility Classes
 
-This page describes the built-in utility classes provided by `@vueland/utils-jit` and the values they support.
+This page describes the built-in utility classes provided by `@vueland/utils-jit` and the values they support. Built-in rules are framework-agnostic arbitrary-value utilities; project-specific static and parameterized utilities can be added through [`defineRule`](./custom-rules).
 
-## Default utility classes
+## Built-in utility classes
 
-| Utility | CSS properties | Example |
-| --- | --- | --- |
-| `w-[value]` | `width` | `w-[320px]` |
-| `h-[value]` | `height` | `h-[200px]` |
-| `min-w-[value]` | `min-width` | `min-w-[240px]` |
-| `max-w-[value]` | `max-width` | `max-w-[1200px]` |
-| `min-h-[value]` | `min-height` | `min-h-[100vh]` |
-| `max-h-[value]` | `max-height` | `max-h-[600px]` |
-| `ma-[value]` | `margin` | `ma-[16px]` |
-| `mx-[value]` | `margin-left`, `margin-right` | `mx-[auto]` |
-| `my-[value]` | `margin-top`, `margin-bottom` | `my-[24px]` |
-| `mt-[value]` | `margin-top` | `mt-[16px]` |
-| `mr-[value]` | `margin-right` | `mr-[12px]` |
-| `mb-[value]` | `margin-bottom` | `mb-[24px]` |
-| `ml-[value]` | `margin-left` | `ml-[12px]` |
-| `pa-[value]` | `padding` | `pa-[20px]` |
-| `px-[value]` | `padding-left`, `padding-right` | `px-[16px]` |
-| `py-[value]` | `padding-top`, `padding-bottom` | `py-[12px]` |
-| `pt-[value]` | `padding-top` | `pt-[10px]` |
-| `pr-[value]` | `padding-right` | `pr-[8px]` |
-| `pb-[value]` | `padding-bottom` | `pb-[20px]` |
-| `pl-[value]` | `padding-left` | `pl-[16px]` |
-| `left-[value]` | `left` | `left-[12px]` |
-| `right-[value]` | `right` | `right-[12px]` |
-| `top-[value]` | `top` | `top-[12px]` |
-| `bottom-[value]` | `bottom` | `bottom-[12px]` |
-| `inset-[value]` | `inset` | `inset-[0px]` |
-| `radius-[value]` | `border-radius` | `radius-[12px]` |
-| `radius-tl-[value]` | `border-top-left-radius` | `radius-tl-[8px]` |
-| `radius-tr-[value]` | `border-top-right-radius` | `radius-tr-[8px]` |
-| `radius-bl-[value]` | `border-bottom-left-radius` | `radius-bl-[8px]` |
-| `radius-br-[value]` | `border-bottom-right-radius` | `radius-br-[8px]` |
-| `z-[value]` | `z-index` | `z-[100]` |
-| `opacity-[value]` | `opacity` | `opacity-[0.64]` |
-| `color-[value]` | `color` | `color-[#111]` |
-| `bg-[value]` | `background-color` | `bg-[#fff]` |
+| Utility             | CSS properties                  | Example           |
+| ------------------- | ------------------------------- | ----------------- |
+| `w-[value]`         | `width`                         | `w-[320px]`       |
+| `h-[value]`         | `height`                        | `h-[200px]`       |
+| `min-w-[value]`     | `min-width`                     | `min-w-[240px]`   |
+| `max-w-[value]`     | `max-width`                     | `max-w-[1200px]`  |
+| `min-h-[value]`     | `min-height`                    | `min-h-[100vh]`   |
+| `max-h-[value]`     | `max-height`                    | `max-h-[600px]`   |
+| `ma-[value]`        | `margin`                        | `ma-[16px]`       |
+| `mx-[value]`        | `margin-left`, `margin-right`   | `mx-[auto]`       |
+| `my-[value]`        | `margin-top`, `margin-bottom`   | `my-[24px]`       |
+| `mt-[value]`        | `margin-top`                    | `mt-[16px]`       |
+| `mr-[value]`        | `margin-right`                  | `mr-[12px]`       |
+| `mb-[value]`        | `margin-bottom`                 | `mb-[24px]`       |
+| `ml-[value]`        | `margin-left`                   | `ml-[12px]`       |
+| `pa-[value]`        | `padding`                       | `pa-[20px]`       |
+| `px-[value]`        | `padding-left`, `padding-right` | `px-[16px]`       |
+| `py-[value]`        | `padding-top`, `padding-bottom` | `py-[12px]`       |
+| `pt-[value]`        | `padding-top`                   | `pt-[10px]`       |
+| `pr-[value]`        | `padding-right`                 | `pr-[8px]`        |
+| `pb-[value]`        | `padding-bottom`                | `pb-[20px]`       |
+| `pl-[value]`        | `padding-left`                  | `pl-[16px]`       |
+| `left-[value]`      | `left`                          | `left-[12px]`     |
+| `right-[value]`     | `right`                         | `right-[12px]`    |
+| `top-[value]`       | `top`                           | `top-[12px]`      |
+| `bottom-[value]`    | `bottom`                        | `bottom-[12px]`   |
+| `inset-[value]`     | `inset`                         | `inset-[0px]`     |
+| `radius-[value]`    | `border-radius`                 | `radius-[12px]`   |
+| `radius-tl-[value]` | `border-top-left-radius`        | `radius-tl-[8px]` |
+| `radius-tr-[value]` | `border-top-right-radius`       | `radius-tr-[8px]` |
+| `radius-bl-[value]` | `border-bottom-left-radius`     | `radius-bl-[8px]` |
+| `radius-br-[value]` | `border-bottom-right-radius`    | `radius-br-[8px]` |
+| `z-[value]`         | `z-index`                       | `z-[100]`         |
+| `opacity-[value]`   | `opacity`                       | `opacity-[0.64]`  |
+| `color-[value]`     | `color`                         | `color-[#111]`    |
+| `bg-[value]`        | `background-color`              | `bg-[#fff]`       |
 
 All built-in rules generate declarations with `!important`.
+
+Classes like `flex-center`, `surface-[#fff]`, or `grid-cols-3` are not part of the default set unless you define them in `rules`. See [Custom Rules](./custom-rules) for arbitrary, static, and parameterized utility examples.
 
 ## Supported values
 

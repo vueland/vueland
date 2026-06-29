@@ -31,7 +31,7 @@
                 class="min-h-[270px] pa-1 md:pa-4 lg:pa-1 d-flex"
             >
                 <c-form>
-                    <c-card class="elevation-2 align-self-stretch flex-center">
+                    <c-card class="elevation-2 align-self-stretch">
                         <c-card-header>
                             <h2>Simple card example</h2>
                         </c-card-header>

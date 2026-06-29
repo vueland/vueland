@@ -34,11 +34,19 @@ export default defineConfig({
                 defineRule({
                     name: 'flex-center',
                     matcher: /^flex-center$/,
-                    validate: v => !!v,
                     declaration: () => ({
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
+                    }),
+                }),
+                defineRule({
+                    name: 'grid-cols',
+                    matcher: /^grid-cols-(\d+)$/,
+                    validate: value => Number(value) > 0,
+                    declaration: value => ({
+                        display: 'grid',
+                        gridTemplateColumns: `repeat(${value}, minmax(0, 1fr))`,
                     }),
                 }),
             ],

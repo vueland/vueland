@@ -93,7 +93,7 @@ export default defineConfig({
 })
 ```
 
-> `breakpoints` here become the single source of truth — they control JIT responsive classes (`sm:w-[960px]`), predefined SCSS utilities (`md:d-flex`), and the `useDisplay` composable, all at once.
+> `breakpoints` here become the single source of truth — they control JIT responsive classes (`sm:w-[960px]`), predefined SCSS utilities (`md:d-flex`), and the `useBreakpoints` composable, all at once.
 
 ### 3. Create your SCSS entry point
 
@@ -131,7 +131,7 @@ export const vueland = createVuelandUI({
     light: { primary: '#1976d2' /* ... */ },
   },
   // breakpoints are picked up from utils-jit automatically
-  // pass explicitly here only if you want to override them for useDisplay
+  // pass explicitly here only if you want to override them for useBreakpoints
 })
 ```
 
@@ -195,12 +195,12 @@ src/.generated/
 
 ## `createVuelandUI` options
 
-| Option        | Type                     | Description                                                                                                                                           |
-| ------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `components`  | `Record`                 | Components to register globally                                                                                                                       |
-| `theme`       | `string`                 | Active theme on startup                                                                                                                               |
-| `themes`      | `ThemesOptions`          | Theme color definitions                                                                                                                               |
-| `icons`       | `IconsOptions`           | Icon sets and aliases                                                                                                                                 |
-| `presets`     | `Record`                 | Component style presets                                                                                                                               |
-| `breakpoints` | `Record<string, number>` | Custom breakpoints for `useDisplay`. Auto-synced from `utils-jit` when used — explicit value takes priority. See [Breakpoints](/en/guide/breakpoints) |
-| `ssr`         | `boolean`                | SSR support                                                                                                                                           |
+| Option        | Type                     | Description                                                                                                                                               |
+| ------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `components`  | `Record`                 | Components to register globally                                                                                                                           |
+| `theme`       | `string`                 | Active theme on startup                                                                                                                                   |
+| `themes`      | `ThemesOptions`          | Theme color definitions                                                                                                                                   |
+| `icons`       | `IconsOptions`           | Icon sets and aliases                                                                                                                                     |
+| `presets`     | `Record`                 | Component style presets                                                                                                                                   |
+| `breakpoints` | `Record<string, number>` | Custom breakpoints for `useBreakpoints`. Auto-synced from `utils-jit` when used — explicit value takes priority. See [Breakpoints](/en/guide/breakpoints) |
+| `ssr`         | `boolean`                | SSR support                                                                                                                                               |

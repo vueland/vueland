@@ -11,7 +11,7 @@ import type {
     VariantMap,
 } from './types'
 
-export const DEFAULT_INCLUDE: Pattern[] = [/\.(vue|js|ts|jsx|tsx|html)$/]
+export const DEFAULT_INCLUDE: Pattern[] = [/\.(vue|js|ts|jsx|tsx|html|svelte|astro)$/]
 
 export const DEFAULT_EXCLUDE: Pattern[] = [
     /(^|[/\\])node_modules([/\\]|$)/,
@@ -92,6 +92,7 @@ export const DEFAULT_VARIANTS: VariantMap = {
 const MIN_TOKEN_LENGTH = 5
 const MAX_TOKEN_LENGTH = 180
 const MAX_VALUE_LENGTH = 160
+const STATIC_TOKEN_MIN_LENGTH = 2
 
 export function normalizePath(value: string): string {
     return value.replace(/\\/g, '/')
@@ -184,7 +185,31 @@ function looksLikeArbitraryUtility(token: string): boolean {
 
     const arbitraryIndex = token.indexOf('-[')
 
-    return arbitraryIndex > 0
+    return arbitraryIndex > 0 && token.slice(arbitraryIndex + 2, -1).trim().length > 0
+}
+
+function looksLikeStaticUtility(token: string): boolean {
+    if (!token) {
+        return false
+    }
+
+    if (token.length < STATIC_TOKEN_MIN_LENGTH || token.length > MAX_TOKEN_LENGTH) {
+        return false
+    }
+
+    if (token.includes('[') || token.includes(']')) {
+        return false
+    }
+
+    if (token.startsWith('<') || token.startsWith('>') || token.endsWith('-') || token.endsWith(':')) {
+        return false
+    }
+
+    return /^!?-?(?:[a-zA-Z0-9_-]+:)*[a-zA-Z_][a-zA-Z0-9_/-]*$/.test(token)
+}
+
+function looksLikeUtilityToken(token: string): boolean {
+    return looksLikeArbitraryUtility(token) || looksLikeStaticUtility(token)
 }
 
 export function stripComments(code: string): string {
@@ -217,16 +242,43 @@ export function extractClassCandidates(code: string): string[] {
     return candidates
 }
 
+function extractStringCandidates(code: string): string[] {
+    const candidates: string[] = []
+    const pattern = /(['"`])((?:\\.|(?!\1)[\s\S])*?)\1/g
+
+    for (const match of code.matchAll(pattern)) {
+        const value = match[2]
+
+        if (value) {
+            candidates.push(value)
+        }
+    }
+
+    return candidates
+}
+
 function tokenizeChunk(code: string): Set<string> {
     const result = new Set<string>()
 
-    const pattern = /(?:[a-zA-Z0-9_-]+:)*[a-zA-Z][a-zA-Z0-9_-]*-\[[^\]\s]+(?:\s+[^\]\s]+)*\]/g
+    const arbitraryPattern = /(?:[a-zA-Z0-9_-]+:)*[a-zA-Z][a-zA-Z0-9_-]*-\[[^\]\s]+(?:\s+[^\]\s]+)*\]/g
 
-    for (const match of code.matchAll(pattern)) {
+    for (const match of code.matchAll(arbitraryPattern)) {
         const raw = match[0]
         const token = stripEdgeGarbage(raw)
 
         if (looksLikeArbitraryUtility(token)) {
+            result.add(token)
+        }
+    }
+
+    const staticSource = code.replace(arbitraryPattern, ' ')
+    const staticPattern = /!?-?(?:[a-zA-Z0-9_-]+:)*[a-zA-Z_][a-zA-Z0-9_/-]*/g
+
+    for (const match of staticSource.matchAll(staticPattern)) {
+        const raw = match[0]
+        const token = stripEdgeGarbage(raw)
+
+        if (looksLikeStaticUtility(token)) {
             result.add(token)
         }
     }
@@ -237,22 +289,31 @@ function tokenizeChunk(code: string): Set<string> {
 export function tokenize(code: string): Set<string> {
     const cleanCode = stripComments(code)
     const classCandidates = extractClassCandidates(cleanCode)
+    const result = new Set<string>()
 
     if (classCandidates.length > 0) {
-        const result = new Set<string>()
-
         for (const candidate of classCandidates) {
             for (const token of tokenizeChunk(candidate)) {
                 result.add(token)
             }
         }
+    }
 
-        if (result.size > 0) {
-            return result
+    const stringCandidates = extractStringCandidates(cleanCode)
+
+    for (const candidate of stringCandidates) {
+        for (const token of tokenizeChunk(candidate)) {
+            result.add(token)
         }
     }
 
-    return tokenizeChunk(cleanCode)
+    for (const token of tokenizeChunk(cleanCode)) {
+        if (looksLikeArbitraryUtility(token)) {
+            result.add(token)
+        }
+    }
+
+    return result
 }
 
 export function parseToken(token: string): ParsedToken | null {
@@ -265,7 +326,7 @@ export function parseToken(token: string): ParsedToken | null {
     const utility = parts[parts.length - 1]
     const variants = parts.slice(0, -1)
 
-    if (!utility.includes('-[') || !utility.endsWith(']')) {
+    if (!looksLikeUtilityToken(token) || !looksLikeUtilityToken(utility)) {
         return null
     }
 
@@ -330,7 +391,7 @@ export function defineRule(options: RuleOptions): UtilityRule {
                 return null
             }
 
-            const rawValue = match[1]
+            const rawValue = match[1] ?? utility
 
             if (!rawValue) {
                 return null
@@ -342,11 +403,11 @@ export function defineRule(options: RuleOptions): UtilityRule {
                 return null
             }
 
-            if (options.validate && !options.validate(value)) {
+            if (options.validate && !options.validate(value, match)) {
                 return null
             }
 
-            return { declarations: normalizeDeclarations(options.declaration(value), important) }
+            return { declarations: normalizeDeclarations(options.declaration(value, match), important) }
         },
     }
 }

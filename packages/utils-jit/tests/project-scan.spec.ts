@@ -92,6 +92,8 @@ describe('collectProjectFiles', () => {
     it('собирает файлы по include-паттернам', () => {
         project.write('src/App.vue')
         project.write('src/main.ts')
+        project.write('src/Widget.svelte')
+        project.write('src/Page.astro')
         project.write('src/style.css')
 
         const names = scan(project.root, path.join(project.root, 'src/.generated/utils-jit.css'))
@@ -99,6 +101,8 @@ describe('collectProjectFiles', () => {
 
         expect(names).toContain('App.vue')
         expect(names).toContain('main.ts')
+        expect(names).toContain('Widget.svelte')
+        expect(names).toContain('Page.astro')
         expect(names).not.toContain('style.css')
     })
 

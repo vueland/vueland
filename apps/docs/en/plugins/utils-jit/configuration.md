@@ -4,14 +4,12 @@
 
 ```ts
 import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
 import { utilsJIT } from '@vueland/utils-jit'
 
 export default defineConfig({
   plugins: [
-    vue(),
     utilsJIT({
-      include: [/\.(vue|js|ts|jsx|tsx|html)$/],
+      include: [/\.(vue|js|ts|jsx|tsx|html|svelte|astro)$/],
       exclude: [/src\/fixtures/],
       emitFile: false,
       outFile: 'src/.generated/utils-jit.css',
@@ -29,11 +27,13 @@ export default defineConfig({
 })
 ```
 
+Add your framework plugin (`@vitejs/plugin-vue`, `@vitejs/plugin-react`, etc.) in the same `plugins` array when your app needs one.
+
 ## Options
 
 | Option          | Type                      | Default                                                      | Description                                                                                                                                       |
 | --------------- | ------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `include`       | `Array<string \| RegExp>` | `[/\.(vue\|js\|ts\|jsx\|tsx\|html)$/]`                       | Files that should be scanned.                                                                                                                     |
+| `include`       | `Array<string \| RegExp>` | `[/\.(vue\|js\|ts\|jsx\|tsx\|html\|svelte\|astro)$/]`        | Files that should be scanned.                                                                                                                     |
 | `exclude`       | `Array<string \| RegExp>` | Service directories                                          | Files and directories that should be ignored.                                                                                                     |
 | `emitFile`      | `boolean`                 | `false`                                                      | Also write the CSS to a file (for debugging). By default the CSS is served only as a virtual module.                                              |
 | `outFile`       | `string`                  | `src/.generated/utils-jit.css`                               | Path to the debug file relative to the Vite root. Only used when `emitFile: true`.                                                                |
@@ -84,7 +84,7 @@ A list of patterns for files that should be scanned.
 Default:
 
 ```ts
-;[/\.(vue|js|ts|jsx|tsx|html)$/]
+;[/\.(vue|js|ts|jsx|tsx|html|svelte|astro)$/]
 ```
 
 Example:
@@ -92,6 +92,14 @@ Example:
 ```ts
 utilsJIT({
   include: [/\.(vue|ts)$/],
+})
+```
+
+Vue, React, Preact, Solid, Svelte, Astro, HTML, JS, and TS files are included by default. For other file types, include their extensions explicitly:
+
+```ts
+utilsJIT({
+  include: [/\.(vue|js|ts|jsx|tsx|html|svelte|astro|mdx)$/],
 })
 ```
 
@@ -148,10 +156,10 @@ After that you can use the new prefix in JIT classes:
 ```
 
 ::: tip Why merge, not replace
-The default breakpoint names (`xs/sm/md/lg/xl/xxl`) are a shared contract: `@vueland/ui` generates predefined `.md\:pa-4`, `.lg\:d-flex` classes and the built-in responsive `CRow`/`CCol` props from them, and `useDisplay` exposes them at runtime. Overriding a single value (e.g. `{ sm: 680 }`) must not drop the other names — otherwise the whole library would lose its `.md\:*` / `.lg\:*` utilities. So you can override values and add **new** names (e.g. `tablet: 1280`), but you cannot remove the default names.
+In standalone usage, merging lets you override one value without losing the built-in responsive prefixes. In a Vueland app, the same names (`xs/sm/md/lg/xl/xxl`) are also a shared contract: `@vueland/ui` generates predefined `.md\:pa-4`, `.lg\:d-flex` classes and built-in responsive `CRow`/`CCol` props from them, and `useBreakpoints` exposes them at runtime. So you can override values and add **new** names (e.g. `tablet: 1280`), but the default names remain available.
 :::
 
-### Custom breakpoint names in grid components
+### Vueland UI: custom breakpoint names in grid components
 
 Custom breakpoint names are compiled into the grid CSS, but Vue components do not receive new props for them. For example, `breakpoints: { tablet: 1280 }` generates tablet grid classes, but it does not make `<c-col tablet="6">` or `<c-row align-tablet="center">` valid props.
 
@@ -222,17 +230,26 @@ utilsJIT({
 })
 ```
 
-## Working with Vue `class` and `:class`
+## Working with class strings
 
-The plugin first tries to quickly extract the content of `class="..."` and `:class="..."`, then tokenizes the extracted chunks.
+The plugin scans static class-like strings in the files matched by `include`. It handles regular HTML/Vue `class`, Vue `:class`, React/Preact `className`, and string literals used in arrays or objects.
 
-Static strings inside `:class` are supported:
+Vue examples:
 
 ```vue
 <template>
+  <div class="w-[200px]"></div>
   <div :class="['w-[200px]', active && 'px-[16px]']"></div>
   <div :class="{ 'radius-[12px]': rounded }"></div>
 </template>
+```
+
+React example:
+
+```tsx
+export function Card({ active }: { active: boolean }) {
+  return <div className={active ? 'w-[320px] px-[16px]' : 'w-[240px] px-[12px]'}>Content</div>
+}
 ```
 
 Runtime values are not evaluated. The class must exist in the source code as a static token.
@@ -289,6 +306,8 @@ To avoid generating unsafe or invalid CSS, the plugin limits arbitrary values:
 - the value must contain at least one letter or digit;
 - only a safe subset of CSS value characters is allowed.
 
+This safety check is applied to the resolved value of built-in rules and custom `defineRule` rules before a rule-specific `validate` function or `declaration` function runs.
+
 The following classes will be ignored:
 
 ```html
@@ -300,7 +319,7 @@ The following classes will be ignored:
 
 ## Recommendations
 
-Use Utils JIT for precise arbitrary values, not as a replacement for the entire design system.
+Use Utils JIT for precise arbitrary values and project-specific generated utilities. It works best as a focused layer next to your design system: keep repeated semantic decisions in theme tokens, presets, or component variants, and use JIT utilities for values and rules that really need to be generated from source usage.
 
 Good:
 
@@ -310,7 +329,20 @@ Good:
 </template>
 ```
 
-If a value is repeated across the project, it is better to move it into a theme, preset, or component variant.
+Also good for local custom utilities:
+
+```ts
+defineRule({
+  name: 'grid-cols',
+  matcher: /^grid-cols-(\d+)$/,
+  declaration: (value) => ({
+    display: 'grid',
+    gridTemplateColumns: `repeat(${value}, minmax(0, 1fr))`,
+  }),
+})
+```
+
+If a value or behavior becomes a global design decision, move it into a theme token, preset, or component variant.
 
 ## Troubleshooting
 

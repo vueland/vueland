@@ -444,7 +444,7 @@ describe('plugins / filesystem integration', () => {
             'src/App.vue',
             `
             <template>
-                <div class="surface-[#fff] size-[40px]"></div>
+                <div class="surface-[#fff] size-[40px] flex-center hover:flex-center grid-cols-3 md:grid-cols-4"></div>
             </template>
         `,
         )
@@ -468,6 +468,23 @@ describe('plugins / filesystem integration', () => {
                             height: value,
                         }),
                     }),
+                    defineRule({
+                        name: 'flex-center',
+                        matcher: /^flex-center$/,
+                        declaration: () => ({
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }),
+                    }),
+                    defineRule({
+                        name: 'grid-cols',
+                        matcher: /^grid-cols-(\d+)$/,
+                        validate: value => Number(value) > 0,
+                        declaration: value => ({
+                            gridTemplateColumns: `repeat(${value}, minmax(0, 1fr))`,
+                        }),
+                    }),
                 ],
             }),
         )
@@ -478,6 +495,74 @@ describe('plugins / filesystem integration', () => {
 
         expect(css).toContain('.surface-\\[\\#fff\\]{background-color: #fff;}')
         expect(css).toContain('.size-\\[40px\\]{width: 40px !important;height: 40px !important;}')
+        expect(css).toContain(
+            '.flex-center{display: flex !important;justify-content: center !important;align-items: center !important;}',
+        )
+        expect(css).toContain(
+            '.hover\\:flex-center:hover{display: flex !important;justify-content: center !important;align-items: center !important;}',
+        )
+        expect(css).toContain(
+            '.grid-cols-3{grid-template-columns: repeat(3, minmax(0, 1fr)) !important;}',
+        )
+        expect(css).toContain(
+            '@media (min-width: 960px) { .md\\:grid-cols-4{grid-template-columns: repeat(4, minmax(0, 1fr)) !important;} }',
+        )
+    })
+
+    it('не генерирует false-positive css из большого файла со строковым шумом', () => {
+        const noisyStrings = Array.from({ length: 2500 }, (_, index) => {
+            return [
+                `const label${index} = 'copy-token-${index}'`,
+                `const event${index} = 'analytics:event:${index}'`,
+                `const path${index} = '/api/v1/items/${index}'`,
+                `const text${index} = 'button primary card content item ${index}'`,
+                `const unknownClass${index} = 'unknown-${index} hover:unknown-${index}'`,
+            ].join('\n')
+        }).join('\n')
+
+        project.write(
+            'src/BigFile.ts',
+            `
+            ${noisyStrings}
+
+            export const validClasses = [
+                'grid-cols-3',
+                'md:grid-cols-4',
+                'w-[100px]',
+            ]
+        `,
+        )
+
+        const plugin = asHookPlugin(
+            utilsJIT({
+                rules: [
+                    defineRule({
+                        name: 'grid-cols',
+                        matcher: /^grid-cols-(\d+)$/,
+                        validate: value => Number(value) > 0,
+                        declaration: value => ({
+                            gridTemplateColumns: `repeat(${value}, minmax(0, 1fr))`,
+                        }),
+                    }),
+                ],
+            }),
+        )
+
+        callConfigResolved(plugin, project.root)
+
+        const css = getCss(plugin)
+
+        expect(css).toContain('.w-\\[100px\\]{width: 100px !important;}')
+        expect(css).toContain(
+            '.grid-cols-3{grid-template-columns: repeat(3, minmax(0, 1fr)) !important;}',
+        )
+        expect(css).toContain(
+            '@media (min-width: 960px) { .md\\:grid-cols-4{grid-template-columns: repeat(4, minmax(0, 1fr)) !important;} }',
+        )
+        expect(css).not.toContain('unknown-')
+        expect(css).not.toContain('copy-token-')
+        expect(css).not.toContain('analytics')
+        expect(css.split('\n').filter((line) => line.includes('{')).length).toBe(3)
     })
 
     it('игнорирует excluded files при полном сканировании', () => {

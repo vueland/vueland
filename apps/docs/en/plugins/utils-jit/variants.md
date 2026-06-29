@@ -6,6 +6,8 @@ Variants are added before the utility class name using `:`.
 <div class="hover:w-[320px] md:px-[24px] focus-visible:bg-[#eee]"></div>
 ```
 
+They work with built-in arbitrary-value utilities and with custom utilities created through [`defineRule`](./custom-rules), for example `hover:flex-center` or `md:grid-cols-3`.
+
 ## Pseudo-classes
 
 The following variants are available by default:
@@ -27,20 +29,23 @@ even
 
 Example:
 
-```vue
-<template>
-  <button class="w-[160px] hover:w-[180px] focus:px-[20px] active:radius-[10px]">
-    Button
-  </button>
-</template>
+```html
+<button class="w-[160px] hover:w-[180px] focus:px-[20px] active:radius-[10px]">Button</button>
 ```
 
 Result:
 
 ```css
-.hover\:w-\[180px\]:hover{width: 180px !important;}
-.focus\:px-\[20px\]:focus{padding-left: 20px !important;padding-right: 20px !important;}
-.active\:radius-\[10px\]:active{border-radius: 10px !important;}
+.hover\:w-\[180px\]:hover {
+  width: 180px !important;
+}
+.focus\:px-\[20px\]:focus {
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}
+.active\:radius-\[10px\]:active {
+  border-radius: 10px !important;
+}
 ```
 
 ## Responsive variants
@@ -49,31 +54,44 @@ The following breakpoints are available by default:
 
 ```ts
 {
+  xs: 0,
   sm: 600,
   md: 960,
   lg: 1280,
-  xl: 1280,
-  '2xl': 1536,
+  xl: 1920,
+  xxl: 2560,
 }
 ```
 
 Example:
 
-```vue
-<template>
-  <div class="w-[100%] md:w-[720px] lg:w-[960px] xl:w-[1200px] 2xl:w-[1440px]">
-    Container
-  </div>
-</template>
+```html
+<div class="w-[100%] md:w-[720px] lg:w-[960px] xl:w-[1200px] xxl:w-[1440px]">Container</div>
 ```
 
 Result:
 
 ```css
-@media (min-width: 768px) { .md\:w-\[720px\]{width: 720px !important;} }
-@media (min-width: 1024px) { .lg\:w-\[960px\]{width: 960px !important;} }
-@media (min-width: 1280px) { .xl\:w-\[1200px\]{width: 1200px !important;} }
-@media (min-width: 1536px) { .2xl\:w-\[1440px\]{width: 1440px !important;} }
+@media (min-width: 960px) {
+  .md\:w-\[720px\] {
+    width: 720px !important;
+  }
+}
+@media (min-width: 1280px) {
+  .lg\:w-\[960px\] {
+    width: 960px !important;
+  }
+}
+@media (min-width: 1920px) {
+  .xl\:w-\[1200px\] {
+    width: 1200px !important;
+  }
+}
+@media (min-width: 2560px) {
+  .xxl\:w-\[1440px\] {
+    width: 1440px !important;
+  }
+}
 ```
 
 ## Custom variants
@@ -108,9 +126,19 @@ Usage:
 Result:
 
 ```css
-.hocus\:w-\[320px\]:hover,.hocus\:w-\[320px\]:focus{width: 320px !important;}
-.selected\:bg-\[\#eee\][aria-selected="true"]{background-color: #eee !important;}
-@media (min-width: 900px) { .tablet\:px-\[24px\]{padding-left: 24px !important;padding-right: 24px !important;} }
+.hocus\:w-\[320px\]:hover,
+.hocus\:w-\[320px\]:focus {
+  width: 320px !important;
+}
+.selected\:bg-\[\#eee\][aria-selected='true'] {
+  background-color: #eee !important;
+}
+@media (min-width: 900px) {
+  .tablet\:px-\[24px\] {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+  }
+}
 ```
 
 ## Theme variants
@@ -141,8 +169,12 @@ Usage:
 Result:
 
 ```css
-[data-theme="dark"] .dark\:bg-\[\#111\]{background-color: #111 !important;}
-[data-theme="dark"] .dark\:color-\[\#fff\]{color: #fff !important;}
+[data-theme='dark'] .dark\:bg-\[\#111\] {
+  background-color: #111 !important;
+}
+[data-theme='dark'] .dark\:color-\[\#fff\] {
+  color: #fff !important;
+}
 ```
 
 ### Using `.dark`
@@ -167,7 +199,9 @@ Usage:
 Result:
 
 ```css
-.dark .dark\:bg-\[\#111\]{background-color: #111 !important;}
+.dark .dark\:bg-\[\#111\] {
+  background-color: #111 !important;
+}
 ```
 
 ## Combining variants
@@ -189,18 +223,28 @@ utilsJIT({
 
 Now `hocus:` can be combined with responsive variants:
 
-```vue
-<template>
-  <button class="hover:md:w-[240px] focus:lg:px-[32px] hocus:xl:bg-[#eee]">
-    Responsive button
-  </button>
-</template>
+```html
+<button class="hover:md:w-[240px] focus:lg:px-[32px] hocus:xl:bg-[#eee]">Responsive button</button>
 ```
 
 Result:
 
 ```css
-@media (min-width: 768px) { .hover\:md\:w-\[240px\]:hover{width: 240px !important;} }
-@media (min-width: 1024px) { .focus\:lg\:px-\[32px\]:focus{padding-left: 32px !important;padding-right: 32px !important;} }
-@media (min-width: 1280px) { .hocus\:xl\:bg-\[\#eee\]:hover,.hocus\:xl\:bg-\[\#eee\]:focus{background-color: #eee !important;} }
+@media (min-width: 960px) {
+  .hover\:md\:w-\[240px\]:hover {
+    width: 240px !important;
+  }
+}
+@media (min-width: 1280px) {
+  .focus\:lg\:px-\[32px\]:focus {
+    padding-left: 32px !important;
+    padding-right: 32px !important;
+  }
+}
+@media (min-width: 1920px) {
+  .hocus\:xl\:bg-\[\#eee\]:hover,
+  .hocus\:xl\:bg-\[\#eee\]:focus {
+    background-color: #eee !important;
+  }
+}
 ```

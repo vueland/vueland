@@ -4,17 +4,10 @@ The plugin can be extended through `rules` and `defineRule`.
 
 ```ts
 import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import {
-  defineRule,
-  isColorValue,
-  isSizeValue,
-  utilsJIT,
-} from '@vueland/utils-jit'
+import { defineRule, isColorValue, isSizeValue, utilsJIT } from '@vueland/utils-jit'
 
 export default defineConfig({
   plugins: [
-    vue(),
     utilsJIT({
       rules: [
         defineRule({
@@ -36,28 +29,63 @@ export default defineConfig({
             height: value,
           }),
         }),
+
+        defineRule({
+          name: 'flex-center',
+          matcher: /^flex-center$/,
+          declaration: () => ({
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }),
+        }),
+
+        defineRule({
+          name: 'grid-cols',
+          matcher: /^grid-cols-(\d+)$/,
+          validate: (value) => Number(value) > 0,
+          declaration: (value) => ({
+            display: 'grid',
+            gridTemplateColumns: `repeat(${value}, minmax(0, 1fr))`,
+          }),
+        }),
       ],
     }),
   ],
 })
 ```
 
-Now you can use:
+Use the generated utilities anywhere your framework accepts class strings:
 
-```vue
-<template>
-  <div class="surface-[#fff] size-[40px] hover:size-[48px]">
-    Custom utilities
-  </div>
-</template>
+```html
+<div class="surface-[#fff] size-[40px] hover:size-[48px] flex-center grid-cols-3">
+  Custom utilities
+</div>
 ```
 
 Generated CSS:
 
 ```css
-.surface-\[\#fff\]{background-color: #fff;}
-.size-\[40px\]{width: 40px !important;height: 40px !important;}
-.hover\:size-\[48px\]:hover{width: 48px !important;height: 48px !important;}
+.surface-\[\#fff\] {
+  background-color: #fff;
+}
+.size-\[40px\] {
+  width: 40px !important;
+  height: 40px !important;
+}
+.hover\:size-\[48px\]:hover {
+  width: 48px !important;
+  height: 48px !important;
+}
+.flex-center {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+.grid-cols-3 {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
 ```
 
 ## `defineRule` API
@@ -65,7 +93,7 @@ Generated CSS:
 ```ts
 defineRule({
   name: 'rule-name',
-  matcher: /^rule-name-\[(.+)\]$/,
+  matcher: /^rule-name-(.+)$/,
   validate: (value) => true,
   declaration: (value) => ({
     cssProperty: value,
@@ -74,15 +102,18 @@ defineRule({
 })
 ```
 
-| Field | Type | Description |
-| --- | --- | --- |
-| `name` | `string` | Rule name used for readability and debugging. |
-| `matcher` | `RegExp` | Matcher for the utility part without variants. |
-| `validate` | `(value: string) => boolean` | Validates the value inside `[]`. |
-| `declaration` | `(value: string) => Record<string, string \| number> \| string[]` | Generates CSS declarations. |
-| `important` | `boolean` | Adds `!important` to object-based declarations. Defaults to `true`. |
+| Field         | Type                                                                                       | Description                                                         |
+| ------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| `name`        | `string`                                                                                   | Rule name used for readability and debugging.                       |
+| `matcher`     | `RegExp`                                                                                   | Matcher for the utility part without variants.                      |
+| `validate`    | `(value: string, match: RegExpMatchArray) => boolean`                                      | Validates the resolved value.                                       |
+| `declaration` | `(value: string, match: RegExpMatchArray) => Record<string, string \| number> \| string[]` | Generates CSS declarations.                                         |
+| `important`   | `boolean`                                                                                  | Adds `!important` to object-based declarations. Defaults to `true`. |
 
 `matcher` receives only the utility part without variants.
+If the matcher has a capture group, `value` is the first captured group.
+If there is no capture group, `value` is the utility itself.
+Before `validate` and `declaration` run, the resolved value is normalized and checked by the internal CSS value safety guard.
 
 For this class:
 
@@ -94,6 +125,33 @@ For this class:
 
 ```txt
 surface-[#fff]
+```
+
+For a static class, match the utility directly:
+
+```ts
+defineRule({
+  name: 'flex-center',
+  matcher: /^flex-center$/,
+  declaration: () => ({
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }),
+})
+```
+
+For parameterized classes without `[]`, use capture groups:
+
+```ts
+defineRule({
+  name: 'grid-cols',
+  matcher: /^grid-cols-(\d+)$/,
+  validate: (value) => Number(value) > 0,
+  declaration: (value) => ({
+    gridTemplateColumns: `repeat(${value}, minmax(0, 1fr))`,
+  }),
+})
 ```
 
 ## Declarations
@@ -152,9 +210,7 @@ If `declaration` returns `string[]`, the strings are treated as final CSS declar
 defineRule({
   name: 'raw',
   matcher: /^raw-\[(.+)\]$/,
-  declaration: (value) => [
-    `--raw-value: ${value};`,
-  ],
+  declaration: (value) => [`--raw-value: ${value};`],
 })
 ```
 
@@ -167,7 +223,7 @@ import { defineRule } from '@vueland/utils-jit'
 
 const gridColsRule = defineRule({
   name: 'grid-cols',
-  matcher: /^grid-cols-\[(.+)\]$/,
+  matcher: /^grid-cols-(\d+)$/,
   validate: (value) => /^\d+$/.test(value),
   declaration: (value) => ({
     gridTemplateColumns: `repeat(${value}, minmax(0, 1fr))`,
@@ -178,13 +234,15 @@ const gridColsRule = defineRule({
 Usage:
 
 ```html
-<div class="grid-cols-[3]"></div>
+<div class="grid-cols-3"></div>
 ```
 
 Result:
 
 ```css
-.grid-cols-\[3\]{grid-template-columns: repeat(3, minmax(0, 1fr)) !important;}
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
 ```
 
 ## Validators
