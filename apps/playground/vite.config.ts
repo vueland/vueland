@@ -1,9 +1,12 @@
 import vue from '@vitejs/plugin-vue'
-import { defineRule, utilsJIT } from '@vueland/utils-jit'
 import path from 'node:path'
 import { defineConfig, type PluginOption } from 'vite'
 
+import { defineRule, utilsJIT } from '../../packages/utils-jit/src/index'
+
 const useBuiltUi = process.env.USE_BUILT_UI === 'true'
+const uiSrcDir = path.resolve(__dirname, '../../packages/ui/src/')
+const utilsJitSrcEntry = path.resolve(__dirname, '../../packages/utils-jit/src/index.ts')
 
 export default defineConfig({
     plugins: [
@@ -50,10 +53,13 @@ export default defineConfig({
 
     resolve: {
         alias: useBuiltUi
-            ? {}
+            ? {
+                '@vueland/utils-jit': utilsJitSrcEntry,
+            }
             : {
-                '@vueland/ui': path.resolve(__dirname, '../../packages/ui/src/'),
-                '@': path.resolve(__dirname, '../../packages/ui/src/'),
+                '@vueland/ui': uiSrcDir,
+                '@vueland/utils-jit': utilsJitSrcEntry,
+                '@': uiSrcDir,
             },
     },
 
@@ -64,6 +70,6 @@ export default defineConfig({
     },
 
     optimizeDeps: {
-        exclude: useBuiltUi ? [] : ['@vueland/ui'],
+        exclude: useBuiltUi ? ['@vueland/utils-jit'] : ['@vueland/ui', '@vueland/utils-jit'],
     },
 })

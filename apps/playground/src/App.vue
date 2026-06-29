@@ -1,7 +1,6 @@
 <script setup lang="ts">
+    import { useCore } from '@vueland/ui/composables'
     import { shallowRef, unref } from 'vue'
-
-    import { useCore } from '@/composables'
 
     import FormDemo from './FormDemo.vue'
 

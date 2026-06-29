@@ -41,51 +41,51 @@ export const DEFAULT_BREAKPOINTS: Record<string, number> = {
 export const DEFAULT_VARIANTS: VariantMap = {
     hover: {
         kind: 'pseudo',
-        value: 'hover', 
+        value: 'hover',
     },
     focus: {
         kind: 'pseudo',
-        value: 'focus', 
+        value: 'focus',
     },
     'focus-visible': {
         kind: 'pseudo',
-        value: 'focus-visible', 
+        value: 'focus-visible',
     },
     'focus-within': {
         kind: 'pseudo',
-        value: 'focus-within', 
+        value: 'focus-within',
     },
     active: {
         kind: 'pseudo',
-        value: 'active', 
+        value: 'active',
     },
     disabled: {
         kind: 'pseudo',
-        value: 'disabled', 
+        value: 'disabled',
     },
     checked: {
         kind: 'pseudo',
-        value: 'checked', 
+        value: 'checked',
     },
     visited: {
         kind: 'pseudo',
-        value: 'visited', 
+        value: 'visited',
     },
     first: {
         kind: 'pseudo',
-        value: 'first-child', 
+        value: 'first-child',
     },
     last: {
         kind: 'pseudo',
-        value: 'last-child', 
+        value: 'last-child',
     },
     odd: {
         kind: 'pseudo',
-        value: 'nth-child(odd)', 
+        value: 'nth-child(odd)',
     },
     even: {
         kind: 'pseudo',
-        value: 'nth-child(even)', 
+        value: 'nth-child(even)',
     },
 }
 

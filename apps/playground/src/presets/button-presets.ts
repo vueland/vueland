@@ -1,4 +1,4 @@
-import { type CButtonPreset } from '@vueland/ui/types'
+import type { CButtonPreset } from '@vueland/ui/types'
 
 export const A: CButtonPreset = {
     base: { root: ['bg-green-darken-2', 'hover:bg-green-lighten-2', 'text-white'] },
