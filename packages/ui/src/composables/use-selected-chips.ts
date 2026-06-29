@@ -30,7 +30,7 @@ export function useSelectedChips<T>(props: IterableItemsProps<T> & SelectablePro
 
         const value = props.modelValue as T | undefined
 
-        return [value ? `${(value as T)?.[titleKey] ?? value}` : '']
+        return value ? [`${(value as T)?.[titleKey] ?? value}`] : []
     })
 
     function select(value: T) {

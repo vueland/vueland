@@ -44,7 +44,6 @@ $chip-colors: (
   --c-chip-bg-color: #{getCssVar('sys', 'color', 'primary-container')};
   --c-chip-border-color: #{getCssVar('sys', 'color', 'primary')};
   --c-chip-border-width: #{getCssVar('sys', 'border-width', 'thin')};
-  --c-chip-elevation: #{getCssVar('sys', 'elevation', '0')};
   --c-chip-font-size: #{getCssVar('sys', 'typography', 'label-size')};
   --c-chip-font-weight: #{getCssVar('sys', 'typography', 'label-weight')};
   --c-chip-line-height: #{getCssVar('sys', 'typography', 'label-line-height')};
@@ -56,7 +55,6 @@ $chip-colors: (
   color: getCssVar('chip', 'text-color');
   background-color: getCssVar('chip', 'bg-color');
   border: getCssVar('chip', 'border-width') solid getCssVar('chip', 'border-color');
-  box-shadow: getCssVar('chip', 'elevation');
   font-size: getCssVar('chip', 'font-size');
   font-weight: getCssVar('chip', 'font-weight');
   line-height: getCssVar('chip', 'line-height');

@@ -24,7 +24,7 @@ $self: '.c-field';
   --c-field-focused-border-width: #{getCssVar('sys', 'border-width', 'medium')};
   --c-field-input-text-color: #{getCssVar('sys', 'color', 'on-surface')};
   --c-field-placeholder-color: #{getCssVar('sys', 'color', 'placeholder')};
-  --c-field-error-bg-color: #{getCssVar('sys', 'color', 'surface')};
+  --c-field-error-bg-color: #{getCssVar('sys', 'color', 'surface-bright')};
   --c-field-error-border-color: #{getCssVar('sys', 'color', 'error')};
   --c-field-error-text-color: #{getCssVar('sys', 'color', 'error')};
   --c-field-readonly-bg-color: #{getCssVar('sys', 'color', 'readonly-container')};

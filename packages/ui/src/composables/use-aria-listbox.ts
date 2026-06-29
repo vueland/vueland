@@ -7,7 +7,7 @@ import {
 } from '@/utils'
 
 export type AriaListRole = 'listbox' | 'menu' | undefined
-export type AriaListVariant = 'list' | 'listbox' | 'menu'
+export type AriaListVariant = 'listbox' | 'menu'
 
 export interface AriaListboxProps {
     variant?: AriaListVariant
@@ -22,47 +22,25 @@ export interface AriaListboxItemState {
     disabled?: boolean
 }
 
-export function isAriaListRole(role: AriaListRole): role is Exclude<AriaListRole, undefined> {
-    return role === 'listbox' || role === 'menu'
-}
-
 export function useAriaListbox(props: AriaListboxProps) {
-    const role = computed(() => {
-        if (!props.variant || props.variant === 'list') {
-            return undefined
-        }
-
-        return props.variant
-    })
-
-    const managed = computed(() => isAriaListRole(role.value))
-
-    const aria = computed(() => {
-        const resolvedRole = role.value
-
-        if (!isAriaListRole(resolvedRole)) {
+    return computed(() => {
+        if (!props.variant) {
             return {}
         }
 
         return {
-            role: resolvedRole,
+            role: props.variant,
             ...ariaDisabled(props.disabled),
-            ...(resolvedRole === 'listbox' ? ariaMultiselectable(props.multiple) : {}),
+            ...(props.variant === 'listbox' ? ariaMultiselectable(props.multiple) : {}),
         }
     })
-
-    return {
-        aria,
-        managed,
-        role,
-    }
 }
 
 export function useAriaListboxItem(state: () => AriaListboxItemState) {
     return computed(() => {
         const s = state()
 
-        if (!isAriaListRole(s.role)) {
+        if (!s.role) {
             return {}
         }
 

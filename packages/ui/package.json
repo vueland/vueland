@@ -74,6 +74,11 @@
       "import": "./dist/constants/index.js",
       "require": "./dist/constants/index.js"
     },
+    "./constants/*": {
+      "types": "./dist/constants/index.d.ts",
+      "import": "./dist/constants/*.js",
+      "require": "./dist/constants/*.js"
+    },
     "./enums/*": {
       "types": "./dist/enums/index.d.ts",
       "import": "./dist/enums/index.js",
@@ -109,10 +114,10 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "pnpm run clean && pnpm run build:types && pnpm run build:js && pnpm run build:dts && pnpm run gen:globals && node ./build/insert-ref.mjs && pnpm run types:clean && pnpm run build:scss",
-    "build:js": "rollup -c ./build/rollup.config.mjs",
+    "build:js": "vite build --config ./build/vite.config.ts",
     "build:dts": "rollup -c ./build/rollup.dts.config.mjs",
     "build:scss": "node ./build/copy-scss.mjs",
-    "build-lib": "pnpm run build:types && pnpm run build:js && pnpm run build:dts && pnpm run gen:globals && node ./build/insert-ref.mjs && pnpm run types:clean && pnpm run build:scss",
+    "build-lib": "pnpm run clean && pnpm run build:types && pnpm run build:js && pnpm run build:dts && pnpm run gen:globals && node ./build/insert-ref.mjs && pnpm run types:clean && pnpm run build:scss",
     "prepack": "pnpm run build-lib",
     "build:types": "vue-tsc -p tsconfig.build.json --declaration --emitDeclarationOnly",
     "lint": "eslint src/**/*.vue",
@@ -126,13 +131,7 @@
     "gen:globals": "node ./build/generate-global-components.mjs"
   },
   "devDependencies": {
-    "@rollup/plugin-alias": "^6.0.0",
-    "@rollup/plugin-commonjs": "^28.0.2",
-    "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-node-resolve": "^16.0.1",
-    "@rollup/plugin-replace": "^6.0.2",
     "@vitejs/plugin-vue": "^6.0.3",
-    "@vitejs/plugin-vue-jsx": "^5.1.5",
     "@vitest/coverage-v8": "^4.0.18",
     "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.20",
@@ -143,11 +142,9 @@
     "rimraf": "^6.0.1",
     "rollup": "^4.57.1",
     "rollup-plugin-dts": "^6.3.0",
-    "rollup-plugin-esbuild": "^6.2.1",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-postcss": "^4.0.2",
     "sass": "^1.97.3",
-    "vitest": "^4.0.18",
+    "vite": "^8.1.0",
+    "vitest": "^4.1.9",
     "vue": "^3.5.27",
     "vue-tsc": "^2.2.0"
   }
