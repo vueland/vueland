@@ -13,11 +13,11 @@ import ObjectValuesExample from '../../examples/CList/ObjectValuesExample.vue'
 
 The interaction model is driven by the `variant` prop:
 
-| `variant`        | Role             | Behaviour                                                                        |
-| ---------------- | ---------------- | -------------------------------------------------------------------------------- |
-| `list` (default) | —                | Plain, non-interactive list. Items are not registered and not selectable.        |
-| `listbox`        | `role="listbox"` | Selectable options with full keyboard support (`option` items, `aria-selected`). |
-| `menu`           | `role="menu"`    | Actionable items with keyboard support (`menuitem` items, no selection state).   |
+| `variant`        | Role             | Behaviour                                                                                        |
+| ---------------- | ---------------- | ------------------------------------------------------------------------------------------------ |
+| `list` (default) | —                | Plain, non-interactive list. Items are not registered and not selectable.                        |
+| `listbox`        | `role="listbox"` | Selectable options with full keyboard support (`option` items, `aria-selected`).                 |
+| `menu`           | `role="menu"`    | Same selection behaviour as `listbox`; only ARIA differs (`menuitem` items, no `aria-selected`). |
 
 ## Plain list
 
@@ -147,10 +147,7 @@ const skills = [
 
 :::
 
-In a multiple `listbox`, keyboard users can also:
-
-- `Shift` + `ArrowUp` / `ArrowDown` — extend the selection over a range.
-- `Ctrl` / `Cmd` + `A` — select all enabled items.
+`multiple` is not limited to `listbox` — it works in any interactive `variant`.
 
 ## Rich items
 
@@ -254,7 +251,7 @@ const folders = [
 
 ## Menu variant
 
-Use `variant="menu"` for action lists. Items render as `menuitem`, carry no selection state, and `Enter` / `Space` trigger a native `click` instead of toggling a value.
+Use `variant="menu"` for action lists. Items render as `menuitem` (no `aria-selected`). `Enter` / `Space` and click both trigger the item's own click — so a menu item's `@click` runs from the keyboard too, and the value toggles just like in `listbox`. Only the ARIA role differs.
 
 <MenuExample />
 
@@ -414,14 +411,12 @@ With `mandatory`, the currently selected item cannot be deselected. In `multiple
 
 When `variant` is `listbox` or `menu`, the list is part of the tab order (`tabindex="0"`) and can be focused directly. It can also be focused programmatically via the exposed `focus()` method.
 
-| Key                     | Action                                                           |
-| ----------------------- | ---------------------------------------------------------------- |
-| `ArrowDown` / `ArrowUp` | Move the active item                                             |
-| `Home` / `End`          | Jump to the first / last enabled item                            |
-| `Enter` / `Space`       | Activate the current item (toggle in `listbox`, click in `menu`) |
-| `Shift` + `Arrow`       | Extend selection (multiple `listbox`)                            |
-| `Ctrl` / `Cmd` + `A`    | Select all enabled items (multiple `listbox`)                    |
-| Type characters         | Typeahead — focus the first matching enabled item                |
+| Key                     | Action                                                                             |
+| ----------------------- | ---------------------------------------------------------------------------------- |
+| `ArrowDown` / `ArrowUp` | Move the active item (disabled items are skipped)                                  |
+| `Home` / `End`          | Jump to the first / last enabled item                                              |
+| `Enter` / `Space`       | Activate the current item — fires its click (selection toggles, its `@click` runs) |
+| Type characters         | Typeahead — focus the first matching enabled item                                  |
 
 ```vue
 <template>
@@ -441,17 +436,19 @@ const listRef = ref()
 
 ## Custom rendering
 
-The default slot exposes `select`, `unselect` and `isActive` so you can render the selection with any components instead of `CListItem`.
+The default slot is bound to the **full list API** — the very same `ListAPI` contract that `CListItem` consumes internally via inject. There is no separate "slot-only" surface: whatever the component uses to drive selection is exactly what the slot hands you, so you can re-render items with any components and keep the behaviour.
+
+For selection you only need `toggle` (or the granular `select` / `unselect`) and `isActive`:
 
 ```vue
 <template>
   <CList v-model="selected" variant="listbox">
-    <template #default="{ select, unselect, isActive }">
+    <template #default="{ toggle, isActive }">
       <CChip
         v-for="item in items"
         :key="item"
         :class="{ 'is-active': isActive(item) }"
-        @click="isActive(item) ? unselect(item) : select(item)"
+        @click="toggle(item)"
       >
         {{ item }}
       </CChip>
@@ -472,15 +469,15 @@ const selected = ref<string | null>(null)
 
 ### CList props
 
-| Prop         | Type                                | Default  | Description                                                                          |
-| ------------ | ----------------------------------- | -------- | ------------------------------------------------------------------------------------ |
-| `modelValue` | `T \| T[] \| null`                  | `null`   | Currently selected value(s)                                                          |
-| `variant`    | `'list' \| 'listbox' \| 'menu'`     | `'list'` | Interaction and ARIA mode                                                            |
-| `multiple`   | `boolean`                           | `false`  | Allow multiple items to be selected (`listbox` only)                                 |
-| `mandatory`  | `boolean`                           | `false`  | Prevent deselecting the current item (in `multiple`: prevent removing the last item) |
-| `readonly`   | `boolean`                           | `false`  | Disable selection changes                                                            |
-| `disabled`   | `boolean`                           | `false`  | Disable the whole list and remove it from the tab order                              |
-| `item-key`   | `keyof T \| ((item: T) => unknown)` | —        | How to compare values: a property name or a function. Defaults to reference equality |
+| Prop         | Type                               | Default  | Description                                                                          |
+| ------------ | ---------------------------------- | -------- | ------------------------------------------------------------------------------------ |
+| `modelValue` | `T \| T[] \| null`                 | `null`   | Currently selected value(s)                                                          |
+| `variant`    | `'list' \| 'listbox' \| 'menu'`    | `'list'` | Interaction and ARIA mode                                                            |
+| `multiple`   | `boolean`                          | `false`  | Collect selected values into an array (works in any interactive `variant`)           |
+| `mandatory`  | `boolean`                          | `false`  | Prevent deselecting the current item (in `multiple`: prevent removing the last item) |
+| `readonly`   | `boolean`                          | `false`  | Disable selection changes                                                            |
+| `disabled`   | `boolean`                          | `false`  | Disable the whole list and remove it from the tab order                              |
+| `item-key`   | `string \| ((item: T) => unknown)` | —        | How to compare values: a property name or a function. Defaults to reference equality |
 
 ### CList events
 
@@ -490,26 +487,33 @@ const selected = ref<string | null>(null)
 
 ### CList slots
 
-| Slot      | Props                            | Description  |
-| --------- | -------------------------------- | ------------ |
-| `default` | `{ select, unselect, isActive }` | List content |
+| Slot      | Props        | Description  |
+| --------- | ------------ | ------------ |
+| `default` | `ListAPI<T>` | List content |
 
 #### `default` slot props
 
-| Prop       | Type                   | Description                            |
-| ---------- | ---------------------- | -------------------------------------- |
-| `select`   | `(item: T) => void`    | Mark an item as selected               |
-| `unselect` | `(item: T) => void`    | Remove an item from the selection      |
-| `isActive` | `(item: T) => boolean` | Check if an item is currently selected |
+The slot receives the whole `ListAPI<T>` — the same object provided to `CListItem` via inject. Selection-facing members:
+
+| Prop       | Type                               | Description                                                                                            |
+| ---------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `toggle`   | `(item: T) => void`                | Select the item, or unselect it if already selected — the same primitive the component uses internally |
+| `select`   | `(item: T) => void`                | Mark an item as selected                                                                               |
+| `unselect` | `(item: T) => void`                | Remove an item from the selection                                                                      |
+| `isActive` | `(item: T) => boolean`             | Check if an item is currently selected                                                                 |
+| `role`     | `'listbox' \| 'menu' \| undefined` | Current interaction mode                                                                               |
+
+For rebuilding `CListItem` from scratch the same object also exposes `registerItem` / `unregisterItem`, so keyboard navigation can discover your items. Both take a `ListItem` controller.
 
 ### CList expose
 
-| Method                           | Signature    | Description                                                  |
-| -------------------------------- | ------------ | ------------------------------------------------------------ |
-| `focus`                          | `() => void` | Programmatically focus the list (only in `listbox` / `menu`) |
-| `navigateFirst` / `navigateLast` | `() => void` | Move the active item to the first / last enabled item        |
-| `navigateUp` / `navigateDown`    | `() => void` | Move the active item up / down                               |
-| `activateCurrentItem`            | `() => void` | Activate the currently focused item                          |
+| Method                           | Signature                    | Description                                                          |
+| -------------------------------- | ---------------------------- | -------------------------------------------------------------------- |
+| `focus`                          | `() => void`                 | Programmatically focus the list (only in `listbox` / `menu`)         |
+| `navigateFirst` / `navigateLast` | `() => void`                 | Move the active item to the first / last enabled item                |
+| `navigateUp` / `navigateDown`    | `() => void`                 | Move the active item up / down                                       |
+| `activateItem`                   | `() => void`                 | Fire the focused item's click (selection toggles, its `@click` runs) |
+| `onKeydown`                      | `(e: KeyboardEvent) => void` | Feed a keyboard event to the list's handler (drive it from a parent) |
 
 ### CListItem props
 
@@ -520,10 +524,10 @@ const selected = ref<string | null>(null)
 
 ### CListItem events
 
-| Event      | Arguments    | Description                                   |
-| ---------- | ------------ | --------------------------------------------- |
-| `active`   | `id: string` | Item became the active (focused/hovered) item |
-| `inactive` | `id: string` | Item stopped being the active item            |
+| Event      | Arguments    | Description                                    |
+| ---------- | ------------ | ---------------------------------------------- |
+| `active`   | `id: string` | Item became the active (keyboard-focused) item |
+| `inactive` | `id: string` | Item stopped being the active item             |
 
 ### CListItem slots
 
@@ -582,8 +586,6 @@ const selected = ref<string | null>(null)
 | `--c-list-item-focus-bg-color`       | `var(--c-sys-state-focus-color)`            |
 | `--c-list-item-pressed-bg-color`     | `var(--c-sys-state-pressed-color)`          |
 | `--c-list-item-focus-ring-color`     | `var(--c-sys-color-focus-ring)`             |
-| `--c-list-item-hover-opacity`        | `0.1`                                       |
-| `--c-list-item-focus-opacity`        | `0.3`                                       |
 | `--c-list-item-disabled-opacity`     | `var(--c-sys-state-disabled-opacity)`       |
 | `--c-list-item-disabled-color`       | `var(--c-sys-color-disabled)`               |
 | `--c-list-item-dragged-opacity`      | `var(--c-sys-state-dragged-opacity)`        |

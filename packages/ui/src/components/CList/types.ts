@@ -1,5 +1,6 @@
 import type { VNode } from 'vue'
 
+import type { LoosePath } from '@/composables'
 import type { AriaListRole, AriaListVariant } from '@/composables/use-aria-listbox'
 
 export type CListRole = AriaListRole
@@ -12,34 +13,28 @@ export type CListProps<T> = {
     readonly?: boolean
     disabled?: boolean
     variant?: CListVariant
-    itemKey?: string | ((item: T) => unknown)
+    itemKey?: LoosePath<T> | ((item: T) => unknown)
 }
 
+// Слот отдаёт тот же контракт, что провайдится потомкам (ListAPI)
 export type CListSlots<T> = {
-    default?(props: {
-        select(item: T): void
-        unselect(item: T): void
-        isActive(item: T): boolean
-    }): VNode | VNode[]
+    default?(props: ListAPI<T>): VNode | VNode[]
 }
 
-export type ListItemController<T = any> = {
-    id: string
+export type ListItem = {
     focus(): void
     blur(): void
-    activate(): void
+    click(): void
     getText(): string
-    getValue(): T | undefined
     isDisabled(): boolean
 }
 
-export type ListAPI<T = any> = {
+export type ListAPI<T = unknown> = {
     role: CListRole
-    registerItem(controller: ListItemController<T>): void
-    unregisterItem(controller: ListItemController<T>): void
-    setCurrentItem(controller: ListItemController<T>): void
-    unsetCurrentItem(controller: ListItemController<T>): void
+    registerItem(controller: ListItem): void
+    unregisterItem(controller: ListItem): void
     select(value: T): void
     unselect(value: T): void
+    toggle(value: T): void
     isActive(value: T): boolean
 }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { shallowRef } from 'vue'
 
-    const value = shallowRef()
+    const value = shallowRef([])
     const email = shallowRef()
 
     const items = [
@@ -41,6 +41,7 @@
                                 label="Select user"
                                 clearable
                                 chips
+                                multiple
                                 title-key="name"
                                 :items
                                 :options="{

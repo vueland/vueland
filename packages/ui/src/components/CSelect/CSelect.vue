@@ -39,8 +39,6 @@
 
     const { onKeydown } = useKeyboard(
         {
-            ArrowDown: () => unref(cListRef)?.navigateDown(),
-            ArrowUp: () => unref(cListRef)?.navigateUp(),
             Tab: () => {
                 unref(cTextFieldRef).blur()
                 menu.value = false
@@ -49,11 +47,13 @@
                 menu.value = false
                 unref(cTextFieldRef).blur()
             },
+            '*': (e) => unref(cListRef)?.onKeydown(e)
         }, { prevent: ['ArrowDown', 'ArrowUp'] })
 
     function onBlur() {
         clearActiveDescendant()
         unref(cTextFieldRef).blur()
+        menu.value = false
     }
 
     function onFocus() {
@@ -170,7 +170,7 @@
                             v-model="model"
                             variant="listbox"
                             class="c-select__listbox"
-                            item-key="name"
+                            :item-key="titleKey"
                             aria-live="polite"
                             :multiple
                             :mandatory
