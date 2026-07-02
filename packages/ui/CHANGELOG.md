@@ -1,5 +1,11 @@
 # @vueland/ui
 
+## 0.1.1
+
+### Patch Changes
+
+- [`9c473b6`](https://github.com/vueland/vueland/commit/9c473b64e9f6bfe3a1ed927c53d4cfa31f41a153) - c-select v-model fixing
+
 ## 0.1.0
 
 ### Minor Changes
