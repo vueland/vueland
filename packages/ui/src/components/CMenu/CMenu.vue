@@ -163,7 +163,10 @@
 
     if (IN_BROWSER) {
         watch(model, (value) => {
-            if (props.modelValue) open()
+            if (isDef(props.modelValue)) {
+                value && open()
+                !value && close()
+            }
 
             if (value) {
                 window.addEventListener('resize', handler, { passive: true })
@@ -181,7 +184,9 @@
                 bindListeners(listeners)
             }
 
-            if (unref(model)) open()
+            if (!isDef(props.modelValue) && unref(model)) {
+                open()
+            }
         })
 
         onBeforeUnmount(() => {

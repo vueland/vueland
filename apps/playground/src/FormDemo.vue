@@ -39,13 +39,12 @@
                             <c-select
                                 v-model="value"
                                 label="Select user"
-                                clearable
-                                chips
                                 multiple
                                 title-key="name"
                                 :items
+                                details="some beautiful and long text for test"
                                 :options="{
-                                    noItemsMessage: 'No user found',
+                                    noItemsMessage: 'No items',
                                 }"
                             />
 
@@ -71,6 +70,7 @@
                                         v-bind="activator"
                                         variant="flat"
                                         color="success"
+                                        class="elevation-5"
                                         v-on="on"
                                     >
                                         tooltip

@@ -24,12 +24,11 @@
     }>()
 
     const emit = defineEmits<{
-        active: [id: string]
-        inactive: [id: string]
+        (e:'active', id: string): void
+        (e:'inactive', id: string): void
     }>()
 
     const list = useList<T>()
-
     const itemId = useId(undefined, { prefix: 'c-list-item' })
 
     const rootRef = shallowRef<HTMLElement>()
@@ -74,7 +73,7 @@
         }
     })
 
-    const controller: ListItem = {
+    const api: ListItem = {
         focus: focusItem,
         blur: blurItem,
         click: () => unref(rootRef)?.click(),
@@ -111,13 +110,13 @@
 
     onMounted(() => {
         if (list?.role) {
-            list!.registerItem(controller)
+            list!.registerItem(api)
         }
     })
 
     onBeforeUnmount(() => {
         if (list?.role) {
-            list!.unregisterItem(controller)
+            list!.unregisterItem(api)
         }
     })
 </script>

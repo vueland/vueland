@@ -94,6 +94,7 @@ $self: '.c-field';
     width: 100%;
     padding: 5px 0;
     column-gap: 3px;
+    position: relative;
   }
 
   &__prepend {
@@ -157,8 +158,8 @@ $self: '.c-field';
     }
   }
 
-  &--focused > &__core > &-label,
-  &--filled > &__core > &-label {
+  &--focused > &-label,
+  &--filled > &-label {
     top: 0;
     left: getCssVar('field', 'border-radius');
     transform: translate(0, -50%) scale(0.8);

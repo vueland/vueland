@@ -1,8 +1,12 @@
-import { computed, getCurrentInstance } from 'vue'
+import {
+    computed,
+    getCurrentInstance,
+    useAttrs,
+} from 'vue'
 
-import { isNotEmpty } from '@/helpers'
+import { isDef, isNotEmpty } from '@/helpers'
 
-import type { IterableItemsProps } from './use-normalized-items'
+import { getByPath, type IterableItemsProps } from './use-normalized-items'
 
 export type SelectableProps<T> = {
     modelValue: T | T[]
@@ -12,8 +16,9 @@ export type SelectableProps<T> = {
 
 export function useSelectedChips<T>(props: IterableItemsProps<T> & SelectableProps<T>) {
     const instance = getCurrentInstance()!
+    const attrs = useAttrs()
 
-    const { titleKey = '' } = props ?? {}
+    const { titleKey = '', valueKey } = props ?? {}
 
     const hasValue = computed(() =>
         props.multiple
@@ -21,16 +26,20 @@ export function useSelectedChips<T>(props: IterableItemsProps<T> & SelectablePro
             : isNotEmpty(props.modelValue),
     )
 
+    const closable = computed(() => isDef(attrs.clearable))
+
+    // Заголовок для чипа берём не из самого value (при valueKey там лежит value,
+    // а не элемент), а находим исходный элемент по value и достаём из него title.
     const chips = computed(() => {
-        if (props.multiple) {
-            return ((props.modelValue as T[] | undefined) ?? []).map(
-                (it: T) => (it as T)?.[titleKey] ?? it,
-            )
-        }
+        const values = props.multiple
+            ? props.modelValue as T[]
+            : (isDef(props.modelValue) ? [props.modelValue as T] : [])
 
-        const value = props.modelValue as T | undefined
+        return values.map((value: T) => {
+            const item = props.items.find(it => (valueKey ? getByPath(it, valueKey) : it) === value)
 
-        return value ? [`${(value as T)?.[titleKey] ?? value}`] : []
+            return item === undefined ? value : getByPath(item, titleKey)
+        })
     })
 
     function select(value: T) {
@@ -43,6 +52,7 @@ export function useSelectedChips<T>(props: IterableItemsProps<T> & SelectablePro
     return {
         hasValue,
         chips,
+        closable,
         select,
     }
 }

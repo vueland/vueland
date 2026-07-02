@@ -53,20 +53,20 @@ app?.getScrollLeft() // current scroll X
 
 ### CSS classes
 
-| Class                 | Description                      |
-| --------------------- | -------------------------------- |
-| `c-app`               | Root element                     |
-| `c-app__wrapper`      | Inner wrapper for scroll content |
-| `c-app--block-scroll` | Internal scroll-lock state       |
+| Class                | Description                      |
+| -------------------- | -------------------------------- |
+| `c-app`              | Root element                     |
+| `c-app__wrapper`     | Inner wrapper for scroll content |
+| `c-app--lock-scroll` | Internal scroll-lock state       |
 
 ### CSS variables
 
 `CApp` does not define customizable component tokens. When scroll is locked, it temporarily writes runtime variables to the root element:
 
-| Variable                      | When it appears      | Description                      |
-| ----------------------------- | -------------------- | -------------------------------- |
-| `--c-application-scroll-top`  | After `lockScroll()` | Negative saved Y scroll position |
-| `--c-application-scroll-left` | After `lockScroll()` | Negative saved X scroll position |
+| Variable              | When it appears      | Description                      |
+| --------------------- | -------------------- | -------------------------------- |
+| `--c-app-scroll-top`  | After `lockScroll()` | Negative saved Y scroll position |
+| `--c-app-scroll-left` | After `lockScroll()` | Negative saved X scroll position |
 
 These values are managed by `useApplicationScroll` and removed after `unlockScroll()`.
 

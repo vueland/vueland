@@ -151,11 +151,11 @@ describe('CApp', () => {
         await nextTick()
 
         expect(rafSpy).toHaveBeenCalled()
-        expect(wrapper.classes()).toContain('c-app--block-scroll')
+        expect(wrapper.classes()).toContain('c-app--lock-scroll')
 
         // Проверяем что позиция записалась в CSS переменные
-        expect(wrapper.element.style.getPropertyValue('--c-application-scroll-top')).toBe('-240px')
-        expect(wrapper.element.style.getPropertyValue('--c-application-scroll-left')).toBe('-15px')
+        expect(wrapper.element.style.getPropertyValue('--c-app-scroll-top')).toBe('-240px')
+        expect(wrapper.element.style.getPropertyValue('--c-app-scroll-left')).toBe('-15px')
     })
 
     it('unlockScroll снимает блокировку и восстанавливает scroll', async () => {
@@ -192,17 +192,17 @@ describe('CApp', () => {
         api.lockScroll()
         await nextTick()
 
-        expect(wrapper.classes()).toContain('c-app--block-scroll')
+        expect(wrapper.classes()).toContain('c-app--lock-scroll')
 
         // Разблокируем
         api.unlockScroll()
         await nextTick()
 
-        expect(wrapper.classes()).not.toContain('c-app--block-scroll')
+        expect(wrapper.classes()).not.toContain('c-app--lock-scroll')
 
         // CSS переменные должны быть очищены
-        expect(wrapper.element.style.getPropertyValue('--c-scroll-top')).toBe('')
-        expect(wrapper.element.style.getPropertyValue('--c-scroll-left')).toBe('')
+        expect(wrapper.element.style.getPropertyValue('--c-app-scroll-top')).toBe('')
+        expect(wrapper.element.style.getPropertyValue('--c-app-scroll-left')).toBe('')
 
         // Проверяем восстановление позиции
         expect(scrollToMock).toHaveBeenCalledWith({

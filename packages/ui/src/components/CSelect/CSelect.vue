@@ -17,7 +17,7 @@
 
     defineSlots<CSelectSlots<T>>()
 
-    const model = defineModel<T | T[]>({
+    const model = defineModel<T | T[] | undefined | null>({
         get: () => props.modelValue,
         set: (val) => val,
     })
@@ -26,14 +26,13 @@
     const cListRef = shallowRef()
     const menu = shallowRef(false)
 
-    const activeDescendant = shallowRef()
-
     const listId = useId(undefined, { prefix: 'c-select-list' })
     const normalizedItems = useNormalizedItems(props)
 
     const {
         chips: selects,
         hasValue,
+        closable,
         select
     } = useSelectedChips(props)
 
@@ -51,7 +50,6 @@
         }, { prevent: ['ArrowDown', 'ArrowUp'] })
 
     function onBlur() {
-        clearActiveDescendant()
         unref(cTextFieldRef).blur()
         menu.value = false
     }
@@ -64,21 +62,15 @@
         model.value = props.multiple ? [] : undefined
     }
 
-    function onCloseChip(value: T) {
-        const { valueKey, titleKey } = props
-        const key = valueKey ?? titleKey
+    function onCloseChip(index: number) {
+        if (!props.multiple) {
+            model.value = undefined
+            return
+        }
 
-        model.value = props.multiple
-            ? (model.value as T[]).filter(it => (key ? it[key] : it) !== value)
-            : undefined
-    }
+        const items = Array.isArray(unref(model)) ? unref(model) as T[] : []
 
-    function setActiveDescendant(id: string) {
-        activeDescendant.value = id
-    }
-
-    function clearActiveDescendant() {
-        activeDescendant.value = undefined
+        model.value = items.filter((_, i) => i !== index)
     }
 </script>
 
@@ -89,7 +81,6 @@
         role="combobox"
         inputmode="none"
         :aria-controls="listId"
-        :aria-activedescendant="activeDescendant"
         :dirty="hasValue"
         v-bind="$attrs"
         :value="selects.join(', ')"
@@ -117,11 +108,11 @@
                         class="c-select__chips"
                     >
                         <c-chip
-                            v-for="it in selects"
-                            :key="it"
-                            :value="it"
+                            v-for="(it, i) in selects"
+                            :key="i"
+                            :closable
                             color="info"
-                            @close="onCloseChip"
+                            @close="onCloseChip(i)"
                         >
                             {{ it }}
                         </c-chip>
@@ -173,13 +164,12 @@
                             :item-key="titleKey"
                             aria-live="polite"
                             :multiple
-                            :mandatory
+                            :mandatory="mandatory || !multiple"
                         >
                             <c-list-item
                                 v-for="item of normalizedItems"
                                 :key="item.key"
                                 :value="item.value ?? item.raw"
-                                @active="setActiveDescendant"
                             >
                                 <c-list-item-title>
                                     {{ item.title }}
