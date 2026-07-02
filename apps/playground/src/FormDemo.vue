@@ -5,6 +5,8 @@
         watchEffect
     } from 'vue'
 
+    import { IconAliases } from '@/enums'
+
     const value = shallowRef()
     const email = shallowRef()
 
@@ -67,7 +69,11 @@
                                 v-model="email"
                                 label="Email address"
                                 :rules="emailRules"
-                            />
+                            >
+                                <template #prepend>
+                                    <c-icon :name="IconAliases.CALENDAR" />
+                                </template>
+                            </c-text-field>
                         </c-card-body>
                         <c-card-footer>
                             <c-tooltip
