@@ -1,5 +1,11 @@
 # @vueland/ui
 
+## 0.1.0
+
+### Minor Changes
+
+- [#85](https://github.com/vueland/vueland/pull/85) [`2617a04`](https://github.com/vueland/vueland/commit/2617a04a59cbc2b5966e757fff7f38dd660b222f) Thanks [@wiseadme](https://github.com/wiseadme)! - c-select component
+
 ## 0.0.8
 
 ### Patch Changes
