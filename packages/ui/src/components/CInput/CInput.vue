@@ -154,31 +154,29 @@
     }
 
     const DetailsMessage = () =>
-        h(
-            Transition,
-            {
-                name: 'fade-in-down',
-                mode: 'out-in',
-            },
-            {
-                default: () =>
-                    h(
-                        'div',
-                        {
-                            key: unref(internalDetailsKey),
-                            id: `${unref(fieldId)}-details`,
-                            class: ['c-input__details', ...unref(preset).details],
-                        },
-                        {
-                            default: () =>
-                                slots.details?.({
-                                    details: props.details,
-                                    ...errors,
-                                    uid: fieldId,
-                                }),
-                        },
-                    ),
-            },
+        h(Transition,
+          {
+              name: 'fade-in-down',
+              mode: 'out-in',
+          },
+          {
+              default: () =>
+                  h('div',
+                    {
+                        key: unref(internalDetailsKey),
+                        id: `${unref(fieldId)}-details`,
+                        class: ['c-input__details', ...unref(preset).details],
+                    },
+                    {
+                        default: () =>
+                            slots.details?.({
+                                details: props.details,
+                                ...errors,
+                                uid: fieldId,
+                            }),
+                    },
+                  ),
+          },
         )
 
     onBeforeMount(() => {

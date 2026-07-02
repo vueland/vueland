@@ -6,7 +6,7 @@
   flex: 1 1;
 
   &__listbox {
-    padding: 5px 0;
+    padding: 8px 0;
   }
 
   &__chips {
@@ -17,6 +17,10 @@
     & > .c-chip {
       --c-chip-elevation: #{getCssVar('sys', 'elevation', '2')};
     }
+  }
+
+  &__items {
+    color: getCssVar('sys', 'color', 'on', 'background');
   }
 
   & > .c-input__field > .c-text-field > .c-field > .c-field__append {
@@ -31,5 +35,7 @@
   & > .c-input__field > .c-text-field > .c-field > .c-field__core > .c-field-input {
     caret-color: transparent;
     color: transparent;
+    position: absolute;
+    z-index: -1;
   }
 }

@@ -175,8 +175,6 @@ export default [
             },
         },
         rules: {
-            // Vue форматирование (4 пробела, как в проекте)
-
             'vue/html-indent': ['error', 4],
             'vue/script-indent': ['error', 4, { baseIndent: 1 }],
             'vue/max-attributes-per-line': [

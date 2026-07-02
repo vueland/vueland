@@ -124,17 +124,16 @@
             <slot name="prepend"></slot>
         </div>
 
+        <c-label
+            :id="`${$attrs.id}-label`"
+            :for="($attrs.id as string)"
+            tag="label"
+            class="c-field-label"
+            :class="presets.label"
+        >
+            {{ label }}
+        </c-label>
         <div class="c-field__core">
-            <c-label
-                :id="`${$attrs.id}-label`"
-                :for="($attrs.id as string)"
-                tag="label"
-                class="c-field-label"
-                :class="presets.label"
-            >
-                {{ label }}
-            </c-label>
-
             <slot name="before"></slot>
 
             <element />

@@ -23,7 +23,7 @@
             { "file": "CField", "title": "CField" },
             { "file": "CCheckbox", "title": "CCheckbox" },
             { "file": "CRadio", "title": "CRadio" },
-            { "file": "CSelect", "title": "CSelect" },
+            { "file": "CSelect", "title": "CSelect ★" },
             { "file": "CAutocomplete", "title": "CAutocomplete" }
         ]
     },

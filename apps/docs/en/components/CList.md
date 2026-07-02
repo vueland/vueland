@@ -323,6 +323,8 @@ const actions = [
 
 By default values are matched by reference (via `toRaw`), which is enough for primitives and stable object references. When your values are objects coming from different sources (e.g. re-fetched from an API), pass `item-key` to compare them by a field or a custom function.
 
+`item-key` must resolve to a **unique** value per item. If two items share the same key (e.g. objects with a non-unique title), they are treated as the same value — selecting one marks both. Prefer a stable id field over a display field.
+
 In the demo below, the initial selection is a **different object reference** than the one in the list — `item-key="id"` is what makes it match and render as selected.
 
 <ObjectValuesExample />

@@ -27,7 +27,7 @@ export type NormalizedItem<T> = {
     key: string
 }
 
-function getByPath(item: unknown, path: string): unknown {
+export function getByPath(item: unknown, path: string): any {
     if (!path) return item
 
     return path.split('.').reduce<any>((acc, key) => acc?.[key], item)

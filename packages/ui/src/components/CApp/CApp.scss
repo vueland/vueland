@@ -24,11 +24,11 @@
     }
   }
 
-  &--block-scroll {
+  &--lock-scroll {
     width: 100%;
     position: fixed;
-    top: getCssVar('application', 'scroll-top');
-    left: getCssVar('application', 'scroll-left');
+    top: getCssVar('app', 'scroll-top');
+    left: getCssVar('app', 'scroll-left');
     bottom: 0;
     pointer-events: none;
   }
