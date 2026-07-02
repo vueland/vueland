@@ -1,8 +1,19 @@
 <script setup lang="ts">
-    import { shallowRef } from 'vue'
+    import {
+        shallowRef,
+        unref,
+        watchEffect
+    } from 'vue'
 
-    const value = shallowRef([])
+    const value = shallowRef()
     const email = shallowRef()
+
+    const rules = [
+        val => ({
+            valid: !!val,
+            message: 'Required'
+        })
+    ]
 
     const items = [
         { name: 'Alex', email: 'aaa@mail.ru' },
@@ -16,6 +27,10 @@
             message: 'Email is required',
         })
     ]
+
+    watchEffect(() => {
+        console.log(unref(value))
+    })
 </script>
 
 <template>
@@ -39,9 +54,9 @@
                             <c-select
                                 v-model="value"
                                 label="Select user"
-                                multiple
                                 title-key="name"
                                 :items
+                                :rules="rules"
                                 details="some beautiful and long text for test"
                                 :options="{
                                     noItemsMessage: 'No items',

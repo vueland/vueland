@@ -13,6 +13,7 @@
     import { CLabel } from '@/components/CLabel'
     import { useFieldPresets } from '@/composables/use-field-presets'
     import { IconAliases } from '@/enums'
+    import { isNotEmpty } from '@/helpers'
 
     import type { CFieldProps } from './types'
 
@@ -28,6 +29,8 @@
     }>()
 
     const value = defineModel<string | number | undefined | null>()
+
+    const hasValue = computed(() => ['string', 'number'].includes(typeof unref(value)) && isNotEmpty(unref(value)))
 
     const inputRef = shallowRef<HTMLElement>()
 
@@ -54,7 +57,7 @@
     const classes = computed(() => [
         {
             'c-field--focused': props.focused,
-            'c-field--filled': !!unref(value) || props.dirty,
+            'c-field--filled': unref(hasValue) || props.dirty,
             'c-field--has-prepend': !!slots.prepend,
             'c-field--disabled': props.disabled,
             'c-field--readonly': props.readonly,

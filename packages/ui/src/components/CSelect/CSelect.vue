@@ -1,5 +1,9 @@
 <script setup lang="ts" generic="T">
-    import { shallowRef, unref } from 'vue'
+    import {
+        shallowRef,
+        unref,
+        watchEffect
+    } from 'vue'
 
     import { CMenu } from '@/components/CMenu'
     import { CTextField } from '@/components/CTextField'
@@ -17,10 +21,7 @@
 
     defineSlots<CSelectSlots<T>>()
 
-    const model = defineModel<T | T[] | undefined | null>({
-        get: () => props.modelValue,
-        set: (val) => val,
-    })
+    const model = defineModel<T | T[] | undefined | null>()
 
     const cTextFieldRef = shallowRef()
     const cListRef = shallowRef()
@@ -72,11 +73,16 @@
 
         model.value = items.filter((_, i) => i !== index)
     }
+
+    watchEffect(() => {
+        console.log(hasValue.value)
+    })
 </script>
 
 <template>
     <c-text-field
         ref="cTextFieldRef"
+        :model-value="model"
         class="c-select"
         role="combobox"
         inputmode="none"
