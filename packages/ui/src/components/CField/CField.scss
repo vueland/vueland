@@ -200,17 +200,17 @@ $self: '.c-field';
   &--has-prepend {
     padding-left: 0;
 
-    > #{$self}__core > #{$self}-label {
+    & > #{$self}-label {
       left: getCssVar('field', 'prepend-min-width');
     }
 
-    > #{$self}__core > #{$self}-input {
+    & > #{$self}-input {
       padding-right: 8px;
     }
   }
 
-  &--has-prepend#{$self}--focused > &__core > &-label,
-  &--has-prepend#{$self}--filled > &__core > &-label {
+  &--has-prepend#{$self}--focused > &-label,
+  &--has-prepend#{$self}--filled > &-label {
     top: 0;
     left: getCssVar('field', 'border-radius');
     transform: translate(0, -50%) scale(0.8);
