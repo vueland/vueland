@@ -1,5 +1,11 @@
 # @vueland/ui
 
+## 0.1.2
+
+### Patch Changes
+
+- [#88](https://github.com/vueland/vueland/pull/88) [`8196010`](https://github.com/vueland/vueland/commit/819601058f425e938481df1f9e5833f4a64758fd) Thanks [@wiseadme](https://github.com/wiseadme)! - field label layering on prepend slot
+
 ## 0.1.1
 
 ### Patch Changes
