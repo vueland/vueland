@@ -27,8 +27,6 @@ $list-item-hover-bg-color: getCssVar('sys', 'state', 'hover-color');
 $list-item-focus-bg-color: getCssVar('sys', 'state', 'focus-color');
 $list-item-pressed-bg-color: getCssVar('sys', 'state', 'pressed-color');
 $list-item-focus-ring-color: getCssVar('sys', 'color', 'focus-ring');
-$list-item-hover-opacity: 0.1;
-$list-item-focus-opacity: 0.3;
 $list-item-dragged-opacity: getCssVar('sys', 'state', 'dragged-opacity');
 
 // List item typography

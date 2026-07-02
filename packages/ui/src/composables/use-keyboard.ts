@@ -10,6 +10,7 @@ export type KeyboardKey =
     | 'Home'
     | 'End'
     | 'Space'
+    | '*'
 
 export type KeyboardHandler = (event: KeyboardEvent) => void
 
@@ -39,6 +40,7 @@ const KEY_ALIASES: Record<string, KeyboardKey> = {
     ' ': 'Space',
     Space: 'Space',
     Spacebar: 'Space',
+    '*': '*',
 }
 
 function normalizeKey(event: KeyboardEvent): KeyboardKey | undefined {
@@ -62,7 +64,7 @@ export function useKeyboard(handlers: KeyboardHandlers, options: UseKeyboardOpti
         const key = normalizeKey(event)
 
         if (!key || !handlers[key]) {
-            return
+            return handlers['*']?.(event)
         }
 
         const handler = handlers[key]!
