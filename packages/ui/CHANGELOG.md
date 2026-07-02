@@ -1,5 +1,11 @@
 # @vueland/ui
 
+## 0.0.8
+
+### Patch Changes
+
+- [#83](https://github.com/vueland/vueland/pull/83) [`4510df8`](https://github.com/vueland/vueland/commit/4510df8d2285067a40db22c57acd6fbeaf0a572d) Thanks [@wiseadme](https://github.com/wiseadme)! - c-list component api updated
+
 ## 0.0.7
 
 ### Patch Changes
