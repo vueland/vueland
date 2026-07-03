@@ -20,10 +20,19 @@ function getNodeText(sourceCode: Rule.RuleContext['sourceCode'], node: AnyNode):
 
 function getNodeWithComments(sourceCode: Rule.RuleContext['sourceCode'], node: AnyNode): string {
     const comments = sourceCode.getCommentsBefore(node as unknown as Parameters<typeof sourceCode.getCommentsBefore>[0])
-    const commentText = comments.map((c) =>
-        c.type === 'Line' ? `//${c.value}\n` : `/*${c.value}*/\n`,
-    ).join('')
-    return commentText + getNodeText(sourceCode, node)
+
+    if (!comments.length) {
+        return getNodeText(sourceCode, node)
+    }
+
+    // каждая строка после комментария получает отступ ноды,
+    // иначе нода после переноса уезжает к левому краю
+    const indent = getNodeIndent(sourceCode, node)
+    const commentText = comments
+        .map((c) => (c.type === 'Line' ? `//${c.value}` : `/*${c.value}*/`))
+        .join('\n' + indent)
+
+    return commentText + '\n' + indent + getNodeText(sourceCode, node)
 }
 
 function getNodeIndent(sourceCode: Rule.RuleContext['sourceCode'], node: AnyNode): string {
@@ -32,6 +41,42 @@ function getNodeIndent(sourceCode: Rule.RuleContext['sourceCode'], node: AnyNode
     const lastNewline = src.lastIndexOf('\n', start - 1)
     const indent = src.slice(lastNewline + 1, start)
     return /^\s+$/.test(indent) ? indent : ''
+}
+
+function getNodeStartWithComments(sourceCode: Rule.RuleContext['sourceCode'], node: AnyNode): number {
+    const comments = sourceCode.getCommentsBefore(node as unknown as Parameters<typeof sourceCode.getCommentsBefore>[0])
+    return comments.length
+        ? comments[0].range![0]
+        : (node as unknown as { range: [number, number] }).range[0]
+}
+
+// Склеивает отсортированные ноды: пары, оставшиеся соседями из исходника,
+// сохраняют оригинальный разделитель, между переехавшими — пустая строка
+function buildSortedText(
+    sourceCode: Rule.RuleContext['sourceCode'],
+    body: AnyNode[],
+    indices: number[],
+    getText: (idx: number) => string,
+): string {
+    const src = sourceCode.getText()
+
+    return indices.map((idx, pos) => {
+        const text = getText(idx)
+
+        if (pos === 0) {
+            return getNodeIndent(sourceCode, body[idx]) + text
+        }
+
+        const prevIdx = indices[pos - 1]
+
+        if (idx === prevIdx + 1) {
+            const prevEnd = (body[prevIdx] as unknown as { range: [number, number] }).range[1]
+
+            return src.slice(prevEnd, getNodeStartWithComments(sourceCode, body[idx])) + text
+        }
+
+        return '\n\n' + getNodeIndent(sourceCode, body[idx]) + text
+    }).join('')
 }
 
 function getOrderIndex(order: NodeCategory[], category: NodeCategory): number | null {
@@ -113,6 +158,7 @@ export const scriptSetupOrder: Rule.RuleModule = {
         docs: {
             description: 'Enforce consistent ordering of Vue 3 script setup blocks',
             recommended: true,
+            url: 'https://vueland.github.io/vueland/en/plugins/eslint-script-setup/rules#script-setup-order',
         },
         schema: [
             {
@@ -242,9 +288,12 @@ export const scriptSetupOrder: Rule.RuleModule = {
                                 // Пересортируем с новыми категориями
                                 const newSortedIndices = getSortedIndices(newCategories, customOrder)
 
-                                const sortedText = newSortedIndices
-                                    .map((idx) => getNodeIndent(sourceCode, body[idx]) + convertedTexts[idx])
-                                    .join('\n\n')
+                                const sortedText = buildSortedText(
+                                    sourceCode,
+                                    body,
+                                    newSortedIndices,
+                                    (idx) => convertedTexts[idx],
+                                )
 
                                 return fixer.replaceTextRange([rangeStart, rangeEnd], sortedText)
                             },
@@ -278,9 +327,12 @@ export const scriptSetupOrder: Rule.RuleModule = {
                         const rangeStart = newlineBefore + 1
                         const rangeEnd = (last as unknown as { range: [number, number] }).range[1]
 
-                        const sortedText = sortedIndices
-                            .map((idx) => getNodeIndent(sourceCode, body[idx]) + getNodeWithComments(sourceCode, body[idx]).trimStart())
-                            .join('\n\n')
+                        const sortedText = buildSortedText(
+                            sourceCode,
+                            body,
+                            sortedIndices,
+                            (idx) => getNodeWithComments(sourceCode, body[idx]).trimStart(),
+                        )
 
                         return fixer.replaceTextRange([rangeStart, rangeEnd], sortedText)
                     },

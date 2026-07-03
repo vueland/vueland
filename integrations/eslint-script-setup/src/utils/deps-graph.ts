@@ -1,38 +1,31 @@
 type AnyNode = { type: string; [key: string]: unknown }
 
-// AST node keys that contain child nodes (avoids circular parent/scope refs)
-const CHILD_KEYS: Partial<Record<string, string[]>> = {
-    Program: ['body'],
-    ExpressionStatement: ['expression'],
-    CallExpression: ['callee', 'arguments'],
-    MemberExpression: ['object', 'property'],
-    Identifier: [],
-    Literal: [],
-    VariableDeclaration: ['declarations'],
-    VariableDeclarator: ['id', 'init'],
-    ArrowFunctionExpression: [],
-    FunctionExpression: [],
-    FunctionDeclaration: ['params', 'body'],
-    BlockStatement: ['body'],
-    ReturnStatement: ['argument'],
-    IfStatement: ['test', 'consequent', 'alternate'],
-    BinaryExpression: ['left', 'right'],
-    LogicalExpression: ['left', 'right'],
-    UnaryExpression: ['argument'],
-    ConditionalExpression: ['test', 'consequent', 'alternate'],
-    AssignmentExpression: ['left', 'right'],
-    ObjectExpression: ['properties'],
-    Property: ['key', 'value'],
-    ArrayExpression: ['elements'],
-    TemplateLiteral: ['expressions'],
-    SpreadElement: ['argument'],
-    NewExpression: ['callee', 'arguments'],
-    AwaitExpression: ['argument'],
-    ChainExpression: ['expression'],
+// Служебные ссылки и type-only узлы: типы стираются при компиляции
+// и runtime-зависимостей по порядку объявлений не создают
+const SKIP_KEYS = new Set([
+    'parent',
+    'loc',
+    'range',
+    'typeAnnotation',
+    'typeParameters',
+    'typeArguments',
+    'returnType',
+])
+
+// Тела функций ленивые: ссылки внутри выполняются только при вызове,
+// поэтому зависимостей по порядку объявлений не создают
+const LAZY_FUNCTION_TYPES = new Set([
+    'ArrowFunctionExpression',
+    'FunctionExpression',
+    'FunctionDeclaration',
+])
+
+function isNode(value: unknown): value is AnyNode {
+    return !!value && typeof value === 'object' && 'type' in (value as object)
 }
 
 function collectIdentifiers(node: AnyNode, ids: Set<string>, visited = new Set<AnyNode>()): void {
-    if (!node || typeof node !== 'object' || visited.has(node)) {
+    if (!isNode(node) || visited.has(node)) {
         return
     }
 
@@ -43,82 +36,139 @@ function collectIdentifiers(node: AnyNode, ids: Set<string>, visited = new Set<A
         return
     }
 
-    const keys = CHILD_KEYS[node.type]
-
-    if (!keys) {
+    if (LAZY_FUNCTION_TYPES.has(node.type)) {
         return
     }
 
-    for (const key of keys) {
-        const child = node[key]
+    // obj.prop: prop — не ссылка (если доступ не computed)
+    if (node.type === 'MemberExpression' && !node.computed) {
+        collectIdentifiers(node.object as AnyNode, ids, visited)
+        return
+    }
+
+    // { key: value }: key — не ссылка (если ключ не computed)
+    if (node.type === 'Property' && !node.computed) {
+        collectIdentifiers(node.value as AnyNode, ids, visited)
+        return
+    }
+
+    // Обходим все дочерние узлы: белый список типов пропускал бы обёртки
+    // вроде TSAsExpression, и зависимость терялась — сортировка ломала код
+    for (const [key, child] of Object.entries(node)) {
+        if (SKIP_KEYS.has(key)) {
+            continue
+        }
 
         if (Array.isArray(child)) {
-            child.forEach((c) => {
-                if (c && typeof c === 'object' && 'type' in c) {
-                    collectIdentifiers(c as AnyNode, ids, visited)
-                } })
-        } else if (child && typeof child === 'object' && 'type' in child) {
-            collectIdentifiers(child as AnyNode, ids, visited)
+            for (const item of child) {
+                if (isNode(item)) {
+                    collectIdentifiers(item, ids, visited)
+                }
+            }
+        } else if (isNode(child)) {
+            collectIdentifiers(child, ids, visited)
         }
     }
 }
 
-function getDeclaredName(node: AnyNode): string | null {
-    if (node.type === 'VariableDeclaration') {
-        const id = (node.declarations as AnyNode[])[0]?.id as AnyNode | undefined
+// Собирает имена, объявляемые паттерном: Identifier, деструктуринг, дефолты, rest
+function collectPatternNames(pattern: AnyNode | undefined | null, names: Set<string>): void {
+    if (!pattern) {
+        return
+    }
 
-        if (id?.type === 'Identifier') {
-            return id.name as string
+    switch (pattern.type) {
+        case 'Identifier':
+            names.add(pattern.name as string)
+            break
+        case 'ObjectPattern':
+            for (const prop of pattern.properties as AnyNode[]) {
+                collectPatternNames((prop.value ?? prop.argument) as AnyNode, names)
+            }
+            break
+        case 'ArrayPattern':
+            for (const element of pattern.elements as (AnyNode | null)[]) {
+                collectPatternNames(element, names)
+            }
+            break
+        case 'AssignmentPattern':
+            collectPatternNames(pattern.left as AnyNode, names)
+            break
+        case 'RestElement':
+            collectPatternNames(pattern.argument as AnyNode, names)
+            break
+    }
+}
+
+function getDeclaredNames(node: AnyNode): Set<string> {
+    const names = new Set<string>()
+
+    if (node.type === 'VariableDeclaration') {
+        for (const decl of node.declarations as AnyNode[]) {
+            collectPatternNames(decl.id as AnyNode, names)
         }
     }
 
     if (node.type === 'FunctionDeclaration' && node.id) {
-        return (node.id as AnyNode).name as string
+        names.add((node.id as AnyNode).name as string)
     }
 
     if (node.type === 'TSTypeAliasDeclaration' || node.type === 'TSInterfaceDeclaration') {
-        return (node.id as AnyNode)?.name as string ?? null
+        const name = (node.id as AnyNode)?.name as string | undefined
+
+        if (name) {
+            names.add(name)
+        }
     }
 
     if (node.type === 'ExportNamedDeclaration') {
         const decl = node.declaration as AnyNode | undefined
+
         if (decl?.type === 'TSTypeAliasDeclaration' || decl?.type === 'TSInterfaceDeclaration') {
-            return (decl.id as AnyNode)?.name as string ?? null
+            const name = (decl.id as AnyNode)?.name as string | undefined
+
+            if (name) {
+                names.add(name)
+            }
         }
     }
 
-    return null
+    return names
 }
 
 export interface NodeEntry {
     node: AnyNode
     index: number
-    declaredName: string | null
+    declaredNames: Set<string>
     usedNames: Set<string>
 }
 
 export function buildEntries(nodes: AnyNode[]): NodeEntry[] {
     return nodes.map((node, index) => {
-        const declaredName = getDeclaredName(node)
+        const declaredNames = getDeclaredNames(node)
         const usedNames = new Set<string>()
 
         if (node.type === 'VariableDeclaration') {
-            const init = (node.declarations as AnyNode[])[0]?.init as AnyNode | undefined
+            for (const decl of node.declarations as AnyNode[]) {
+                // id обходим тоже: дефолты деструктуринга и computed-ключи —
+                // немедленные ссылки; собственные имена вычитаем ниже
+                collectIdentifiers(decl.id as AnyNode, usedNames)
 
-            if (init) {
-                collectIdentifiers(init, usedNames)
+                if (decl.init) {
+                    collectIdentifiers(decl.init as AnyNode, usedNames)
+                }
             }
         } else if (node.type === 'ExpressionStatement') {
             collectIdentifiers(node.expression as AnyNode, usedNames)
-        } else if (node.type === 'FunctionDeclaration' && node.body) {
-            collectIdentifiers(node.body as AnyNode, usedNames)
+        }
+        // тела FunctionDeclaration не собираем: ссылки внутри функции ленивые
+        // и выполняются только при вызове — порядок объявлений для них не важен
+
+        for (const name of declaredNames) {
+            usedNames.delete(name)
         }
 
-        if (declaredName) {
-            usedNames.delete(declaredName)
-        }
-
-        return { node, index, declaredName, usedNames }
+        return { node, index, declaredNames, usedNames }
     })
 }
 
@@ -128,8 +178,8 @@ export function detectOrderConflicts(
 ): Array<{ from: number; to: number; name: string }> {
     const nameToOriginalIndex = new Map<string, number>()
     entries.forEach((e, i) => {
-        if (e.declaredName) {
-            nameToOriginalIndex.set(e.declaredName, i)
+        for (const name of e.declaredNames) {
+            nameToOriginalIndex.set(name, i)
         }
     })
 
@@ -148,7 +198,6 @@ export function detectOrderConflicts(
             if (entries[depOriginalIdx].node.type === 'FunctionDeclaration') {
                 continue
             }
-
 
             const depNewPos = sortedIndices.indexOf(depOriginalIdx)
 

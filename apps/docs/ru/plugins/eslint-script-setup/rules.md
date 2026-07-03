@@ -22,13 +22,21 @@ const MAX = 100
 
 const double = computed(() => count.value * 2)
 
-function increment() { count.value++ }
+function increment() {
+  count.value++
+}
 
-watchEffect(() => { /* ... */ })
+watchEffect(() => {
+  /* ... */
+})
 
-watch(count, () => { /* ... */ })
+watch(count, () => {
+  /* ... */
+})
 
-onMounted(() => { /* ... */ })
+onMounted(() => {
+  /* ... */
+})
 </script>
 ```
 
@@ -41,10 +49,14 @@ onMounted(() => { /* ... */ })
 ```ts
 // До фикса
 const count = useCounter() // ✗ используется до объявления
-const useCounter = () => { return ref(0) }
+const useCounter = () => {
+  return ref(0)
+}
 
 // После фикса — конвертировано и отсортировано
-function useCounter() { return ref(0) }
+function useCounter() {
+  return ref(0)
+}
 const count = useCounter()
 ```
 
@@ -107,13 +119,39 @@ const count = useCounter()
 
 ---
 
+## `script-attrs-order`
+
+Фиксирует порядок атрибутов на теге `<script>`. Поддерживает автофикс.
+
+```vue
+<!-- ✗ неверно -->
+<script lang="ts" setup>
+
+<!-- ✓ верно -->
+<script setup lang="ts">
+<script setup lang="ts" generic="T">
+```
+
+### Опции
+
+```js
+'@vueland/script-attrs-order': ['warn', {
+  // Порядок атрибутов (значение по умолчанию). Неперечисленные атрибуты
+  // сохраняют свой относительный порядок после перечисленных.
+  order: ['setup', 'lang', 'generic'],
+}]
+```
+
+---
+
 ## `no-multi-declaration`
 
 Запрещает несколько объявлений в одном операторе `const`/`let` внутри `<script setup>`.
 
 ```ts
 // ✗ неверно
-const a = ref(1), b = ref(2)
+const a = ref(1),
+  b = ref(2)
 
 // ✓ верно
 const a = ref(1)

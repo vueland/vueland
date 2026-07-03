@@ -13,6 +13,7 @@ export const noInlineComposable: Rule.RuleModule = {
         docs: {
             description: 'Disallow composable calls passed directly as arguments to other functions',
             recommended: true,
+            url: 'https://vueland.github.io/vueland/en/plugins/eslint-script-setup/rules#no-inline-composable',
         },
         schema: [],
         messages: {

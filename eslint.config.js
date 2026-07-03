@@ -254,6 +254,7 @@ export default [
             'vue/padding-line-between-blocks': ['error', 'always'],
             '@vueland/no-multi-declaration': 'error',
             '@vueland/no-inline-composable': 'error',
+            '@vueland/script-attrs-order': 'warn',
             '@vueland/script-setup-order': [
                 'error',
                 {
