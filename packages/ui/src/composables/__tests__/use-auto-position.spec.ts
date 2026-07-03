@@ -647,6 +647,74 @@ describe('useAutoPosition', () => {
         expect(api.content.value.left).toBe(310)
     })
 
+    it('reverse: если после реверса вверх всё равно не влезает, прижимает к краю экрана', async () => {
+        Object.defineProperty(window, 'innerHeight', {
+            configurable: true,
+            value: 320,
+        })
+
+        const {
+            api,
+            activator,
+            content,
+            update,
+        } = await createHarness({
+            align: 'bottom',
+            strategy: 'reverse',
+        })
+
+        setRect(activator, {
+            top: 150,
+            left: 200,
+            width: 120,
+            height: 40,
+        })
+
+        // контент выше свободного места и снизу, и сверху активатора
+        setSize(content, {
+            width: 120,
+            height: 300,
+        })
+
+        await update()
+
+        expect(api.content.value.top).toBe(10)
+    })
+
+    it('reverse: если после реверса влево всё равно не влезает, прижимает к краю экрана', async () => {
+        Object.defineProperty(window, 'innerWidth', {
+            configurable: true,
+            value: 500,
+        })
+
+        const {
+            api,
+            activator,
+            content,
+            update,
+        } = await createHarness({
+            align: 'right',
+            strategy: 'reverse',
+        })
+
+        setRect(activator, {
+            top: 100,
+            left: 200,
+            width: 60,
+            height: 40,
+        })
+
+        // контент шире свободного места и справа, и слева от активатора
+        setSize(content, {
+            width: 400,
+            height: 60,
+        })
+
+        await update()
+
+        expect(api.content.value.left).toBe(10)
+    })
+
     it('реагирует на изменение positionX и positionY', async () => {
         const {
             api,

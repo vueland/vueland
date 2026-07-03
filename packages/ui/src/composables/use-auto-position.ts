@@ -322,7 +322,8 @@ export function useAutoPosition(
             return clampTopToViewport(top)
         }
 
-        return getReversedTop()
+        // если реверснутая позиция тоже не влезает — прижимаем к краю экрана
+        return clampTopToViewport(getReversedTop())
     }
 
     const resolveLeft = () => {
@@ -338,7 +339,8 @@ export function useAutoPosition(
             return clampLeftToViewport(left)
         }
 
-        return getReversedLeft()
+        // если реверснутая позиция тоже не влезает — прижимаем к краю экрана
+        return clampLeftToViewport(getReversedLeft())
     }
 
     const applyPosition = () => {
