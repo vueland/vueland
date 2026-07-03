@@ -1,6 +1,7 @@
 import {
     computed,
     getCurrentInstance,
+    unref,
     useAttrs,
 } from 'vue'
 
@@ -12,6 +13,7 @@ export type SelectableProps<T> = {
     modelValue: T | T[]
     multiple?: boolean
     mandatory?: boolean
+    chips?: boolean
 }
 
 export function useSelectedChips<T>(props: IterableItemsProps<T> & SelectableProps<T>) {
@@ -32,7 +34,7 @@ export function useSelectedChips<T>(props: IterableItemsProps<T> & SelectablePro
     // а не элемент), а находим исходный элемент по value и достаём из него title.
     const chips = computed(() => {
         const values = props.multiple
-            ? props.modelValue as T[]
+            ? ((props.modelValue as T[] | undefined) ?? [])
             : (isDef(props.modelValue) ? [props.modelValue as T] : [])
 
         return values.map((value: T) => {
@@ -42,6 +44,8 @@ export function useSelectedChips<T>(props: IterableItemsProps<T> & SelectablePro
         })
     })
 
+    const textValue = computed(() => unref(chips).join(', '))
+
     function select(value: T) {
         instance?.emit(
             'update:modelValue',
@@ -49,10 +53,26 @@ export function useSelectedChips<T>(props: IterableItemsProps<T> & SelectablePro
         )
     }
 
+    function unselect(index: number) {
+        if (!props.multiple) {
+            return instance?.emit(
+                'update:modelValue',
+                undefined,
+            )
+        }
+
+        instance?.emit(
+            'update:modelValue',
+            (props.modelValue as T[]).filter((_, i) => i !== index),
+        )
+    }
+
     return {
         hasValue,
         chips,
         closable,
+        textValue,
         select,
+        unselect,
     }
 }

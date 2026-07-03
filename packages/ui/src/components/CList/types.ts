@@ -31,10 +31,11 @@ export type ListItem = {
 
 export type ListAPI<T = unknown> = {
     role: CListRole
-    registerItem(controller: ListItem): void
-    unregisterItem(controller: ListItem): void
+    registerItem(item: ListItem): void
+    unregisterItem(item: ListItem): void
+    blur(): void
     select(value: T): void
     unselect(value: T): void
     toggle(value: T): void
-    isActive(value: T): boolean
+    isSelected(value: T): boolean
 }

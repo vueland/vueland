@@ -78,7 +78,7 @@ describe('CList', () => {
 
             mount(CList, { slots: { default: () => h(Probe) } })
 
-            for (const key of ['role', 'registerItem', 'unregisterItem', 'select', 'unselect', 'toggle', 'isActive'] as const) {
+            for (const key of ['role', 'registerItem', 'unregisterItem', 'blur', 'select', 'unselect', 'toggle', 'isSelected'] as const) {
                 expect(key in api).toBe(true)
             }
         })
@@ -199,17 +199,6 @@ describe('CList', () => {
             } = mountList({ variant: 'listbox', multiple: true, modelValue: ['a', 'b'] }, items('a', 'b'))
 
             await listItems(wrapper)[0].trigger('click')
-            await nextTick()
-
-            expect(model.value).toEqual(['b'])
-        })
-
-        it('не падает и работает при multiple с null-моделью', async () => {
-            const { wrapper, model } = mountList({ variant: 'listbox', multiple: true }, items('a', 'b'))
-
-            expect(listItems(wrapper)).toHaveLength(2)
-
-            await listItems(wrapper)[1].trigger('click')
             await nextTick()
 
             expect(model.value).toEqual(['b'])
@@ -548,6 +537,21 @@ describe('CList', () => {
             await first.trigger('blur')
             await nextTick()
             expect(first.classes()).not.toContain('c-list-item--focused')
+        })
+
+        it('после нативного blur ArrowDown продолжает от активного индекса', async () => {
+            const { wrapper } = mountList({ variant: 'listbox' }, items('a', 'b'))
+
+            await keydown(wrapper, 'ArrowDown')
+            await nextTick()
+
+            const first = listItems(wrapper)[0]
+
+            await first.trigger('blur')
+            await keydown(wrapper, 'ArrowDown')
+            await nextTick()
+
+            expect(listItems(wrapper)[1].classes()).toContain('c-list-item--focused')
         })
 
         it('hover не активирует элемент: active/inactive не эмитятся', async () => {

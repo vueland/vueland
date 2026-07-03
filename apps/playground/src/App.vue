@@ -19,7 +19,7 @@
             <c-toolbar class="bg-graphite elevation-2">
                 <c-toolbar-logo>
                     <c-btn
-                        color="tertiary"
+                        color="green-accent-3"
                         @click="onClick"
                     >
                         MODE

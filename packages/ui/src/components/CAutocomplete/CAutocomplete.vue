@@ -1,13 +1,13 @@
 <script setup lang="ts" generic="T">
     import {
+        nextTick,
         shallowRef,
         unref,
         watch,
     } from 'vue'
 
-    import { CField } from '@/components/CField'
-    import { CInput } from '@/components/CInput'
     import { CMenu } from '@/components/CMenu'
+    import { useSelectedChips, useToggle } from '@/composables'
     import { useAutocomplete } from '@/composables/use-autocomplete'
     import { useId } from '@/composables/use-id'
     import { useKeyboard } from '@/composables/use-keyboard'
@@ -25,26 +25,60 @@
 
     defineSlots<CAutocompleteSlots<T>>()
 
-    const model = defineModel<T | T[]>({
-        get: () => props.modelValue,
-        set: (val) => val,
-    })
+    const model = defineModel<T | T[] | undefined | null>()
 
     const inputRef = shallowRef()
-    const fieldRef = shallowRef()
-    const menuRef = shallowRef()
     const menuListRef = shallowRef()
-    const activeDescendant = shallowRef<string>()
 
+    const [menu, toggleMenu] = useToggle(false)
     const listId = useId(undefined, { prefix: 'c-autocomplete-list' })
 
     const {
-        inputValue,
-        searchItems,
         chips,
         hasValue,
+        textValue,
+        closable,
         select,
-    } = useAutocomplete(props)
+        unselect
+    } = useSelectedChips(props)
+
+    const { inputValue, searchItems } = useAutocomplete(props)
+
+    function clear() {
+        model.value = props.multiple ? [] : undefined
+        inputValue.value = ''
+    }
+
+    function onFocus() {
+        menu.value = true
+    }
+
+    function onClose() {
+        unref(inputRef).blur()
+    }
+
+    function onListKeyboardSelect(e: KeyboardEvent) {
+        unref(menuListRef).onKeydown(e)
+
+        if (props.multiple) {
+            unref(inputRef).blur()
+            nextTick(() => unref(inputRef).focus())
+        } else {
+            inputValue.value = ''
+        }
+    }
+
+    function resetListFocus() {
+        unref(menuListRef)?.blur()
+    }
+
+    function navigateListDown() {
+        unref(menuListRef)?.navigateDown()
+    }
+
+    function navigateListUp() {
+        unref(menuListRef)?.navigateUp()
+    }
 
     const { onKeydown } = useKeyboard({
         Backspace: () => {
@@ -54,64 +88,86 @@
                 model.value = props.multiple
                     ? data.slice(0, -1)
                     : undefined
+
+                resetListFocus()
             }
         },
         Tab: () => {
             unref(inputRef).blur()
-            unref(menuRef).close()
+            toggleMenu()
         },
         Escape: () => {
-            unref(menuRef).close()
-            unref(fieldRef).blur()
+            toggleMenu()
+            unref(inputRef).blur()
         },
-        ArrowDown: () => unref(menuListRef)?.navigateDown(),
-        ArrowUp: () => unref(menuListRef)?.navigateUp(),
-        Enter: () => {}
+        ArrowDown: navigateListDown,
+        ArrowUp: navigateListUp,
     }, { prevent: ['ArrowDown', 'ArrowUp', 'Enter'] })
 
-    function clear() {
-        model.value = props.multiple ? [] : undefined
-        inputValue.value = ''
-    }
+    const { onKeydown: onListKeydown } = useKeyboard({
+        Enter: onListKeyboardSelect,
+        Space: onListKeyboardSelect
+    })
 
-    function focus() {
-        unref(inputRef).focus()
-    }
-
-    function onClose() {
-        unref(inputRef).blur()
-    }
-
-    function setActiveDescendant(id: string) {
-        activeDescendant.value = id
-    }
-
-    function clearActiveDescendant(id: string) {
-        if (activeDescendant.value === id) {
-            activeDescendant.value = undefined
-        }
-    }
-
-    watch(inputValue, () => {
-        emit('update:search', unref(inputValue))
+    watch(inputValue, (value) => {
+        emit('update:search', value)
     })
 
 </script>
 
 <template>
-    <c-input
+    <c-text-field
         ref="inputRef"
-        :model-value="model"
+        v-model="inputValue"
+        :validation-value="model"
+        :dirty="hasValue"
         v-bind="$attrs"
+        :value="textValue"
         role="combobox"
         :aria-controls="listId"
-        :aria-activedescendant="activeDescendant"
+        class="c-autocomplete"
+        @mousedown="resetListFocus"
+        @focus="onFocus"
+        @keydown="onKeydown"
+        @clear="clear"
     >
-        <template #field="field">
+        <template
+            v-if="$slots.prepend"
+            #prepend
+        >
+            <slot name="prepend"></slot>
+        </template>
+        <template #append>
+            <slot name="append">
+                <c-icon
+                    :name="IconAliases.DROPDOWN"
+                    size="24"
+                />
+            </slot>
+        </template>
+        <template #before>
+            <slot
+                name="chips"
+                :items="chips"
+            >
+                <c-chip
+                    v-for="(it, i) in chips"
+                    :key="it"
+                    :closable
+                    class="c-autocomplete__chip"
+                    color="info"
+                    @close="unselect(i)"
+                >
+                    {{ it }}
+                </c-chip>
+            </slot>
+        </template>
+        <template #menu="{id}">
             <c-menu
-                :id="`${field.uid}-menu`"
-                ref="menuRef"
+                :id
+                v-model="menu"
                 align="bottom"
+                activator="parent"
                 open-on-focus
                 close-on-click-outside
                 :close-on-content-click="!multiple"
@@ -120,66 +176,6 @@
                 :preset="options?.menuPreset"
                 @close="onClose"
             >
-                <template #activator="{on, activator}">
-                    <div
-                        class="c-autocomplete"
-                        v-bind="activator"
-                    >
-                        <slot
-                            name="field"
-                            v-bind="field"
-                        >
-                            <c-field
-                                :id="field.uid"
-                                ref="fieldRef"
-                                v-model="inputValue"
-                                v-bind="field.attrs"
-                                class="c-autocomplete__field"
-                                :label="field.label"
-                                :clearable="field.clearable"
-                                :disabled="field.disabled"
-                                :focused="field.focused"
-                                :readonly="field.readonly"
-                                :filled="hasValue"
-                                :error="field.hasError"
-                                v-on="on"
-                                @focus="focus"
-                                @keydown="onKeydown"
-                                @clear="clear"
-                            >
-                                <template
-                                    v-if="$slots.prepend"
-                                    #prepend
-                                >
-                                    <slot name="prepend"></slot>
-                                </template>
-                                <template #append>
-                                    <slot name="append">
-                                        <c-icon
-                                            :name="IconAliases.DROPDOWN"
-                                            size="24"
-                                        />
-                                    </slot>
-                                </template>
-                                <template #before>
-                                    <slot
-                                        name="chips"
-                                        :items="chips"
-                                    >
-                                        <c-chip
-                                            v-for="it in chips"
-                                            :key="it"
-                                            class="c-autocomplete__chip"
-                                            color="info"
-                                        >
-                                            {{ it }}
-                                        </c-chip>
-                                    </slot>
-                                </template>
-                            </c-field>
-                        </slot>
-                    </div>
-                </template>
                 <template #default>
                     <slot
                         name="menu"
@@ -190,11 +186,12 @@
                             :id="listId"
                             ref="menuListRef"
                             v-model="model"
+                            tabindex="-1"
                             variant="listbox"
-                            :disabled="field.disabled"
                             class="c-autocomplete__listbox"
                             :multiple
                             :mandatory
+                            @keydown="onListKeydown"
                         >
                             <c-list-item v-if="!searchItems.length">
                                 <c-list-item-title>
@@ -205,8 +202,6 @@
                                 v-for="item of searchItems"
                                 :key="item.key"
                                 :value="item.value ?? item.raw"
-                                @active="setActiveDescendant"
-                                @inactive="clearActiveDescendant"
                             >
                                 <c-list-item-title>
                                     {{ item.title }}
@@ -228,5 +223,5 @@
                 </span>
             </slot>
         </template>
-    </c-input>
+    </c-text-field>
 </template>
