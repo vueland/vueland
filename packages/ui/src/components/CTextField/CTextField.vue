@@ -60,7 +60,6 @@
         focus: () => unref(cInputRef)?.focus(),
     })
 
-
 </script>
 
 <template>

@@ -115,7 +115,7 @@ const allSkills = ['Vue', 'React', 'TypeScript', 'Node.js', 'Go', 'Rust']
 | `mandatory`  | `boolean`                          | `false` | In `multiple`: keep the last item. Single selection is always kept |
 | `chips`      | `boolean`                          | `false` | Render selected values as removable chips                          |
 
-Any [`CTextField`](/en/components/CTextField) prop — `label`, `placeholder`, `clearable`, `rules`, `disabled`, `readonly`, … — is forwarded to the underlying field.
+Any [`CTextField`](/en/components/CTextField) prop — `label`, `placeholder`, `clearable`, `rules`, `disabled`, `readonly`, … — is forwarded to the underlying field. Functions in `rules` receive the model value (the value or array stored in `v-model`), not the text displayed in the field.
 
 ### CSelect events
 

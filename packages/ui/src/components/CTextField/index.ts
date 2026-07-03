@@ -10,7 +10,7 @@ import type {
 export type { CTextFieldProps, CTextFieldSlots }
 
 type CTextFieldComponent = new <T = any>() => {
-    $props: Omit<CInputProps, 'modelValue'> & CTextFieldProps<T>
+    $props: Omit<CInputProps<T>, 'modelValue'> & CTextFieldProps
     $slots: CTextFieldSlots
     $emits: CTextFieldEmits<T>
 }
