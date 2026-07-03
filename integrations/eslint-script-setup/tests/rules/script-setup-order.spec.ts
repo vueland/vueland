@@ -1,6 +1,10 @@
 import * as tsParser from '@typescript-eslint/parser'
 import { RuleTester } from 'eslint'
-import { describe, it } from 'vitest'
+import {
+    describe,
+    expect,
+    it,
+} from 'vitest'
 
 import { scriptSetupOrder } from '../../src/rules/script-setup-order'
 
@@ -142,7 +146,7 @@ describe('script-setup-order', () => {
                 {
                     filename: 'Component.vue',
                     options: [{ order: ['import', 'type', 'macros'] }],
-                    code: 'defineExpose({ focus })\nconst model = defineModel()',
+                    code: 'console.log(\'debug\')\nconst model = defineModel()',
                 },
             ],
             invalid: [],
@@ -431,6 +435,368 @@ describe('script-setup-order', () => {
                     options: [{ reactiveApis: ['customRef'] }],
                     code: 'onMounted(() => {})\nconst x = customRef(() => ({ get() {}, set() {} }))',
                     output: 'const x = customRef(() => ({ get() {}, set() {} }))\n\nonMounted(() => {})',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    // ─── pin-маркер ───────────────────────────────────────────────────────────
+
+    it('pin: leading-маркер закрепляет ноду, остальные сортируются вокруг', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    code: [
+                        'const double = computed(() => 1)',
+                        '// eslint-script-setup:keep',
+                        'const count = ref(0)',
+                        'const label = \'x\'',
+                    ].join('\n'),
+                    output: [
+                        'const label = \'x\'',
+                        '',
+                        '// eslint-script-setup:keep',
+                        'const count = ref(0)',
+                        '',
+                        'const double = computed(() => 1)',
+                    ].join('\n'),
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    it('pin: trailing-маркер снимает нарушение с закреплённой ноды', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [
+                {
+                    filename: 'Component.vue',
+                    code: 'const double = computed(() => 1) // eslint-script-setup:keep\nconst count = ref(0)',
+                },
+            ],
+            invalid: [],
+        })
+    })
+
+    it('pin: пустая строка между маркером и нодой разрывает закрепление', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    code: '// eslint-script-setup:keep\n\nconst double = computed(() => 1)\nconst count = ref(0)',
+                    output: 'const count = ref(0)\n\n// eslint-script-setup:keep\nconst double = computed(() => 1)',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    // ─── порядок lifecycle-хуков ──────────────────────────────────────────────
+
+    it('lifecycle: хуки сортируются по моменту срабатывания', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    code: 'onMounted(() => {})\nonBeforeMount(() => {})',
+                    output: 'onBeforeMount(() => {})\n\nonMounted(() => {})',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    it('lifecycle: хуки не сортируются, если lifecycle не перечислен в order', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [
+                {
+                    filename: 'Component.vue',
+                    options: [{ order: ['import', 'type', 'macros'] }],
+                    code: 'onMounted(() => {})\nconst count = ref(0)\nonBeforeMount(() => {})',
+                },
+            ],
+            invalid: [],
+        })
+    })
+
+    it('lifecycle: кастомный lifecycleOrder переопределяет порядок хуков', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [
+                {
+                    filename: 'Component.vue',
+                    options: [{ lifecycleOrder: ['onMounted', 'onBeforeMount'] }],
+                    code: 'onMounted(() => {})\nonBeforeMount(() => {})',
+                },
+            ],
+            invalid: [],
+        })
+    })
+
+    it('lifecycle: пустой lifecycleOrder отключает сортировку хуков', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [
+                {
+                    filename: 'Component.vue',
+                    options: [{ lifecycleOrder: [] }],
+                    code: 'onMounted(() => {})\nonBeforeMount(() => {})',
+                },
+            ],
+            invalid: [],
+        })
+    })
+
+    // ─── новые категории ──────────────────────────────────────────────────────
+
+    it('inject: идёт перед reactive', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    code: 'const count = ref(0)\nconst theme = inject(\'theme\')',
+                    output: 'const theme = inject(\'theme\')\n\nconst count = ref(0)',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    it('provide: идёт перед lifecycle', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    code: 'onMounted(() => {})\nprovide(\'key\', 1)',
+                    output: 'provide(\'key\', 1)\n\nonMounted(() => {})',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    it('class: идёт перед composable', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    code: 'const router = useRouter()\nclass Foo {}',
+                    output: 'class Foo {}\n\nconst router = useRouter()',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    it('class: extends создаёт зависимость — depConflict вместо ломаного фикса', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    code: 'const base = getBase()\nclass Foo extends base {}',
+                    errors: [{ messageId: 'depConflict' }],
+                },
+            ],
+        })
+    })
+
+    it('defineExpose: сортируется в самый конец', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    code: 'defineExpose({ a: 1 })\nonMounted(() => {})',
+                    output: 'onMounted(() => {})\n\ndefineExpose({ a: 1 })',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    // ─── гранулярные макросы в order ──────────────────────────────────────────
+
+    it('macros: конкретные макросы в order сортируются между собой', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    options: [{ order: ['defineProps', 'defineEmits'] }],
+                    code: 'const emit = defineEmits([\'update\'])\nconst props = defineProps({ a: Number })',
+                    output: 'const props = defineProps({ a: Number })\n\nconst emit = defineEmits([\'update\'])',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    it('macros: withDefaults считается defineProps', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    options: [{ order: ['defineProps', 'defineEmits'] }],
+                    code: 'const emit = defineEmits()\nconst props = withDefaults(defineProps(), { a: 1 })',
+                    output: 'const props = withDefaults(defineProps(), { a: 1 })\n\nconst emit = defineEmits()',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    it('macros: не перечисленный макрос идёт по позиции категории macros', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    options: [{ order: ['defineOptions', 'macros'] }],
+                    code: 'const props = defineProps()\ndefineOptions({ name: \'Foo\' })',
+                    output: 'defineOptions({ name: \'Foo\' })\n\nconst props = defineProps()',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    // ─── customCategories ─────────────────────────────────────────────────────
+
+    it('customCategories: namePattern выделяет свою категорию', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    options: [{
+                        order: ['macros', 'reactive', 'handlers', 'lifecycle'],
+                        customCategories: [{ name: 'handlers', namePattern: '^on[A-Z]' }],
+                    }],
+                    code: 'onMounted(() => {})\nfunction onClick() {}\nconst count = ref(0)',
+                    output: 'const count = ref(0)\n\nfunction onClick() {}\n\nonMounted(() => {})',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    it('customCategories: calleePattern выделяет свою категорию', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    options: [{
+                        order: ['composable', 'stores'],
+                        customCategories: [{ name: 'stores', calleePattern: '^storeToRefs$' }],
+                    }],
+                    code: 'const { a } = storeToRefs(store)\nconst router = useRouter()',
+                    output: 'const router = useRouter()\n\nconst { a } = storeToRefs(store)',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    // ─── валидация опций ──────────────────────────────────────────────────────
+
+    it('валидация: неизвестная запись в order — ошибка конфигурации', () => {
+        expect(() => tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [
+                {
+                    filename: 'Component.vue',
+                    options: [{ order: ['import', 'bogus'] }],
+                    code: 'const count = ref(0)',
+                },
+            ],
+            invalid: [],
+        })).toThrow(/Invalid "order" entry: "bogus"/)
+    })
+
+    it('валидация: кастомная категория без паттернов — ошибка конфигурации', () => {
+        expect(() => tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [
+                {
+                    filename: 'Component.vue',
+                    options: [{ order: ['handlers'], customCategories: [{ name: 'handlers' }] }],
+                    code: 'const count = ref(0)',
+                },
+            ],
+            invalid: [],
+        })).toThrow(/requires "namePattern" or "calleePattern"/)
+    })
+
+    it('валидация: кастомная категория не в order — ошибка конфигурации', () => {
+        expect(() => tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [
+                {
+                    filename: 'Component.vue',
+                    options: [{ customCategories: [{ name: 'handlers', namePattern: '^on[A-Z]' }] }],
+                    code: 'const count = ref(0)',
+                },
+            ],
+            invalid: [],
+        })).toThrow(/must be listed in the "order" option/)
+    })
+
+    it('валидация: кастомная категория с именем встроенной — ошибка конфигурации', () => {
+        expect(() => tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [
+                {
+                    filename: 'Component.vue',
+                    options: [{ order: ['reactive'], customCategories: [{ name: 'reactive', namePattern: 'x' }] }],
+                    code: 'const count = ref(0)',
+                },
+            ],
+            invalid: [],
+        })).toThrow(/shadows a built-in category/)
+    })
+
+    it('валидация: неизвестный хук в lifecycleOrder — ошибка конфигурации', () => {
+        expect(() => tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [
+                {
+                    filename: 'Component.vue',
+                    options: [{ lifecycleOrder: ['onFoo'] }],
+                    code: 'const count = ref(0)',
+                },
+            ],
+            invalid: [],
+        })).toThrow(/not a known lifecycle API/)
+    })
+
+    // ─── трейлинг- и лидинг-комментарии при сортировке ────────────────────────
+
+    it('комментарии: trailing-комментарий переезжает вместе с нодой', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    code: 'const double = computed(() => 1) // сумма\nconst count = ref(0)',
+                    output: 'const count = ref(0)\n\nconst double = computed(() => 1) // сумма',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    it('комментарии: leading-комментарий первой ноды не дублируется', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    code: '// header\nimport { ref } from \'vue\'\nonMounted(() => {})\nconst count = ref(0)',
+                    output: '// header\nimport { ref } from \'vue\'\n\nconst count = ref(0)\n\nonMounted(() => {})',
                     errors: [{ messageId: 'wrongOrder' }],
                 },
             ],

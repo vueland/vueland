@@ -66,8 +66,9 @@ const count = useCounter()
 '@vueland/script-setup-order': ['warn', {
   // Override the full category order
   order: [
-    'import', 'type', 'macros', 'composable', 'reactive',
-    'variable', 'computed', 'function', 'watchEffect', 'watch', 'lifecycle'
+    'import', 'type', 'macros', 'class', 'composable', 'inject',
+    'reactive', 'variable', 'computed', 'function', 'watchEffect',
+    'watch', 'provide', 'lifecycle', 'defineExpose'
   ],
 
   // Regex to detect composables (default: /^use[A-Z]/)
@@ -79,6 +80,61 @@ const count = useCounter()
   watchEffectApis: ['watchDebounced'],
   watchApis: ['watchThrottled'],
   lifecycleApis: ['onIdle'],
+
+  // Hook order inside the lifecycle group (default: lifecycle firing order)
+  lifecycleOrder: ['onBeforeMount', 'onMounted' /* ... */],
+
+  // Own categories matched by AST
+  customCategories: [
+    { name: 'handlers', namePattern: '^on[A-Z]' },
+  ],
+}]
+```
+
+Unknown entries in `order`, `lifecycleOrder`, or invalid `customCategories` throw a configuration error instead of being silently ignored.
+
+### Pinning a declaration
+
+A `// eslint-script-setup:keep` comment pins a declaration in place — the rest of the block is sorted into the free slots around it. The comment must be directly adjacent: on the line right before the declaration or at the end of its line. A blank line between the comment and the declaration breaks the pin.
+
+```ts
+const emit = defineEmits(['update'])
+
+// eslint-script-setup:keep
+const count = ref(0)
+
+const props = defineProps<{ label: string }>() // stays below the pinned node
+```
+
+### Lifecycle hook order
+
+Hooks inside the `lifecycle` group are sorted by the moment they fire: `onBeforeMount` → `onMounted` → `onBeforeUpdate` → `onUpdated` → `onBeforeUnmount` → `onUnmounted` → the rest. Multiple calls of the same hook keep their source order.
+
+The `lifecycleOrder` option overrides this order; pass an empty array to disable hook sorting. Hook sorting only applies when `lifecycle` is listed in `order` — with a partial `order` that omits it, hooks are left as-is.
+
+### Individual macros in `order`
+
+Instead of the whole `macros` group, specific macros can be listed to enforce order between them. Macros not listed fall back to the position of the `macros` group. `withDefaults(defineProps(...))` counts as `defineProps`.
+
+```js
+'@vueland/script-setup-order': ['warn', {
+  order: ['import', 'type', 'defineOptions', 'defineProps', 'defineEmits', 'macros'],
+}]
+```
+
+### Custom categories
+
+The `customCategories` option defines your own groups, matched against the AST — by the declared identifier name (`namePattern`) and/or the callee name of the initializer (`calleePattern`). Custom matching runs before the built-in classification, and each custom category must also be listed in `order`:
+
+```js
+'@vueland/script-setup-order': ['warn', {
+  order: ['macros', 'composable', 'stores', 'reactive', 'computed', 'handlers', 'lifecycle'],
+  customCategories: [
+    // const { items } = storeToRefs(store) → stores
+    { name: 'stores', calleePattern: '^storeToRefs$' },
+    // function onClick() {} / const onSubmit = () => {} → handlers
+    { name: 'handlers', namePattern: '^on[A-Z]' },
+  ],
 }]
 ```
 
@@ -109,8 +165,9 @@ The full order can feel too strict for a large established codebase. The `order`
 ```js
 '@vueland/script-setup-order': ['error', {
   order: [
-    'import', 'type', 'macros', 'composable', 'reactive',
-    'variable', 'computed', 'function', 'watchEffect', 'watch', 'lifecycle'
+    'import', 'type', 'macros', 'class', 'composable', 'inject',
+    'reactive', 'variable', 'computed', 'function', 'watchEffect',
+    'watch', 'provide', 'lifecycle', 'defineExpose'
   ],
 }]
 ```

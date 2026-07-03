@@ -4,7 +4,7 @@
 
 Enforces a consistent order of declarations inside `<script setup>` blocks and provides autofix.
 
-Default order: `import → type → macros → composable → reactive → variable → computed → function → watchEffect → watch → lifecycle`
+Default order: `import → type → macros → class → composable → inject → reactive → variable → computed → function → watchEffect → watch → provide → lifecycle → defineExpose`
 
 ## Installation
 

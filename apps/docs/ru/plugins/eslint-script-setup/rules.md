@@ -66,8 +66,9 @@ const count = useCounter()
 '@vueland/script-setup-order': ['warn', {
   // Переопределить полный порядок категорий
   order: [
-    'import', 'type', 'macros', 'composable', 'reactive',
-    'variable', 'computed', 'function', 'watchEffect', 'watch', 'lifecycle'
+    'import', 'type', 'macros', 'class', 'composable', 'inject',
+    'reactive', 'variable', 'computed', 'function', 'watchEffect',
+    'watch', 'provide', 'lifecycle', 'defineExpose'
   ],
 
   // Регулярное выражение для определения composable (по умолчанию: /^use[A-Z]/)
@@ -79,6 +80,61 @@ const count = useCounter()
   watchEffectApis: ['watchDebounced'],
   watchApis: ['watchThrottled'],
   lifecycleApis: ['onIdle'],
+
+  // Порядок хуков внутри группы lifecycle (по умолчанию — порядок срабатывания)
+  lifecycleOrder: ['onBeforeMount', 'onMounted' /* ... */],
+
+  // Собственные категории, определяемые по AST
+  customCategories: [
+    { name: 'handlers', namePattern: '^on[A-Z]' },
+  ],
+}]
+```
+
+Неизвестные записи в `order`, `lifecycleOrder` или некорректные `customCategories` бросают ошибку конфигурации, а не игнорируются молча.
+
+### Закрепление декларации
+
+Комментарий `// eslint-script-setup:keep` закрепляет декларацию на месте — остальной блок сортируется в свободные слоты вокруг неё. Комментарий должен стоять вплотную: на строке прямо перед декларацией или в конце её строки. Пустая строка между комментарием и декларацией разрывает закрепление.
+
+```ts
+const emit = defineEmits(['update'])
+
+// eslint-script-setup:keep
+const count = ref(0)
+
+const props = defineProps<{ label: string }>() // останется ниже закреплённой ноды
+```
+
+### Порядок lifecycle-хуков
+
+Хуки внутри группы `lifecycle` сортируются по моменту срабатывания: `onBeforeMount` → `onMounted` → `onBeforeUpdate` → `onUpdated` → `onBeforeUnmount` → `onUnmounted` → остальные. Несколько вызовов одного хука сохраняют исходный порядок.
+
+Опция `lifecycleOrder` переопределяет этот порядок; пустой массив отключает сортировку хуков. Сортировка хуков действует только когда `lifecycle` перечислен в `order` — при частичном `order` без него хуки не трогаются.
+
+### Отдельные макросы в `order`
+
+Вместо общей группы `macros` можно перечислить конкретные макросы, чтобы зафиксировать порядок между ними. Не перечисленные макросы идут по позиции группы `macros`. `withDefaults(defineProps(...))` считается `defineProps`.
+
+```js
+'@vueland/script-setup-order': ['warn', {
+  order: ['import', 'type', 'defineOptions', 'defineProps', 'defineEmits', 'macros'],
+}]
+```
+
+### Кастомные категории
+
+Опция `customCategories` определяет собственные группы, которые матчатся по AST — по имени объявляемого идентификатора (`namePattern`) и/или по имени вызова в инициализаторе (`calleePattern`). Кастомный матчинг выполняется до встроенной классификации, и каждая кастомная категория должна быть перечислена в `order`:
+
+```js
+'@vueland/script-setup-order': ['warn', {
+  order: ['macros', 'composable', 'stores', 'reactive', 'computed', 'handlers', 'lifecycle'],
+  customCategories: [
+    // const { items } = storeToRefs(store) → stores
+    { name: 'stores', calleePattern: '^storeToRefs$' },
+    // function onClick() {} / const onSubmit = () => {} → handlers
+    { name: 'handlers', namePattern: '^on[A-Z]' },
+  ],
 }]
 ```
 
@@ -109,8 +165,9 @@ const count = useCounter()
 ```js
 '@vueland/script-setup-order': ['error', {
   order: [
-    'import', 'type', 'macros', 'composable', 'reactive',
-    'variable', 'computed', 'function', 'watchEffect', 'watch', 'lifecycle'
+    'import', 'type', 'macros', 'class', 'composable', 'inject',
+    'reactive', 'variable', 'computed', 'function', 'watchEffect',
+    'watch', 'provide', 'lifecycle', 'defineExpose'
   ],
 }]
 ```

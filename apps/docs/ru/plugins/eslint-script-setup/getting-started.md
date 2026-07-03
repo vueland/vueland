@@ -4,7 +4,7 @@
 
 Обеспечивает единообразный порядок объявлений внутри `<script setup>` и автоматически исправляет нарушения.
 
-Порядок по умолчанию: `import → type → macros → composable → reactive → variable → computed → function → watchEffect → watch → lifecycle`
+Порядок по умолчанию: `import → type → macros → class → composable → inject → reactive → variable → computed → function → watchEffect → watch → provide → lifecycle → defineExpose`
 
 ## Установка
 
