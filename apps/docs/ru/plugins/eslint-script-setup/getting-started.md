@@ -44,6 +44,7 @@ export default [
     plugins: { '@vueland': vueScriptSetup },
     rules: {
       '@vueland/script-setup-order': 'warn',
+      '@vueland/script-attrs-order': 'warn',
       '@vueland/no-multi-declaration': 'error',
       '@vueland/no-inline-composable': 'error',
     },
@@ -51,12 +52,10 @@ export default [
 ]
 ```
 
-Или используйте пресет `recommended`, который применяет все три правила с дефолтными уровнями:
+Или используйте пресет `recommended`, который применяет все правила с дефолтными уровнями:
 
 ```js
 import vueScriptSetup from '@vueland/eslint-script-setup'
 
-export default [
-  vueScriptSetup.configs.recommended,
-]
+export default [vueScriptSetup.configs.recommended]
 ```

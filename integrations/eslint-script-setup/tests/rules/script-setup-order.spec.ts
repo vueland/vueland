@@ -114,7 +114,7 @@ describe('script-setup-order', () => {
                     filename: 'Component.vue',
                     options: [{ order: ['import', 'reactive', 'computed', 'watch', 'lifecycle'] }],
                     code: 'const count = ref(0)\nwatch(count, () => {})\nwatchEffect(() => {})\nonMounted(() => {})',
-                    output: 'const count = ref(0)\n\nwatch(count, () => {})\n\nonMounted(() => {})\n\nwatchEffect(() => {})',
+                    output: 'const count = ref(0)\nwatch(count, () => {})\n\nonMounted(() => {})\n\nwatchEffect(() => {})',
                     errors: [{ messageId: 'wrongOrder' }],
                 },
             ],
@@ -263,6 +263,24 @@ describe('script-setup-order', () => {
         })
     })
 
+    it('invalid: ссылки в теле FunctionDeclaration ленивые — сортирует без depConflict', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    // частичный order: function и reactive не перечислены и сохраняют
+                    // свой порядок — onBlur остаётся выше menu, и это валидно,
+                    // потому что тело функции выполняется только при вызове
+                    options: [{ order: ['import', 'type', 'macros'] }],
+                    code: 'function onBlur() { menu.value = false }\nconst model = defineModel()\nconst menu = shallowRef(false)',
+                    output: 'const model = defineModel()\n\nfunction onBlur() { menu.value = false }\n\nconst menu = shallowRef(false)',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
     it('invalid: computed зависит от другого computed — depConflict без фикса', () => {
         tester.run('script-setup-order', scriptSetupOrder, {
             valid: [],
@@ -275,6 +293,63 @@ describe('script-setup-order', () => {
                     // идёт ДО computed → depConflict
                     code: 'const double = computed(() => 1)\nconst label = double.value + \'!\'',
                     errors: [{ messageId: 'depConflict' }],
+                },
+            ],
+        })
+    })
+
+    it('invalid: зависимость через TSAsExpression видна — depConflict вместо ломаного фикса', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    code: 'const double = computed(() => 1)\nconst label = (double as any).value',
+                    errors: [{ messageId: 'depConflict' }],
+                },
+            ],
+        })
+    })
+
+    it('invalid: имена из деструктуринга видны — depConflict вместо ломаного фикса', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    // после сортировки reactive поднимется выше variable,
+                    // но count зависит от имени "a" из деструктуринга
+                    code: 'const { a } = obj\nconst count = ref(a)',
+                    errors: [{ messageId: 'depConflict' }],
+                },
+            ],
+        })
+    })
+
+    it('invalid: property в obj.prop не считается зависимостью — фикс применяется', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    // "flag" в state.flag — property, а не ссылка на computed flag
+                    code: 'const flag = computed(() => 1)\nconst count = ref(state.flag)',
+                    output: 'const count = ref(state.flag)\n\nconst flag = computed(() => 1)',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    it('invalid: autofix сохраняет отступ ноды после комментария', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    code: '    onMounted(() => {})\n    // счётчик\n    const count = ref(0)',
+                    output: '    // счётчик\n    const count = ref(0)\n\n    onMounted(() => {})',
+                    errors: [{ messageId: 'wrongOrder' }],
                 },
             ],
         })
@@ -299,6 +374,34 @@ describe('script-setup-order', () => {
                         'function useCounter() { return { value: ref(0) } }',
                     ].join('\n'),
                     errors: [{ messageId: 'depConflictFixed' }],
+                },
+            ],
+        })
+    })
+
+    it('invalid: autofix не добавляет пустые строки между соседними нодами', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    code: 'onMounted(() => {})\nconst a = ref(0)\nconst b = ref(1)',
+                    output: 'const a = ref(0)\nconst b = ref(1)\n\nonMounted(() => {})',
+                    errors: [{ messageId: 'wrongOrder' }],
+                },
+            ],
+        })
+    })
+
+    it('invalid: autofix сохраняет намеренные пустые строки между соседними нодами', () => {
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    code: 'onMounted(() => {})\nconst a = ref(0)\n\nconst b = ref(1)',
+                    output: 'const a = ref(0)\n\nconst b = ref(1)\n\nonMounted(() => {})',
+                    errors: [{ messageId: 'wrongOrder' }],
                 },
             ],
         })

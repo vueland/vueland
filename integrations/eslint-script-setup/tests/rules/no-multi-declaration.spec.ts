@@ -30,4 +30,50 @@ describe('no-multi-declaration', () => {
             ],
         })
     })
+
+    it('не репортит объявления в заголовке цикла', () => {
+        tester.run('no-multi-declaration', noMultiDeclaration, {
+            valid: [
+                {
+                    filename: 'Component.vue',
+                    code: 'for (let i = 0, len = items.length; i < len; i++) { work(i) }',
+                },
+            ],
+            invalid: [],
+        })
+    })
+
+    it('деструктуринг — одно объявление, не репортит', () => {
+        tester.run('no-multi-declaration', noMultiDeclaration, {
+            valid: [
+                {
+                    filename: 'Component.vue',
+                    code: 'const { chips, hasValue } = useSelectedChips(props)',
+                },
+                {
+                    filename: 'Component.vue',
+                    code: 'const [first, second] = usePair()',
+                },
+            ],
+            invalid: [],
+        })
+    })
+
+    it('репортит несколько декларантов внутри функции и без инициализаторов', () => {
+        tester.run('no-multi-declaration', noMultiDeclaration, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    code: 'function setup() { const a = 1, b = 2 }',
+                    errors: [{ messageId: 'noMulti' }],
+                },
+                {
+                    filename: 'Component.vue',
+                    code: 'let x, y',
+                    errors: [{ messageId: 'noMulti' }],
+                },
+            ],
+        })
+    })
 })

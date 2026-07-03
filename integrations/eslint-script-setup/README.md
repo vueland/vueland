@@ -55,6 +55,7 @@ export default [
     plugins: { '@vueland': vueScriptSetup },
     rules: {
       '@vueland/script-setup-order': 'warn',
+      '@vueland/script-attrs-order': 'warn',
       '@vueland/no-multi-declaration': 'error',
       '@vueland/no-inline-composable': 'error',
     },
@@ -67,9 +68,7 @@ Or use the `recommended` preset:
 ```js
 import vueScriptSetup from '@vueland/eslint-script-setup'
 
-export default [
-  vueScriptSetup.configs.recommended,
-]
+export default [vueScriptSetup.configs.recommended]
 ```
 
 ## Rules
@@ -95,13 +94,21 @@ const MAX = 100
 
 const double = computed(() => count.value * 2)
 
-function increment() { count.value++ }
+function increment() {
+  count.value++
+}
 
-watchEffect(() => { /* ... */ })
+watchEffect(() => {
+  /* ... */
+})
 
-watch(count, () => { /* ... */ })
+watch(count, () => {
+  /* ... */
+})
 
-onMounted(() => { /* ... */ })
+onMounted(() => {
+  /* ... */
+})
 </script>
 ```
 
@@ -131,13 +138,39 @@ If reordering would place a `const` before the value it depends on, the rule rep
 
 ---
 
+### `script-attrs-order`
+
+Enforces attribute order on the `<script>` tag. Provides autofix.
+
+```vue
+<!-- ✗ -->
+<script lang="ts" setup>
+
+<!-- ✓ -->
+<script setup lang="ts">
+<script setup lang="ts" generic="T">
+```
+
+**Options:**
+
+```js
+'@vueland/script-attrs-order': ['warn', {
+  // Attribute order (default). Attributes not listed keep their
+  // relative order after the listed ones.
+  order: ['setup', 'lang', 'generic'],
+}]
+```
+
+---
+
 ### `no-multi-declaration`
 
 Forbids multiple declarators in a single `const`/`let` statement.
 
 ```ts
 // ✗
-const a = ref(1), b = ref(2)
+const a = ref(1),
+  b = ref(2)
 
 // ✓
 const a = ref(1)

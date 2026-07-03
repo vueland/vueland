@@ -39,4 +39,48 @@ describe('no-inline-composable', () => {
             ],
         })
     })
+
+    it('не репортит composable внутри callback и методы-composable', () => {
+        tester.run('no-inline-composable', noInlineComposable, {
+            valid: [
+                {
+                    // вызов внутри тела callback — не прямой аргумент
+                    filename: 'Component.vue',
+                    code: 'watch(count, () => { const router = useRouter() })',
+                },
+                {
+                    // callee — MemberExpression, правило смотрит только на прямые вызовы
+                    filename: 'Component.vue',
+                    code: 'doSomething(store.useThing())',
+                },
+                {
+                    // сам composable с обычными аргументами
+                    filename: 'Component.vue',
+                    code: 'const feature = useFeature(options)',
+                },
+            ],
+            invalid: [],
+        })
+    })
+
+    it('репортит вложенные и множественные inline-вызовы', () => {
+        tester.run('no-inline-composable', noInlineComposable, {
+            valid: [],
+            invalid: [
+                {
+                    filename: 'Component.vue',
+                    code: 'wrap(deep(useFoo()))',
+                    errors: [{ messageId: 'noInline', data: { name: 'useFoo' } }],
+                },
+                {
+                    filename: 'Component.vue',
+                    code: 'setup(useA(), useB())',
+                    errors: [
+                        { messageId: 'noInline', data: { name: 'useA' } },
+                        { messageId: 'noInline', data: { name: 'useB' } },
+                    ],
+                },
+            ],
+        })
+    })
 })

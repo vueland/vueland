@@ -22,13 +22,21 @@ const MAX = 100
 
 const double = computed(() => count.value * 2)
 
-function increment() { count.value++ }
+function increment() {
+  count.value++
+}
 
-watchEffect(() => { /* ... */ })
+watchEffect(() => {
+  /* ... */
+})
 
-watch(count, () => { /* ... */ })
+watch(count, () => {
+  /* ... */
+})
 
-onMounted(() => { /* ... */ })
+onMounted(() => {
+  /* ... */
+})
 </script>
 ```
 
@@ -41,10 +49,14 @@ When the conflicting declaration is an arrow function (e.g. `const useFoo = () =
 ```ts
 // Before fix
 const count = useCounter() // ✗ used before declaration
-const useCounter = () => { return ref(0) }
+const useCounter = () => {
+  return ref(0)
+}
 
 // After fix — converted and sorted
-function useCounter() { return ref(0) }
+function useCounter() {
+  return ref(0)
+}
 const count = useCounter()
 ```
 
@@ -107,13 +119,39 @@ The full order can feel too strict for a large established codebase. The `order`
 
 ---
 
+## `script-attrs-order`
+
+Enforces attribute order on the `<script>` tag. Provides autofix.
+
+```vue
+<!-- ✗ incorrect -->
+<script lang="ts" setup>
+
+<!-- ✓ correct -->
+<script setup lang="ts">
+<script setup lang="ts" generic="T">
+```
+
+### Options
+
+```js
+'@vueland/script-attrs-order': ['warn', {
+  // Attribute order (default). Attributes not listed keep their
+  // relative order after the listed ones.
+  order: ['setup', 'lang', 'generic'],
+}]
+```
+
+---
+
 ## `no-multi-declaration`
 
 Forbids multiple declarators in a single `const`/`let` statement inside `<script setup>`.
 
 ```ts
 // ✗ incorrect
-const a = ref(1), b = ref(2)
+const a = ref(1),
+  b = ref(2)
 
 // ✓ correct
 const a = ref(1)

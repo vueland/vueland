@@ -6,6 +6,7 @@ export const noMultiDeclaration: Rule.RuleModule = {
         docs: {
             description: 'Disallow multiple declarators in a single const/let statement in script setup',
             recommended: true,
+            url: 'https://vueland.github.io/vueland/en/plugins/eslint-script-setup/rules#no-multi-declaration',
         },
         schema: [],
         messages: {
@@ -16,8 +17,15 @@ export const noMultiDeclaration: Rule.RuleModule = {
         const filename = context.filename ?? context.getFilename?.()
         if (!filename.endsWith('.vue')) return {}
 
+        const FOR_PARENTS = new Set(['ForStatement', 'ForInStatement', 'ForOfStatement'])
+
         return {
             VariableDeclaration(node) {
+                // объявления в заголовке цикла (for (let i = 0, len = ...)) идиоматичны
+                if (node.parent && FOR_PARENTS.has(node.parent.type)) {
+                    return
+                }
+
                 if (node.declarations.length > 1) {
                     context.report({ node, messageId: 'noMulti' })
                 }
