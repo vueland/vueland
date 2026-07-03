@@ -1,5 +1,11 @@
 # @vueland/ui
 
+## 0.1.3
+
+### Patch Changes
+
+- [#90](https://github.com/vueland/vueland/pull/90) [`f627be9`](https://github.com/vueland/vueland/commit/f627be9dda3f6ffa06ffc4ebf4a993f748c1f77b) Thanks [@wiseadme](https://github.com/wiseadme)! - useValidate`(and every`CInput`-based component) now accepts a `validationValue`prop. When set, validation rules receive it instead of`modelValue`; when nullish, rules fall back to `modelValue`as before. The`validateOn: 'input'`watcher reacts to changes of both values, and the`validateOn: 'blur'` semantics are unchanged — input changes are skipped while the effective value stays non-empty.
+
 ## 0.1.2
 
 ### Patch Changes
