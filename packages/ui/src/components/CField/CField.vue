@@ -29,9 +29,6 @@
     }>()
 
     const value = defineModel<string | number | undefined | null>()
-
-    const hasValue = computed(() => ['string', 'number'].includes(typeof unref(value)) && isNotEmpty(unref(value)))
-
     const inputRef = shallowRef<HTMLElement>()
 
     const slots = useSlots()
@@ -57,7 +54,7 @@
     const classes = computed(() => [
         {
             'c-field--focused': props.focused,
-            'c-field--filled': unref(hasValue) || props.dirty,
+            'c-field--filled': isNotEmpty(unref(value)) || props.dirty,
             'c-field--has-prepend': !!slots.prepend,
             'c-field--disabled': props.disabled,
             'c-field--readonly': props.readonly,

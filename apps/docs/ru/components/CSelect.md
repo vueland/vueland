@@ -113,6 +113,8 @@ const allSkills = ['Vue', 'React', 'TypeScript', 'Node.js', 'Go', 'Rust']
 
 `CSelect` наследует состояния поля: `disabled`, `readonly`, `clearable`, `details`, `rules`, `validate-on` и пресеты ввода. Это позволяет использовать select в формах без отдельной обвязки.
 
+Правила из `rules` получают саму модель — значение (или массив в `multiple`) из `v-model`, а не текст, отображаемый в поле. С `value-key` в правило придёт именно сохранённое значение.
+
 <StatesExample />
 
 ::: details Показать код
@@ -275,7 +277,7 @@ const selectedRegion = computed(() => regions.find((item) => item.code === regio
 | `mandatory`  | `boolean`                       | `false`      | В `multiple` запрещает снять последний пункт через список |
 | `chips`      | `boolean`                       | `false`      | Показывать выбранные значения как чипы                    |
 
-Также доступны пропсы внутреннего поля: `label`, `placeholder`, `details`, `clearable`, `disabled`, `readonly`, `rules`, `validate-on`, `preset`, `id`, `no-details` и другие пропсы [`CInput`](/ru/components/CInput#props) / [`CTextField`](/ru/components/CTextField#api).
+Также доступны пропсы внутреннего поля: `label`, `placeholder`, `details`, `clearable`, `disabled`, `readonly`, `rules`, `validate-on`, `preset`, `id`, `no-details` и другие пропсы [`CInput`](/ru/components/CInput#props) / [`CTextField`](/ru/components/CTextField#api). Функции из `rules` вызываются со значением модели (`v-model`), а не с отображаемой строкой.
 
 ### События CSelect
 

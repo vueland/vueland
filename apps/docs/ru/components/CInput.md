@@ -163,22 +163,23 @@ const vueland = createVuelandUI({
 
 ### Props
 
-| Prop         | Тип                             | По умолчанию | Описание                                                                   |
-| ------------ | ------------------------------- | ------------ | -------------------------------------------------------------------------- |
-| `modelValue` | `T \| T[] \| undefined \| null` | `undefined`  | Значение (v-model)                                                         |
-| `id`         | `string`                        | auto         | Базовый ID для генерации `uid`, `uid-label`, `uid-details`                 |
-| `label`      | `string`                        | —            | Текст лейбла (передаётся в слот `field`)                                   |
-| `details`    | `string`                        | —            | Подсказка под полем                                                        |
-| `noDetails`  | `boolean`                       | `false`      | Скрыть блок details                                                        |
-| `clearable`  | `boolean`                       | `false`      | Передать `clearable` в слот `field`                                        |
-| `disabled`   | `boolean`                       | `false`      | Блокирует фокус, добавляет `aria-disabled`                                 |
-| `readonly`   | `boolean`                       | `false`      | Добавляет `aria-readonly`, блокирует ввод                                  |
-| `focused`    | `boolean`                       | `false`      | Начальное состояние фокуса                                                 |
-| `dirty`      | `boolean`                       | `false`      | Помечает поле как заполненное для визуального состояния                    |
-| `role`       | `CInputRole`                    | —            | Семантическая роль. Управляет aria-разметкой и префиксом `uid`             |
-| `rules`      | `ValidateFn[]`                  | `[]`         | Функции валидации                                                          |
-| `validateOn` | `'input' \| 'blur'`             | `'input'`    | Момент запуска валидации                                                   |
-| `preset`     | `string`                        | —            | Имя пресета (dot-путь в объекте `presets`, переданном в `createVuelandUI`) |
+| Prop              | Тип                             | По умолчанию | Описание                                                                                                           |
+| ----------------- | ------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `modelValue`      | `T \| T[] \| undefined \| null` | `undefined`  | Значение (v-model)                                                                                                 |
+| `id`              | `string`                        | auto         | Базовый ID для генерации `uid`, `uid-label`, `uid-details`                                                         |
+| `label`           | `string`                        | —            | Текст лейбла (передаётся в слот `field`)                                                                           |
+| `details`         | `string`                        | —            | Подсказка под полем                                                                                                |
+| `noDetails`       | `boolean`                       | `false`      | Скрыть блок details                                                                                                |
+| `clearable`       | `boolean`                       | `false`      | Передать `clearable` в слот `field`                                                                                |
+| `disabled`        | `boolean`                       | `false`      | Блокирует фокус, добавляет `aria-disabled`                                                                         |
+| `readonly`        | `boolean`                       | `false`      | Добавляет `aria-readonly`, блокирует ввод                                                                          |
+| `focused`         | `boolean`                       | `false`      | Начальное состояние фокуса                                                                                         |
+| `dirty`           | `boolean`                       | `false`      | Помечает поле как заполненное для визуального состояния                                                            |
+| `role`            | `CInputRole`                    | —            | Семантическая роль. Управляет aria-разметкой и префиксом `uid`                                                     |
+| `rules`           | `ValidateFn[]`                  | `[]`         | Функции валидации                                                                                                  |
+| `validateOn`      | `'input' \| 'blur'`             | `'input'`    | Момент запуска валидации                                                                                           |
+| `validationValue` | `any`                           | —            | Значение, которое передаётся в `rules` вместо `modelValue` — для полей, где `modelValue` хранит отображаемый текст |
+| `preset`          | `string`                        | —            | Имя пресета (dot-путь в объекте `presets`, переданном в `createVuelandUI`)                                         |
 
 #### Тип CInputRole
 

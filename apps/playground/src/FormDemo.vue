@@ -1,18 +1,14 @@
 <script setup lang="ts">
-    import {
-        shallowRef,
-        unref,
-        watchEffect
-    } from 'vue'
+    import { shallowRef } from 'vue'
 
     import { IconAliases } from '@/enums'
 
-    const value = shallowRef()
+    const value = shallowRef([])
     const email = shallowRef()
 
     const rules = [
         val => ({
-            valid: !!val,
+            valid: !!val.length,
             message: 'Required'
         })
     ]
@@ -29,10 +25,6 @@
             message: 'Email is required',
         })
     ]
-
-    watchEffect(() => {
-        console.log(unref(value))
-    })
 </script>
 
 <template>
@@ -57,7 +49,11 @@
                                 v-model="value"
                                 label="Select user"
                                 title-key="name"
+                                value-key="email"
                                 :items
+                                chips
+                                clearable
+                                multiple
                                 :rules="rules"
                                 details="some beautiful and long text for test"
                                 :options="{

@@ -1,7 +1,7 @@
 import type { VNode } from 'vue'
 
-export type CTextFieldProps<T> = {
-    modelValue?: T
+export type CTextFieldProps = {
+    modelValue?: string | number | undefined | null
     noInput?: boolean
     filled?: boolean
 }

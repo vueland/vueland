@@ -1,8 +1,8 @@
 <script setup lang="ts" generic="T">
     import {
+        computed,
         shallowRef,
-        unref,
-        watchEffect
+        unref
     } from 'vue'
 
     import { CMenu } from '@/components/CMenu'
@@ -50,6 +50,8 @@
             '*': (e) => unref(cListRef)?.onKeydown(e)
         }, { prevent: ['ArrowDown', 'ArrowUp'] })
 
+    const modelValue = computed(() => unref(selects).join(', '))
+
     function onBlur() {
         unref(cTextFieldRef).blur()
         menu.value = false
@@ -73,23 +75,19 @@
 
         model.value = items.filter((_, i) => i !== index)
     }
-
-    watchEffect(() => {
-        console.log(hasValue.value)
-    })
 </script>
 
 <template>
     <c-text-field
         ref="cTextFieldRef"
-        :model-value="model"
+        :model-value="modelValue"
+        :validation-value="model"
         class="c-select"
         role="combobox"
         inputmode="none"
         :aria-controls="listId"
         :dirty="hasValue"
         v-bind="$attrs"
-        :value="selects.join(', ')"
         @beforeinput.prevent
         @paste.prevent
         @drop.prevent

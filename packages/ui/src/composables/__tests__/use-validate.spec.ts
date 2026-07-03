@@ -50,7 +50,11 @@ function mountUseValidate(
 ) {
     let api!: ReturnType<typeof useValidate>
 
-    const props = reactive({ ...initialProps }) as Reactive<TestProps>
+    // validationValue всегда присутствует в props, как при defineProps в компоненте
+    const props = reactive({
+        validationValue: undefined,
+        ...initialProps,
+    }) as Reactive<TestProps>
     const state = reactive({ ...initialState }) as Reactive<InputState>
 
     const wrapper = mount(
@@ -282,6 +286,132 @@ describe('useValidate', () => {
 
         expect(rule).toHaveBeenCalledTimes(1)
         expect(api.errors.hasError).toBe(true)
+    })
+
+    describe('validationValue', () => {
+        it('rule получает validationValue вместо modelValue', async () => {
+            const rule = vi.fn((value: string[]) => ({
+                valid: value.length > 0,
+                message: 'Required field',
+            }))
+
+            const { api } = mountUseValidate({
+                modelValue: 'Alex, Vitaly',
+                validationValue: ['Alex', 'Vitaly'],
+                rules: [rule],
+            })
+
+            expect(await api.validate()).toBe(true)
+            expect(rule).toHaveBeenLastCalledWith(['Alex', 'Vitaly'])
+        })
+
+        it('rule получает modelValue, если validationValue = null/undefined', async () => {
+            const rule = vi.fn((value: string) => ({
+                valid: !!value,
+                message: 'Required field',
+            }))
+
+            const { api, props } = mountUseValidate({
+                modelValue: 'John',
+                validationValue: null,
+                rules: [rule],
+            })
+
+            expect(await api.validate()).toBe(true)
+            expect(rule).toHaveBeenLastCalledWith('John')
+
+            props.validationValue = undefined
+
+            expect(await api.validate()).toBe(true)
+            expect(rule).toHaveBeenLastCalledWith('John')
+        })
+
+        it('falsy, но не nullish validationValue (пустой массив) передаётся в rule как есть', async () => {
+            const rule = vi.fn((value: string[]) => ({
+                valid: value.length > 0,
+                message: 'Required field',
+            }))
+
+            const { api } = mountUseValidate({
+                modelValue: 'John',
+                validationValue: [],
+                rules: [rule],
+            })
+
+            expect(await api.validate()).toBe(false)
+            expect(rule).toHaveBeenLastCalledWith([])
+            expect(api.errors.errorMessage).toBe('Required field')
+        })
+
+        it('валидирует при изменении validationValue, если validateOn=input', async () => {
+            const { api, props } = mountUseValidate({
+                modelValue: 'a',
+                validationValue: ['a'],
+                rules: [(value: string[]) => ({
+                    valid: value.length > 0,
+                    message: 'Required field',
+                })],
+            })
+
+            expect(api.errors.hasError).toBe(false)
+
+            props.validationValue = []
+            await nextTick()
+            await nextTick()
+
+            expect(api.errors.hasError).toBe(true)
+            expect(api.errors.errorMessage).toBe('Required field')
+
+            props.validationValue = ['b']
+            await nextTick()
+            await nextTick()
+
+            expect(api.errors.hasError).toBe(false)
+        })
+
+        it('при validateOn=blur не валидирует truthy validationValue на изменение', async () => {
+            const rule = vi.fn((value: string[]) => ({
+                valid: value.length > 0,
+                message: 'Required field',
+            }))
+
+            // пустой массив — truthy, поэтому изменение не триггерит валидацию
+            const { api, props } = mountUseValidate({
+                modelValue: 'a',
+                validationValue: ['a'],
+                validateOn: 'blur',
+                rules: [rule],
+            })
+
+            props.validationValue = []
+            await nextTick()
+            await nextTick()
+
+            expect(rule).not.toHaveBeenCalled()
+            expect(api.errors.hasError).toBe(false)
+        })
+
+        it('при validateOn=blur валидирует пустеющее validationValue на изменение', async () => {
+            const rule = vi.fn((value: string) => ({
+                valid: !!value,
+                message: 'Required field',
+            }))
+
+            const { api, props } = mountUseValidate({
+                modelValue: 'Alex',
+                validationValue: 'a',
+                validateOn: 'blur',
+                rules: [rule],
+            })
+
+            props.validationValue = ''
+            await nextTick()
+            await nextTick()
+
+            expect(rule).toHaveBeenCalledTimes(1)
+            expect(rule).toHaveBeenLastCalledWith('')
+            expect(api.errors.hasError).toBe(true)
+        })
     })
 
     describe('readonly / disabled', () => {

@@ -53,6 +53,8 @@ const value = ref('')
 
 Передайте массив функций-правил в prop `rules`. Каждое правило принимает текущее значение и возвращает объект `{ valid: boolean, message: string }`. Prop `validate-on` управляет моментом запуска: `'input'` (по умолчанию) или `'blur'`.
 
+Если в `modelValue` хранится отображаемый текст, а проверять нужно другое значение, передайте его в prop `validation-value` — правила получат его вместо `modelValue`. Именно так `CSelect` валидирует выбранную модель, а не строку, показанную в поле.
+
 <ValidationExample />
 
 ::: details Показать код
@@ -232,7 +234,7 @@ type CInputPreset = Partial<Record<'base' | CInputState, ZonePreset>>
 
 ### Props
 
-`CTextField` принимает props [`CInput`](/ru/components/CInput#props), включая `label`, `details`, `clearable`, `disabled`, `readonly`, `focused`, `dirty`, `rules`, `validateOn` и `preset`.
+`CTextField` принимает props [`CInput`](/ru/components/CInput#props), включая `label`, `details`, `clearable`, `disabled`, `readonly`, `focused`, `dirty`, `rules`, `validateOn`, `validationValue` и `preset`.
 
 `v-model` работает со значением `string | number | null | undefined`.
 

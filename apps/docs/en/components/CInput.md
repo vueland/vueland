@@ -163,22 +163,23 @@ The example above uses `preset="input.blue"` across six states:
 
 ### Props
 
-| Prop         | Type                            | Default     | Description                                                                  |
-| ------------ | ------------------------------- | ----------- | ---------------------------------------------------------------------------- |
-| `modelValue` | `T \| T[] \| undefined \| null` | `undefined` | Field value (v-model)                                                        |
-| `id`         | `string`                        | auto        | Base ID used to generate `uid`, `uid-label`, `uid-details`                   |
-| `label`      | `string`                        | —           | Label text (forwarded into the `field` slot)                                 |
-| `details`    | `string`                        | —           | Hint text shown below the field                                              |
-| `noDetails`  | `boolean`                       | `false`     | Hide the details area entirely                                               |
-| `clearable`  | `boolean`                       | `false`     | Forward `clearable` into the `field` slot                                    |
-| `disabled`   | `boolean`                       | `false`     | Blocks focus, adds `aria-disabled`                                           |
-| `readonly`   | `boolean`                       | `false`     | Adds `aria-readonly`, blocks editing                                         |
-| `focused`    | `boolean`                       | `false`     | Initial focused state                                                        |
-| `dirty`      | `boolean`                       | `false`     | Marks the field as filled for visual state                                   |
-| `role`       | `CInputRole`                    | —           | Semantic role. Drives the aria wiring and the `uid` prefix                   |
-| `rules`      | `ValidateFn[]`                  | `[]`        | Validation functions                                                         |
-| `validateOn` | `'input' \| 'blur'`             | `'input'`   | When to trigger automatic validation                                         |
-| `preset`     | `string`                        | —           | Preset name (dot-path into the `presets` object passed to `createVuelandUI`) |
+| Prop              | Type                            | Default     | Description                                                                                              |
+| ----------------- | ------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------- |
+| `modelValue`      | `T \| T[] \| undefined \| null` | `undefined` | Field value (v-model)                                                                                    |
+| `id`              | `string`                        | auto        | Base ID used to generate `uid`, `uid-label`, `uid-details`                                               |
+| `label`           | `string`                        | —           | Label text (forwarded into the `field` slot)                                                             |
+| `details`         | `string`                        | —           | Hint text shown below the field                                                                          |
+| `noDetails`       | `boolean`                       | `false`     | Hide the details area entirely                                                                           |
+| `clearable`       | `boolean`                       | `false`     | Forward `clearable` into the `field` slot                                                                |
+| `disabled`        | `boolean`                       | `false`     | Blocks focus, adds `aria-disabled`                                                                       |
+| `readonly`        | `boolean`                       | `false`     | Adds `aria-readonly`, blocks editing                                                                     |
+| `focused`         | `boolean`                       | `false`     | Initial focused state                                                                                    |
+| `dirty`           | `boolean`                       | `false`     | Marks the field as filled for visual state                                                               |
+| `role`            | `CInputRole`                    | —           | Semantic role. Drives the aria wiring and the `uid` prefix                                               |
+| `rules`           | `ValidateFn[]`                  | `[]`        | Validation functions                                                                                     |
+| `validateOn`      | `'input' \| 'blur'`             | `'input'`   | When to trigger automatic validation                                                                     |
+| `validationValue` | `any`                           | —           | Value passed to `rules` instead of `modelValue` — for fields where `modelValue` holds the displayed text |
+| `preset`          | `string`                        | —           | Preset name (dot-path into the `presets` object passed to `createVuelandUI`)                             |
 
 #### CInputRole type
 

@@ -372,6 +372,67 @@ describe('CTextField', () => {
         expect(wrapper.html().indexOf('.c-text-field__details')).toBe(-1)
     })
 
+    describe('validationValue', () => {
+        it('rules получают validationValue вместо modelValue', async () => {
+            const rule = vi.fn((value: string) => ({
+                valid: !!value,
+                message: 'Required',
+            }))
+
+            const wrapper = createWrapper({
+                modelValue: 'Alex, Vitaly',
+                validationValue: '',
+                rules: [rule],
+            })
+
+            const result = await (wrapper.vm as any).validate()
+            await wait()
+
+            expect(result).toBe(false)
+            expect(rule).toHaveBeenLastCalledWith('')
+            expect(wrapper.get('.c-text-field__details').text()).toBe('Required')
+        })
+
+        it('rules получают modelValue, если validationValue не передан', async () => {
+            const rule = vi.fn((value: string) => ({
+                valid: !!value,
+                message: 'Required',
+            }))
+
+            const wrapper = createWrapper({
+                modelValue: 'John',
+                rules: [rule],
+            })
+
+            expect(await (wrapper.vm as any).validate()).toBe(true)
+            expect(rule).toHaveBeenLastCalledWith('John')
+        })
+
+        it('изменение validation-value запускает валидацию при validateOn=input', async () => {
+            const wrapper = createWrapper({
+                modelValue: 'Alex',
+                validationValue: ['Alex'],
+                rules: [(value: unknown[]) => ({
+                    valid: value.length > 0,
+                    message: 'Required',
+                })],
+            })
+
+            expect(wrapper.classes()).not.toContain('c-input--has-error')
+
+            await wrapper.setProps({ validationValue: [] } as any)
+            await wait()
+
+            expect(wrapper.classes()).toContain('c-input--has-error')
+            expect(wrapper.get('.c-text-field__details').text()).toBe('Required')
+
+            await wrapper.setProps({ validationValue: ['Vitaly'] } as any)
+            await wait()
+
+            expect(wrapper.classes()).not.toContain('c-input--has-error')
+        })
+    })
+
     it('применяет base к root/details и прокидывает field-зону в CField через inject', () => {
         const wrapper = mount(CTextField, {
             props: {

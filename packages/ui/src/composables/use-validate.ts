@@ -19,9 +19,10 @@ export type ValidateFn = (value: any) => ValidateResult | Promise<ValidateResult
 
 export type ValidateOn = 'input' | 'blur'
 
-export type ValidateProps = {
+export type ValidateProps<T = any> = {
     rules?: ValidateFn[]
     validateOn?: ValidateOn
+    validationValue?: T
 }
 
 export type ValidateState = {
@@ -43,7 +44,11 @@ export function useValidate(
     },
     state: Reactive<InputState>,
 ) {
-    const { modelValue, validateOn } = toRefs(props)
+    const {
+        modelValue,
+        validationValue,
+        validateOn,
+    } = toRefs(props)
 
     const errors = shallowReactive<ValidateState>({
         errorMessage: undefined,
@@ -71,7 +76,7 @@ export function useValidate(
 
         try {
             for (const rule of props.rules!) {
-                const result = await rule(props.modelValue)
+                const result = await rule(props.validationValue ?? props.modelValue)
 
                 if (!result.valid) {
                     applyResult(result)
@@ -87,8 +92,11 @@ export function useValidate(
     }
 
     if (unref(hasRules)) {
-        watch(modelValue, (val) => {
-            if (unref(validateOn) === InputEvents.BLUR && !!val) return
+        watch([modelValue, validationValue], () => {
+            const value = unref(validationValue) ?? unref(modelValue)
+
+            if (unref(validateOn) === InputEvents.BLUR && !!value) return
+
             validate()
         })
 

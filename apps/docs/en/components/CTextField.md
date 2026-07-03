@@ -53,6 +53,8 @@ const value = ref('')
 
 Pass an array of rule functions via the `rules` prop. Each rule receives the current value and returns `{ valid: boolean, message: string }`. Use `validate-on` to control when validation fires: `'input'` (default) or `'blur'`.
 
+If `modelValue` holds the displayed text and you need to validate a different value, pass it via the `validation-value` prop — rules receive it instead of `modelValue`. This is how `CSelect` validates the selected model rather than the string shown in the field.
+
 <ValidationExample />
 
 ::: details Show code
@@ -232,7 +234,7 @@ The preset is distributed automatically: `CInput` applies `root` and `details`, 
 
 ### Props
 
-`CTextField` accepts [`CInput`](/en/components/CInput#props) props, including `label`, `details`, `clearable`, `disabled`, `readonly`, `focused`, `dirty`, `rules`, `validateOn`, and `preset`.
+`CTextField` accepts [`CInput`](/en/components/CInput#props) props, including `label`, `details`, `clearable`, `disabled`, `readonly`, `focused`, `dirty`, `rules`, `validateOn`, `validationValue`, and `preset`.
 
 `v-model` works with `string | number | null | undefined`.
 

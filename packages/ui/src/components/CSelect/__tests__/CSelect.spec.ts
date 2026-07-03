@@ -4,8 +4,14 @@ import {
     describe,
     expect,
     it,
+    vi,
 } from 'vitest'
-import { nextTick } from 'vue'
+import {
+    defineComponent,
+    h,
+    nextTick,
+    shallowRef,
+} from 'vue'
 
 import { $APP_API_KEY } from '@/constants'
 import { wait } from '@/helpers'
@@ -37,23 +43,38 @@ const global = {
 
 let mounted: ReturnType<typeof mount>[] = []
 
-// CSelect контролируемый (model читает props.modelValue), поэтому синхронизируем
-// modelValue обратно в пропсы — тогда wrapper ведёт себя как с v-model.
+// CSelect монтируется внутри хост-компонента с настоящим v-model:
+// модель проверяем снаружи, как это делает пользователь библиотеки.
+// shallowRef — чтобы объектные значения сохраняли ссылку (deep ref их проксирует).
 function mountSelect(props: Record<string, unknown> = {}) {
-    const wrapper: ReturnType<typeof mount> = mount(CSelect as never, {
-        attachTo: document.body,
-        props: {
-            items: [],
-            modelValue: undefined,
-            ...props,
-            'onUpdate:modelValue': (v: unknown) => wrapper.setProps({ modelValue: v }),
+    const {
+        modelValue,
+        ...rest
+    } = props
+    const model = shallowRef<unknown>(modelValue)
+
+    const wrapper = mount(defineComponent({
+        setup() {
+            return () => h(CSelect as any, {
+                items: [],
+                ...rest,
+                modelValue: model.value,
+                'onUpdate:modelValue': (v: unknown) => {
+                    model.value = v
+                },
+            })
         },
+    }), {
+        attachTo: document.body,
         global,
     })
 
     mounted.push(wrapper)
 
-    return wrapper
+    return {
+        wrapper,
+        model,
+    }
 }
 
 async function openMenu(wrapper: ReturnType<typeof mount>) {
@@ -62,7 +83,7 @@ async function openMenu(wrapper: ReturnType<typeof mount>) {
     await nextTick()
 }
 
-const options = () => [...document.querySelectorAll<HTMLElement>('.c-list-item')]
+const options = () => document.querySelectorAll<HTMLElement>('.c-list-item')
 
 describe('CSelect', () => {
     afterEach(() => {
@@ -72,7 +93,7 @@ describe('CSelect', () => {
     })
 
     it('связывает aria-controls с внешним id списка', async () => {
-        const wrapper = mountSelect({ items: ['first', 'second'], modelValue: '' })
+        const { wrapper } = mountSelect({ items: ['first', 'second'], modelValue: '' })
 
         const field = wrapper.get('.c-field-input')
         const listId = field.attributes('aria-controls')
@@ -87,18 +108,18 @@ describe('CSelect', () => {
         expect(list?.classList.contains('c-list')).toBe(true)
     })
 
-    it('single: клик по опции выбирает значение', async () => {
-        const wrapper = mountSelect({ items: ['first', 'second'] })
+    it('single: клик по опции пишет значение во внешний v-model', async () => {
+        const { wrapper, model } = mountSelect({ items: ['first', 'second'] })
 
         await openMenu(wrapper)
         options()[1].click()
         await nextTick()
 
-        expect(wrapper.props('modelValue')).toBe('second')
+        expect(model.value).toBe('second')
     })
 
-    it('multiple: клики накапливают значения и рендерят чипы', async () => {
-        const wrapper = mountSelect({
+    it('multiple: клики накапливают значения во внешнем v-model и рендерят чипы', async () => {
+        const { wrapper, model } = mountSelect({
             items: ['a', 'b', 'c'],
             multiple: true,
             chips: true,
@@ -111,12 +132,12 @@ describe('CSelect', () => {
         options()[2].click()
         await nextTick()
 
-        expect(wrapper.props('modelValue')).toEqual(['a', 'c'])
+        expect(model.value).toEqual(['a', 'c'])
         expect(document.querySelectorAll('.c-chip')).toHaveLength(2)
     })
 
-    it('закрытие чипа удаляет элемент по индексу', async () => {
-        const wrapper = mountSelect({
+    it('закрытие чипа удаляет элемент по индексу из внешнего v-model', async () => {
+        const { wrapper, model } = mountSelect({
             items: ['a', 'b', 'c'],
             multiple: true,
             chips: true,
@@ -129,14 +150,14 @@ describe('CSelect', () => {
 
         expect(chips).toHaveLength(3)
 
-        chips[1].vm.$emit('close')
+        ;(chips[1] as any).vm.$emit('close')
         await nextTick()
 
-        expect(wrapper.props('modelValue')).toEqual(['a', 'c'])
+        expect(model.value).toEqual(['a', 'c'])
     })
 
     it('клавиатура: ArrowDown + Enter выбирает первый элемент', async () => {
-        const wrapper = mountSelect({ items: ['a', 'b'] })
+        const { wrapper, model } = mountSelect({ items: ['a', 'b'] })
 
         await openMenu(wrapper)
 
@@ -146,11 +167,11 @@ describe('CSelect', () => {
         await input.trigger('keydown', { key: 'Enter' })
         await nextTick()
 
-        expect(wrapper.props('modelValue')).toBe('a')
+        expect(model.value).toBe('a')
     })
 
     it('клавиатура: typeahead фокусирует опцию, Enter её выбирает', async () => {
-        const wrapper = mountSelect({ items: ['Alex', 'Vitaly'] })
+        const { wrapper, model } = mountSelect({ items: ['Alex', 'Vitaly'] })
 
         await openMenu(wrapper)
 
@@ -160,11 +181,11 @@ describe('CSelect', () => {
         await input.trigger('keydown', { key: 'Enter' })
         await nextTick()
 
-        expect(wrapper.props('modelValue')).toBe('Vitaly')
+        expect(model.value).toBe('Vitaly')
     })
 
     it('Escape закрывает меню', async () => {
-        const wrapper = mountSelect({ items: ['a', 'b'] })
+        const { wrapper } = mountSelect({ items: ['a', 'b'] })
 
         await openMenu(wrapper)
         expect(document.querySelector('.c-menu--visible')).toBeTruthy()
@@ -178,7 +199,7 @@ describe('CSelect', () => {
     })
 
     it('Tab закрывает меню', async () => {
-        const wrapper = mountSelect({ items: ['a', 'b'] })
+        const { wrapper } = mountSelect({ items: ['a', 'b'] })
 
         await openMenu(wrapper)
         expect(document.querySelector('.c-menu--visible')).toBeTruthy()
@@ -191,56 +212,70 @@ describe('CSelect', () => {
         expect(document.querySelector('.c-menu--visible')).toBeNull()
     })
 
-    it('clear очищает модель', async () => {
-        const wrapper = mountSelect({ items: ['a', 'b'], modelValue: 'a', clearable: true })
+    it('clear очищает внешний v-model (single)', async () => {
+        const { wrapper, model } = mountSelect({ items: ['a', 'b'], modelValue: 'a', clearable: true })
 
         await wrapper.getComponent({ name: 'CField' }).vm.$emit('clear')
         await nextTick()
 
-        expect(wrapper.props('modelValue')).toBe(undefined)
+        expect(model.value).toBe(undefined)
+    })
+
+    it('clear сбрасывает внешний v-model в пустой массив (multiple)', async () => {
+        const { wrapper, model } = mountSelect({
+            items: ['a', 'b'],
+            multiple: true,
+            modelValue: ['a', 'b'],
+            clearable: true,
+        })
+
+        await wrapper.getComponent({ name: 'CField' }).vm.$emit('clear')
+        await nextTick()
+
+        expect(model.value).toEqual([])
     })
 
     it('mandatory single: клик по выбранному не снимает выбор', async () => {
-        const wrapper = mountSelect({ items: ['a', 'b'], modelValue: 'a', mandatory: true })
+        const { wrapper, model } = mountSelect({ items: ['a', 'b'], modelValue: 'a', mandatory: true })
 
         await openMenu(wrapper)
         options()[0].click()
         await nextTick()
 
-        expect(wrapper.props('modelValue')).toBe('a')
+        expect(model.value).toBe('a')
     })
 
     it('single: повторный клик по выбранному сохраняет выбор', async () => {
-        const wrapper = mountSelect({ items: ['a', 'b'], modelValue: 'a' })
+        const { wrapper, model } = mountSelect({ items: ['a', 'b'], modelValue: 'a' })
 
         await openMenu(wrapper)
         options()[0].click()
         await nextTick()
 
-        expect(wrapper.props('modelValue')).toBe('a')
+        expect(model.value).toBe('a')
     })
 
     it('объектные items с titleKey: выбор кладёт объект, поле показывает title', async () => {
         const users = [{ name: 'Alex' }, { name: 'Vitaly' }]
-        const wrapper = mountSelect({ items: users, titleKey: 'name' })
+        const { wrapper, model } = mountSelect({ items: users, titleKey: 'name' })
 
         await openMenu(wrapper)
         options()[1].click()
         await nextTick()
 
-        expect(wrapper.props('modelValue')).toEqual({ name: 'Vitaly' })
+        expect(model.value).toEqual({ name: 'Vitaly' })
         expect(document.querySelector('.c-select__items')?.textContent?.trim()).toBe('Vitaly')
     })
 
     it('valueKey: в модель кладётся value, а поле показывает title', async () => {
         const users = [{ id: 1, name: 'Alex' }, { id: 2, name: 'Vitaly' }]
-        const wrapper = mountSelect({ items: users, titleKey: 'name', valueKey: 'id' })
+        const { wrapper, model } = mountSelect({ items: users, titleKey: 'name', valueKey: 'id' })
 
         await openMenu(wrapper)
         options()[1].click()
         await nextTick()
 
-        expect(wrapper.props('modelValue')).toBe(2)
+        expect(model.value).toBe(2)
         expect(document.querySelector('.c-select__items')?.textContent?.trim()).toBe('Vitaly')
     })
 
@@ -250,5 +285,183 @@ describe('CSelect', () => {
         await nextTick()
 
         expect(document.querySelector('.c-select__items')?.textContent?.trim()).toBe('a, c')
+    })
+
+    it('нативный input показывает строку выбранных значений', async () => {
+        const { wrapper } = mountSelect({ items: ['a', 'b', 'c'], multiple: true, modelValue: ['a', 'c'] })
+
+        await nextTick()
+
+        expect((wrapper.get('.c-field-input').element as HTMLInputElement).value).toBe('a, c')
+    })
+
+    it('single: начальное modelValue отображается в поле и нативном input', async () => {
+        const { wrapper } = mountSelect({ items: ['a', 'b'], modelValue: 'a' })
+
+        await nextTick()
+
+        expect(document.querySelector('.c-select__items')?.textContent?.trim()).toBe('a')
+        expect((wrapper.get('.c-field-input').element as HTMLInputElement).value).toBe('a')
+    })
+
+    it('single: выбор опции обновляет нативный input', async () => {
+        const { wrapper } = mountSelect({ items: ['first', 'second'] })
+
+        await openMenu(wrapper)
+        options()[1].click()
+        await nextTick()
+        await nextTick()
+
+        expect((wrapper.get('.c-field-input').element as HTMLInputElement).value).toBe('second')
+    })
+
+    it('single: начальная модель со значением из valueKey отображает title', async () => {
+        const users = [{ id: 1, name: 'Alex' }, { id: 2, name: 'Vitaly' }]
+        const { wrapper } = mountSelect({
+            items: users,
+            titleKey: 'name',
+            valueKey: 'id',
+            modelValue: 2,
+        })
+
+        await nextTick()
+
+        expect(document.querySelector('.c-select__items')?.textContent?.trim()).toBe('Vitaly')
+        expect((wrapper.get('.c-field-input').element as HTMLInputElement).value).toBe('Vitaly')
+    })
+
+    it('single: внешняя смена v-model обновляет отображение, сброс очищает поле', async () => {
+        const { wrapper, model } = mountSelect({ items: ['a', 'b'], modelValue: 'a' })
+
+        model.value = 'b'
+        await nextTick()
+
+        expect(document.querySelector('.c-select__items')?.textContent?.trim()).toBe('b')
+        expect((wrapper.get('.c-field-input').element as HTMLInputElement).value).toBe('b')
+
+        model.value = undefined
+        await nextTick()
+
+        expect(document.querySelector('.c-select__items')).toBeNull()
+        expect((wrapper.get('.c-field-input').element as HTMLInputElement).value).toBe('')
+    })
+
+    it('multiple: внешняя смена v-model обновляет отображение', async () => {
+        const { wrapper, model } = mountSelect({
+            items: ['a', 'b', 'c'],
+            multiple: true,
+            modelValue: ['a'],
+        })
+
+        model.value = ['a', 'c']
+        await nextTick()
+
+        expect(document.querySelector('.c-select__items')?.textContent?.trim()).toBe('a, c')
+        expect((wrapper.get('.c-field-input').element as HTMLInputElement).value).toBe('a, c')
+
+        model.value = []
+        await nextTick()
+
+        expect(document.querySelector('.c-select__items')).toBeNull()
+        expect((wrapper.get('.c-field-input').element as HTMLInputElement).value).toBe('')
+    })
+
+    it('single: modelValue вне items отображается как есть', async () => {
+        const { wrapper } = mountSelect({ items: ['a', 'b'], modelValue: 'z' })
+
+        await nextTick()
+
+        expect((wrapper.get('.c-field-input').element as HTMLInputElement).value).toBe('z')
+    })
+
+    it('single + chips: закрытие чипа очищает внешний v-model', async () => {
+        const { wrapper, model } = mountSelect({
+            items: ['a', 'b'],
+            modelValue: 'a',
+            chips: true,
+        })
+
+        await nextTick()
+
+        const chips = wrapper.findAllComponents(CChip)
+
+        expect(chips).toHaveLength(1)
+
+        ;(chips[0] as any).vm.$emit('close')
+        await nextTick()
+
+        expect(model.value).toBe(undefined)
+    })
+
+    describe('валидация', () => {
+        it('rules получают значение модели, а не отображаемую строку', async () => {
+            const rule = vi.fn((value?: number) => ({
+                valid: !!value,
+                message: 'Required',
+            }))
+
+            const users = [{ id: 1, name: 'Alex' }, { id: 2, name: 'Vitaly' }]
+            const { wrapper } = mountSelect({
+                items: users,
+                titleKey: 'name',
+                valueKey: 'id',
+                rules: [rule],
+            })
+
+            await openMenu(wrapper)
+            options()[1].click()
+            await nextTick()
+            await wait()
+
+            expect(rule).toHaveBeenLastCalledWith(2)
+            expect(wrapper.classes()).not.toContain('c-input--has-error')
+        })
+
+        it('multiple: rules получают массив модели, снятие последнего пункта даёт ошибку', async () => {
+            const rule = vi.fn((value: string[]) => ({
+                valid: value.length > 0,
+                message: 'Required',
+            }))
+
+            const { wrapper } = mountSelect({
+                items: ['a', 'b'],
+                multiple: true,
+                modelValue: [],
+                rules: [rule],
+            })
+
+            await openMenu(wrapper)
+            options()[0].click()
+            await nextTick()
+            await wait()
+
+            expect(rule).toHaveBeenLastCalledWith(['a'])
+            expect(wrapper.classes()).not.toContain('c-input--has-error')
+
+            options()[0].click()
+            await nextTick()
+            await wait()
+
+            expect(rule).toHaveBeenLastCalledWith([])
+            expect(wrapper.classes()).toContain('c-input--has-error')
+        })
+
+        it('clear запускает валидацию и показывает ошибку', async () => {
+            const { wrapper } = mountSelect({
+                items: ['a', 'b'],
+                modelValue: 'a',
+                clearable: true,
+                rules: [(value?: string) => ({
+                    valid: !!value,
+                    message: 'Required',
+                })],
+            })
+
+            await wrapper.getComponent({ name: 'CField' }).vm.$emit('clear')
+            await nextTick()
+            await wait()
+
+            expect(wrapper.classes()).toContain('c-input--has-error')
+        })
     })
 })
