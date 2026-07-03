@@ -1,5 +1,11 @@
 # @vueland/ui
 
+## 0.1.4
+
+### Patch Changes
+
+- [#92](https://github.com/vueland/vueland/pull/92) [`247f9e8`](https://github.com/vueland/vueland/commit/247f9e8198aee001aa932414fe195fccea56b127) Thanks [@wiseadme](https://github.com/wiseadme)! - fix: `CMenu` with `strategy="reverse"` no longer overflows the viewport when the content doesn't fit on either side — the reversed position is now clamped to the screen edge
+
 ## 0.1.3
 
 ### Patch Changes
