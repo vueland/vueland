@@ -1,5 +1,11 @@
 # @vueland/eslint-script-setup
 
+## 1.0.0
+
+### Major Changes
+
+- [#94](https://github.com/vueland/vueland/pull/94) [`1887ed1`](https://github.com/vueland/vueland/commit/1887ed19e096444c551a34f60231b2b0d8f93ebd) Thanks [@wiseadme](https://github.com/wiseadme)! - fix: `script-setup-order` dependency detection hardened — dependencies through TS wrappers (`as`, `satisfies`, `!`) and destructured declarations are now tracked (prevents auto-sort from producing broken code), member properties and object keys are no longer treated as references, and autofix preserves node indentation after leading comments
+
 ## 0.1.1
 
 ### Patch Changes
@@ -12,7 +18,7 @@
 
 - [`e96ca99`](https://github.com/vueland/vueland/commit/e96ca9933467c9644ac42f2a8e967d6f140fdbf0) - Initial release of `@vueland/eslint-script-setup` — an ESLint plugin that enforces consistent code ordering in Vue 3 `<script setup>` blocks.
 
-    Rules:
-    - `script-setup-order` — enforces `import → type → macros → composable → reactive → variable → computed → function → watchEffect → watch → lifecycle` order with autofix
-    - `no-multi-declaration` — forbids multiple declarators in a single statement
-    - `no-inline-composable` — forbids calling composables inline as arguments
+  Rules:
+  - `script-setup-order` — enforces `import → type → macros → composable → reactive → variable → computed → function → watchEffect → watch → lifecycle` order with autofix
+  - `no-multi-declaration` — forbids multiple declarators in a single statement
+  - `no-inline-composable` — forbids calling composables inline as arguments
