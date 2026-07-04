@@ -6,28 +6,36 @@ export type NodeCategory =
   | 'import'
   | 'type'
   | 'macros'
+  | 'class'
   | 'composable'
+  | 'inject'
   | 'reactive'
   | 'variable'
   | 'computed'
   | 'function'
   | 'watchEffect'
   | 'watch'
+  | 'provide'
   | 'lifecycle'
+  | 'defineExpose'
   | 'unknown'
 
 export const CATEGORY_ORDER: NodeCategory[] = [
     'import',
     'type',
     'macros',
+    'class',
     'composable',
+    'inject',
     'reactive',
     'variable',
     'computed',
     'function',
     'watchEffect',
     'watch',
+    'provide',
     'lifecycle',
+    'defineExpose',
 ]
 
 export const MACRO_APIS = new Set([
@@ -37,6 +45,16 @@ export const MACRO_APIS = new Set([
     'defineSlots',
     'defineModel',
     'withDefaults',
+])
+
+// Макросы, которые можно перечислять в order по отдельности вместо общей
+// категории macros; withDefaults(defineProps(...)) считается defineProps
+export const DEFINE_MACROS = new Set([
+    'defineProps',
+    'defineEmits',
+    'defineSlots',
+    'defineModel',
+    'defineOptions',
 ])
 
 export const REACTIVE_APIS = new Set([
@@ -56,7 +74,9 @@ export const WATCH_EFFECT_APIS = new Set(['watchEffect', 'watchPostEffect', 'wat
 // Явные вотчеры с источником
 export const WATCH_APIS = new Set(['watch'])
 
-export const LIFECYCLE_APIS = new Set([
+// Порядок соответствует моменту срабатывания хуков в жизненном цикле —
+// используется как дефолт опции lifecycleOrder
+export const LIFECYCLE_ORDER = [
     'onBeforeMount',
     'onMounted',
     'onBeforeUpdate',
@@ -69,4 +89,6 @@ export const LIFECYCLE_APIS = new Set([
     'onActivated',
     'onDeactivated',
     'onServerPrefetch',
-])
+]
+
+export const LIFECYCLE_APIS = new Set(LIFECYCLE_ORDER)

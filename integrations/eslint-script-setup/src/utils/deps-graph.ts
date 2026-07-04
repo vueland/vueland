@@ -46,8 +46,12 @@ function collectIdentifiers(node: AnyNode, ids: Set<string>, visited = new Set<A
         return
     }
 
-    // { key: value }: key — не ссылка (если ключ не computed)
-    if (node.type === 'Property' && !node.computed) {
+    // { key: value }: key — не ссылка (если ключ не computed);
+    // то же для членов класса — имя метода/поля не ссылка
+    if (
+        (node.type === 'Property' || node.type === 'MethodDefinition' || node.type === 'PropertyDefinition')
+        && !node.computed
+    ) {
         collectIdentifiers(node.value as AnyNode, ids, visited)
         return
     }
@@ -109,7 +113,7 @@ function getDeclaredNames(node: AnyNode): Set<string> {
         }
     }
 
-    if (node.type === 'FunctionDeclaration' && node.id) {
+    if ((node.type === 'FunctionDeclaration' || node.type === 'ClassDeclaration') && node.id) {
         names.add((node.id as AnyNode).name as string)
     }
 
@@ -160,6 +164,12 @@ export function buildEntries(nodes: AnyNode[]): NodeEntry[] {
             }
         } else if (node.type === 'ExpressionStatement') {
             collectIdentifiers(node.expression as AnyNode, usedNames)
+        } else if (node.type === 'ClassDeclaration') {
+            // extends, computed-ключи и инициализаторы полей — потенциально
+            // немедленные ссылки; тела методов walker пропускает как ленивые.
+            // Инициализаторы instance-полей на деле ленивые — собираем и их
+            // тоже: перестраховка даёт depConflict вместо ломаного фикса
+            collectIdentifiers(node, usedNames)
         }
         // тела FunctionDeclaration не собираем: ссылки внутри функции ленивые
         // и выполняются только при вызове — порядок объявлений для них не важен

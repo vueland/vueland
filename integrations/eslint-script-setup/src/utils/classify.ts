@@ -1,4 +1,4 @@
-import { MACRO_APIS, type NodeCategory  } from '@/utils/types'
+import { MACRO_APIS } from '@/utils/types'
 
 type AnyNode = { type: string; [key: string]: unknown }
 
@@ -20,6 +20,27 @@ function getInitCallName(decl: AnyNode): string | null {
     return getCallName(init)
 }
 
+// Имя, объявляемое нодой: const x = ..., function x() {}, class X {}
+function getDeclaredName(node: AnyNode): string | null {
+    if (node.type === 'VariableDeclaration') {
+        const id = (node.declarations as AnyNode[])[0]?.id as AnyNode | undefined
+        return id?.type === 'Identifier' ? (id.name as string) : null
+    }
+
+    if (node.type === 'FunctionDeclaration' || node.type === 'ClassDeclaration') {
+        const id = node.id as AnyNode | undefined
+        return id?.type === 'Identifier' ? (id.name as string) : null
+    }
+
+    return null
+}
+
+export interface CustomCategory {
+    name: string
+    namePattern?: RegExp
+    calleePattern?: RegExp
+}
+
 export interface ClassifyConfig {
     reactiveApis: Set<string>
     computedApis: Set<string>
@@ -27,11 +48,44 @@ export interface ClassifyConfig {
     watchApis: Set<string>
     lifecycleApis: Set<string>
     composablePattern: RegExp
+    customCategories: CustomCategory[]
 }
 
-export function classifyNode(node: AnyNode, config: ClassifyConfig): NodeCategory {
+export interface ClassifiedNode {
+    // NodeCategory либо имя кастомной категории
+    category: string
+    // Имя вызова (defineProps, onMounted, ...) — нужно для подпорядков
+    // внутри категорий macros и lifecycle
+    callName: string | null
+}
+
+// Кастомные категории проверяются до встроенной классификации,
+// чтобы пользователь мог перехватить любую runtime-декларацию
+function matchCustomCategory(
+    node: AnyNode,
+    callName: string | null,
+    customCategories: CustomCategory[],
+): string | null {
+    if (!customCategories.length) return null
+
+    const declaredName = getDeclaredName(node)
+
+    for (const custom of customCategories) {
+        if (custom.namePattern && declaredName && custom.namePattern.test(declaredName)) {
+            return custom.name
+        }
+
+        if (custom.calleePattern && callName && custom.calleePattern.test(callName)) {
+            return custom.name
+        }
+    }
+
+    return null
+}
+
+export function classifyNode(node: AnyNode, config: ClassifyConfig): ClassifiedNode {
     if (node.type === 'ImportDeclaration') {
-        return 'import'
+        return { category: 'import', callName: null }
     }
 
     if (
@@ -39,7 +93,7 @@ export function classifyNode(node: AnyNode, config: ClassifyConfig): NodeCategor
         || node.type === 'TSInterfaceDeclaration'
         || node.type === 'TSEnumDeclaration'
     ) {
-        return 'type'
+        return { category: 'type', callName: null }
     }
 
     if (node.type === 'ExportNamedDeclaration') {
@@ -49,70 +103,93 @@ export function classifyNode(node: AnyNode, config: ClassifyConfig): NodeCategor
             || decl?.type === 'TSInterfaceDeclaration'
             || decl?.type === 'TSEnumDeclaration'
         ) {
-            return 'type'
+            return { category: 'type', callName: null }
         }
+    }
+
+    const callName = node.type === 'ExpressionStatement'
+        ? getCallName(node.expression as AnyNode)
+        : getInitCallName(node)
+
+    const customName = matchCustomCategory(node, callName, config.customCategories)
+
+    if (customName) {
+        return { category: customName, callName }
+    }
+
+    if (node.type === 'ClassDeclaration') {
+        return { category: 'class', callName: null }
+    }
+
+    // Не входит в MACRO_APIS: собственная категория, по умолчанию в конце
+    if (callName === 'defineExpose') {
+        return { category: 'defineExpose', callName }
+    }
+
+    if (callName === 'provide') {
+        return { category: 'provide', callName }
+    }
+
+    if (callName === 'inject') {
+        return { category: 'inject', callName }
     }
 
     if (node.type === 'ExpressionStatement') {
-        const expr = node.expression as AnyNode
-        const name = getCallName(expr)
-
-        if (name) {
-            if (MACRO_APIS.has(name)) return 'macros'
-            if (config.watchEffectApis.has(name)) return 'watchEffect'
-            if (config.watchApis.has(name)) return 'watch'
-            if (config.lifecycleApis.has(name)) return 'lifecycle'
+        if (callName) {
+            if (MACRO_APIS.has(callName)) return { category: 'macros', callName }
+            if (config.watchEffectApis.has(callName)) return { category: 'watchEffect', callName }
+            if (config.watchApis.has(callName)) return { category: 'watch', callName }
+            if (config.lifecycleApis.has(callName)) return { category: 'lifecycle', callName }
         }
 
-        return 'unknown'
+        return { category: 'unknown', callName }
     }
 
-
-    if (node.type === 'FunctionDeclaration') return 'function'
+    if (node.type === 'FunctionDeclaration') {
+        return { category: 'function', callName: null }
+    }
 
     if (node.type === 'VariableDeclaration') {
-        const callName = getInitCallName(node)
-
         if (!callName) {
             const init = (node.declarations as AnyNode[])[0]?.init as AnyNode | undefined
 
             if (init?.type === 'ArrowFunctionExpression' || init?.type === 'FunctionExpression') {
-                return 'function'
+                return { category: 'function', callName: null }
             }
 
-            return 'variable'
+            return { category: 'variable', callName: null }
         }
 
         if (MACRO_APIS.has(callName)) {
-            return 'macros'
+            return { category: 'macros', callName }
         }
 
         if (config.reactiveApis.has(callName)) {
-            return 'reactive'
+            return { category: 'reactive', callName }
         }
 
         if (config.computedApis.has(callName)) {
-            return 'computed'
+            return { category: 'computed', callName }
         }
 
         if (config.watchEffectApis.has(callName)) {
-            return 'watchEffect'
+            return { category: 'watchEffect', callName }
         }
 
         if (config.watchApis.has(callName)) {
-            return 'watch'
+            return { category: 'watch', callName }
         }
 
         if (config.lifecycleApis.has(callName)) {
-            return 'lifecycle'
+            return { category: 'lifecycle', callName }
         }
 
         if (config.composablePattern.test(callName)) {
-            return 'composable'
+            return { category: 'composable', callName }
         }
 
-        return 'variable'
+        return { category: 'variable', callName }
     }
 
-    return 'unknown'
+    return { category: 'unknown', callName }
 }

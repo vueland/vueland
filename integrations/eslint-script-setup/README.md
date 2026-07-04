@@ -20,7 +20,7 @@
 
 Enforces a consistent order of declarations inside `<script setup>` blocks and provides autofix.
 
-Default order: `import → type → macros → composable → reactive → variable → computed → function → watchEffect → watch → lifecycle`
+Default order: `import → type → macros → class → composable → inject → reactive → variable → computed → function → watchEffect → watch → provide → lifecycle → defineExpose`
 
 ## Installation
 
@@ -116,9 +116,12 @@ onMounted(() => {
 
 ```js
 '@vueland/script-setup-order': ['warn', {
-  // Override the full order (all categories you want enforced must be listed)
-  order: ['import', 'type', 'macros', 'composable', 'reactive', 'variable',
-          'computed', 'function', 'watchEffect', 'watch', 'lifecycle'],
+  // Override the full order (all categories you want enforced must be listed).
+  // Individual macros (defineProps, defineEmits, defineSlots, defineModel,
+  // defineOptions) may be listed instead of the whole 'macros' group.
+  order: ['import', 'type', 'macros', 'class', 'composable', 'inject',
+          'reactive', 'variable', 'computed', 'function', 'watchEffect',
+          'watch', 'provide', 'lifecycle', 'defineExpose'],
 
   // Regex pattern to detect composables (default: /^use[A-Z]/)
   composablePattern: '^use[A-Z]',
@@ -129,7 +132,29 @@ onMounted(() => {
   watchEffectApis: ['watchDebounced'],
   watchApis: ['watchThrottled'],
   lifecycleApis: ['onIdle'],
+
+  // Hook order inside the lifecycle group (default: lifecycle firing order).
+  // Pass [] to disable hook sorting. Applies when 'lifecycle' is listed in order.
+  lifecycleOrder: ['onBeforeMount', 'onMounted', /* ... */],
+
+  // Own categories matched by AST (declared name and/or callee name).
+  // Each custom category must also be listed in `order`.
+  customCategories: [
+    { name: 'handlers', namePattern: '^on[A-Z]' },
+    { name: 'stores', calleePattern: '^storeToRefs$' },
+  ],
 }]
+```
+
+**Pinning a declaration:**
+
+A `// eslint-script-setup:keep` comment directly before a declaration (or at the end of its line) pins it in place — the rest of the block is sorted into the free slots around it. A blank line between the comment and the declaration breaks the pin.
+
+```ts
+const emit = defineEmits(['update'])
+
+// eslint-script-setup:keep
+const count = ref(0)
 ```
 
 **Dependency conflict handling:**

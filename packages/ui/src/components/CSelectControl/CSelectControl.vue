@@ -19,13 +19,13 @@
 
     defineSlots<CSelectControlSlots>()
 
+    const model = defineModel<T | T[] | boolean>({ default: false })
+
     defineExpose({
         checkOn,
         checkOff,
         toggle,
     })
-
-    const model = defineModel<T | T[] | boolean>({ default: false })
 
     const { isArray } = Array
 
