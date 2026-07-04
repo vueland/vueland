@@ -1,0 +1,129 @@
+@use 'sass:map';
+@use '../../styles/mixins/functions' as *;
+
+$progress-linear-colors: (
+  primary: (
+    color: getCssVar('sys', 'color', 'primary'),
+    container: getCssVar('sys', 'color', 'primary-container'),
+  ),
+  secondary: (
+    color: getCssVar('sys', 'color', 'secondary'),
+    container: getCssVar('sys', 'color', 'secondary-container'),
+  ),
+  tertiary: (
+    color: getCssVar('sys', 'color', 'tertiary'),
+    container: getCssVar('sys', 'color', 'tertiary-container'),
+  ),
+  success: (
+    color: getCssVar('sys', 'color', 'success'),
+    container: getCssVar('sys', 'color', 'success-container'),
+  ),
+  error: (
+    color: getCssVar('sys', 'color', 'error'),
+    container: getCssVar('sys', 'color', 'error-container'),
+  ),
+  warning: (
+    color: getCssVar('sys', 'color', 'warning'),
+    container: getCssVar('sys', 'color', 'warning-container'),
+  ),
+  info: (
+    color: getCssVar('sys', 'color', 'info'),
+    container: getCssVar('sys', 'color', 'info-container'),
+  ),
+);
+
+.c-progress-linear {
+  --c-progress-linear-color: #{getCssVar('sys', 'color', 'primary')};
+  --c-progress-linear-track-color: #{getCssVar('sys', 'color', 'primary-container')};
+
+  position: relative;
+  width: 100%;
+  background: transparent;
+  overflow: hidden;
+
+  @each $name, $tokens in $progress-linear-colors {
+    &--#{$name} {
+      --c-progress-linear-color: #{map.get($tokens, color)};
+      --c-progress-linear-track-color: #{map.get($tokens, container)};
+    }
+  }
+
+  &__background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: getCssVar('progress-linear', 'track-color');
+  }
+
+  &__buffer {
+    position: absolute;
+    height: 100%;
+    background-color: getCssVar('progress-linear', 'color');
+    opacity: 0.3;
+  }
+
+  &__indeterminate {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__bar {
+    position: absolute;
+    height: 100%;
+    width: 0;
+    background-color: getCssVar('progress-linear', 'color');
+    transition: width 0.3s ease-in-out;
+
+    &--long {
+      animation: c-progress-linear-long 2s linear 0s infinite;
+    }
+
+    &--short {
+      animation: c-progress-linear-short 2s linear 1s infinite;
+    }
+  }
+}
+
+@keyframes c-progress-linear-long {
+  0% {
+    right: 100%;
+    width: 0%;
+  }
+
+  50% {
+    right: -60%;
+    width: 70%;
+  }
+
+  100% {
+    right: -100%;
+    width: 15%;
+  }
+}
+
+@keyframes c-progress-linear-short {
+  0% {
+    right: 100%;
+    left: -100%;
+    width: 70%;
+  }
+
+  30% {
+    right: -8%;
+    left: 30%;
+    width: 25%;
+  }
+
+  60% {
+    right: -8%;
+    left: 120%;
+    width: 5%;
+  }
+
+  100% {
+    right: -8%;
+    left: 180%;
+    width: 35%;
+  }
+}
