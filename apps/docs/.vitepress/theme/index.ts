@@ -59,6 +59,7 @@ import * as components from '@vueland/ui/components'
 import { ALIASES } from '@vueland/ui/constants'
 import { createFontAwesomeResolver } from '@vueland/ui/resolvers'
 import type {
+    CButtonPreset,
     CInputPreset,
     CProgressCircularPreset,
     CProgressLinearPreset,
@@ -172,6 +173,20 @@ const downloadProgressPreset: CProgressLinearPreset = {
     complete: { bar: ['bg-green'] },
 }
 
+// Демо для страницы CBtn: полный пресет со состояниями.
+const saveButtonPreset: CButtonPreset = {
+    base: { root: ['bg-indigo', 'hover:bg-indigo-darken-1', 'text-white', 'elevation-2'] },
+    active: { root: ['bg-indigo-darken-2', 'text-white', 'elevation-0'] },
+    loading: { root: ['bg-indigo-lighten-2', 'text-white', 'elevation-0'] },
+    disabled: { root: ['bg-grey-lighten-1', 'text-grey-darken-1'] },
+}
+
+// Демо сочетания пресета и пропа color: пресет отвечает за форму и типографику,
+// цвет остаётся за пропом.
+const pillButtonPreset: CButtonPreset = {
+    base: { root: ['radius-16', 'px-6', 'text-uppercase', 'elevation-3'] },
+}
+
 export default {
     extends: DefaultTheme,
     Layout: VuelandLayout,
@@ -205,6 +220,10 @@ export default {
                 progress: {
                     upload: uploadProgressPreset,
                     download: downloadProgressPreset,
+                },
+                button: {
+                    save: saveButtonPreset,
+                    pill: pillButtonPreset,
                 },
             },
         })

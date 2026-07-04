@@ -2,10 +2,12 @@
     import { computed } from 'vue'
 
     import { IconAliases } from '@/enums'
+    import { toColorClass } from '@/utils'
 
     const props = defineProps<{
         closable?: boolean
-        color?: 'primary' | 'secondary' | 'tertiary' | 'success' | 'error' | 'warning' | 'info'
+        /** Палитровый токен ('red-lighten-2') или сырой цвет ('#fa5a5a', rgb(...), var(...)) */
+        color?: string
         value?: T
     }>()
 
@@ -13,7 +15,8 @@
         (e: 'close', value?: T): void
     }>()
 
-    const classes = computed(() => `c-chip--${props.color ?? 'primary'}`)
+    // bg-* утилиты красят и рамку (border-color идёт в комплекте)
+    const classes = computed(() => toColorClass('bg', props.color))
 </script>
 
 <template>

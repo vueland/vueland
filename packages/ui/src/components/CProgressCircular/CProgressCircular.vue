@@ -2,7 +2,7 @@
     import { computed, unref } from 'vue'
 
     import { useProgressCircularPresets } from '@/composables/use-progress-presets'
-    import { convertToUnit } from '@/utils'
+    import { convertToUnit, toColorClass } from '@/utils'
 
     import type { CProgressCircularProps, CProgressCircularSlots } from './types'
 
@@ -56,7 +56,8 @@
     })
 
     const rootClasses = computed(() => [
-        `c-progress-circular--${props.color ?? 'primary'}`,
+        // Обводка красится через currentColor, поэтому цвет — это text-утилита
+        toColorClass('text', props.color),
         { 'c-progress-circular--indeterminate': props.indeterminate },
         ...unref(preset).root,
     ])

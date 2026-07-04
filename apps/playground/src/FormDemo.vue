@@ -85,9 +85,8 @@
                                 <template #activator="{ on, activator }">
                                     <c-btn
                                         v-bind="activator"
-                                        variant="flat"
-                                        color="success"
-                                        class="elevation-5"
+                                        color="#7C4DFF"
+                                        preset="button.A"
                                         v-on="on"
                                     >
                                         tooltip

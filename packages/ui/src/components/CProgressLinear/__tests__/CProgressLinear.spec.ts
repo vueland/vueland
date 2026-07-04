@@ -58,12 +58,15 @@ describe('CProgressLinear', () => {
         expect(wrapper.attributes('style')).toContain('height: 8px')
     })
 
-    it('color ставит цветовой модификатор, по умолчанию primary', () => {
-        const primary = mount(CProgressLinear)
-        const success = mount(CProgressLinear, { props: { color: 'success' } })
+    it('color вешает bg-утилиту на бар и буфер: палитра и сырой цвет', () => {
+        const plain = mount(CProgressLinear)
+        const palette = mount(CProgressLinear, { props: { color: 'red-lighten-2', bufferValue: 50 } })
+        const arbitrary = mount(CProgressLinear, { props: { color: '#fa5a5a' } })
 
-        expect(primary.classes()).toContain('c-progress-linear--primary')
-        expect(success.classes()).toContain('c-progress-linear--success')
+        expect(plain.find('.c-progress-linear__bar').classes()).toEqual(['c-progress-linear__bar'])
+        expect(palette.find('.c-progress-linear__bar').classes()).toContain('bg-red-lighten-2')
+        expect(palette.find('.c-progress-linear__buffer').classes()).toContain('bg-red-lighten-2')
+        expect(arbitrary.find('.c-progress-linear__bar').classes()).toContain('bg-[#fa5a5a]')
     })
 
     it('пресет раскладывает классы по зонам, включая оба indeterminate-бара', () => {

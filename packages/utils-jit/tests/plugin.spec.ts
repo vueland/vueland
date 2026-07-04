@@ -308,7 +308,9 @@ describe('plugins / filesystem integration', () => {
         expect(css).toContain('/* @vueland/utils-jit: generated utilities */')
         expect(css).toContain('.w-\\[100px\\]{width: 100px !important;}')
         expect(css).toContain('.h-\\[40px\\]{height: 40px !important;}')
-        expect(css).toContain('.hover\\:bg-\\[\\#fff\\]:hover{background-color: #fff !important;}')
+        expect(css).toContain(
+            '.hover\\:bg-\\[\\#fff\\]:hover{background-color: #fff !important;border-color: #fff !important;}',
+        )
     })
 
     it('сортирует css rules стабильно по token', async () => {

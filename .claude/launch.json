@@ -1,0 +1,26 @@
+{
+    "version": "0.0.1",
+    "configurations": [
+        {
+            "name": "playground",
+            "runtimeExecutable": "pnpm",
+            "runtimeArgs": [
+                "--dir",
+                "apps/playground",
+                "dev:play",
+                "--port",
+                "5199",
+                "--strictPort"
+            ],
+            "port": 5199,
+            "autoPort": false
+        },
+        {
+            "name": "docs",
+            "runtimeExecutable": "pnpm",
+            "runtimeArgs": ["--dir", "apps/docs", "dev:docs", "--port", "5200", "--strictPort"],
+            "port": 5200,
+            "autoPort": false
+        }
+    ]
+}

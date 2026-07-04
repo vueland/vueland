@@ -31,18 +31,19 @@ Add your framework plugin (`@vitejs/plugin-vue`, `@vitejs/plugin-react`, etc.) i
 
 ## Options
 
-| Option          | Type                      | Default                                                      | Description                                                                                                                                       |
-| --------------- | ------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `include`       | `Array<string \| RegExp>` | `[/\.(vue\|js\|ts\|jsx\|tsx\|html\|svelte\|astro)$/]`        | Files that should be scanned.                                                                                                                     |
-| `exclude`       | `Array<string \| RegExp>` | Service directories                                          | Files and directories that should be ignored.                                                                                                     |
-| `emitFile`      | `boolean`                 | `false`                                                      | Also write the CSS to a file (for debugging). By default the CSS is served only as a virtual module.                                              |
-| `outFile`       | `string`                  | `src/.generated/utils-jit.css`                               | Path to the debug file relative to the Vite root. Only used when `emitFile: true`.                                                                |
-| `breakpoints`   | `Record<string, number>`  | `{ xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920, xxl: 2560 }` | Responsive breakpoints. When passed, they are **merged** with the defaults (values are overridden per key, new keys are added as class prefixes). |
-| `rules`         | `UtilityRule[]`           | `[]`                                                         | Custom utility rules.                                                                                                                             |
-| `variants`      | `VariantMap`              | `{}`                                                         | Custom variants that are added to the built-in variants.                                                                                          |
-| `banner`        | `string`                  | `/* @vueland/utils-jit: generated utilities */`              | Banner at the top of the generated CSS.                                                                                                           |
-| `emitEmptyFile` | `boolean`                 | `true`                                                       | Serve a placeholder comment when no utilities are found (otherwise empty CSS).                                                                    |
-| `debug`         | `boolean`                 | `false`                                                      | Prints diagnostic messages.                                                                                                                       |
+| Option            | Type                      | Default                                                      | Description                                                                                                                                       |
+| ----------------- | ------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `include`         | `Array<string \| RegExp>` | `[/\.(vue\|js\|ts\|jsx\|tsx\|html\|svelte\|astro)$/]`        | Files that should be scanned.                                                                                                                     |
+| `exclude`         | `Array<string \| RegExp>` | Service directories                                          | Files and directories that should be ignored.                                                                                                     |
+| `emitFile`        | `boolean`                 | `false`                                                      | Also write the CSS to a file (for debugging). By default the CSS is served only as a virtual module.                                              |
+| `outFile`         | `string`                  | `src/.generated/utils-jit.css`                               | Path to the debug file relative to the Vite root. Only used when `emitFile: true`.                                                                |
+| `breakpoints`     | `Record<string, number>`  | `{ xs: 0, sm: 600, md: 960, lg: 1280, xl: 1920, xxl: 2560 }` | Responsive breakpoints. When passed, they are **merged** with the defaults (values are overridden per key, new keys are added as class prefixes). |
+| `colorAttributes` | `string[]`                | `['color']` when `@vueland/ui` is installed, otherwise `[]`  | Attributes/props whose values are scanned as colors. See [`colorAttributes`](#colorattributes).                                                   |
+| `rules`           | `UtilityRule[]`           | `[]`                                                         | Custom utility rules.                                                                                                                             |
+| `variants`        | `VariantMap`              | `{}`                                                         | Custom variants that are added to the built-in variants.                                                                                          |
+| `banner`          | `string`                  | `/* @vueland/utils-jit: generated utilities */`              | Banner at the top of the generated CSS.                                                                                                           |
+| `emitEmptyFile`   | `boolean`                 | `true`                                                       | Serve a placeholder comment when no utilities are found (otherwise empty CSS).                                                                    |
+| `debug`           | `boolean`                 | `false`                                                      | Prints diagnostic messages.                                                                                                                       |
 
 ## `emitFile`
 
@@ -187,6 +188,43 @@ Breakpoint keys can be any string — they become CSS class prefixes and are val
 
 If you only use `utils-jit` without `@vueland/ui` SCSS, keys like `'2xl'` are perfectly fine.
 
+## `colorAttributes`
+
+`@vueland/ui` components with a `color` prop build the utility class at runtime: `color="#fa5a5a"` becomes `bg-[#fa5a5a]` or `color-[#fa5a5a]` depending on the component and variant. A static scan cannot find those classes in the sources — the code only contains the color value, not the final class.
+
+`colorAttributes` closes that gap: for the listed attributes the scanner takes the value and adds the `bg-[value]` and `color-[value]` candidates itself.
+
+```html
+<!-- in the source -->
+<c-btn color="#7C4DFF">Save</c-btn>
+```
+
+```css
+/* both candidates appear in virtual:utils-jit.css */
+.bg-\[\#7C4DFF\] {
+  background-color: #7c4dff !important;
+  border-color: #7c4dff !important;
+}
+.color-\[\#7C4DFF\] {
+  color: #7c4dff !important;
+}
+```
+
+**The default is automatic:** when `@vueland/ui` is installed in the project (listed in `dependencies`/`devDependencies` or resolvable from the root), the plugin enables `['color']` on its own — no configuration needed. An explicitly passed value (including `[]`) turns the autodetection off:
+
+```ts
+utilsJIT({
+  // your own color-carrying props in addition to color
+  colorAttributes: ['color', 'track-color'],
+})
+```
+
+The same rules as for classes apply:
+
+- only **raw** values are expanded: `#hex`, `rgb()/hsl()/oklch()/...`, `var(...)`. Palette tokens (`color="red-lighten-2"`) don't need the JIT — the `bg-red-lighten-2`/`text-red-lighten-2` classes already exist in the static `@vueland/ui` utilities;
+- the value must be a literal: the scanner sees `color="#fa5a5a"` and `:color="'#fa5a5a'"`, but not `:color="someVar"` (same as dynamically built classes);
+- whitespace inside the value is normalized: `rgb(255, 90, 90)` becomes `rgb(255,90,90)` both in the class and in the candidate.
+
 ## `variants`
 
 Custom variants allow you to extend the state and selector syntax.
@@ -251,6 +289,8 @@ export function Card({ active }: { active: boolean }) {
   return <div className={active ? 'w-[320px] px-[16px]' : 'w-[240px] px-[12px]'}>Content</div>
 }
 ```
+
+Besides classes, the plugin scans the values of the attributes listed in [`colorAttributes`](#colorattributes) — by default the `color` props of `@vueland/ui` components.
 
 Runtime values are not evaluated. The class must exist in the source code as a static token.
 

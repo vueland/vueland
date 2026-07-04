@@ -2,7 +2,7 @@
     import { computed, unref } from 'vue'
 
     import { useProgressLinearPresets } from '@/composables/use-progress-presets'
-    import { convertToUnit } from '@/utils'
+    import { convertToUnit, toColorClass } from '@/utils'
 
     import type { CProgressLinearProps } from './types'
 
@@ -24,10 +24,10 @@
 
     const normalizedBuffer = computed(() => clampPercent(props.bufferValue))
 
-    const rootClasses = computed(() => [
-        `c-progress-linear--${props.color ?? 'primary'}`,
-        ...unref(preset).root,
-    ])
+    const rootClasses = computed(() => [...unref(preset).root])
+
+    // Красится сам бар (и буфер), а не корень — трек остаётся на своих токенах
+    const barColor = computed(() => toColorClass('bg', props.color))
 
     const rootStyle = computed(() => {
         const height = Number(props.height ?? 4)
@@ -53,7 +53,7 @@
         <div
             v-if="bufferValue"
             class="c-progress-linear__buffer"
-            :class="preset.buffer"
+            :class="[barColor, preset.buffer]"
             :style="{ width: `${normalizedBuffer}%` }"
         ></div>
         <div
@@ -62,17 +62,17 @@
         >
             <div
                 class="c-progress-linear__bar c-progress-linear__bar--long"
-                :class="preset.bar"
+                :class="[barColor, preset.bar]"
             ></div>
             <div
                 class="c-progress-linear__bar c-progress-linear__bar--short"
-                :class="preset.bar"
+                :class="[barColor, preset.bar]"
             ></div>
         </div>
         <div
             v-else
             class="c-progress-linear__bar"
-            :class="preset.bar"
+            :class="[barColor, preset.bar]"
             :style="{ width: `${normalizedValue}%` }"
         ></div>
     </div>

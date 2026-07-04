@@ -258,6 +258,39 @@ function extractStringCandidates(code: string): string[] {
     return candidates
 }
 
+// Сырое CSS-значение цвета (не палитровый токен) — то, что компоненты
+// @vueland/ui оборачивают в arbitrary-класс: bg-[#fa5a5a] / color-[#fa5a5a]
+const RAW_COLOR_VALUE_RE =
+    /^(?:#[0-9a-fA-F]{3,8}|(?:rgb|rgba|hsl|hsla|oklch|oklab|color)\(.+\)|var\(.+\))$/
+
+function extractColorAttrCandidates(code: string, attributes: string[]): string[] {
+    const candidates: string[] = []
+
+    for (const attribute of attributes) {
+        // color="#fa5a5a" и :color="'#fa5a5a'" — динамические выражения
+        // (:color="someVar") статическому скану недоступны, как и в class
+        const pattern = new RegExp(
+            `(?:^|[\\s<]):?${attribute}\\s*=\\s*(["'])(.*?)\\1`,
+            'g',
+        )
+
+        for (const match of code.matchAll(pattern)) {
+            // Пробелы внутри rgb(...) убираются так же, как в рантайм-хелпере
+            // @vueland/ui, иначе кандидат не совпадёт с классом из DOM
+            const value = match[2]
+                .trim()
+                .replace(/^['"`]|['"`]$/g, '')
+                .replace(/\s+/g, '')
+
+            if (RAW_COLOR_VALUE_RE.test(value)) {
+                candidates.push(`bg-[${value}]`, `color-[${value}]`)
+            }
+        }
+    }
+
+    return candidates
+}
+
 function tokenizeChunk(code: string): Set<string> {
     const result = new Set<string>()
 
@@ -287,10 +320,14 @@ function tokenizeChunk(code: string): Set<string> {
     return result
 }
 
-export function tokenize(code: string): Set<string> {
+export function tokenize(code: string, colorAttributes: string[] = []): Set<string> {
     const cleanCode = stripComments(code)
     const classCandidates = extractClassCandidates(cleanCode)
     const result = new Set<string>()
+
+    for (const candidate of extractColorAttrCandidates(cleanCode, colorAttributes)) {
+        result.add(candidate)
+    }
 
     if (classCandidates.length > 0) {
         for (const candidate of classCandidates) {

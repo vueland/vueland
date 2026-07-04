@@ -38,22 +38,25 @@ const value = ref(65)
 
 ## Цвета
 
-`color` принимает семантический цвет темы. Подложка автоматически использует соответствующий токен `*-container`.
+`color` принимает палитровый токен (`teal`, `green-darken-1`) или сырой цвет (`#fa5a5a`, `rgb(...)`, `var(...)`) — предопределённого набора нет. Кольцо рисуется через `currentColor`, поэтому цвет ложится `text-*`/`color-[...]` классом на корень; подложка остаётся на токенах темы и перекрашивается через пресет (зона `underlay`).
 
 <ColorsExample />
 
 ::: details Показать код
 
 ```html
-<CProgressCircular value="70" size="48" width="5" color="primary" />
-<CProgressCircular value="70" size="48" width="5" color="secondary" />
-<CProgressCircular value="70" size="48" width="5" color="tertiary" />
-<CProgressCircular value="70" size="48" width="5" color="success" />
-<CProgressCircular value="70" size="48" width="5" color="error" />
-<CProgressCircular value="70" size="48" width="5" color="warning" />
-<CProgressCircular value="70" size="48" width="5" color="info" />
+<CProgressCircular value="70" size="48" width="5" color="indigo" />
+<CProgressCircular value="70" size="48" width="5" color="teal" />
+<CProgressCircular value="70" size="48" width="5" color="deep-purple-lighten-1" />
+<CProgressCircular value="70" size="48" width="5" color="green-darken-1" />
+<CProgressCircular value="70" size="48" width="5" color="#FFA726" />
+<CProgressCircular value="70" size="48" width="5" color="#fa5a5a" />
 ```
 
+:::
+
+::: tip Сырой цвет должен быть литералом
+Arbitrary-классы (`color-[#fa5a5a]`) генерирует [utils-jit](/ru/plugins/utils-jit/getting-started) статическим сканом исходников: `color="#fa5a5a"` сработает, `:color="someVar"` с сырым значением — нет. Палитровых токенов это не касается. Подробнее — в [`colorAttributes`](/ru/plugins/utils-jit/configuration#colorattributes).
 :::
 
 ## Indeterminate
@@ -66,8 +69,8 @@ const value = ref(65)
 
 ```html
 <CProgressCircular indeterminate size="24" width="3" />
-<CProgressCircular indeterminate color="success" size="40" width="4" />
-<CProgressCircular indeterminate color="error" size="64" width="6" />
+<CProgressCircular indeterminate color="green-darken-1" size="40" width="4" />
+<CProgressCircular indeterminate color="#fa5a5a" size="64" width="6" />
 ```
 
 :::
@@ -123,15 +126,15 @@ createVuelandUI({
 
 ### Пропы
 
-| Проп            | Тип                                                                                     | По умолчанию | Описание                                  |
-| --------------- | --------------------------------------------------------------------------------------- | ------------ | ----------------------------------------- |
-| `value`         | `number \| string`                                                                      | `0`          | Процент прогресса, обрезается до 0–100    |
-| `size`          | `number \| string`                                                                      | `32`         | Диаметр (px)                              |
-| `width`         | `number \| string`                                                                      | `4`          | Толщина штриха (px)                       |
-| `rotate`        | `number \| string`                                                                      | `0`          | Поворот начальной точки (deg)             |
-| `indeterminate` | `boolean`                                                                               | `false`      | Режим бесконечного спиннера               |
-| `color`         | `'primary' \| 'secondary' \| 'tertiary' \| 'success' \| 'error' \| 'warning' \| 'info'` | `'primary'`  | Семантический цвет темы                   |
-| `preset`        | `string`                                                                                | —            | Имя пресета (путь через точку) из реестра |
+| Проп            | Тип                | По умолчанию | Описание                                                                                                  |
+| --------------- | ------------------ | ------------ | --------------------------------------------------------------------------------------------------------- |
+| `value`         | `number \| string` | `0`          | Процент прогресса, обрезается до 0–100                                                                    |
+| `size`          | `number \| string` | `32`         | Диаметр (px)                                                                                              |
+| `width`         | `number \| string` | `4`          | Толщина штриха (px)                                                                                       |
+| `rotate`        | `number \| string` | `0`          | Поворот начальной точки (deg)                                                                             |
+| `indeterminate` | `boolean`          | `false`      | Режим бесконечного спиннера                                                                               |
+| `color`         | `string`           | —            | Палитровый токен (`teal`) или сырой цвет (`#fa5a5a`, `rgb(...)`, `var(...)`); без пропа — primary из темы |
+| `preset`        | `string`           | —            | Имя пресета (путь через точку) из реестра                                                                 |
 
 ### Слоты
 

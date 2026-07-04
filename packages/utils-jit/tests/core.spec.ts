@@ -148,6 +148,33 @@ describe('core / tokenize', () => {
 
         expect([...tokenize(code)]).toEqual(['flex-center', 'hover:flex-center'])
     })
+
+    it('colorAttributes: сырой цвет разворачивается в bg-/color- кандидатов', () => {
+        const tokens = [...tokenize('<c-btn color="#fa5a5a" />', ['color'])]
+
+        expect(tokens).toContain('bg-[#fa5a5a]')
+        expect(tokens).toContain('color-[#fa5a5a]')
+    })
+
+    it('colorAttributes: строковый литерал в :color тоже разворачивается', () => {
+        const tokens = [...tokenize('<c-btn :color="\'rgb(255, 90, 90)\'" />', ['color'])]
+
+        expect(tokens).toContain('bg-[rgb(255,90,90)]')
+        expect(tokens).toContain('color-[rgb(255,90,90)]')
+    })
+
+    it('colorAttributes: палитровые значения кандидатов не порождают', () => {
+        const tokens = [...tokenize('<c-btn color="red-lighten-2" />', ['color'])]
+
+        expect(tokens).not.toContain('bg-[red-lighten-2]')
+        expect(tokens.some((token) => token.startsWith('bg-[') || token.startsWith('color-['))).toBe(false)
+    })
+
+    it('colorAttributes: без настройки color-атрибуты не сканируются', () => {
+        const tokens = [...tokenize('<c-btn color="#fa5a5a" />')]
+
+        expect(tokens.some((token) => token.startsWith('bg-[') || token.startsWith('color-['))).toBe(false)
+    })
 })
 
 describe('core / parseToken', () => {

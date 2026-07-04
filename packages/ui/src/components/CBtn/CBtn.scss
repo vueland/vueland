@@ -1,63 +1,19 @@
-@use 'sass:map';
 @use '../../styles/mixins/functions' as *;
-
-$btn-colors: (
-  primary: (
-    color: getCssVar('sys', 'color', 'primary'),
-    on-color: getCssVar('sys', 'color', 'on-primary'),
-    container: getCssVar('sys', 'color', 'primary-container'),
-    on-container: getCssVar('sys', 'color', 'on-primary-container'),
-  ),
-  secondary: (
-    color: getCssVar('sys', 'color', 'secondary'),
-    on-color: getCssVar('sys', 'color', 'on-secondary'),
-    container: getCssVar('sys', 'color', 'secondary-container'),
-    on-container: getCssVar('sys', 'color', 'on-secondary-container'),
-  ),
-  tertiary: (
-    color: getCssVar('sys', 'color', 'tertiary'),
-    on-color: getCssVar('sys', 'color', 'on-tertiary'),
-    container: getCssVar('sys', 'color', 'tertiary-container'),
-    on-container: getCssVar('sys', 'color', 'on-tertiary-container'),
-  ),
-  success: (
-    color: getCssVar('sys', 'color', 'success'),
-    on-color: getCssVar('sys', 'color', 'on-success'),
-    container: getCssVar('sys', 'color', 'success-container'),
-    on-container: getCssVar('sys', 'color', 'on-success-container'),
-  ),
-  error: (
-    color: getCssVar('sys', 'color', 'error'),
-    on-color: getCssVar('sys', 'color', 'on-error'),
-    container: getCssVar('sys', 'color', 'error-container'),
-    on-container: getCssVar('sys', 'color', 'on-error-container'),
-  ),
-  warning: (
-    color: getCssVar('sys', 'color', 'warning'),
-    on-color: getCssVar('sys', 'color', 'on-warning'),
-    container: getCssVar('sys', 'color', 'warning-container'),
-    on-container: getCssVar('sys', 'color', 'on-warning-container'),
-  ),
-  info: (
-    color: getCssVar('sys', 'color', 'info'),
-    on-color: getCssVar('sys', 'color', 'on-info'),
-    container: getCssVar('sys', 'color', 'info-container'),
-    on-container: getCssVar('sys', 'color', 'on-info-container'),
-  ),
-);
 
 .c-btn {
   --c-btn-text-color: #{getCssVar('sys', 'color', 'on-primary')};
+  --c-btn-loader-color: #{getCssVar('sys', 'color', 'on-primary')};
   --c-btn-border-radius: #{getCssVar('sys', 'shape', 'md')};
   --c-btn-bg-color: #{getCssVar('sys', 'color', 'primary')};
   --c-btn-container-color: #{getCssVar('sys', 'color', 'primary-container')};
   --c-btn-on-container-color: #{getCssVar('sys', 'color', 'on-primary-container')};
-  --c-btn-border-color: #{getCssVar('sys', 'color', 'primary')};
+  // currentColor: рамка outlined следует за цветом текста, в т.ч. от text-* утилит
+  --c-btn-border-color: currentColor;
   --c-btn-border-width: #{getCssVar('sys', 'border-width', 'thin')};
-  --c-btn-hover-bg-color: #{getCssVar('sys', 'state', 'hover-color')};
+  --c-btn-hover-bg-color: currentColor;
   --c-btn-focus-bg-color: #{getCssVar('sys', 'state', 'focus-color')};
-  --c-btn-pressed-bg-color: #{getCssVar('sys', 'state', 'pressed-color')};
-  --c-btn-transition-duration: #{getCssVar('sys', 'motion', 'duration-fast')};
+  --c-btn-pressed-bg-color: currentColor;
+  --c-btn-transition-duration: 0.3s;
   --c-btn-disabled-text-color: #{getCssVar('sys', 'color', 'disabled')};
   --c-btn-disabled-bg-color: #{getCssVar('sys', 'color', 'disabled-container')};
   --c-btn-disabled-opacity: #{getCssVar('sys', 'state', 'disabled-opacity')};
@@ -92,16 +48,6 @@ $btn-colors: (
     border-color getCssVar('btn', 'transition-duration')
       getCssVar('sys', 'motion', 'easing-standard');
 
-  @each $name, $tokens in $btn-colors {
-    &--#{$name} {
-      --c-btn-bg-color: #{map.get($tokens, color)};
-      --c-btn-text-color: #{map.get($tokens, on-color)};
-      --c-btn-container-color: #{map.get($tokens, container)};
-      --c-btn-on-container-color: #{map.get($tokens, on-container)};
-      --c-btn-border-color: #{map.get($tokens, color)};
-    }
-  }
-
   &::before {
     content: '';
     position: absolute;
@@ -109,23 +55,50 @@ $btn-colors: (
     border-radius: inherit;
     pointer-events: none;
     background: transparent;
+    opacity: 0;
+    transition: opacity getCssVar('btn', 'transition-duration')
+      getCssVar('sys', 'motion', 'easing-standard');
   }
 
   &:hover::before {
     background: getCssVar('btn', 'hover-bg-color');
+    opacity: 0.15;
   }
 
   &:active::before {
     background: getCssVar('btn', 'pressed-bg-color');
+    opacity: 0.1;
   }
 
   &:focus-visible::before {
     background: getCssVar('btn', 'focus-bg-color');
+    opacity: 0.15;
   }
 
   &__label {
     position: relative;
     white-space: nowrap;
+
+    // При загрузке лейбл прячется, но держит размеры кнопки
+    &--hidden {
+      visibility: hidden;
+    }
+  }
+
+  &--loading {
+    cursor: progress;
+  }
+
+  &__loader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & > .c-btn-progress {
+      color: getCssVar('btn', 'loader-color');
+    }
   }
 
   &:disabled,
@@ -145,14 +118,12 @@ $btn-colors: (
 
   &--flat {
     background-color: getCssVar('btn', 'bg-color');
-    box-shadow: getCssVar('sys', 'elevation', '2');
-
-    &:active {
-      box-shadow: getCssVar('sys', 'elevation', '0');
-    }
   }
 
   &--outlined {
+    // Дефолтный on-primary невидим на прозрачном фоне — лоадер идёт за текстом
+    --c-btn-loader-color: currentColor;
+
     background-color: transparent;
     color: getCssVar('btn', 'bg-color');
     border: getCssVar('btn', 'border-width') solid getCssVar('btn', 'border-color');

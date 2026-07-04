@@ -56,6 +56,20 @@ export type JitOptions = {
     breakpoints?: Record<string, number>
 
     /**
+     * Атрибуты/пропы, значения которых считаются цветом.
+     *
+     * Компоненты @vueland/ui в рантайме превращают значение color-пропа в
+     * utility-класс (`#fa5a5a` → `bg-[#fa5a5a]` / `color-[#fa5a5a]`), который
+     * статический скан исходников иначе не увидел бы. Для перечисленных здесь
+     * атрибутов сканер добавляет таких arbitrary-кандидатов сам. Палитровые
+     * значения (`red-lighten-2`) покрыты статическими утилитами и в JIT
+     * не нуждаются.
+     *
+     * По умолчанию: ['color'], если в проекте установлен @vueland/ui, иначе [].
+     */
+    colorAttributes?: string[]
+
+    /**
      * Пользовательские utility rules.
      */
     rules?: UtilityRule[]
@@ -93,6 +107,7 @@ export type ResolvedJitOptions = Required<
         | 'emitFile'
         | 'outFile'
         | 'breakpoints'
+        | 'colorAttributes'
         | 'rules'
         | 'variants'
         | 'banner'

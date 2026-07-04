@@ -1,17 +1,16 @@
 import type { PresetProps } from '@/composables/use-presets'
 
-export type CBtnColor =
-    | 'primary'
-    | 'secondary'
-    | 'tertiary'
-    | 'success'
-    | 'error'
-    | 'warning'
-    | 'info'
-
 export type CBtnProps = PresetProps & {
     variant?: 'flat' | 'outlined'
-    color?: CBtnColor
+    /** Палитровый токен ('red-lighten-2') или сырой цвет ('#fa5a5a', rgb(...), var(...)) */
+    color?: string
     block?: boolean
     disabled?: boolean
+    loading?: boolean
+}
+
+/** Отслеживаемые кнопкой взаимодействия — драйвят состояния пресета. */
+export type CBtnState = {
+    focused: boolean
+    active: boolean
 }

@@ -203,7 +203,7 @@
         name="activator"
         :on="listeners"
         :activator="activatorProps"
-    ></slot>
+    />
     <c-overlay
         v-slot="{zIndex}"
         v-model="model"
@@ -223,7 +223,7 @@
                 @click="onContentClick"
             >
                 <div class="c-menu__content">
-                    <slot></slot>
+                    <slot />
                 </div>
             </div>
         </transition>

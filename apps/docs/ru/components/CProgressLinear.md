@@ -37,21 +37,25 @@ const value = ref(40)
 
 ## Цвета и высота
 
-`color` принимает семантический цвет темы, `height` задаёт высоту бара в пикселях. Трек автоматически использует соответствующий токен `*-container`.
+`color` принимает палитровый токен (`teal`, `green-darken-1`) или сырой цвет (`#fa5a5a`, `rgb(...)`, `var(...)`) — предопределённого набора нет. Класс `bg-*` ложится на бар и буфер; трек остаётся на токенах темы и при необходимости перекрашивается через пресет (зона `background`). `height` задаёт высоту бара в пикселях.
 
 <ColorsExample />
 
 ::: details Показать код
 
 ```html
-<CProgressLinear color="primary" value="80" height="4" />
-<CProgressLinear color="secondary" value="65" height="6" />
-<CProgressLinear color="tertiary" value="50" height="8" />
-<CProgressLinear color="success" value="90" height="10" />
-<CProgressLinear color="warning" value="35" height="12" />
-<CProgressLinear color="error" value="20" height="14" />
+<CProgressLinear color="indigo" value="80" height="4" />
+<CProgressLinear color="teal" value="65" height="6" />
+<CProgressLinear color="deep-purple-lighten-1" value="50" height="8" />
+<CProgressLinear color="green-darken-1" value="90" height="10" />
+<CProgressLinear color="#FFA726" value="35" height="12" />
+<CProgressLinear color="#fa5a5a" value="20" height="14" />
 ```
 
+:::
+
+::: tip Сырой цвет должен быть литералом
+Arbitrary-классы (`bg-[#fa5a5a]`) генерирует [utils-jit](/ru/plugins/utils-jit/getting-started) статическим сканом исходников: `color="#fa5a5a"` сработает, `:color="someVar"` с сырым значением — нет. Палитровых токенов это не касается. Подробнее — в [`colorAttributes`](/ru/plugins/utils-jit/configuration#colorattributes).
 :::
 
 ## Буфер
@@ -65,7 +69,7 @@ const value = ref(40)
 ```vue
 <template>
   <CProgressLinear :value="value" :buffer-value="buffer" height="8" />
-  <CProgressLinear color="success" value="30" buffer-value="70" height="8" />
+  <CProgressLinear color="green-darken-1" value="30" buffer-value="70" height="8" />
 </template>
 ```
 
@@ -81,8 +85,8 @@ const value = ref(40)
 
 ```html
 <CProgressLinear indeterminate height="4" />
-<CProgressLinear indeterminate color="tertiary" height="6" />
-<CProgressLinear indeterminate color="info" height="8" />
+<CProgressLinear indeterminate color="teal" height="6" />
+<CProgressLinear indeterminate color="#7C4DFF" height="8" />
 ```
 
 :::
@@ -129,14 +133,14 @@ createVuelandUI({
 
 ### Пропы
 
-| Проп            | Тип                                                                                     | По умолчанию | Описание                                       |
-| --------------- | --------------------------------------------------------------------------------------- | ------------ | ---------------------------------------------- |
-| `value`         | `number \| string`                                                                      | `0`          | Ширина бара в процентах, обрезается до 0–100   |
-| `bufferValue`   | `number \| string`                                                                      | —            | Ширина буфера в процентах, обрезается до 0–100 |
-| `height`        | `number \| string`                                                                      | `4`          | Высота бара (px)                               |
-| `indeterminate` | `boolean`                                                                               | `false`      | Режим бесконечной анимации                     |
-| `color`         | `'primary' \| 'secondary' \| 'tertiary' \| 'success' \| 'error' \| 'warning' \| 'info'` | `'primary'`  | Семантический цвет темы                        |
-| `preset`        | `string`                                                                                | —            | Имя пресета (путь через точку) из реестра      |
+| Проп            | Тип                | По умолчанию | Описание                                                                                                  |
+| --------------- | ------------------ | ------------ | --------------------------------------------------------------------------------------------------------- |
+| `value`         | `number \| string` | `0`          | Ширина бара в процентах, обрезается до 0–100                                                              |
+| `bufferValue`   | `number \| string` | —            | Ширина буфера в процентах, обрезается до 0–100                                                            |
+| `height`        | `number \| string` | `4`          | Высота бара (px)                                                                                          |
+| `indeterminate` | `boolean`          | `false`      | Режим бесконечной анимации                                                                                |
+| `color`         | `string`           | —            | Палитровый токен (`teal`) или сырой цвет (`#fa5a5a`, `rgb(...)`, `var(...)`); без пропа — primary из темы |
+| `preset`        | `string`           | —            | Имя пресета (путь через точку) из реестра                                                                 |
 
 ### CSS-переменные
 
