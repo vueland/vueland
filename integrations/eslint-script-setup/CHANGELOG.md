@@ -1,5 +1,11 @@
 # @vueland/eslint-script-setup
 
+## 1.1.0
+
+### Minor Changes
+
+- [#96](https://github.com/vueland/vueland/pull/96) [`b716d3c`](https://github.com/vueland/vueland/commit/b716d3c5b3cfb6277747cfecb3cafd45750ee57f) Thanks [@wiseadme](https://github.com/wiseadme)! - eslint-script-setup keep marker, lifecycle order, new categories
+
 ## 1.0.0
 
 ### Major Changes
