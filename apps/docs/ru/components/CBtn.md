@@ -69,7 +69,7 @@ import PresetColorExample from '../../examples/CBtn/PresetColorExample.vue'
 :::
 
 ::: tip Сырой цвет должен быть литералом
-Arbitrary-классы генерируются статическим сканом исходников: `color="#7C4DFF"` и `:color="'#7C4DFF'"` сработают, а `:color="someVar"` с сырым значением — нет. Палитровых токенов это не касается — их классы всегда есть в CSS. Подробнее — в [`colorAttributes`](/ru/plugins/utils-jit/configuration#colorattributes).
+Arbitrary-классы генерируются статическим сканом исходников: `color="#7C4DFF"` и `:color="'#7C4DFF'"` сработают, а `:color="someVar"` с сырым значением — нет. Палитровых токенов это не касается — их классы всегда есть в CSS. Подробнее — в [Custom attrs](/ru/plugins/utils-jit/custom-attrs).
 :::
 
 Цвет текста у залитой кнопки остаётся `on-primary` (белый). Если фон требует тёмного текста — добавьте `text-*` класс:

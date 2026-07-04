@@ -6,6 +6,7 @@ export {
     DEFAULT_EXCLUDE,
     DEFAULT_INCLUDE,
     DEFAULT_VARIANTS,
+    defineAttr,
     defineRule,
     escapeCssSelector,
     extractClassCandidates,

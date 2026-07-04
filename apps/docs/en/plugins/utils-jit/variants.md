@@ -163,7 +163,7 @@ utilsJIT({
 Usage:
 
 ```html
-<div class="bg-[#fff] dark:bg-[#111] color-[#111] dark:color-[#fff]"></div>
+<div class="bg-[#fff] dark:bg-[#111] text-[#111] dark:text-[#fff]"></div>
 ```
 
 Result:

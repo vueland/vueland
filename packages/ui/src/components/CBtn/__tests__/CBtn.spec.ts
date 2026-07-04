@@ -88,7 +88,7 @@ describe('CBtn', () => {
         })
 
         expect(palette.classes()).toContain('text-red-lighten-2')
-        expect(arbitrary.classes()).toContain('color-[#fa5a5a]')
+        expect(arbitrary.classes()).toContain('text-[#fa5a5a]')
     })
 
     it('без color цветовых утилит нет', () => {

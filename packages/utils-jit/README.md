@@ -94,7 +94,7 @@ import 'virtual:utils-jit.css'
 Then use utility classes anywhere your framework accepts class names:
 
 ```html
-<button class="w-[160px] px-[20px] py-[12px] radius-[8px] bg-[#42b883] color-[#fff]">Button</button>
+<button class="w-[160px] px-[20px] py-[12px] radius-[8px] bg-[#42b883] text-[#fff]">Button</button>
 ```
 
 The plugin scans your source files and generates only the CSS that is actually used.
@@ -174,6 +174,40 @@ export default defineConfig({
 ```html
 <div class="surface-[#fff] flex-center grid-cols-3 md:grid-cols-4"></div>
 ```
+
+## Custom Attributes
+
+`defineAttr` can scan literal component attributes or props and turn their values into generated utility candidates. Use the built-in validators, or pass your own `(value: string) => boolean` function.
+
+```ts
+import { defineConfig } from 'vite'
+import { defineAttr, isColorValue, isSizeValue, utilsJIT } from '@vueland/utils-jit'
+
+export default defineConfig({
+  plugins: [
+    utilsJIT({
+      attrs: [
+        defineAttr({
+          attr: 'tone',
+          validator: isColorValue,
+          prefixes: ['bg', 'text'],
+        }),
+        defineAttr({
+          attr: 'box-size',
+          validator: isSizeValue,
+          prefixes: ['w', 'h'],
+        }),
+      ],
+    }),
+  ],
+})
+```
+
+```html
+<c-box tone="#fa5a5a" box-size="40px"></c-box>
+```
+
+This adds candidates such as `bg-[#fa5a5a]`, `text-[#fa5a5a]`, `w-[40px]`, and `h-[40px]`.
 
 ## Breakpoints
 

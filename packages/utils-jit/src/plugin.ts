@@ -9,6 +9,7 @@ import {
     DEFAULT_EXCLUDE,
     DEFAULT_INCLUDE,
     DEFAULT_VARIANTS,
+    defineColorAttr,
     shouldProcess,
     tokenize,
 } from './core'
@@ -27,6 +28,7 @@ import { defaultRules } from './rules'
 import { createScssBreakpointInjector } from './scss-injection'
 import { TokenRegistry } from './token-registry'
 import type {
+    AttrRule,
     JitOptions,
     ResolvedJitOptions,
     UtilityRule,
@@ -99,7 +101,7 @@ function resolveOptions(options: JitOptions = {}): ResolvedJitOptions {
             ...DEFAULT_BREAKPOINTS,
             ...(options.breakpoints ?? {}),
         },
-        colorAttributes: options.colorAttributes ?? [],
+        attrs: options.attrs ?? [],
         rules: options.rules ?? [],
         variants: {
             ...DEFAULT_VARIANTS,
@@ -124,17 +126,21 @@ export function utilsJIT(options?: JitOptions): Plugin {
     // стандартные брейкпоинты. SCSS, JS и JIT должны видеть одну и ту же карту.
     const shouldInjectBreakpoints = options?.breakpoints !== undefined
 
-    // Автодефолт зависит от root, который известен только в configResolved,
-    // поэтому явность флага запоминаем здесь
-    const hasExplicitColorAttributes = options?.colorAttributes !== undefined
-
     let root = process.cwd()
     let outFileAbs = ''
+    let vuelandUiAttrs: AttrRule[] = []
 
     function debug(message: string): void {
         if (resolvedOptions.debug) {
             console.info(`[utils-jit] ${message}`)
         }
+    }
+
+    function getAttrRules(): AttrRule[] {
+        return [
+            ...resolvedOptions.attrs,
+            ...vuelandUiAttrs,
+        ]
     }
 
     // Отдаёт обновлённый CSS в virtual-модуль (и опц. дебаг-файл). Гейт по
@@ -171,7 +177,10 @@ export function utilsJIT(options?: JitOptions): Plugin {
                 // токенизировал повторно тот же контент (двойной обход на старте).
                 contentCache.changed(filePath, code)
 
-                return { path: filePath, tokens: tokenize(code, resolvedOptions.colorAttributes) }
+                return {
+                    path: filePath,
+                    tokens: tokenize(code, getAttrRules()),
+                }
             },
         )).filter((file): file is { path: string; tokens: Set<string> } => file !== null)
 
@@ -197,7 +206,10 @@ export function utilsJIT(options?: JitOptions): Plugin {
             return
         }
 
-        registry.syncFile(file, tokenize(code, resolvedOptions.colorAttributes))
+        registry.syncFile(
+            file,
+            tokenize(code, getAttrRules()),
+        )
         flushCss(notify)
     }
 
@@ -239,11 +251,10 @@ export function utilsJIT(options?: JitOptions): Plugin {
             outFileAbs = path.resolve(root, resolvedOptions.outFile)
             cssOutput.setOutFile(outFileAbs)
 
-            // Компоненты @vueland/ui строят классы из color-пропов в рантайме —
-            // при установленной либе сканим их по умолчанию
-            if (!hasExplicitColorAttributes && hasVuelandUi(root)) {
-                resolvedOptions.colorAttributes = ['color']
-            }
+            // Компоненты @vueland/ui строят классы из color-пропов в рантайме.
+            // Это внутренний контракт Vueland UI: пользовательские attrs
+            // добавляются сверху, но не отключают скан color-пропа.
+            vuelandUiAttrs = hasVuelandUi(root) ? [defineColorAttr('color')] : []
         },
 
         async buildStart() {

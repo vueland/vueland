@@ -248,8 +248,8 @@ export const defaultRules = [
     }),
 
     defineRule({
-        name: 'color',
-        matcher: /^color-\[(.+)\]$/,
+        name: 'text-color',
+        matcher: /^text-\[(.+)\]$/,
         validate: isColorValue,
         declaration: (value) => ({ color: value }),
     }),

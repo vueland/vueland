@@ -80,7 +80,7 @@ describe('CProgressCircular', () => {
 
         expect(plain.classes()).toEqual(['c-progress-circular'])
         expect(palette.classes()).toContain('text-red-lighten-2')
-        expect(arbitrary.classes()).toContain('color-[#fa5a5a]')
+        expect(arbitrary.classes()).toContain('text-[#fa5a5a]')
     })
 
     it('передаёт нормализованный value в слот', () => {

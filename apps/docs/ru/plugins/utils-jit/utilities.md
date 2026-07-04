@@ -38,7 +38,7 @@
 | `radius-br-[value]` | `border-bottom-right-radius`    | `radius-br-[8px]` |
 | `z-[value]`         | `z-index`                       | `z-[100]`         |
 | `opacity-[value]`   | `opacity`                       | `opacity-[0.64]`  |
-| `color-[value]`     | `color`                         | `color-[#111]`    |
+| `text-[value]`      | `color`                         | `text-[#111]`     |
 | `bg-[value]`        | `background-color`              | `bg-[#fff]`       |
 
 Все встроенные правила генерируются с `!important`.
@@ -132,15 +132,15 @@ calc(), min(), max(), clamp(), var()
 
 ## Color и background-color
 
-Для `color-[value]` и `bg-[value]` поддерживаются hex, CSS color functions, CSS-переменные и некоторые ключевые значения:
+Для `text-[value]` и `bg-[value]` поддерживаются hex, CSS color functions, CSS-переменные и некоторые ключевые значения:
 
 ```html
-<div class="color-[#111]"></div>
+<div class="text-[#111]"></div>
 <div class="bg-[#fff]"></div>
 <div class="bg-[rgb(255,255,255)]"></div>
-<div class="color-[oklch(60% 0.2 20)]"></div>
+<div class="text-[oklch(60% 0.2 20)]"></div>
 <div class="bg-[var(--vl-surface)]"></div>
-<div class="color-[currentColor]"></div>
+<div class="text-[currentColor]"></div>
 ```
 
 Некорректные значения игнорируются:

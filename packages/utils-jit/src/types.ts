@@ -2,6 +2,50 @@ export type Pattern = string | RegExp
 
 export type MaybeArray<T> = T | T[]
 
+export type AttrValidator = (value: string) => boolean
+
+export type AttrNormalizer = (value: string) => string
+
+export type AttrOptions = {
+    /**
+     * Имя атрибута/пропа для сканирования.
+     *
+     * Примеры:
+     * - color="#fa5a5a"
+     * - :color="'#fa5a5a'"
+     * - track-color="rgb(255, 90, 90)"
+     */
+    attr: string
+
+    /**
+     * Проверяет нормализованное значение атрибута перед генерацией utility candidates.
+     */
+    validator: AttrValidator
+
+    /**
+     * Utility-префиксы, которые генерируются из значения атрибута.
+     *
+     * Пример: prefixes ['bg', 'text'] со значением '#fff' создаёт
+     * bg-[#fff] и text-[#fff].
+     */
+    prefixes: string[]
+
+    /**
+     * Опциональная нормализация значения перед проверкой и генерацией классов.
+     *
+     * По умолчанию пробелы удаляются, как в color-пропах @vueland/ui:
+     * rgb(255, 90, 90) -> bg-[rgb(255,90,90)].
+     */
+    normalize?: AttrNormalizer
+}
+
+export type AttrRule = {
+    attr: string
+    validator: AttrValidator
+    prefixes: string[]
+    normalize: AttrNormalizer
+}
+
 export type VariantKind = 'pseudo' | 'media' | 'selector' | 'attribute'
 
 export type VariantDefinition = {
@@ -56,18 +100,14 @@ export type JitOptions = {
     breakpoints?: Record<string, number>
 
     /**
-     * Атрибуты/пропы, значения которых считаются цветом.
+     * Пользовательские атрибуты/пропы, значения которых разворачиваются
+     * в arbitrary utility candidates.
      *
-     * Компоненты @vueland/ui в рантайме превращают значение color-пропа в
-     * utility-класс (`#fa5a5a` → `bg-[#fa5a5a]` / `color-[#fa5a5a]`), который
-     * статический скан исходников иначе не увидел бы. Для перечисленных здесь
-     * атрибутов сканер добавляет таких arbitrary-кандидатов сам. Палитровые
-     * значения (`red-lighten-2`) покрыты статическими утилитами и в JIT
-     * не нуждаются.
-     *
-     * По умолчанию: ['color'], если в проекте установлен @vueland/ui, иначе [].
+     * Пример:
+     * defineAttr({ attr: 'size', validator: isSizeValue, prefixes: ['w', 'h'] })
+     * size="40px" -> w-[40px] / h-[40px]
      */
-    colorAttributes?: string[]
+    attrs?: AttrRule[]
 
     /**
      * Пользовательские utility rules.
@@ -107,7 +147,7 @@ export type ResolvedJitOptions = Required<
         | 'emitFile'
         | 'outFile'
         | 'breakpoints'
-        | 'colorAttributes'
+        | 'attrs'
         | 'rules'
         | 'variants'
         | 'banner'

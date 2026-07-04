@@ -87,6 +87,7 @@
                                         v-bind="activator"
                                         color="#7C4DFF"
                                         preset="button.A"
+                                        variant="outlined"
                                         v-on="on"
                                     >
                                         tooltip

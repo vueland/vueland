@@ -12,6 +12,7 @@ import {
 } from 'vitest'
 
 import {
+    defineAttr,
     defineRule,
     isColorValue,
     isSizeValue,
@@ -520,6 +521,77 @@ describe('plugins / filesystem integration', () => {
         expect(css).toContain(
             '@media (min-width: 960px) { .md\\:grid-cols-4{grid-template-columns: repeat(4, minmax(0, 1fr)) !important;} }',
         )
+    })
+
+    it('подключает custom attrs через defineAttr', async () => {
+        project.write(
+            'src/App.vue',
+            `
+            <template>
+                <c-box box-size="40px" tone="#fa5a5a" invalid-size="nope" />
+            </template>
+        `,
+        )
+
+        const plugin = asHookPlugin(
+            utilsJIT({
+                attrs: [
+                    defineAttr({
+                        attr: 'box-size',
+                        validator: isSizeValue,
+                        prefixes: ['w', 'h'],
+                    }),
+                    defineAttr({
+                        attr: 'tone',
+                        validator: isColorValue,
+                        prefixes: ['bg', 'text'],
+                    }),
+                    defineAttr({
+                        attr: 'invalid-size',
+                        validator: isSizeValue,
+                        prefixes: ['w'],
+                    }),
+                ],
+            }),
+        )
+
+        await startPlugin(plugin, project.root)
+
+        const css = getCss(plugin)
+
+        expect(css).toContain('.w-\\[40px\\]{width: 40px !important;}')
+        expect(css).toContain('.h-\\[40px\\]{height: 40px !important;}')
+        expect(css).toContain('.bg-\\[\\#fa5a5a\\]{background-color: #fa5a5a !important;border-color: #fa5a5a !important;}')
+        expect(css).toContain('.text-\\[\\#fa5a5a\\]{color: #fa5a5a !important;}')
+        expect(css).not.toContain('nope')
+    })
+
+    it('не отключает color-пропы @vueland/ui при явном attrs', async () => {
+        project.write(
+            'package.json',
+            JSON.stringify({
+                dependencies: {
+                    '@vueland/ui': 'workspace:*',
+                },
+            }),
+        )
+        project.write(
+            'src/App.vue',
+            `
+            <template>
+                <c-btn color="#7c4dff" />
+            </template>
+        `,
+        )
+
+        const plugin = asHookPlugin(utilsJIT({ attrs: [] }))
+
+        await startPlugin(plugin, project.root)
+
+        const css = getCss(plugin)
+
+        expect(css).toContain('.bg-\\[\\#7c4dff\\]{background-color: #7c4dff !important;border-color: #7c4dff !important;}')
+        expect(css).toContain('.text-\\[\\#7c4dff\\]{color: #7c4dff !important;}')
     })
 
     it('не генерирует false-positive css из большого файла со строковым шумом', async () => {

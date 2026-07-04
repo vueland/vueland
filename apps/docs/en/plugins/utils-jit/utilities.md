@@ -38,7 +38,7 @@ This page describes the built-in utility classes provided by `@vueland/utils-jit
 | `radius-br-[value]` | `border-bottom-right-radius`    | `radius-br-[8px]` |
 | `z-[value]`         | `z-index`                       | `z-[100]`         |
 | `opacity-[value]`   | `opacity`                       | `opacity-[0.64]`  |
-| `color-[value]`     | `color`                         | `color-[#111]`    |
+| `text-[value]`      | `color`                         | `text-[#111]`     |
 | `bg-[value]`        | `background-color`              | `bg-[#fff]`       |
 
 All built-in rules generate declarations with `!important`.
@@ -132,15 +132,15 @@ Radius utilities support length-like values:
 
 ## Color and background-color
 
-`color-[value]` and `bg-[value]` support hex colors, CSS color functions, CSS variables, and selected keyword values:
+`text-[value]` and `bg-[value]` support hex colors, CSS color functions, CSS variables, and selected keyword values:
 
 ```html
-<div class="color-[#111]"></div>
+<div class="text-[#111]"></div>
 <div class="bg-[#fff]"></div>
 <div class="bg-[rgb(255,255,255)]"></div>
-<div class="color-[oklch(60% 0.2 20)]"></div>
+<div class="text-[oklch(60% 0.2 20)]"></div>
 <div class="bg-[var(--vl-surface)]"></div>
-<div class="color-[currentColor]"></div>
+<div class="text-[currentColor]"></div>
 ```
 
 Invalid values are ignored:
