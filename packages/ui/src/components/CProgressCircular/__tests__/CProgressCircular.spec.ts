@@ -73,12 +73,14 @@ describe('CProgressCircular', () => {
         expect(wrapper.find('svg').attributes('viewBox')).not.toContain('NaN')
     })
 
-    it('color ставит цветовой модификатор, по умолчанию primary', () => {
-        const primary = mount(CProgressCircular)
-        const error = mount(CProgressCircular, { props: { color: 'error' } })
+    it('color вешает text-утилиту на корень: палитра и сырой цвет', () => {
+        const plain = mount(CProgressCircular)
+        const palette = mount(CProgressCircular, { props: { color: 'red-lighten-2' } })
+        const arbitrary = mount(CProgressCircular, { props: { color: '#fa5a5a' } })
 
-        expect(primary.classes()).toContain('c-progress-circular--primary')
-        expect(error.classes()).toContain('c-progress-circular--error')
+        expect(plain.classes()).toEqual(['c-progress-circular'])
+        expect(palette.classes()).toContain('text-red-lighten-2')
+        expect(arbitrary.classes()).toContain('color-[#fa5a5a]')
     })
 
     it('передаёт нормализованный value в слот', () => {

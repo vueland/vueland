@@ -1,0 +1,22 @@
+<template>
+    <div class="d-flex justify-center gap-3 pa-8">
+        <c-btn
+            preset="button.pill"
+            color="teal"
+        >
+            teal
+        </c-btn>
+        <c-btn
+            preset="button.pill"
+            color="red-darken-1"
+        >
+            red
+        </c-btn>
+        <c-btn
+            preset="button.pill"
+            color="#7C4DFF"
+        >
+            #7C4DFF
+        </c-btn>
+    </div>
+</template>

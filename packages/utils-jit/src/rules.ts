@@ -258,6 +258,10 @@ export const defaultRules = [
         name: 'background-color',
         matcher: /^bg-\[(.+)\]$/,
         validate: isColorValue,
-        declaration: (value) => ({ backgroundColor: value }),
+        // border-color вместе с фоном — как у статических .bg-* утилит
+        declaration: (value) => ({
+            backgroundColor: value,
+            borderColor: value,
+        }),
     }),
 ]

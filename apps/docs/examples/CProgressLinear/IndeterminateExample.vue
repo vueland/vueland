@@ -6,12 +6,12 @@
         />
         <c-progress-linear
             indeterminate
-            color="tertiary"
+            color="teal"
             height="6"
         />
         <c-progress-linear
             indeterminate
-            color="info"
+            color="#7C4DFF"
             height="8"
         />
     </div>

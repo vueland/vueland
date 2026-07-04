@@ -1,3 +1,5 @@
+import * as fs from 'node:fs'
+import { createRequire } from 'node:module'
 import * as path from 'node:path'
 import type { Plugin, ViteDevServer } from 'vite'
 
@@ -58,6 +60,28 @@ async function mapConcurrent<T, R>(
     return results
 }
 
+// В монорепе @vueland/ui может быть workspace-линком без собранного dist,
+// поэтому сначала deps из package.json и только потом require.resolve
+function hasVuelandUi(root: string): boolean {
+    try {
+        const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'))
+
+        if (pkg.dependencies?.['@vueland/ui'] || pkg.devDependencies?.['@vueland/ui']) {
+            return true
+        }
+    } catch {
+        // package.json может отсутствовать или быть невалидным — идём к resolve
+    }
+
+    try {
+        createRequire(path.join(root, 'package.json')).resolve('@vueland/ui')
+
+        return true
+    } catch {
+        return false
+    }
+}
+
 function resolveOptions(options: JitOptions = {}): ResolvedJitOptions {
     return {
         include: options.include ?? DEFAULT_INCLUDE,
@@ -75,6 +99,7 @@ function resolveOptions(options: JitOptions = {}): ResolvedJitOptions {
             ...DEFAULT_BREAKPOINTS,
             ...(options.breakpoints ?? {}),
         },
+        colorAttributes: options.colorAttributes ?? [],
         rules: options.rules ?? [],
         variants: {
             ...DEFAULT_VARIANTS,
@@ -98,6 +123,10 @@ export function utilsJIT(options?: JitOptions): Plugin {
     // `@use with (...)` полностью замещает карту, поэтому partial сломал бы
     // стандартные брейкпоинты. SCSS, JS и JIT должны видеть одну и ту же карту.
     const shouldInjectBreakpoints = options?.breakpoints !== undefined
+
+    // Автодефолт зависит от root, который известен только в configResolved,
+    // поэтому явность флага запоминаем здесь
+    const hasExplicitColorAttributes = options?.colorAttributes !== undefined
 
     let root = process.cwd()
     let outFileAbs = ''
@@ -142,7 +171,7 @@ export function utilsJIT(options?: JitOptions): Plugin {
                 // токенизировал повторно тот же контент (двойной обход на старте).
                 contentCache.changed(filePath, code)
 
-                return { path: filePath, tokens: tokenize(code) }
+                return { path: filePath, tokens: tokenize(code, resolvedOptions.colorAttributes) }
             },
         )).filter((file): file is { path: string; tokens: Set<string> } => file !== null)
 
@@ -168,7 +197,7 @@ export function utilsJIT(options?: JitOptions): Plugin {
             return
         }
 
-        registry.syncFile(file, tokenize(code))
+        registry.syncFile(file, tokenize(code, resolvedOptions.colorAttributes))
         flushCss(notify)
     }
 
@@ -209,6 +238,12 @@ export function utilsJIT(options?: JitOptions): Plugin {
             root = config.root
             outFileAbs = path.resolve(root, resolvedOptions.outFile)
             cssOutput.setOutFile(outFileAbs)
+
+            // Компоненты @vueland/ui строят классы из color-пропов в рантайме —
+            // при установленной либе сканим их по умолчанию
+            if (!hasExplicitColorAttributes && hasVuelandUi(root)) {
+                resolvedOptions.colorAttributes = ['color']
+            }
         },
 
         async buildStart() {

@@ -5,5 +5,6 @@ export type CProgressLinearProps = PresetProps & {
     bufferValue?: number | string
     height?: number | string
     indeterminate?: boolean
-    color?: 'primary' | 'secondary' | 'tertiary' | 'success' | 'error' | 'warning' | 'info'
+    /** Палитровый токен ('red-lighten-2') или сырой цвет ('#fa5a5a', rgb(...), var(...)) */
+    color?: string
 }

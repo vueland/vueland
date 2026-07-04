@@ -1,36 +1,4 @@
-@use 'sass:map';
 @use '../../styles/mixins/functions' as *;
-
-$progress-circular-colors: (
-  primary: (
-    color: getCssVar('sys', 'color', 'primary'),
-    container: getCssVar('sys', 'color', 'primary-container'),
-  ),
-  secondary: (
-    color: getCssVar('sys', 'color', 'secondary'),
-    container: getCssVar('sys', 'color', 'secondary-container'),
-  ),
-  tertiary: (
-    color: getCssVar('sys', 'color', 'tertiary'),
-    container: getCssVar('sys', 'color', 'tertiary-container'),
-  ),
-  success: (
-    color: getCssVar('sys', 'color', 'success'),
-    container: getCssVar('sys', 'color', 'success-container'),
-  ),
-  error: (
-    color: getCssVar('sys', 'color', 'error'),
-    container: getCssVar('sys', 'color', 'error-container'),
-  ),
-  warning: (
-    color: getCssVar('sys', 'color', 'warning'),
-    container: getCssVar('sys', 'color', 'warning-container'),
-  ),
-  info: (
-    color: getCssVar('sys', 'color', 'info'),
-    container: getCssVar('sys', 'color', 'info-container'),
-  ),
-);
 
 .c-progress-circular {
   --c-progress-circular-color: #{getCssVar('sys', 'color', 'primary')};
@@ -50,13 +18,6 @@ $progress-circular-colors: (
     position: absolute;
     inset: 0;
     z-index: 0;
-  }
-
-  @each $name, $tokens in $progress-circular-colors {
-    &--#{$name} {
-      --c-progress-circular-color: #{map.get($tokens, color)};
-      --c-progress-circular-underlay-color: #{map.get($tokens, container)};
-    }
   }
 
   &--indeterminate {

@@ -36,7 +36,7 @@
             height="8"
         />
         <c-progress-linear
-            color="success"
+            color="green-darken-1"
             value="30"
             buffer-value="70"
             height="8"

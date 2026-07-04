@@ -44,8 +44,11 @@ export type CInputPreset = StatePresets<CInputZone, CInputState>
 // Button
 // ---------------------------------------------------------------------------
 
-export type CButtonZone = 'root' | 'label'
-export type CButtonState = 'disabled'
+/** `loader` — спиннер, который рендерится в состоянии loading. */
+export type CButtonZone = 'root' | 'label' | 'loader'
+
+/** Взаимоисключающие в моменте; приоритет: disabled > loading > active > focused. */
+export type CButtonState = 'disabled' | 'loading' | 'active' | 'focused'
 
 export type CButtonPreset = StatePresets<CButtonZone, CButtonState>
 

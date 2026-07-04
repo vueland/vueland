@@ -1,21 +1,37 @@
-<script setup lang="ts">
-    const colors = [
-        'primary',
-        'secondary',
-        'tertiary',
-        'success',
-        'error',
-        'warning',
-        'info',
-    ] as const
-</script>
-
 <template>
     <div class="d-flex align-center justify-center gap-5 pa-8 flex-wrap">
         <c-progress-circular
-            v-for="color in colors"
-            :key="color"
-            :color="color"
+            color="indigo"
+            value="70"
+            size="48"
+            width="5"
+        />
+        <c-progress-circular
+            color="teal"
+            value="70"
+            size="48"
+            width="5"
+        />
+        <c-progress-circular
+            color="deep-purple-lighten-1"
+            value="70"
+            size="48"
+            width="5"
+        />
+        <c-progress-circular
+            color="green-darken-1"
+            value="70"
+            size="48"
+            width="5"
+        />
+        <c-progress-circular
+            color="#FFA726"
+            value="70"
+            size="48"
+            width="5"
+        />
+        <c-progress-circular
+            color="#fa5a5a"
             value="70"
             size="48"
             width="5"

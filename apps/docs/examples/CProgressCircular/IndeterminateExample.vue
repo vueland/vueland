@@ -7,13 +7,13 @@
         />
         <c-progress-circular
             indeterminate
-            color="success"
+            color="green-darken-1"
             size="40"
             width="4"
         />
         <c-progress-circular
             indeterminate
-            color="error"
+            color="#fa5a5a"
             size="64"
             width="6"
         />

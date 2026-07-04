@@ -1,43 +1,4 @@
-@use 'sass:map';
 @use '../../styles/mixins/functions' as *;
-
-$chip-colors: (
-  primary: (
-    color: getCssVar('sys', 'color', 'primary'),
-    container: getCssVar('sys', 'color', 'primary-container'),
-    on-container: getCssVar('sys', 'color', 'on-primary-container'),
-  ),
-  secondary: (
-    color: getCssVar('sys', 'color', 'secondary'),
-    container: getCssVar('sys', 'color', 'secondary-container'),
-    on-container: getCssVar('sys', 'color', 'on-secondary-container'),
-  ),
-  tertiary: (
-    color: getCssVar('sys', 'color', 'tertiary'),
-    container: getCssVar('sys', 'color', 'tertiary-container'),
-    on-container: getCssVar('sys', 'color', 'on-tertiary-container'),
-  ),
-  success: (
-    color: getCssVar('sys', 'color', 'success'),
-    container: getCssVar('sys', 'color', 'success-container'),
-    on-container: getCssVar('sys', 'color', 'on-success-container'),
-  ),
-  error: (
-    color: getCssVar('sys', 'color', 'error'),
-    container: getCssVar('sys', 'color', 'error-container'),
-    on-container: getCssVar('sys', 'color', 'on-error-container'),
-  ),
-  warning: (
-    color: getCssVar('sys', 'color', 'warning'),
-    container: getCssVar('sys', 'color', 'warning-container'),
-    on-container: getCssVar('sys', 'color', 'on-warning-container'),
-  ),
-  info: (
-    color: getCssVar('sys', 'color', 'info'),
-    container: getCssVar('sys', 'color', 'info-container'),
-    on-container: getCssVar('sys', 'color', 'on-info-container'),
-  ),
-);
 
 .c-chip {
   --c-chip-text-color: #{getCssVar('sys', 'color', 'on-primary-container')};
@@ -62,14 +23,6 @@ $chip-colors: (
   min-width: 60px;
   min-height: 24px;
   cursor: pointer;
-
-  @each $name, $tokens in $chip-colors {
-    &--#{$name} {
-      --c-chip-text-color: #{map.get($tokens, on-container)};
-      --c-chip-bg-color: #{map.get($tokens, container)};
-      --c-chip-border-color: #{map.get($tokens, color)};
-    }
-  }
 
   &__content {
     flex: 1 0;
