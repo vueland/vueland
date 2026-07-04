@@ -1,5 +1,18 @@
 # @vueland/ui
 
+## 0.2.0
+
+### Minor Changes
+
+- [#99](https://github.com/vueland/vueland/pull/99) [`d2ac736`](https://github.com/vueland/vueland/commit/d2ac7360e6690ce6ce256e8d04bd10ecd246e655) Thanks [@wiseadme](https://github.com/wiseadme)! - feat: CProgressCircular and CProgressLinear components
+
+  - `CProgressCircular` — circular progress indicator: determinate (`value`, clamped to 0–100) and `indeterminate` modes, `size` / `width` / `rotate` props, semantic `color` prop, default slot with the normalized value rendered in the center.
+  - `CProgressLinear` — linear progress bar: determinate, buffer (`buffer-value`) and `indeterminate` modes, `height` prop, semantic `color` prop.
+  - Preset system support for both: zones cover every colorable element (`root`/`underlay`/`overlay`/`info` for circular, `root`/`background`/`buffer`/`bar` for linear) with `indeterminate` and `complete` (`value` >= 100) states; new `CProgressCircularPreset` / `CProgressLinearPreset` types.
+  - Accessibility: `role="progressbar"` with `aria-valuemin/max/now`; `aria-valuenow` is omitted in indeterminate mode per the WAI-ARIA pattern.
+  - Track colors derive from the matching `*-container` theme token; all colors are overridable via `--c-progress-*` CSS variables.
+  - Guarded against invalid input: non-numeric `value`/`bufferValue` clamp to 0, non-numeric or non-positive `size`/`width`/`height` fall back to defaults, `width` is capped at half the diameter.
+
 ## 0.1.4
 
 ### Patch Changes
