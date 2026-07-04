@@ -8,6 +8,7 @@ import {
     buildCssRule,
     camelToKebab,
     defaultRules,
+    defineAttr,
     defineRule,
     escapeCssSelector,
     extractClassCandidates,
@@ -149,31 +150,121 @@ describe('core / tokenize', () => {
         expect([...tokenize(code)]).toEqual(['flex-center', 'hover:flex-center'])
     })
 
-    it('colorAttributes: сырой цвет разворачивается в bg-/color- кандидатов', () => {
-        const tokens = [...tokenize('<c-btn color="#fa5a5a" />', ['color'])]
+    it('defineAttr: сырой цвет разворачивается в bg-/text- кандидатов', () => {
+        const tokens = [...tokenize('<c-btn color="#fa5a5a" />', [
+            defineAttr({
+                attr: 'color',
+                validator: isColorValue,
+                prefixes: ['bg', 'text'],
+            }),
+        ])]
 
         expect(tokens).toContain('bg-[#fa5a5a]')
-        expect(tokens).toContain('color-[#fa5a5a]')
+        expect(tokens).toContain('text-[#fa5a5a]')
     })
 
-    it('colorAttributes: строковый литерал в :color тоже разворачивается', () => {
-        const tokens = [...tokenize('<c-btn :color="\'rgb(255, 90, 90)\'" />', ['color'])]
+    it('defineAttr: строковый литерал в :color тоже разворачивается', () => {
+        const tokens = [...tokenize('<c-btn :color="\'rgb(255, 90, 90)\'" />', [
+            defineAttr({
+                attr: 'color',
+                validator: isColorValue,
+                prefixes: ['bg', 'text'],
+            }),
+        ])]
 
         expect(tokens).toContain('bg-[rgb(255,90,90)]')
-        expect(tokens).toContain('color-[rgb(255,90,90)]')
+        expect(tokens).toContain('text-[rgb(255,90,90)]')
     })
 
-    it('colorAttributes: палитровые значения кандидатов не порождают', () => {
-        const tokens = [...tokenize('<c-btn color="red-lighten-2" />', ['color'])]
+    it('defineAttr: использует общий isColorValue валидатор', () => {
+        const tokens = [...tokenize('<c-btn color="transparent" />', [
+            defineAttr({
+                attr: 'color',
+                validator: isColorValue,
+                prefixes: ['bg', 'text'],
+            }),
+        ])]
+
+        expect(tokens).toContain('bg-[transparent]')
+        expect(tokens).toContain('text-[transparent]')
+    })
+
+    it('defineAttr: палитровые значения кандидатов не порождает', () => {
+        const tokens = [...tokenize('<c-btn color="red-lighten-2" />', [
+            defineAttr({
+                attr: 'color',
+                validator: isColorValue,
+                prefixes: ['bg', 'text'],
+            }),
+        ])]
 
         expect(tokens).not.toContain('bg-[red-lighten-2]')
-        expect(tokens.some((token) => token.startsWith('bg-[') || token.startsWith('color-['))).toBe(false)
+        expect(tokens.some((token) => token.startsWith('bg-[') || token.startsWith('text-['))).toBe(false)
     })
 
-    it('colorAttributes: без настройки color-атрибуты не сканируются', () => {
+    it('defineAttr: без настройки color-атрибуты не сканируются', () => {
         const tokens = [...tokenize('<c-btn color="#fa5a5a" />')]
 
-        expect(tokens.some((token) => token.startsWith('bg-[') || token.startsWith('color-['))).toBe(false)
+        expect(tokens.some((token) => token.startsWith('bg-[') || token.startsWith('text-['))).toBe(false)
+    })
+
+    it('defineAttr: разворачивает пользовательский attr через валидатор и префиксы', () => {
+        const tokens = [...tokenize(
+            '<c-box box-size="40px" tone="#fa5a5a" invalid-size="nope" />',
+            [
+                defineAttr({
+                    attr: 'box-size',
+                    validator: isSizeValue,
+                    prefixes: ['w', 'h'],
+                }),
+                defineAttr({
+                    attr: 'tone',
+                    validator: isColorValue,
+                    prefixes: ['bg', 'text'],
+                }),
+                defineAttr({
+                    attr: 'invalid-size',
+                    validator: isSizeValue,
+                    prefixes: ['w'],
+                }),
+            ],
+        )]
+
+        expect(tokens).toContain('w-[40px]')
+        expect(tokens).toContain('h-[40px]')
+        expect(tokens).toContain('bg-[#fa5a5a]')
+        expect(tokens).toContain('text-[#fa5a5a]')
+        expect(tokens).not.toContain('w-[nope]')
+    })
+
+    it('defineAttr: поддерживает строковый литерал в bound prop', () => {
+        const tokens = [...tokenize(
+            '<c-box :box-size="\'calc(100% - 16px)\'" />',
+            [
+                defineAttr({
+                    attr: 'box-size',
+                    validator: isSizeValue,
+                    prefixes: ['w'],
+                }),
+            ],
+        )]
+
+        expect(tokens).toContain('w-[calc(100%-16px)]')
+    })
+
+    it('defineAttr: поддерживает простые JSX string expressions', () => {
+        const tokens = [...tokenize(
+            '<Box tone={"#fa5a5a"} />',
+            [
+                defineAttr({
+                    attr: 'tone',
+                    validator: isColorValue,
+                    prefixes: ['bg'],
+                }),
+            ],
+        )]
+
+        expect(tokens).toContain('bg-[#fa5a5a]')
     })
 })
 

@@ -28,6 +28,10 @@
                 "file": "utils-jit/custom-rules"
             },
             {
+                "title": "Custom attrs",
+                "file": "utils-jit/custom-attrs"
+            },
+            {
                 "title": "Utilities",
                 "file": "utils-jit/utilities"
             },

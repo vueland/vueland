@@ -14,13 +14,13 @@ describe('toColorClass', () => {
 
     it('сырой цвет превращается в arbitrary-класс', () => {
         expect(toColorClass('bg', '#fa5a5a')).toBe('bg-[#fa5a5a]')
-        expect(toColorClass('text', '#fa5a5a')).toBe('color-[#fa5a5a]')
+        expect(toColorClass('text', '#fa5a5a')).toBe('text-[#fa5a5a]')
         expect(toColorClass('bg', 'var(--my-color)')).toBe('bg-[var(--my-color)]')
     })
 
     it('пробелы внутри функций цвета схлопываются — класс должен остаться одним токеном', () => {
         expect(toColorClass('bg', 'rgb(255, 90, 90)')).toBe('bg-[rgb(255,90,90)]')
-        expect(toColorClass('text', 'hsl(12, 76%, 61%)')).toBe('color-[hsl(12,76%,61%)]')
+        expect(toColorClass('text', 'hsl(12, 76%, 61%)')).toBe('text-[hsl(12,76%,61%)]')
     })
 
     it('пустое значение даёт undefined', () => {

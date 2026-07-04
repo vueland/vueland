@@ -17,6 +17,7 @@ html[data-theme='dark'] {
   --c-app-surface-color: #1e1e1e;
   --c-app-surface-variant-color: #2a2a2a;
   --c-app-text-color: #e0e0e0;
+  --c-sys-color-on-primary: #ffffff;
 
   background: #1e1e1e;
   color: #e0e0e0;

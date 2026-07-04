@@ -28,6 +28,10 @@
                 "file": "utils-jit/custom-rules"
             },
             {
+                "title": "Пользовательские атрибуты",
+                "file": "utils-jit/custom-attrs"
+            },
+            {
                 "title": "Утилитарные классы",
                 "file": "utils-jit/utilities"
             },

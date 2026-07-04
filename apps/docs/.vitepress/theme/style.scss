@@ -29,6 +29,8 @@
 }
 
 .dark {
+  --c-sys-color-on-primary: var(--c-ref-color-white);
+
   --vp-c-brand-1: #5aabff;
   --vp-c-brand-2: #2f8cff;
   --vp-c-brand-3: #27d98c;

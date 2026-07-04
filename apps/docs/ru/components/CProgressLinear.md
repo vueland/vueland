@@ -55,7 +55,7 @@ const value = ref(40)
 :::
 
 ::: tip Сырой цвет должен быть литералом
-Arbitrary-классы (`bg-[#fa5a5a]`) генерирует [utils-jit](/ru/plugins/utils-jit/getting-started) статическим сканом исходников: `color="#fa5a5a"` сработает, `:color="someVar"` с сырым значением — нет. Палитровых токенов это не касается. Подробнее — в [`colorAttributes`](/ru/plugins/utils-jit/configuration#colorattributes).
+Arbitrary-классы (`bg-[#fa5a5a]`) генерирует [utils-jit](/ru/plugins/utils-jit/getting-started) статическим сканом исходников: `color="#fa5a5a"` сработает, `:color="someVar"` с сырым значением — нет. Палитровых токенов это не касается. Подробнее — в [Custom attrs](/ru/plugins/utils-jit/custom-attrs).
 :::
 
 ## Буфер

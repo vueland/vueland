@@ -38,7 +38,7 @@ const value = ref(65)
 
 ## Цвета
 
-`color` принимает палитровый токен (`teal`, `green-darken-1`) или сырой цвет (`#fa5a5a`, `rgb(...)`, `var(...)`) — предопределённого набора нет. Кольцо рисуется через `currentColor`, поэтому цвет ложится `text-*`/`color-[...]` классом на корень; подложка остаётся на токенах темы и перекрашивается через пресет (зона `underlay`).
+`color` принимает палитровый токен (`teal`, `green-darken-1`) или сырой цвет (`#fa5a5a`, `rgb(...)`, `var(...)`) — предопределённого набора нет. Кольцо рисуется через `currentColor`, поэтому цвет ложится `text-*`/`text-[...]` классом на корень; подложка остаётся на токенах темы и перекрашивается через пресет (зона `underlay`).
 
 <ColorsExample />
 
@@ -56,7 +56,7 @@ const value = ref(65)
 :::
 
 ::: tip Сырой цвет должен быть литералом
-Arbitrary-классы (`color-[#fa5a5a]`) генерирует [utils-jit](/ru/plugins/utils-jit/getting-started) статическим сканом исходников: `color="#fa5a5a"` сработает, `:color="someVar"` с сырым значением — нет. Палитровых токенов это не касается. Подробнее — в [`colorAttributes`](/ru/plugins/utils-jit/configuration#colorattributes).
+Arbitrary-классы (`text-[#fa5a5a]`) генерирует [utils-jit](/ru/plugins/utils-jit/getting-started) статическим сканом исходников: `color="#fa5a5a"` сработает, `:color="someVar"` с сырым значением — нет. Палитровых токенов это не касается. Подробнее — в [Custom attrs](/ru/plugins/utils-jit/custom-attrs).
 :::
 
 ## Indeterminate

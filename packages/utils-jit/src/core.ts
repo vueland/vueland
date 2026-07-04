@@ -1,4 +1,6 @@
 import type {
+    AttrOptions,
+    AttrRule,
     CssBody,
     DeclarationMap,
     DeclarationValue,
@@ -10,6 +12,7 @@ import type {
     VariantDefinition,
     VariantMap,
 } from './types'
+import { isColorValue } from './validators'
 
 export const DEFAULT_INCLUDE: Pattern[] = [/\.(vue|js|ts|jsx|tsx|html|svelte|astro)$/]
 
@@ -258,32 +261,100 @@ function extractStringCandidates(code: string): string[] {
     return candidates
 }
 
-// Сырое CSS-значение цвета (не палитровый токен) — то, что компоненты
-// @vueland/ui оборачивают в arbitrary-класс: bg-[#fa5a5a] / color-[#fa5a5a]
-const RAW_COLOR_VALUE_RE =
-    /^(?:#[0-9a-fA-F]{3,8}|(?:rgb|rgba|hsl|hsla|oklch|oklab|color)\(.+\)|var\(.+\))$/
+const ATTR_NAME_RE = /^[a-zA-Z_][a-zA-Z0-9_.:-]*$/
+const ATTR_PREFIX_RE = /^(?:[a-zA-Z0-9_-]+:)*[a-zA-Z][a-zA-Z0-9_-]*$/
 
-function extractColorAttrCandidates(code: string, attributes: string[]): string[] {
+function escapeRegExp(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function compactAttrValue(value: string): string {
+    return value.trim().replace(/\s+/g, '')
+}
+
+function unwrapStringLiteral(value: string): string {
+    const normalized = value.trim()
+    const quote = normalized[0]
+
+    if (
+        (quote === '"' || quote === '\'' || quote === '`') &&
+        normalized.endsWith(quote)
+    ) {
+        return normalized.slice(1, -1)
+    }
+
+    return normalized
+}
+
+export function defineAttr(options: AttrOptions): AttrRule {
+    const attr = options.attr.trim()
+    const prefixes = [...new Set(options.prefixes.map((prefix) => prefix.trim()))]
+
+    if (!ATTR_NAME_RE.test(attr)) {
+        throw new Error(`[utils-jit] defineAttr: invalid attr "${options.attr}"`)
+    }
+
+    if (prefixes.length === 0 || prefixes.some((prefix) => !ATTR_PREFIX_RE.test(prefix))) {
+        throw new Error('[utils-jit] defineAttr: prefixes must be non-empty utility prefixes')
+    }
+
+    return {
+        attr,
+        validator: options.validator,
+        prefixes,
+        normalize: options.normalize ?? compactAttrValue,
+    }
+}
+
+export function defineColorAttr(attribute: string): AttrRule {
+    return defineAttr({
+        attr: attribute,
+        validator: isColorValue,
+        prefixes: ['bg', 'text'],
+    })
+}
+
+function extractAttrValues(code: string, attr: string): string[] {
+    const values: string[] = []
+    const escapedAttr = escapeRegExp(attr)
+    const vueOrHtmlPattern = new RegExp(
+        `(?:^|[\\s<])(?:v-bind:|:)?${escapedAttr}\\s*=\\s*(["'])((?:\\\\.|(?!\\1)[\\s\\S])*?)\\1`,
+        'g',
+    )
+    const jsxExpressionPattern = new RegExp(
+        `(?:^|[\\s<])${escapedAttr}\\s*=\\s*\\{\\s*(['"\`])((?:\\\\.|(?!\\1)[\\s\\S])*?)\\1\\s*\\}`,
+        'g',
+    )
+
+    for (const pattern of [vueOrHtmlPattern, jsxExpressionPattern]) {
+        for (const match of code.matchAll(pattern)) {
+            const value = match[2]
+
+            if (value) {
+                values.push(value)
+            }
+        }
+    }
+
+    return values
+}
+
+function extractAttrCandidates(code: string, attrs: AttrRule[]): string[] {
     const candidates: string[] = []
 
-    for (const attribute of attributes) {
-        // color="#fa5a5a" и :color="'#fa5a5a'" — динамические выражения
-        // (:color="someVar") статическому скану недоступны, как и в class
-        const pattern = new RegExp(
-            `(?:^|[\\s<]):?${attribute}\\s*=\\s*(["'])(.*?)\\1`,
-            'g',
-        )
+    for (const attr of attrs) {
+        // color="#fa5a5a", :color="'#fa5a5a'" и JSX color={'#fa5a5a'}.
+        // Динамические выражения вроде :color="someVar" статическому скану
+        // недоступны, как и динамически собранные class-строки.
+        for (const rawValue of extractAttrValues(code, attr.attr)) {
+            const value = attr.normalize(unwrapStringLiteral(rawValue))
 
-        for (const match of code.matchAll(pattern)) {
-            // Пробелы внутри rgb(...) убираются так же, как в рантайм-хелпере
-            // @vueland/ui, иначе кандидат не совпадёт с классом из DOM
-            const value = match[2]
-                .trim()
-                .replace(/^['"`]|['"`]$/g, '')
-                .replace(/\s+/g, '')
+            if (!value || !attr.validator(value)) {
+                continue
+            }
 
-            if (RAW_COLOR_VALUE_RE.test(value)) {
-                candidates.push(`bg-[${value}]`, `color-[${value}]`)
+            for (const prefix of attr.prefixes) {
+                candidates.push(`${prefix}-[${value}]`)
             }
         }
     }
@@ -320,12 +391,12 @@ function tokenizeChunk(code: string): Set<string> {
     return result
 }
 
-export function tokenize(code: string, colorAttributes: string[] = []): Set<string> {
+export function tokenize(code: string, attrs: AttrRule[] = []): Set<string> {
     const cleanCode = stripComments(code)
     const classCandidates = extractClassCandidates(cleanCode)
     const result = new Set<string>()
 
-    for (const candidate of extractColorAttrCandidates(cleanCode, colorAttributes)) {
+    for (const candidate of extractAttrCandidates(cleanCode, attrs)) {
         result.add(candidate)
     }
 
