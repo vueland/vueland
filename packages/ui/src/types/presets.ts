@@ -57,3 +57,20 @@ export type CMenuZone = 'root'
 export type CMenuState = 'opened' | 'closed'
 
 export type CMenuPreset = StatePresets<CMenuZone, CMenuState>
+
+// ---------------------------------------------------------------------------
+// Progress (circular и linear делят состояния, зоны у каждого свои)
+// ---------------------------------------------------------------------------
+
+/**
+ * Кольцо (overlay) и подложка (underlay) — SVG-круги: их цвет задаётся
+ * text-* классами, stroke берёт currentColor.
+ */
+export type CProgressCircularZone = 'root' | 'underlay' | 'overlay' | 'info'
+export type CProgressLinearZone = 'root' | 'background' | 'buffer' | 'bar'
+
+/** indeterminate приоритетнее: у бесконечного прогресса нет завершённости. */
+export type CProgressState = 'indeterminate' | 'complete'
+
+export type CProgressCircularPreset = StatePresets<CProgressCircularZone, CProgressState>
+export type CProgressLinearPreset = StatePresets<CProgressLinearZone, CProgressState>

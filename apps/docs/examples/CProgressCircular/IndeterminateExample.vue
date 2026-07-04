@@ -1,0 +1,21 @@
+<template>
+    <div class="d-flex align-center justify-center gap-6 pa-8">
+        <c-progress-circular
+            indeterminate
+            size="24"
+            width="3"
+        />
+        <c-progress-circular
+            indeterminate
+            color="success"
+            size="40"
+            width="4"
+        />
+        <c-progress-circular
+            indeterminate
+            color="error"
+            size="64"
+            width="6"
+        />
+    </div>
+</template>

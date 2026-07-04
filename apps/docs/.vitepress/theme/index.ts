@@ -58,7 +58,11 @@ import { createVuelandUI } from '@vueland/ui'
 import * as components from '@vueland/ui/components'
 import { ALIASES } from '@vueland/ui/constants'
 import { createFontAwesomeResolver } from '@vueland/ui/resolvers'
-import type { CInputPreset } from '@vueland/ui/types'
+import type {
+    CInputPreset,
+    CProgressCircularPreset,
+    CProgressLinearPreset,
+} from '@vueland/ui/types'
 import {
     inBrowser,
     type Theme,
@@ -148,6 +152,26 @@ function makeInputPreset(color: string): CInputPreset {
     }
 }
 
+// Демо для страниц CProgressCircular / CProgressLinear: complete перекрашивает
+// прогресс в зелёный, когда value доходит до 100. Кольцо и подложка — SVG,
+// text-* красит их через currentColor.
+const uploadProgressPreset: CProgressCircularPreset = {
+    base: {
+        underlay: ['text-grey'],
+        overlay: ['text-indigo'],
+        info: ['text-grey'],
+    },
+    complete: {
+        overlay: ['text-green'],
+        info: ['text-green'],
+    },
+}
+
+const downloadProgressPreset: CProgressLinearPreset = {
+    base: { bar: ['bg-indigo'] },
+    complete: { bar: ['bg-green'] },
+}
+
 export default {
     extends: DefaultTheme,
     Layout: VuelandLayout,
@@ -177,6 +201,10 @@ export default {
                     orange: makeInputPreset('text-orange'),
                     pink: makeInputPreset('text-pink'),
                     cyan: makeInputPreset('text-cyan'),
+                },
+                progress: {
+                    upload: uploadProgressPreset,
+                    download: downloadProgressPreset,
                 },
             },
         })

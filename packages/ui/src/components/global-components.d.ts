@@ -32,6 +32,8 @@ declare module 'vue' {
         CListItemIcon: typeof import('./CList').CListItemIcon
         CMain: typeof import('./CMain').CMain
         CMenu: typeof import('./CMenu').CMenu
+        CProgressCircular: typeof import('./CProgressCircular').CProgressCircular
+        CProgressLinear: typeof import('./CProgressLinear').CProgressLinear
         CRadio: typeof import('./CRadio').CRadio
         CSelect: typeof import('./CSelect').CSelect
         CSelectControl: typeof import('./CSelectControl').CSelectControl

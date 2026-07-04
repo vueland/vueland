@@ -29,6 +29,8 @@ export const components = [
     ['CListItemIcon', './CList'],
     ['CMain', './CMain'],
     ['CMenu', './CMenu'],
+    ['CProgressCircular', './CProgressCircular'],
+    ['CProgressLinear', './CProgressLinear'],
     ['CRadio', './CRadio'],
     ['CSelect', './CSelect'],
     ['CSelectControl', './CSelectControl'],
