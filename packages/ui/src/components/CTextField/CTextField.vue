@@ -18,16 +18,14 @@
     }
 
     defineOptions({ name: 'CTextField' })
-
     defineEmits<CTextFieldEmits<T>>()
-
     defineSlots<CTextFieldSlots>()
 
     const model = defineModel<string | number | undefined | null>()
 
-    const cInputRef = shallowRef<CInputExpose>()
-
     const rootAttrs = useAttrs()
+
+    const cInputRef = shallowRef<CInputExpose>()
 
     function validate() {
         return unref(cInputRef)?.validate()
@@ -57,7 +55,7 @@
         validate,
         reset,
         blur: () => unref(cInputRef)?.blur(),
-        focus: () => unref(cInputRef)?.focus(),
+        focus: () => unref(cInputRef)?.focus()
     })
 
 </script>

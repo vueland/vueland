@@ -2,11 +2,12 @@
     import {
         computed,
         h,
-        onMounted,
+        nextTick,
         shallowRef,
         unref,
         useAttrs,
-        useSlots
+        useSlots,
+        watch,
     } from 'vue'
 
     import { CIcon } from '@/components/CIcon'
@@ -49,6 +50,7 @@
         && !props.error
         && !props.disabled
         && !props.readonly
+        && !props.dirty
     )
 
     const classes = computed(() => [
@@ -99,9 +101,11 @@
         focus: () => unref(inputRef)?.focus()
     })
 
-    onMounted(() => {
-        if (props.focused) unref(inputRef)?.focus()
-    })
+    watch(() => props.focused, (value) => {
+        if (value) {
+            nextTick(() => unref(inputRef)?.focus())
+        }
+    }, { immediate: true })
 </script>
 
 <template>

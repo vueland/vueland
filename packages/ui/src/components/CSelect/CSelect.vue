@@ -1,9 +1,5 @@
 <script setup lang="ts" generic="T">
-    import {
-        computed,
-        shallowRef,
-        unref
-    } from 'vue'
+    import { shallowRef, unref } from 'vue'
 
     import { CMenu } from '@/components/CMenu'
     import { CTextField } from '@/components/CTextField'
@@ -34,7 +30,9 @@
         chips: selects,
         hasValue,
         closable,
-        select
+        textValue,
+        select,
+        unselect
     } = useSelectedChips(props)
 
     const { onKeydown } = useKeyboard(
@@ -50,8 +48,6 @@
             '*': (e) => unref(cListRef)?.onKeydown(e)
         }, { prevent: ['ArrowDown', 'ArrowUp'] })
 
-    const modelValue = computed(() => unref(selects).join(', '))
-
     function onBlur() {
         unref(cTextFieldRef).blur()
         menu.value = false
@@ -64,23 +60,12 @@
     function onClear() {
         model.value = props.multiple ? [] : undefined
     }
-
-    function onCloseChip(index: number) {
-        if (!props.multiple) {
-            model.value = undefined
-            return
-        }
-
-        const items = Array.isArray(unref(model)) ? unref(model) as T[] : []
-
-        model.value = items.filter((_, i) => i !== index)
-    }
 </script>
 
 <template>
     <c-text-field
         ref="cTextFieldRef"
-        :model-value="modelValue"
+        :model-value="textValue"
         :validation-value="model"
         class="c-select"
         role="combobox"
@@ -105,7 +90,7 @@
                         v-if="!chips"
                         class="c-select__items"
                     >
-                        {{ selects.join(', ') }}
+                        {{ textValue }}
                     </div>
                     <div
                         v-else
@@ -116,7 +101,7 @@
                             :key="i"
                             :closable
                             color="info"
-                            @close="onCloseChip(i)"
+                            @close="unselect(i)"
                         >
                             {{ it }}
                         </c-chip>

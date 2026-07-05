@@ -165,7 +165,6 @@
         watch(model, (value) => {
             if (isDef(props.modelValue)) {
                 value && open()
-                !value && close()
             }
 
             if (value) {
@@ -177,7 +176,7 @@
                 window.removeEventListener('scroll', handler)
                 window.removeEventListener('keydown', onKeydown)
             }
-        }, { immediate: true })
+        }, { immediate: unref(model) })
 
         onMounted(() => {
             if (isParentActivator) {

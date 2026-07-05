@@ -127,12 +127,6 @@
     background-color: transparent;
     color: getCssVar('btn', 'bg-color');
     border: getCssVar('btn', 'border-width') solid getCssVar('btn', 'border-color');
-
-    &:hover,
-    &:focus-visible {
-      color: getCssVar('btn', 'on-container-color');
-      background-color: getCssVar('btn', 'container-color');
-    }
   }
 
   &--block {

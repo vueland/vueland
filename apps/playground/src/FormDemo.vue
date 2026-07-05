@@ -4,7 +4,7 @@
     import { IconAliases } from '@/enums'
 
     const value = shallowRef([])
-    const email = shallowRef()
+    const email = shallowRef([])
 
     const rules = [
         val => ({
@@ -39,12 +39,12 @@
                 md="6"
                 class="min-h-[270px] pa-1 md:pa-4 lg:pa-1 d-flex"
             >
-                <c-form>
-                    <c-card class="elevation-2 align-self-stretch">
-                        <c-card-header>
-                            <h2>Simple card example</h2>
-                        </c-card-header>
-                        <c-card-body>
+                <c-card class="elevation-2 align-self-stretch">
+                    <c-card-header>
+                        <h2>Simple card example</h2>
+                    </c-card-header>
+                    <c-card-body>
+                        <c-form>
                             <c-select
                                 v-model="value"
                                 label="Select user"
@@ -61,43 +61,58 @@
                                 }"
                             />
 
-                            <c-text-field
+                            <c-autocomplete
                                 v-model="email"
-                                label="Email address"
-                                :rules="emailRules"
+                                label="Select email"
+                                title-key="email"
+                                multiple
+                                clearable
+                                value-key="name"
+                                autocomplete="off"
+                                autocorrect="off"
+                                autocapitalize="off"
+                                spellcheck="false"
+                                class="mt-4"
+                                :items
                             >
                                 <template #prepend>
                                     <c-icon :name="IconAliases.CALENDAR" />
                                 </template>
-                            </c-text-field>
-                        </c-card-body>
-                        <c-card-footer>
-                            <c-tooltip
-                                align="top-center"
-                                open-on-hover
-                                open-on-focus
-                                close-on-leave
-                                close-on-blur
-                                offset-y="8"
-                                strategy="reverse"
-                                class="radius-8 px-4 py-2"
-                            >
-                                <template #activator="{ on, activator }">
-                                    <c-btn
-                                        v-bind="activator"
-                                        color="#7C4DFF"
-                                        preset="button.A"
-                                        variant="outlined"
-                                        v-on="on"
-                                    >
-                                        tooltip
-                                    </c-btn>
-                                </template>
-                                <span>some text</span>
-                            </c-tooltip>
-                        </c-card-footer>
-                    </c-card>
-                </c-form>
+                            </c-autocomplete>
+
+                            <c-text-field
+                                v-model="email"
+                                label="Email address"
+                                :rules="emailRules"
+                            />
+                        </c-form>
+                    </c-card-body>
+                    <c-card-footer>
+                        <c-tooltip
+                            align="top-center"
+                            open-on-hover
+                            open-on-focus
+                            close-on-leave
+                            close-on-blur
+                            offset-y="8"
+                            strategy="reverse"
+                            class="radius-8 px-4 py-2"
+                        >
+                            <template #activator="{ on, activator }">
+                                <c-btn
+                                    v-bind="activator"
+                                    color="#7C4DFF"
+                                    preset="button.A"
+                                    variant="outlined"
+                                    v-on="on"
+                                >
+                                    tooltip
+                                </c-btn>
+                            </template>
+                            <span>some text</span>
+                        </c-tooltip>
+                    </c-card-footer>
+                </c-card>
             </c-col>
         </c-row>
     </div>

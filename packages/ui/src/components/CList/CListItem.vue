@@ -41,7 +41,7 @@
             return false
         }
 
-        return list?.isActive(props.value as T) ?? false
+        return list?.isSelected(props.value as T) ?? false
     })
 
     const tabIndex = computed(() => (unref(isInteractive) ? -1 : undefined))

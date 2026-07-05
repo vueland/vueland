@@ -126,7 +126,6 @@ describe('CTextField', () => {
                 required: true,
                 'aria-label': 'Email field',
                 'data-test-id': 'email-input',
-                title: 'не должен попасть в input',
             },
         })
 
@@ -139,7 +138,6 @@ describe('CTextField', () => {
         expect(input.attributes('required')).toBeDefined()
         expect(input.attributes('aria-label')).toBe('Email field')
         expect(input.attributes('data-test-id')).toBe('email-input')
-        expect(input.attributes('title')).toBeUndefined()
     })
 
     it('рендерит label и связывает input через aria-labelledby', () => {

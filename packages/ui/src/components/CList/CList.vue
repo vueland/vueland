@@ -99,27 +99,25 @@
         return resolveItemKey(a) === resolveItemKey(b)
     }
 
-    function isSelected(listItem: T) {
-        return Array.isArray(unref(model)) && (unref(model) as T[])?.some(item => {
-            return isSameValue(item, listItem)
-        })
+    function isSelected(value: T) {
+        return (unref(model) as T[])?.some(item => isSameValue(item, value))
     }
 
-    function selectItem(listItem: T) {
+    function selectItem(value: T) {
         if (!unref(isSelectable)) {
             return
         }
 
         if (!props.multiple) {
-            model.value = listItem
+            model.value = value
             return
         }
 
-        if (isSelected(listItem)) {
+        if (isSelected(value)) {
             return
         }
 
-        model.value = [...(Array.isArray(model.value) ? model.value : []), listItem]
+        model.value = [...unref(model) as T[], value]
     }
 
     function unselectItem(listItem: T) {
@@ -136,9 +134,11 @@
             return
         }
 
-        const items = Array.isArray(model.value) ? model.value : []
+        const items = model.value as T[]
 
-        if (props.mandatory && items.length <= 1) return
+        if (props.mandatory && items.length <= 1) {
+            return
+        }
 
         model.value = items.filter(item => !isSameValue(item, listItem))
     }
@@ -148,14 +148,16 @@
             return isSelected(listItem)
         }
 
-        return isDef(model.value) && isSameValue(model.value as T, listItem)
+        const value = model.value as T
+
+        return isDef(value) && isSameValue(value, listItem)
     }
 
-    function toggleItem(listItem: T) {
-        if (isItemSelected(listItem)) {
-            unselectItem(listItem)
+    function toggleItem(value: T) {
+        if (isItemSelected(value)) {
+            unselectItem(value)
         } else {
-            selectItem(listItem)
+            selectItem(value)
         }
     }
 
@@ -169,10 +171,18 @@
         listItems = listItems.filter(item => item !== listItem)
 
         if (activeItem === listItem) {
-            activeItem = null
+            blur()
         }
 
-        index = activeItem ? listItems.indexOf(activeItem) : -1
+        if (activeItem) {
+            index = listItems.indexOf(activeItem)
+        }
+    }
+
+    function blur() {
+        activeItem?.blur()
+        activeItem = null
+        index = -1
     }
 
     function focus() {
@@ -270,6 +280,7 @@
     defineExpose({
         focus,
         activateItem,
+        blur,
         navigateFirst,
         navigateDown,
         navigateLast,
@@ -281,10 +292,11 @@
         role: props.variant,
         registerItem,
         unregisterItem,
+        blur,
         select: selectItem,
         unselect: unselectItem,
         toggle: toggleItem,
-        isActive: isItemSelected,
+        isSelected: isItemSelected,
     }
 
     provide($LIST_API_KEY, listApi)

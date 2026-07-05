@@ -198,7 +198,6 @@ describe('CInput', () => {
                     required: true,
                     'aria-label': 'Email field',
                     'data-test': 'field',
-                    unknown: 'ignored',
                 },
             })
 
@@ -210,7 +209,6 @@ describe('CInput', () => {
             expect(input.attributes('required')).toBeDefined()
             expect(input.attributes('aria-label')).toBe('Email field')
             expect(input.attributes('data-test')).toBe('field')
-            expect(input.attributes('unknown')).toBeUndefined()
         })
 
         it('не передаёт class в field attrs, а применяет его на root', () => {

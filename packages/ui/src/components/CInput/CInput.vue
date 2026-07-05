@@ -7,7 +7,7 @@
         shallowReactive,
         Transition,
         unref,
-        useAttrs
+        useAttrs,
     } from 'vue'
 
     import { useAriaActivator } from '@/composables/use-aria-activator'
@@ -16,7 +16,7 @@
     import { useId } from '@/composables/use-id'
     import { useInputPresets } from '@/composables/use-input-presets'
     import { useValidate } from '@/composables/use-validate'
-    import { FIELD_ATTRS } from '@/constants'
+    import { allowedAttrs, excludeProps } from '@/helpers/exclude-props'
 
     import type {
         CInputEmits,
@@ -34,16 +34,16 @@
 
     defineEmits<CInputEmits<T>>()
 
-    const focusedModel = defineModel<boolean>('focused', { default: false })
+    const focused = defineModel<boolean>('focused', { default: false })
 
     const slots = defineSlots<CInputSlots>()
 
     const state = shallowReactive<InputState>({
         get focused() {
-            return focusedModel.value
+            return focused.value
         },
         set focused(v: boolean) {
-            focusedModel.value = v
+            focused.value = v
         },
         isDirty: false,
     })
@@ -55,7 +55,6 @@
     } = useValidate(props, state)
 
     const formApi = useForm()
-
     const attrs = useAttrs()
 
     const preset = useInputPresets({
@@ -76,43 +75,30 @@
         disabled: props.disabled,
     }))
 
-    const ariaActivator = useAriaActivator(() => ({
-        expanded: state.focused,
-        haspopup: 'listbox',
-        controls: `${fieldId}-menu`,
-    }))
-
-    const INTERNAL_HANDLERS = new Set([
-        'onUpdate:modelValue',
-        'onUpdate:focused'
-    ])
-
     const isCombobox = props.role === 'combobox'
     const isCheckBox = props.role === 'checkbox'
     const isRadio = props.role === 'radio'
 
-    const hasDetails = computed(
-        () => !props.noDetails && (!!props.details || !!slots?.details || errors.hasError),
+    const hasDetails = computed(() =>
+        !props.noDetails
+        && (!!props.details || !!slots?.details || errors.hasError)
     )
 
-    const normalizedAttrsMap = computed(() =>
-        Object.entries(attrs).reduce((acc, [k, v]) => {
-            if (
-                FIELD_ATTRS.has(k) ||
-                k.startsWith('aria-') ||
-                k.startsWith('data-') ||
-                (k.startsWith('on') && !INTERNAL_HANDLERS.has(k))
-            ) {
-                acc[k] = v
-            }
-
-            return acc
-        }, {}),
-    )
+    const normalizedAttrsMap = computed(() => excludeProps({
+        ...props,
+        ...allowedAttrs,
+    }))
 
     const fieldAttrs = computed(() => ({
         ...unref(ariaField),
-        ...(isCombobox ? { role: 'combobox', ...unref(ariaActivator) } : {}),
+        ...(isCombobox ? {
+            role: 'combobox',
+            ...useAriaActivator(() => ({
+                expanded: state.focused,
+                haspopup: 'listbox',
+                controls: `${fieldId}-menu`,
+            })).value
+        } : {}),
         ...unref(normalizedAttrsMap),
     }))
 
@@ -130,14 +116,17 @@
         ...unref(preset).root,
     ])
 
-    const internalDetailsKey = computed(() =>
-        [errors.errorMessage, props.details, errors.hasError].join('|'),
-    )
+    const internalDetailsKey = computed(() => [
+        errors.errorMessage,
+        props.details,
+        errors.hasError
+    ].join('|'))
 
     function focus() {
         if (props.disabled || props.readonly) {
             return
         }
+
         state.focused = true
     }
 
@@ -153,31 +142,26 @@
         resetValidate()
     }
 
+    const genDetails = () => h('div', {
+        key: unref(internalDetailsKey),
+        id: `${unref(fieldId)}-details`,
+        class: ['c-input__details', ...unref(preset).details],
+    }, {
+        default: () =>
+            slots.details?.({
+                details: props.details,
+                ...errors,
+                uid: fieldId,
+            }),
+    })
+
     const DetailsMessage = () =>
-        h(Transition,
-          {
-              name: 'fade-in-down',
-              mode: 'out-in',
-          },
-          {
-              default: () =>
-                  h('div',
-                    {
-                        key: unref(internalDetailsKey),
-                        id: `${unref(fieldId)}-details`,
-                        class: ['c-input__details', ...unref(preset).details],
-                    },
-                    {
-                        default: () =>
-                            slots.details?.({
-                                details: props.details,
-                                ...errors,
-                                uid: fieldId,
-                            }),
-                    },
-                  ),
-          },
-        )
+        h(Transition, {
+            name: 'fade-in-down',
+            mode: 'out-in',
+        }, {
+            default: () => genDetails(),
+        })
 
     onBeforeMount(() => {
         formApi?.add(validate)
