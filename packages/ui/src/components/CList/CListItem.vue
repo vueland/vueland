@@ -53,11 +53,15 @@
         disabled: props.disabled,
     }))
 
-    const itemClasses = computed(() => ({
-        'c-list-item--disabled': props.disabled,
-        'c-list-item--selected': unref(isSelected),
-        'c-list-item--focused': unref(focused),
-    }))
+    const itemClasses = computed(() => [
+        {
+            'c-list-item--disabled': props.disabled,
+            'c-list-item--selected': unref(isSelected),
+            'c-list-item--focused': unref(focused),
+        },
+        // Зона `option` пресета листа — резолвит хост-CList.
+        ...(list?.getPreset().option ?? []),
+    ])
 
     const itemListeners = computed(() => {
         if (!unref(isInteractive)) {
@@ -78,6 +82,7 @@
         blur: blurItem,
         click: () => unref(rootRef)?.click(),
         getText: () => unref(rootRef)?.textContent?.trim() ?? '',
+        getElement: () => unref(rootRef),
         isDisabled: () => props.disabled,
     }
 

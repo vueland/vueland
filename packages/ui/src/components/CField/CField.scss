@@ -93,7 +93,6 @@ $self: '.c-field';
     min-height: getCssVar('field', 'min-height');
     width: 100%;
     padding: 5px 0;
-    column-gap: 3px;
     position: relative;
   }
 
@@ -124,9 +123,8 @@ $self: '.c-field';
   }
 
   &-input {
-    flex: 1 1;
-    width: 100%;
-    min-width: 20%;
+    //flex: 1 1;
+    min-width: 100%;
     outline: none;
     cursor: inherit;
     color: getCssVar('field', 'input-text-color');

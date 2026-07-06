@@ -12,7 +12,7 @@ import {
 
 import { isDef } from '@/helpers'
 import type { DimensionsProps } from '@/types'
-import { IN_BROWSER } from '@/utils'
+import { IN_BROWSER, throttle } from '@/utils'
 
 import { useApplication } from './use-application'
 
@@ -94,8 +94,8 @@ function getObservedSize(entry: ResizeObserverEntry) {
     const borderBoxSize = entry.borderBoxSize?.[0]
 
     return {
-        width: borderBoxSize?.inlineSize ?? entry.contentRect.width,
-        height: borderBoxSize?.blockSize ?? entry.contentRect.height,
+        width: borderBoxSize?.inlineSize ?? entry.contentRect?.width,
+        height: borderBoxSize?.blockSize ?? entry.contentRect?.height,
     }
 }
 
@@ -399,28 +399,30 @@ export function useAutoPosition(
         updateInFlight = false
     }
 
+    const onResize = throttle((entries) => {
+        const entry = entries[0]
+
+        if (!entry) {
+            return
+        }
+
+        const { width, height } = getObservedSize(entry)
+        const current = unref(content)
+
+        if (isSameSize(current, width, height)) {
+            return
+        }
+
+        current.width = width
+        current.height = height
+
+        if (!updateInFlight) {
+            scheduleUpdate()
+        }
+    }, 50)
+
     if (IN_BROWSER) {
-        const resizeObserver = new ResizeObserver((entries) => {
-            const entry = entries[0]
-
-            if (!entry) {
-                return
-            }
-
-            const { width, height } = getObservedSize(entry)
-            const current = unref(content)
-
-            if (isSameSize(current, width, height)) {
-                return
-            }
-
-            current.width = width
-            current.height = height
-
-            if (!updateInFlight) {
-                scheduleUpdate()
-            }
-        })
+        const resizeObserver = new ResizeObserver((v) => onResize(v))
 
         watch(
             () => resolveElement(unref(activatorEl)),

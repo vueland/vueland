@@ -202,10 +202,15 @@ createVuelandUI({
   presets: {
     input: {
       blue: {
-        base: { label: ['text-blue'] },
-        focused: { label: ['text-blue'], field: ['text-blue'] },
-        filled: { label: ['text-blue'] },
-        error: { label: ['text-red'], details: ['text-red'] },
+        base: {
+          field: {
+            base: { label: ['text-blue'] },
+            focused: { label: ['text-blue'], root: ['text-blue'] },
+            filled: { label: ['text-blue'] },
+            error: { label: ['text-red'] },
+          },
+        },
+        error: { details: ['text-red'] },
       } satisfies CInputPreset,
     },
   },
@@ -214,19 +219,24 @@ createVuelandUI({
 
 ### Структура CInputPreset
 
-Пресет — это **набор плоских пресетов по состояниям**: `base` плюс опциональные оверрайды по состояниям. Без составных состояний и вложенности:
+Пресет — это **набор снимков по состояниям**: `base` плюс опциональные оверрайды. Свои зоны у `CInput` — `root` и `details`, а пресет поля (`CFieldPreset`) вкладывается по значению:
 
 ```ts
-type CInputZone = 'root' | 'field' | 'input' | 'label' | 'details' | 'prepend' | 'append'
+type CInputZone = 'root' | 'details'
 type CInputState = 'focused' | 'filled' | 'error' | 'disabled' | 'readonly'
 
-type ZonePreset = Partial<Record<CInputZone, string[]>>
-type CInputPreset = Partial<Record<'base' | CInputState, ZonePreset>>
+type CInputSnapshot = Partial<Record<CInputZone, string[]>> & {
+  field?: CFieldPreset
+  menu?: CMenuPreset
+  list?: CListPreset
+}
+
+type CInputPreset = Partial<Record<'base' | CInputState, CInputSnapshot>>
 ```
 
-Компонент всегда в одном текущем состоянии — применяется пресет этого состояния, его зоны подменяют одноимённые зоны `base`, без стека и без приоритетов. Полная модель — в разделе [CInput → Система пресетов](/ru/components/CInput#система-пресетов).
+Компонент всегда в одном текущем состоянии — применяется снимок этого состояния, его зоны подменяют одноимённые зоны `base`, без стека и без приоритетов. Полная модель — в разделе [CInput → Система пресетов](/ru/components/CInput#система-пресетов).
 
-Пресет распределяется автоматически: `CInput` применяет `root` и `details` и раздаёт набор в `CField` через provide/inject, а тот применяет `field`, `input`, `label`, `prepend`, `append`.
+Пресет распределяется автоматически: `CInput` применяет `root` и `details` и раздаёт набор в поддерево через provide/inject, а `CField` берёт вложенный `field`-пресет из `base`-снимка и резолвит свои состояния (`root` поля, `input`, `label`, `prepend`, `append`) самостоятельно.
 
 ---
 

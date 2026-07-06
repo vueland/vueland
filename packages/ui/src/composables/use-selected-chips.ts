@@ -1,16 +1,19 @@
 import {
     computed,
     getCurrentInstance,
+    h,
     unref,
     useAttrs,
+    useSlots,
 } from 'vue'
 
+import { CChip } from '@/components'
 import { isDef, isNotEmpty } from '@/helpers'
 
 import { getByPath, type IterableItemsProps } from './use-normalized-items'
 
 export type SelectableProps<T> = {
-    modelValue: T | T[]
+    modelValue: T | T[] | undefined | null
     multiple?: boolean
     mandatory?: boolean
     chips?: boolean
@@ -19,6 +22,7 @@ export type SelectableProps<T> = {
 export function useSelectedChips<T>(props: IterableItemsProps<T> & SelectableProps<T>) {
     const instance = getCurrentInstance()!
     const attrs = useAttrs()
+    const slots = useSlots()
 
     const { titleKey = '', valueKey } = props ?? {}
 
@@ -27,8 +31,6 @@ export function useSelectedChips<T>(props: IterableItemsProps<T> & SelectablePro
             ? ((props.modelValue as T[] | undefined) ?? []).length > 0
             : isNotEmpty(props.modelValue),
     )
-
-    const closable = computed(() => isDef(attrs.clearable))
 
     // Заголовок для чипа берём не из самого value (при valueKey там лежит value,
     // а не элемент), а находим исходный элемент по value и достаём из него title.
@@ -46,10 +48,19 @@ export function useSelectedChips<T>(props: IterableItemsProps<T> & SelectablePro
 
     const textValue = computed(() => unref(chips).join(', '))
 
+    // Как и дефолтный CList: повторный выбор снимает значение (toggle).
     function select(value: T) {
+        if (!props.multiple) {
+            return instance?.emit('update:modelValue', value)
+        }
+
+        const selected = (props.modelValue as T[] | undefined) ?? []
+
         instance?.emit(
             'update:modelValue',
-            props.multiple ? [...((props.modelValue as T[] | undefined) ?? []), value] : value,
+            selected.includes(value)
+                ? selected.filter(it => it !== value)
+                : [...selected, value],
         )
     }
 
@@ -67,12 +78,19 @@ export function useSelectedChips<T>(props: IterableItemsProps<T> & SelectablePro
         )
     }
 
+    const genChips = () => slots.chips?.({ items: unref(chips) }) ?? (unref(chips).map((it, i, arr) => h(props.chips ? CChip : 'div', props.chips ? {
+        onClose: () => unselect(i),
+        closable: isDef(attrs.clearable),
+    } : {}, {
+        default: () => it + (props.chips || i === arr.length - 1 ? '' : ','),
+    })))
+
     return {
         hasValue,
         chips,
-        closable,
         textValue,
         select,
         unselect,
+        genChips,
     }
 }

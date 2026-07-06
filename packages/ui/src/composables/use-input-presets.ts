@@ -7,7 +7,7 @@ import type { CInputState } from '@/types'
 import { usePresetZones, useProvidePreset } from './use-presets'
 import type { ValidateState } from './use-validate'
 
-/** Порядок схлопывания состояний инпута/поля: кто выше — тот текущий статус. */
+/** Порядок схлопывания состояний инпута: кто выше — тот текущий статус. */
 export const C_INPUT_STATE_PRECEDENCE: readonly CInputState[] = [
     'disabled',
     'readonly',
@@ -25,8 +25,8 @@ export function useInputPresets({
     errors: ValidateState
     state: InputState
 }) {
-    // CInput — источник истины: он разрешает набор и провайдит его в поддерево
-    // поля (CField его инжектит).
+    // CInput — источник истины: он разрешает набор и провайдит его в поддерево.
+    // Вложенные пресеты (field/menu/list) из base-снимка потребители берут сами.
     const raw = useProvidePreset(props)
 
     const active = (): Partial<Record<CInputState, boolean>> => {

@@ -447,8 +447,8 @@ describe('CTextField', () => {
                             textField: {
                                 base: {
                                     root: ['preset-root'],
-                                    field: ['preset-field'],
                                     details: ['preset-details'],
+                                    field: { base: { root: ['preset-field'] } },
                                 },
                             },
                         },
@@ -458,7 +458,7 @@ describe('CTextField', () => {
         })
 
         expect(wrapper.classes()).toContain('preset-root')
-        // CField получает набор из контекста (provide/inject), а не пропом
+        // CField получает вложенный пресет из контекста (provide/inject), а не пропом
         expect(wrapper.get('.c-field').classes()).toContain('preset-field')
         expect(wrapper.get('.c-input__details').classes()).toContain('preset-details')
     })
@@ -484,12 +484,14 @@ describe('CTextField', () => {
                             textField: {
                                 base: {
                                     root: ['preset-root'],
-                                    field: ['preset-field'],
                                     details: ['preset-details'],
+                                    field: {
+                                        base: { root: ['preset-field'] },
+                                        error: { root: ['preset-error-field'] },
+                                    },
                                 },
                                 error: {
                                     root: ['preset-error-root'],
-                                    field: ['preset-error-field'],
                                     details: ['preset-error-details'],
                                 },
                             },
@@ -504,7 +506,7 @@ describe('CTextField', () => {
 
         expect(wrapper.getComponent(CTextField).classes()).toContain('preset-error-root')
         expect(wrapper.getComponent(CTextField).classes()).not.toContain('preset-root')
-        // field-зона тоже приходит из контекста и подменяется состоянием
+        // вложенный пресет поля тоже приходит из контекста; его состояние error резолвит сам CField
         expect(wrapper.get('.c-field').classes()).toContain('preset-error-field')
         expect(wrapper.get('.c-field').classes()).not.toContain('preset-field')
         expect(wrapper.get('.c-input__details').classes()).toContain('preset-error-details')

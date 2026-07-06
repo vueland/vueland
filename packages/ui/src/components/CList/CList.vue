@@ -10,6 +10,7 @@
 
     import { useAriaListbox } from '@/composables/use-aria-listbox'
     import { useKeyboard } from '@/composables/use-keyboard'
+    import { useListPresets } from '@/composables/use-list-presets'
     import { useTypeahead } from '@/composables/use-typeahead'
     import { $LIST_API_KEY } from '@/constants'
     import { isDef } from '@/helpers'
@@ -55,11 +56,18 @@
         ...unref(aria),
     }))
 
-    const rootClasses = computed(() => ({
-        'c-list--disabled': props.disabled,
-        'c-list--readonly': props.readonly,
-        'c-list--default': !props.variant,
-    }))
+    // Свой проп `preset` (CListPreset) или вложенный пресет листа из контекста
+    // комбобокса; зону `option` пункты берут через list API.
+    const presetZones = useListPresets({ props })
+
+    const rootClasses = computed(() => [
+        {
+            'c-list--disabled': props.disabled,
+            'c-list--readonly': props.readonly,
+            'c-list--default': !props.variant,
+        },
+        ...unref(presetZones).root,
+    ])
 
     const isSelectable = computed(() => props.variant && !props.disabled && !props.readonly)
 
@@ -165,6 +173,19 @@
 
     function registerItem(item: ListItem) {
         listItems.push(item)
+
+        // Порядок берём из DOM: хронология монтирования при keyed-диффе
+        // ему не обязана соответствовать (выживший при фильтрации пункт
+        // регистрировался раньше домонтированных вокруг него).
+        listItems.sort((a, b) => (
+            a.getElement()!.compareDocumentPosition(b.getElement()!) & Node.DOCUMENT_POSITION_FOLLOWING
+                ? -1
+                : 1
+        ))
+
+        if (activeItem) {
+            index = listItems.indexOf(activeItem)
+        }
     }
 
     function unregisterItem(listItem: ListItem) {
@@ -297,6 +318,7 @@
         unselect: unselectItem,
         toggle: toggleItem,
         isSelected: isItemSelected,
+        getPreset: () => unref(presetZones),
     }
 
     provide($LIST_API_KEY, listApi)

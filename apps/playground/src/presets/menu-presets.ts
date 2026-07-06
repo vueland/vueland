@@ -1,9 +1,15 @@
 import type { CMenuPreset } from '@vueland/ui/types'
 
-export const A: CMenuPreset = {
-    base: { root: ['bg-blue', 'text-white', 'elevation-5'] },
+/** Мягкое скруглённое меню — вкладывается в `input.soft` и работает standalone. */
+export const soft: CMenuPreset = {
+    base: { root: ['radius-12', 'elevation-4'] },
 }
 
-export const B: CMenuPreset = {
-    base: { root: ['bg-green-darken-4', 'text-white'] },
+/**
+ * Тёмное меню. Состояние opened усиливает тень — видно, что standalone-CMenu
+ * резолвит свои состояния сам (opened/closed).
+ */
+export const dark: CMenuPreset = {
+    base: { root: ['bg-graphite', 'text-white', 'radius-8', 'elevation-2'] },
+    opened: { root: ['bg-graphite', 'text-white', 'radius-8', 'elevation-8'] },
 }

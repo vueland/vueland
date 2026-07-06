@@ -9,6 +9,7 @@ import { createFontAwesomeResolver } from '@vueland/ui/resolvers'
 // Пресеты
 import * as buttonPresets from './presets/button-presets'
 import * as inputPresets from './presets/input-presets'
+import * as listPresets from './presets/list-presets'
 import * as menuPresets from './presets/menu-presets'
 
 import '@vueland/ui/styles/styles.scss'
@@ -92,6 +93,7 @@ export const ui = createVuelandUI({
     presets: {
         button: buttonPresets,
         input: inputPresets,
+        list: listPresets,
         menu: menuPresets,
     },
 })

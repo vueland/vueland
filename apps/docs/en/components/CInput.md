@@ -66,31 +66,41 @@ Every value is an array of utility class names, so presets work with any utility
 
 A flat preset (`ZonePreset`) maps **zones** to class lists. Zones map 1:1 to the rendered DOM:
 
-| Zone      | Element                                  |
-| --------- | ---------------------------------------- |
-| `root`    | the `.c-input` wrapper                   |
-| `field`   | the `.c-field` box (border / background) |
-| `input`   | the native `<input>`                     |
-| `label`   | the floating label                       |
-| `details` | the hint / error row                     |
-| `prepend` | the prepend-slot wrapper                 |
-| `append`  | the append-slot wrapper                  |
+`CInput` itself owns two zones:
+
+| Zone      | Element                |
+| --------- | ---------------------- |
+| `root`    | the `.c-input` wrapper |
+| `details` | the hint / error row   |
+
+Nested parts are described by their components' own presets and composed into the input snapshot **by value** — the same format standalone components use:
+
+| Field   | Preset type    | Zones                                                    | States                                           |
+| ------- | -------------- | -------------------------------------------------------- | ------------------------------------------------ |
+| `field` | `CFieldPreset` | `root` (.c-field), `input`, `label`, `prepend`, `append` | `focused` `filled` `error` `disabled` `readonly` |
+| `menu`  | `CMenuPreset`  | `root` (.c-menu)                                         | `opened` `closed`                                |
+| `list`  | `CListPreset`  | `root` (.c-list), `option` (.c-list-item)                | `disabled` `readonly`                            |
 
 ### The CInputPreset type
 
 A preset is a set of **flat presets keyed by state**. `base` is the resting look; each state is its own complete flat preset:
 
 ```ts
-type CInputZone = 'root' | 'field' | 'input' | 'label' | 'details' | 'prepend' | 'append'
+type CInputZone = 'root' | 'details'
 type CInputState = 'focused' | 'filled' | 'error' | 'disabled' | 'readonly'
 
-type ZonePreset = Partial<Record<CInputZone, string[]>>
+// one snapshot: own zones + nested component presets (by value)
+type CInputSnapshot = Partial<Record<CInputZone, string[]>> & {
+  field?: CFieldPreset
+  menu?: CMenuPreset
+  list?: CListPreset
+}
 
-// base + optional per-state flat presets — everything optional
-type CInputPreset = Partial<Record<'base' | CInputState, ZonePreset>>
+// base + optional per-state snapshots — everything optional
+type CInputPreset = Partial<Record<'base' | CInputState, CInputSnapshot>>
 ```
 
-There are **no compound states** and no nesting — a state is just another flat preset.
+There are **no compound states.** Nesting happens only at component boundaries: put a nested preset in `base` — its own states are resolved by that component itself.
 
 ### One state at a time
 
@@ -114,12 +124,17 @@ import type { CInputPreset } from '@vueland/ui/types'
 
 function makePreset(color: string): CInputPreset {
   return {
-    base: { label: [color] },
-    focused: { label: [color], field: [color] },
-    filled: { label: [color] },
-    error: { label: ['text-red'], field: ['text-red'], details: ['text-red'] },
-    readonly: { label: ['text-grey'] },
-    // `disabled` is dimmed by the component; add a zone only to override
+    base: {
+      field: {
+        base: { label: [color] },
+        focused: { label: [color], root: [color] },
+        filled: { label: [color] },
+        error: { label: ['text-red'], root: ['text-red'] },
+        readonly: { label: ['text-grey'] },
+        // `disabled` is dimmed by the component; add a state only to override
+      },
+    },
+    error: { details: ['text-red'] },
   }
 }
 
@@ -142,7 +157,7 @@ Then use the preset by name on any `CInput`-based component:
 
 ### CInput → CField distribution
 
-You write a **single** preset. `CInput` resolves it, applies its own zones (`root`, `details`), and shares the set with the field subtree through `provide`/`inject`. `CField` injects it and applies `field`, `input`, `label`, `prepend`, `append`. You never write a separate field preset, and nothing is mutated globally.
+You write a **single** preset. `CInput` resolves it, applies its own zones (`root`, `details`), and shares the set with the subtree through `provide`/`inject`. `CField`, `CMenu` and `CList` pick up their nested presets (`field`/`menu`/`list`) from the `base` snapshot and resolve their own states themselves. Each of them also has its own `preset` prop — it overrides the context, so standalone usage keeps working. Nothing is mutated globally.
 
 ### All states at a glance
 

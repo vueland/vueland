@@ -1,13 +1,17 @@
 <script setup lang="ts" generic="T">
-    import { shallowRef, unref } from 'vue'
+    import {
+        shallowRef,
+        unref,
+        useAttrs,
+    } from 'vue'
 
     import { CMenu } from '@/components/CMenu'
     import { CTextField } from '@/components/CTextField'
-    import { useId } from '@/composables/use-id'
     import { useKeyboard } from '@/composables/use-keyboard'
     import { useNormalizedItems } from '@/composables/use-normalized-items'
     import { useSelectedChips } from '@/composables/use-selected-chips'
     import { IconAliases } from '@/enums'
+    import { isDef } from '@/helpers'
 
     import type { CSelectProps, CSelectSlots } from './types'
 
@@ -23,16 +27,17 @@
     const cListRef = shallowRef()
     const menu = shallowRef(false)
 
-    const listId = useId(undefined, { prefix: 'c-select-list' })
+    const attrs = useAttrs()
+
+    const isReadonly = () => isDef(attrs.readonly) && attrs.readonly !== false
+
     const normalizedItems = useNormalizedItems(props)
 
     const {
-        chips: selects,
         hasValue,
-        closable,
         textValue,
         select,
-        unselect
+        genChips
     } = useSelectedChips(props)
 
     const { onKeydown } = useKeyboard(
@@ -54,12 +59,18 @@
     }
 
     function onFocus() {
+        if (isReadonly()) {
+            return
+        }
+
         menu.value = true
     }
 
     function onClear() {
         model.value = props.multiple ? [] : undefined
     }
+
+    const CChipsBox = () => unref(hasValue) ? genChips() : null
 </script>
 
 <template>
@@ -70,7 +81,6 @@
         class="c-select"
         role="combobox"
         inputmode="none"
-        :aria-controls="listId"
         :dirty="hasValue"
         v-bind="$attrs"
         @beforeinput.prevent
@@ -80,40 +90,22 @@
         @clear="onClear"
         @focus="onFocus"
     >
+        <template
+            v-if="$slots.prepend"
+            #prepend
+        >
+            <slot name="prepend" />
+        </template>
         <template #before>
-            <slot
-                name="selects"
-                :items="selects"
-            >
-                <template v-if="selects.length">
-                    <div
-                        v-if="!chips"
-                        class="c-select__items"
-                    >
-                        {{ textValue }}
-                    </div>
-                    <div
-                        v-else
-                        class="c-select__chips"
-                    >
-                        <c-chip
-                            v-for="(it, i) in selects"
-                            :key="i"
-                            :closable
-                            color="info"
-                            @close="unselect(i)"
-                        >
-                            {{ it }}
-                        </c-chip>
-                    </div>
-                </template>
-            </slot>
+            <c-chips-box />
         </template>
         <template #append>
-            <c-icon
-                :name="IconAliases.DROPDOWN"
-                size="20"
-            />
+            <slot name="append">
+                <c-icon
+                    :name="IconAliases.DROPDOWN"
+                    size="20"
+                />
+            </slot>
         </template>
         <template #details="{ errorMessage, details }">
             <slot
@@ -135,6 +127,7 @@
                 :close-on-content-click="!multiple"
                 close-on-click-outside
                 :offset-y="2"
+                max-height="300"
                 strategy="reverse"
                 @close="onBlur"
             >
@@ -145,7 +138,6 @@
                         :items="normalizedItems"
                     >
                         <c-list
-                            :id="listId"
                             ref="cListRef"
                             v-model="model"
                             variant="listbox"
@@ -155,6 +147,13 @@
                             :multiple
                             :mandatory="mandatory || !multiple"
                         >
+                            <c-list-item v-if="!normalizedItems.length">
+                                <c-list-item-title>
+                                    <slot name="no-items-message">
+                                        {{ options?.noItemsMessage ?? 'No items' }}
+                                    </slot>
+                                </c-list-item-title>
+                            </c-list-item>
                             <c-list-item
                                 v-for="item of normalizedItems"
                                 :key="item.key"

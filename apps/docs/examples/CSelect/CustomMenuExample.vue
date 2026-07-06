@@ -60,7 +60,7 @@
                 clearable
                 preset="input.cyan"
             >
-                <template #selects="{ items }">
+                <template #chips="{ items }">
                     <div
                         v-if="items.length && selectedRegion"
                         class="select-custom__value"

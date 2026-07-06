@@ -6,6 +6,7 @@
 import BasicExample from '../../examples/CSelect/BasicExample.vue'
 import ObjectItemsExample from '../../examples/CSelect/ObjectItemsExample.vue'
 import MultipleExample from '../../examples/CSelect/MultipleExample.vue'
+import CustomMenuExample from '../../examples/CSelect/CustomMenuExample.vue'
 </script>
 
 ## Basic usage
@@ -19,19 +20,35 @@ Pass an array of values to `items` and bind the selection with `v-model`. With p
 ```vue
 <template>
   <CSelect
-    v-model="framework"
-    label="Framework"
+    v-model="environment"
+    label="Environment"
     placeholder="Choose one"
-    :items="frameworks"
+    :items="environments"
     clearable
   />
+
+  <div class="d-flex items-center gap-2 fs-sm text-blue-grey mt-4">
+    Deploys to
+    <span class="radius-pill text-white px-3 py-1 fs-xs fw-semi-bold" :class="badge">
+      {{ environment ?? 'nowhere' }}
+    </span>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
-const framework = ref()
-const frameworks = ['Vue', 'React', 'Svelte', 'Angular', 'Solid', 'Qwik']
+const environment = ref('Staging')
+const environments = ['Preview', 'Staging', 'Production']
+
+const badge = computed(
+  () =>
+    ({
+      Preview: 'bg-blue-grey',
+      Staging: 'bg-orange',
+      Production: 'bg-green',
+    })[environment.value ?? ''] ?? 'bg-blue-grey',
+)
 </script>
 ```
 
@@ -83,14 +100,97 @@ Add `multiple` to collect an array of values, and `chips` to render each selecti
 
 ```vue
 <template>
-  <CSelect v-model="skills" label="Skills" :items="allSkills" multiple chips clearable />
+  <CSelect
+    v-model="channels"
+    label="Channels"
+    placeholder="Where do we ping you?"
+    :items="allChannels"
+    multiple
+    chips
+    clearable
+  />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const skills = ref(['Vue', 'TypeScript'])
-const allSkills = ['Vue', 'React', 'TypeScript', 'Node.js', 'Go', 'Rust']
+const channels = ref(['Email', 'Slack'])
+const allChannels = ['Email', 'Slack', 'Push', 'SMS', 'Webhook']
+</script>
+```
+
+:::
+
+## Custom rendering
+
+The `chips` slot replaces how selected values are displayed inside the field, and the `menu` slot rebuilds the dropdown from scratch. `menu` receives the normalized `items` and an `onSelect` function that updates the model (in `multiple` mode calling it with a selected value removes it):
+
+<CustomMenuExample />
+
+::: details Show code
+
+```vue
+<template>
+  <CSelect
+    v-model="region"
+    label="Data region"
+    :items="regions"
+    title-key="name"
+    value-key="code"
+    clearable
+  >
+    <template #chips="{ items }">
+      <div v-if="items.length && selectedRegion" class="region-value">
+        <span :class="['region-mark', selectedRegion.color]">
+          {{ selectedRegion.code.toUpperCase() }}
+        </span>
+        <span>{{ items[0] }}</span>
+        <span>{{ selectedRegion.latency }}</span>
+      </div>
+    </template>
+
+    <template #menu="{ items, onSelect }">
+      <CList variant="menu" class="region-menu">
+        <CListItem
+          v-for="item in items"
+          :key="item.key"
+          :value="item.value"
+          @click="onSelect(item.value)"
+        >
+          <CListItemContent>
+            <CListItemTitle>{{ item.title }}</CListItemTitle>
+            <CListItemSubtitle>
+              {{ item.raw.location }} - {{ item.raw.latency }}
+            </CListItemSubtitle>
+          </CListItemContent>
+        </CListItem>
+      </CList>
+    </template>
+  </CSelect>
+</template>
+
+<script setup lang="ts">
+import { computed, ref } from 'vue'
+
+const region = ref('eu')
+const regions = [
+  {
+    code: 'us',
+    name: 'North America',
+    location: 'Virginia, USA',
+    latency: '41 ms',
+    color: 'bg-indigo',
+  },
+  {
+    code: 'eu',
+    name: 'Europe',
+    location: 'Frankfurt, Germany',
+    latency: '24 ms',
+    color: 'bg-teal',
+  },
+]
+
+const selectedRegion = computed(() => regions.find((item) => item.code === region.value))
 </script>
 ```
 
@@ -100,22 +200,39 @@ const allSkills = ['Vue', 'React', 'TypeScript', 'Node.js', 'Go', 'Rust']
 
 - **Single is mandatory by default** — clicking the already-selected option keeps it; use the clear button (`clearable`) to reset. In `multiple` mode clicking a selected option removes it. Pass `mandatory` to also keep the last item in `multiple` mode.
 - **Keyboard** — focus opens the menu; `ArrowUp` / `ArrowDown` move the active option (moving real focus), `Enter` / `Space` select it, type characters to jump to a matching option (typeahead), `Escape` / `Tab` close the menu.
+- **Readonly** — the field stays focusable, but the menu does not open and the value cannot be changed.
 
 ## API
 
 ### CSelect props
 
-| Prop         | Type                               | Default | Description                                                        |
-| ------------ | ---------------------------------- | ------- | ------------------------------------------------------------------ |
-| `modelValue` | `T \| T[]`                         | —       | Selected value(s); array in `multiple` mode                        |
-| `items`      | `T[]`                              | `[]`    | Available options                                                  |
-| `title-key`  | `string \| ((item: T) => unknown)` | —       | Path to the option's display label (for object items)              |
-| `value-key`  | `string \| ((item: T) => unknown)` | —       | Path to the value stored in `v-model` (defaults to the whole item) |
-| `multiple`   | `boolean`                          | `false` | Collect selected values into an array                              |
-| `mandatory`  | `boolean`                          | `false` | In `multiple`: keep the last item. Single selection is always kept |
-| `chips`      | `boolean`                          | `false` | Render selected values as removable chips                          |
+| Prop         | Type                          | Default | Description                                                                   |
+| ------------ | ----------------------------- | ------- | ----------------------------------------------------------------------------- |
+| `modelValue` | `T \| T[]`                    | —       | Selected value(s); array in `multiple` mode                                   |
+| `items`      | `readonly T[]`                | `[]`    | Available options                                                             |
+| `title-key`  | `string`                      | —       | Path to the option's display label (for object items); dotted paths supported |
+| `value-key`  | `string`                      | —       | Path to the value stored in `v-model` (defaults to the whole item)            |
+| `multiple`   | `boolean`                     | `false` | Collect selected values into an array                                         |
+| `mandatory`  | `boolean`                     | `false` | In `multiple`: keep the last item. Single selection is always kept            |
+| `chips`      | `boolean`                     | `false` | Render selected values as removable chips                                     |
+| `options`    | `{ noItemsMessage?: string }` | —       | Empty-list message                                                            |
 
 Any [`CTextField`](/en/components/CTextField) prop — `label`, `placeholder`, `clearable`, `rules`, `disabled`, `readonly`, … — is forwarded to the underlying field. Functions in `rules` receive the model value (the value or array stored in `v-model`), not the text displayed in the field.
+
+Presets compose by value: the `menu` and `list` fields of an input preset take plain `CMenuPreset` and `CListPreset` objects — the same format standalone components use. [`CMenu`](/en/components/CMenu), [`CList`](/en/components/CList) and `CListItem` pick them up from the same set via context.
+
+```ts
+import { menuRounded } from './presets/menu' // CMenuPreset: root zone, opened/closed states
+import { listCompact } from './presets/list' // CListPreset: root/option zones, disabled/readonly states
+
+const combo: CInputPreset = {
+  base: {
+    field: ['text-indigo'],
+    menu: menuRounded,
+    list: listCompact,
+  },
+}
+```
 
 ### CSelect events
 
@@ -125,9 +242,11 @@ Any [`CTextField`](/en/components/CTextField) prop — `label`, `placeholder`, `
 
 ### CSelect slots
 
-| Slot                 | Props                                         | Description                                    |
-| -------------------- | --------------------------------------------- | ---------------------------------------------- |
-| `selects`            | `{ items: T[] }`                              | Override how the selected values are displayed |
-| `menu`               | `{ items: NormalizedItem<T>[], onSelect }`    | Override the dropdown content                  |
-| `details`            | `{ errorMessage?: string, details?: string }` | Override the hint / error line                 |
-| `prepend` / `append` | —                                             | Forwarded to the text field                    |
+| Slot               | Props                                         | Description                                                                                               |
+| ------------------ | --------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `chips`            | `{ items: unknown[] }`                        | Override how the selected values are displayed                                                            |
+| `menu`             | `{ items: NormalizedItem<T>[], onSelect }`    | Override the dropdown content; in `multiple` calling `onSelect` with a selected value removes it (toggle) |
+| `details`          | `{ errorMessage?: string, details?: string }` | Override the hint / error line                                                                            |
+| `prepend`          | —                                             | Content before the field                                                                                  |
+| `append`           | —                                             | Content after the field; replaces the dropdown icon                                                       |
+| `no-items-message` | —                                             | Message shown when `items` is empty                                                                       |
