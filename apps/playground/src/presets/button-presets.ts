@@ -7,5 +7,5 @@ export const A: CButtonPreset = {
 }
 
 export const B: CButtonPreset = {
-    base: { root: ['bg-blue', 'hover:bg-blue-lighten-1', 'text-white'] },
+    base: { root: ['bg-blue', 'hover:bg-blue-lighten-1', 'text-white', 'text-uppercase'] },
 }

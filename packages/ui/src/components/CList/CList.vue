@@ -1,6 +1,9 @@
 <script setup lang="ts" generic="T">
     import {
         computed,
+        inject,
+        onBeforeUnmount,
+        onMounted,
         provide,
         shallowRef,
         toRaw,
@@ -8,11 +11,12 @@
         useAttrs,
     } from 'vue'
 
+    import type { KeyboardTarget } from '@/components/CKeyboardProvider/types'
     import { useAriaListbox } from '@/composables/use-aria-listbox'
     import { useKeyboard } from '@/composables/use-keyboard'
     import { useListPresets } from '@/composables/use-list-presets'
     import { useTypeahead } from '@/composables/use-typeahead'
-    import { $LIST_API_KEY } from '@/constants'
+    import { $KEYBOARD_API_KEY, $LIST_API_KEY } from '@/constants'
     import { isDef } from '@/helpers'
 
     import type {
@@ -322,6 +326,20 @@
     }
 
     provide($LIST_API_KEY, listApi)
+
+    // В контексте комбобокса список сам встаёт под клавиатурный контур —
+    // включая кастомный CList из слота menu. Standalone-список контекста
+    // не имеет и не регистрируется.
+    const keyboard = inject($KEYBOARD_API_KEY, null)
+
+    const keyboardTarget: KeyboardTarget = {
+        onKeydown: onListKeydown,
+        blur,
+        getElement: () => unref(rootRef),
+    }
+
+    onMounted(() => keyboard?.register(keyboardTarget))
+    onBeforeUnmount(() => keyboard?.unregister(keyboardTarget))
 </script>
 
 <template>

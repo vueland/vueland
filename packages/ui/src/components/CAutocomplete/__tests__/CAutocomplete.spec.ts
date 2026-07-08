@@ -586,6 +586,36 @@ describe('CAutocomplete', () => {
             expect(model.value).toBe('b')
         })
 
+        it('menu: кастомное меню на CList управляется с клавиатуры без обвязки', async () => {
+            const { wrapper, model } = mountAutocomplete({ items: ['first', 'second'] }, {
+                menu: ({ items, onSelect }: any) => h(CList as any, { variant: 'listbox' }, () =>
+                    items.map((item: any) => h(CListItem as any, {
+                        key: item.key,
+                        value: item.raw,
+                        onClick: () => onSelect(item.raw),
+                    }, () => h(CListItemTitle as any, () => item.title)))),
+            })
+
+            await openMenu(wrapper)
+            await typeSearch(wrapper, 'se')
+
+            const input = wrapper.get('.c-field-input')
+
+            await input.trigger('keydown', { key: 'ArrowDown' })
+            await nextTick()
+
+            expect(options()[0].classList.contains('c-list-item--focused')).toBe(true)
+
+            await keydown(options()[0], 'Enter')
+            await wait()
+            await nextTick()
+
+            expect(model.value).toBe('second')
+
+            // эффекты владельца доехали до кастомного списка: поиск очищен
+            expect((wrapper.get('.c-field-input').element as HTMLInputElement).value).toBe('')
+        })
+
         it('menu: onSelect работает как toggle при multiple', async () => {
             let slotProps: any
 

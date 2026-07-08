@@ -118,7 +118,7 @@
                 </template>
 
                 <!-- Кастомное меню: свой лейаут поверх items + onSelect -->
-                <template #menu="{ items, onSelect }">
+                <template #menu="{ items }">
                     <div class="invite-menu radius-12 elevation-4">
                         <div class="invite-menu__head d-flex items-center gap-2 px-4 py-2">
                             <span class="fs-xs fw-semi-bold text-uppercase text-blue-grey">
@@ -143,7 +143,9 @@
 
                         <c-list
                             v-else
-                            variant="menu"
+                            v-model="invited"
+                            variant="listbox"
+                            multiple
                             class="invite-menu__list"
                         >
                             <c-list-item
@@ -151,7 +153,6 @@
                                 :key="item.key"
                                 :value="item.raw"
                                 class="invite-menu__option radius-8"
-                                @click="onSelect(item.raw)"
                             >
                                 <span
                                     class="invite-avatar"

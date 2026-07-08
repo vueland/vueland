@@ -129,7 +129,7 @@ const technologies = ['Vue', 'React', 'TypeScript', 'Node.js', 'Nuxt', 'Vite', '
 
 ## Custom menu
 
-The `menu` slot replaces the whole dropdown while keeping the component's filtering and selection: it receives the already-filtered `items` (`NormalizedItem<T>[]`) and `onSelect`. Combined with the `chips` slot you can build a full people-picker — avatars, statuses, role badges and your own empty state:
+The `menu` slot replaces the whole dropdown while keeping the component's filtering and selection: it receives the already-filtered `items` (`NormalizedItem<T>[]`) and `onSelect`. Put a [`CList`](/en/components/CList) inside the slot and keyboard works out of the box: the list registers itself into the autocomplete's keyboard loop — arrows from the field, `Enter` / `Space` and the after-pick search reset all work with zero wiring. Combined with the `chips` slot you can build a full people-picker — avatars, statuses, role badges and your own empty state:
 
 <CustomMenuExample />
 
@@ -147,7 +147,6 @@ The `menu` slot replaces the whole dropdown while keeping the component's filter
     chips
     clearable
   >
-    <!-- Custom chips: avatar + first name + own removal -->
     <template #chips>
       <div v-for="member of invited" :key="member.email" class="invite-chip">
         <span class="avatar" :class="member.color">{{ initials(member) }}</span>
@@ -157,19 +156,14 @@ The `menu` slot replaces the whole dropdown while keeping the component's filter
     </template>
 
     <!-- Custom dropdown: own layout on top of items + onSelect -->
-    <template #menu="{ items, onSelect }">
+    <template #menu="{ items }">
       <div class="invite-menu radius-12 elevation-4">
         <div class="invite-menu__head">Team directory — {{ items.length }} matches</div>
 
         <div v-if="!items.length" class="pa-4 fs-sm text-blue-grey">Nobody matches this search</div>
 
-        <CList v-else variant="menu">
-          <CListItem
-            v-for="item of items"
-            :key="item.key"
-            :value="item.raw"
-            @click="onSelect(item.raw)"
-          >
+        <CList v-else v-model="invited" multiple variant="menu">
+          <CListItem v-for="item of items" :key="item.key" :value="item.raw">
             <span class="avatar" :class="item.raw.color">
               {{ initials(item.raw) }}
               <i class="dot" :class="item.raw.online ? 'bg-green' : 'bg-grey'"></i>
@@ -215,6 +209,7 @@ const initials = (member: Member) =>
     .split(' ')
     .map((part) => part[0])
     .join('')
+
 const uninvite = (member: Member) => {
   invited.value = invited.value.filter((it) => it !== member)
 }
@@ -281,16 +276,16 @@ const combo: CInputPreset = {
 
 ### CAutocomplete slots
 
-| Slot               | Props                                         | Description                                                         |
-| ------------------ | --------------------------------------------- | ------------------------------------------------------------------- |
-| `chips`            | `{ items: unknown[] }`                        | Override how the selected values are displayed                      |
-| `menu`             | `{ items: NormalizedItem<T>[], onSelect }`    | Override the dropdown content; `items` is the already-filtered list |
-| `details`          | `{ errorMessage?: string, details?: string }` | Override the hint / error line                                      |
-| `prepend`          | —                                             | Content before the field                                            |
-| `append`           | —                                             | Content after the field; replaces the dropdown icon                 |
-| `no-items-message` | —                                             | Message shown when the search has no matches                        |
+| Slot               | Props                                                    | Description                                                         |
+| ------------------ | -------------------------------------------------------- | ------------------------------------------------------------------- |
+| `chips`            | `{ items: unknown[] }`                                   | Override how the selected values are displayed                      |
+| `menu`             | `{ items: NormalizedItem<T>[], onSelect } & KeyboardAPI` | Override the dropdown content; `items` is the already-filtered list |
+| `details`          | `{ errorMessage?: string, details?: string }`            | Override the hint / error line                                      |
+| `prepend`          | —                                                        | Content before the field                                            |
+| `append`           | —                                                        | Content after the field; replaces the dropdown icon                 |
+| `no-items-message` | —                                                        | Message shown when the search has no matches                        |
 
-In `menu` the `onSelect` function updates the model: in `multiple` mode calling it with an already-selected value removes it (toggle).
+In `menu` the `onSelect` function updates the model: in `multiple` mode calling it with an already-selected value removes it (toggle). The slot also receives the autocomplete's keyboard api: `register` / `unregister` to plug a custom target into the keyboard loop, `forward` to relay an event to the active target, and `blur` to reset its focus state. A [`CList`](/en/components/CList)-based menu needs none of it — the list registers itself.
 
 ### NormalizedItem
 

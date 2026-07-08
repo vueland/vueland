@@ -123,7 +123,7 @@ const allChannels = ['Email', 'Slack', 'Push', 'SMS', 'Webhook']
 
 ## Custom rendering
 
-The `chips` slot replaces how selected values are displayed inside the field, and the `menu` slot rebuilds the dropdown from scratch. `menu` receives the normalized `items` and an `onSelect` function that updates the model (in `multiple` mode calling it with a selected value removes it):
+The `chips` slot replaces how selected values are displayed inside the field, and the `menu` slot rebuilds the dropdown from scratch. `menu` receives the normalized `items` and an `onSelect` function that updates the model (in `multiple` mode calling it with a selected value removes it). Put a [`CList`](/en/components/CList) inside the slot and keyboard works out of the box: the list registers itself into the select's keyboard loop, so arrows, typeahead and `Enter` / `Space` from the field reach it with zero wiring:
 
 <CustomMenuExample />
 
@@ -242,11 +242,13 @@ const combo: CInputPreset = {
 
 ### CSelect slots
 
-| Slot               | Props                                         | Description                                                                                               |
-| ------------------ | --------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `chips`            | `{ items: unknown[] }`                        | Override how the selected values are displayed                                                            |
-| `menu`             | `{ items: NormalizedItem<T>[], onSelect }`    | Override the dropdown content; in `multiple` calling `onSelect` with a selected value removes it (toggle) |
-| `details`          | `{ errorMessage?: string, details?: string }` | Override the hint / error line                                                                            |
-| `prepend`          | —                                             | Content before the field                                                                                  |
-| `append`           | —                                             | Content after the field; replaces the dropdown icon                                                       |
-| `no-items-message` | —                                             | Message shown when `items` is empty                                                                       |
+| Slot               | Props                                                    | Description                                                                                               |
+| ------------------ | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `chips`            | `{ items: unknown[] }`                                   | Override how the selected values are displayed                                                            |
+| `menu`             | `{ items: NormalizedItem<T>[], onSelect } & KeyboardAPI` | Override the dropdown content; in `multiple` calling `onSelect` with a selected value removes it (toggle) |
+| `details`          | `{ errorMessage?: string, details?: string }`            | Override the hint / error line                                                                            |
+| `prepend`          | —                                                        | Content before the field                                                                                  |
+| `append`           | —                                                        | Content after the field; replaces the dropdown icon                                                       |
+| `no-items-message` | —                                                        | Message shown when `items` is empty                                                                       |
+
+Besides `items` and `onSelect`, the `menu` slot receives the select's keyboard api: `register` / `unregister` to plug a custom target into the keyboard loop, `forward` to relay an event to the active target, and `blur` to reset its focus state. A [`CList`](/en/components/CList)-based menu needs none of it — the list registers itself.

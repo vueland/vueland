@@ -1,6 +1,7 @@
 import type { VNode } from 'vue'
 
 import type { CInputProps } from '@/components/CInput'
+import type { KeyboardAPI } from '@/components/CKeyboardProvider/types'
 import type { IterableItemsProps, NormalizedItem } from '@/composables/use-normalized-items'
 import type { SelectableProps } from '@/composables/use-selected-chips'
 
@@ -16,7 +17,7 @@ export type CAutocompleteSlots<T> = {
     menu(props: {
         items: NormalizedItem<T>[]
         onSelect(val: T): void
-    }): VNode
+    } & KeyboardAPI): VNode
     prepend(): VNode
     append(): VNode
     chips(props: { items: unknown[] }): VNode[]

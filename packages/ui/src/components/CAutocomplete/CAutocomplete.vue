@@ -7,6 +7,7 @@
         watch,
     } from 'vue'
 
+    import { CKeyboardProvider } from '@/components/CKeyboardProvider'
     import {
         CList,
         CListItem,
@@ -16,7 +17,7 @@
     import { CTextField } from '@/components/CTextField'
     import { useSelectedChips } from '@/composables'
     import { useAutocomplete } from '@/composables/use-autocomplete'
-    import { useKeyboard } from '@/composables/use-keyboard'
+    import { type KeyboardHandlers, useKeyboard } from '@/composables/use-keyboard'
     import { IconAliases } from '@/enums'
     import { isDef } from '@/helpers'
 
@@ -35,7 +36,7 @@
     const model = defineModel<T | T[] | undefined | null>()
 
     const inputRef = shallowRef()
-    const menuListRef = shallowRef()
+    const keyboardRef = shallowRef()
     const menu = shallowRef(false)
 
     const attrs = useAttrs()
@@ -67,9 +68,10 @@
         unref(inputRef).blur()
     }
 
-    function onListKeyboardSelect(e: KeyboardEvent) {
-        unref(menuListRef).onKeydown(e)
-
+    // Выбор с клавиатуры делает сам список (Enter/Space → активация пункта);
+    // здесь — только эффекты автокомплита. Провайдер вешает их на тот список,
+    // который фактически отрендерен.
+    function onListKeyboardSelect() {
         if (props.multiple) {
             unref(inputRef).blur()
             nextTick(() => unref(inputRef).focus())
@@ -78,16 +80,13 @@
         }
     }
 
+    const listHandlers: KeyboardHandlers = {
+        Enter: onListKeyboardSelect,
+        Space: onListKeyboardSelect,
+    }
+
     function resetListFocus() {
-        unref(menuListRef)?.blur()
-    }
-
-    function navigateListDown() {
-        unref(menuListRef)?.navigateDown()
-    }
-
-    function navigateListUp() {
-        unref(menuListRef)?.navigateUp()
+        unref(keyboardRef)?.blur()
     }
 
     const { onKeydown } = useKeyboard({
@@ -112,14 +111,9 @@
             unref(inputRef).blur()
             menu.value = false
         },
-        ArrowDown: navigateListDown,
-        ArrowUp: navigateListUp,
+        ArrowDown: (e) => unref(keyboardRef)?.forward(e),
+        ArrowUp: (e) => unref(keyboardRef)?.forward(e),
     }, { prevent: ['ArrowDown', 'ArrowUp', 'Enter'] })
-
-    const { onKeydown: onListKeydown } = useKeyboard({
-        Enter: onListKeyboardSelect,
-        Space: onListKeyboardSelect
-    })
 
     const CChipsBox = () => unref(hasValue) ? genChips() : null
 
@@ -181,39 +175,44 @@
                 @close="onClose"
             >
                 <template #default>
-                    <slot
-                        name="menu"
-                        :on-select="select"
-                        :items="searchItems"
+                    <c-keyboard-provider
+                        ref="keyboardRef"
+                        v-slot="keyboard"
+                        :handlers="listHandlers"
                     >
-                        <c-list
-                            ref="menuListRef"
-                            v-model="model"
-                            tabindex="-1"
-                            variant="listbox"
-                            class="c-autocomplete__listbox"
-                            :multiple
-                            :mandatory="mandatory || !multiple"
-                            @keydown="onListKeydown"
+                        <slot
+                            name="menu"
+                            :on-select="select"
+                            :items="searchItems"
+                            v-bind="keyboard"
                         >
-                            <c-list-item v-if="!searchItems.length">
-                                <c-list-item-title>
-                                    <slot name="no-items-message">
-                                        {{ options?.noItemsMessage ?? 'No items' }}
-                                    </slot>
-                                </c-list-item-title>
-                            </c-list-item>
-                            <c-list-item
-                                v-for="item of searchItems"
-                                :key="item.key"
-                                :value="item.value ?? item.raw"
+                            <c-list
+                                v-model="model"
+                                tabindex="-1"
+                                variant="listbox"
+                                class="c-autocomplete__listbox"
+                                :multiple
+                                :mandatory="mandatory || !multiple"
                             >
-                                <c-list-item-title>
-                                    {{ item.title }}
-                                </c-list-item-title>
-                            </c-list-item>
-                        </c-list>
-                    </slot>
+                                <c-list-item v-if="!searchItems.length">
+                                    <c-list-item-title>
+                                        <slot name="no-items-message">
+                                            {{ options?.noItemsMessage ?? 'No items' }}
+                                        </slot>
+                                    </c-list-item-title>
+                                </c-list-item>
+                                <c-list-item
+                                    v-for="item of searchItems"
+                                    :key="item.key"
+                                    :value="item.value ?? item.raw"
+                                >
+                                    <c-list-item-title>
+                                        {{ item.title }}
+                                    </c-list-item-title>
+                                </c-list-item>
+                            </c-list>
+                        </slot>
+                    </c-keyboard-provider>
                 </template>
             </c-menu>
         </template>

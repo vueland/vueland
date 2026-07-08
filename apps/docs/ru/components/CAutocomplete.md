@@ -131,7 +131,7 @@ const technologies = ['Vue', 'React', 'TypeScript', 'Node.js', 'Nuxt', 'Vite', '
 
 ## Кастомное меню
 
-Слот `menu` заменяет выпадашку целиком, сохраняя фильтрацию и выбор за компонентом: в него приходит уже отфильтрованный массив `items` (`NormalizedItem<T>[]`) и функция `onSelect`. Вместе со слотом `chips` из этого собирается полноценный people-picker — аватары, статусы, бейджи ролей и своё пустое состояние:
+Слот `menu` заменяет выпадашку целиком, сохраняя фильтрацию и выбор за компонентом: в него приходит уже отфильтрованный массив `items` (`NormalizedItem<T>[]`) и функция `onSelect`. Если внутри слота стоит [`CList`](/ru/components/CList), клавиатура работает из коробки: список сам регистрируется в контуре автокомплита — стрелки из поля, `Enter` / `Space` и очистка поиска после выбора работают без обвязки. Вместе со слотом `chips` из этого собирается полноценный people-picker — аватары, статусы, бейджи ролей и своё пустое состояние:
 
 <CustomMenuExample />
 
@@ -149,7 +149,6 @@ const technologies = ['Vue', 'React', 'TypeScript', 'Node.js', 'Nuxt', 'Vite', '
     chips
     clearable
   >
-    <!-- Кастомные чипы: аватар + имя + своё удаление -->
     <template #chips>
       <div v-for="member of invited" :key="member.email" class="invite-chip">
         <span class="avatar" :class="member.color">{{ initials(member) }}</span>
@@ -158,20 +157,15 @@ const technologies = ['Vue', 'React', 'TypeScript', 'Node.js', 'Nuxt', 'Vite', '
       </div>
     </template>
 
-    <!-- Кастомное меню: свой лейаут поверх items + onSelect -->
-    <template #menu="{ items, onSelect }">
+    <!-- Custom dropdown: own layout on top of items + onSelect -->
+    <template #menu="{ items }">
       <div class="invite-menu radius-12 elevation-4">
         <div class="invite-menu__head">Team directory — {{ items.length }} matches</div>
 
-        <div v-if="!items.length" class="pa-4 fs-sm text-blue-grey">Никого не нашлось</div>
+        <div v-if="!items.length" class="pa-4 fs-sm text-blue-grey">Nobody matches this search</div>
 
-        <CList v-else variant="menu">
-          <CListItem
-            v-for="item of items"
-            :key="item.key"
-            :value="item.raw"
-            @click="onSelect(item.raw)"
-          >
+        <CList v-else v-model="invited" multiple variant="menu">
+          <CListItem v-for="item of items" :key="item.key" :value="item.raw">
             <span class="avatar" :class="item.raw.color">
               {{ initials(item.raw) }}
               <i class="dot" :class="item.raw.online ? 'bg-green' : 'bg-grey'"></i>
@@ -217,6 +211,7 @@ const initials = (member: Member) =>
     .split(' ')
     .map((part) => part[0])
     .join('')
+
 const uninvite = (member: Member) => {
   invited.value = invited.value.filter((it) => it !== member)
 }
@@ -283,16 +278,16 @@ const combo: CInputPreset = {
 
 ### Слоты CAutocomplete
 
-| Слот               | Пропы                                         | Описание                                                                   |
-| ------------------ | --------------------------------------------- | -------------------------------------------------------------------------- |
-| `chips`            | `{ items: unknown[] }`                        | Заменяет отображение выбранных значений внутри поля                        |
-| `menu`             | `{ items: NormalizedItem<T>[], onSelect }`    | Заменяет содержимое выпадающего меню; `items` — уже отфильтрованный список |
-| `details`          | `{ errorMessage?: string, details?: string }` | Заменяет строку подсказки или ошибки                                       |
-| `prepend`          | —                                             | Контент перед полем                                                        |
-| `append`           | —                                             | Контент после поля; заменяет иконку дропдауна                              |
-| `no-items-message` | —                                             | Текст пункта, когда поиск не дал результатов                               |
+| Слот               | Пропы                                                    | Описание                                                                   |
+| ------------------ | -------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `chips`            | `{ items: unknown[] }`                                   | Заменяет отображение выбранных значений внутри поля                        |
+| `menu`             | `{ items: NormalizedItem<T>[], onSelect } & KeyboardAPI` | Заменяет содержимое выпадающего меню; `items` — уже отфильтрованный список |
+| `details`          | `{ errorMessage?: string, details?: string }`            | Заменяет строку подсказки или ошибки                                       |
+| `prepend`          | —                                                        | Контент перед полем                                                        |
+| `append`           | —                                                        | Контент после поля; заменяет иконку дропдауна                              |
+| `no-items-message` | —                                                        | Текст пункта, когда поиск не дал результатов                               |
 
-В `menu` функция `onSelect` обновляет модель: в `multiple` повторный вызов с уже выбранным значением снимает его (toggle).
+В `menu` функция `onSelect` обновляет модель: в `multiple` повторный вызов с уже выбранным значением снимает его (toggle). Помимо этого слот получает keyboard-api автокомплита: `register` / `unregister` — встроить собственную цель в клавиатурный контур, `forward` — переслать событие активной цели, `blur` — сбросить её фокусное состояние. Кастомному меню на [`CList`](/ru/components/CList) это не нужно — список регистрируется сам.
 
 ### NormalizedItem
 

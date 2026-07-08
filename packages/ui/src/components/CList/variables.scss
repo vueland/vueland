@@ -9,7 +9,7 @@ $list-padding-inline: 0;
 $list-disabled-opacity: getCssVar('sys', 'state', 'disabled-opacity');
 
 // List item layout
-$list-item-min-height: getCssVar('sys', 'control', 'height-sm');
+$list-item-min-height: getCssVar('sys', 'control', 'height-md');
 $list-item-padding-block: getCssVar('sys', 'space', '1');
 $list-item-padding-inline: getCssVar('sys', 'space', '2');
 $list-item-gap: getCssVar('sys', 'space', '3');

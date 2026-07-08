@@ -5,6 +5,7 @@
         useAttrs,
     } from 'vue'
 
+    import { CKeyboardProvider } from '@/components/CKeyboardProvider'
     import { CMenu } from '@/components/CMenu'
     import { CTextField } from '@/components/CTextField'
     import { useKeyboard } from '@/composables/use-keyboard'
@@ -24,7 +25,7 @@
     const model = defineModel<T | T[] | undefined | null>()
 
     const cTextFieldRef = shallowRef()
-    const cListRef = shallowRef()
+    const keyboardRef = shallowRef()
     const menu = shallowRef(false)
 
     const attrs = useAttrs()
@@ -50,7 +51,7 @@
                 menu.value = false
                 unref(cTextFieldRef).blur()
             },
-            '*': (e) => unref(cListRef)?.onKeydown(e)
+            '*': (e) => unref(keyboardRef)?.forward(e)
         }, { prevent: ['ArrowDown', 'ArrowUp'] })
 
     function onBlur() {
@@ -132,39 +133,44 @@
                 @close="onBlur"
             >
                 <template #default>
-                    <slot
-                        name="menu"
-                        :on-select="select"
-                        :items="normalizedItems"
+                    <c-keyboard-provider
+                        ref="keyboardRef"
+                        v-slot="keyboard"
                     >
-                        <c-list
-                            ref="cListRef"
-                            v-model="model"
-                            variant="listbox"
-                            class="c-select__listbox"
-                            :item-key="titleKey"
-                            aria-live="polite"
-                            :multiple
-                            :mandatory="mandatory || !multiple"
+                        <slot
+                            name="menu"
+                            :on-select="select"
+                            :items="normalizedItems"
+                            v-bind="keyboard"
                         >
-                            <c-list-item v-if="!normalizedItems.length">
-                                <c-list-item-title>
-                                    <slot name="no-items-message">
-                                        {{ options?.noItemsMessage ?? 'No items' }}
-                                    </slot>
-                                </c-list-item-title>
-                            </c-list-item>
-                            <c-list-item
-                                v-for="item of normalizedItems"
-                                :key="item.key"
-                                :value="item.value ?? item.raw"
+                            <c-list
+                                v-model="model"
+                                variant="listbox"
+                                class="c-select__listbox"
+                                :item-key="titleKey"
+                                aria-live="polite"
+                                :multiple
+                                :mandatory="mandatory || !multiple"
                             >
-                                <c-list-item-title>
-                                    {{ item.title }}
-                                </c-list-item-title>
-                            </c-list-item>
-                        </c-list>
-                    </slot>
+                                <c-list-item v-if="!normalizedItems.length">
+                                    <c-list-item-title>
+                                        <slot name="no-items-message">
+                                            {{ options?.noItemsMessage ?? 'No items' }}
+                                        </slot>
+                                    </c-list-item-title>
+                                </c-list-item>
+                                <c-list-item
+                                    v-for="item of normalizedItems"
+                                    :key="item.key"
+                                    :value="item.value ?? item.raw"
+                                >
+                                    <c-list-item-title>
+                                        {{ item.title }}
+                                    </c-list-item-title>
+                                </c-list-item>
+                            </c-list>
+                        </slot>
+                    </c-keyboard-provider>
                 </template>
             </c-menu>
         </template>
