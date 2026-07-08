@@ -139,65 +139,85 @@
                             >
                                 Flight details
                             </div>
-                            <div class="form-row gap-4">
-                                <c-text-field
-                                    v-model="flight.from"
-                                    label="From"
-                                    :rules="requiredRule"
-                                    validate-on="blur"
-                                    preset="input.blue"
+                            <c-row class="gap-y-4">
+                                <c-col
+                                    cols="12"
+                                    sm="6"
                                 >
-                                    <template #prepend>
-                                        <c-icon
-                                            name="fas:map-marker-alt"
-                                            :size="13"
-                                            source="fa"
-                                        />
-                                    </template>
-                                </c-text-field>
-                                <c-text-field
-                                    v-model="flight.to"
-                                    label="To"
-                                    :rules="requiredRule"
-                                    validate-on="blur"
-                                    preset="input.blue"
+                                    <c-text-field
+                                        v-model="flight.from"
+                                        label="From"
+                                        :rules="requiredRule"
+                                        validate-on="blur"
+                                        preset="input.blue"
+                                    >
+                                        <template #prepend>
+                                            <c-icon
+                                                name="fas:map-marker-alt"
+                                                :size="13"
+                                                source="fa"
+                                            />
+                                        </template>
+                                    </c-text-field>
+                                </c-col>
+                                <c-col
+                                    cols="12"
+                                    sm="6"
                                 >
-                                    <template #prepend>
-                                        <c-icon
-                                            name="fas:map-marker-alt"
-                                            :size="13"
-                                            source="fa"
-                                        />
-                                    </template>
-                                </c-text-field>
-                            </div>
-                            <div class="form-row gap-4">
-                                <c-date-input
-                                    v-model="flight.departure"
-                                    label="Departure date"
-                                    :rules="departureDateRule"
-                                    :min-date="today"
-                                    validate-on="blur"
-                                    clearable
-                                    preset="input.blue"
-                                />
-                                <c-text-field
-                                    v-model="flight.passengers"
-                                    label="Passengers"
-                                    type="number"
-                                    :rules="passengersRule"
-                                    validate-on="blur"
-                                    preset="input.blue"
+                                    <c-text-field
+                                        v-model="flight.to"
+                                        label="To"
+                                        :rules="requiredRule"
+                                        validate-on="blur"
+                                        preset="input.blue"
+                                    >
+                                        <template #prepend>
+                                            <c-icon
+                                                name="fas:map-marker-alt"
+                                                :size="13"
+                                                source="fa"
+                                            />
+                                        </template>
+                                    </c-text-field>
+                                </c-col>
+                            </c-row>
+                            <c-row class="gap-y-4">
+                                <c-col
+                                    cols="12"
+                                    sm="6"
                                 >
-                                    <template #prepend>
-                                        <c-icon
-                                            name="fas:user"
-                                            :size="13"
-                                            source="fa"
-                                        />
-                                    </template>
-                                </c-text-field>
-                            </div>
+                                    <c-date-input
+                                        v-model="flight.departure"
+                                        label="Departure date"
+                                        :rules="departureDateRule"
+                                        :min-date="today"
+                                        validate-on="blur"
+                                        clearable
+                                        preset="input.blue"
+                                    />
+                                </c-col>
+                                <c-col
+                                    cols="12"
+                                    sm="6"
+                                >
+                                    <c-text-field
+                                        v-model="flight.passengers"
+                                        label="Passengers"
+                                        type="number"
+                                        :rules="passengersRule"
+                                        validate-on="blur"
+                                        preset="input.blue"
+                                    >
+                                        <template #prepend>
+                                            <c-icon
+                                                name="fas:user"
+                                                :size="13"
+                                                source="fa"
+                                            />
+                                        </template>
+                                    </c-text-field>
+                                </c-col>
+                            </c-row>
                             <div class="d-flex align-center gap-3">
                                 <span
                                     class="fs-sm"
@@ -228,22 +248,32 @@
                             >
                                 Passenger information
                             </div>
-                            <div class="form-row gap-4">
-                                <c-text-field
-                                    v-model="passenger.firstName"
-                                    label="First name"
-                                    :rules="requiredRule"
-                                    validate-on="blur"
-                                    preset="input.blue"
-                                />
-                                <c-text-field
-                                    v-model="passenger.lastName"
-                                    label="Last name"
-                                    :rules="requiredRule"
-                                    validate-on="blur"
-                                    preset="input.blue"
-                                />
-                            </div>
+                            <c-row class="gap-y-4">
+                                <c-col
+                                    cols="12"
+                                    sm="6"
+                                >
+                                    <c-text-field
+                                        v-model="passenger.firstName"
+                                        label="First name"
+                                        :rules="requiredRule"
+                                        validate-on="blur"
+                                        preset="input.blue"
+                                    />
+                                </c-col>
+                                <c-col
+                                    cols="12"
+                                    sm="6"
+                                >
+                                    <c-text-field
+                                        v-model="passenger.lastName"
+                                        label="Last name"
+                                        :rules="requiredRule"
+                                        validate-on="blur"
+                                        preset="input.blue"
+                                    />
+                                </c-col>
+                            </c-row>
                             <c-text-field
                                 v-model="passenger.passport"
                                 label="Passport number"
@@ -333,31 +363,41 @@
                                     />
                                 </template>
                             </c-text-field>
-                            <div class="form-row gap-4">
-                                <c-text-field
-                                    v-model="payment.expiry"
-                                    label="Expiry (MM/YY)"
-                                    :rules="expiryRule"
-                                    validate-on="blur"
-                                    preset="input.blue"
-                                />
-                                <c-text-field
-                                    v-model="payment.cvv"
-                                    label="CVV"
-                                    type="password"
-                                    :rules="cvvRule"
-                                    validate-on="blur"
-                                    preset="input.blue"
+                            <c-row class="gap-y-4">
+                                <c-col
+                                    cols="12"
+                                    sm="6"
                                 >
-                                    <template #prepend>
-                                        <c-icon
-                                            name="fas:shield-alt"
-                                            :size="13"
-                                            source="fa"
-                                        />
-                                    </template>
-                                </c-text-field>
-                            </div>
+                                    <c-text-field
+                                        v-model="payment.expiry"
+                                        label="Expiry (MM/YY)"
+                                        :rules="expiryRule"
+                                        validate-on="blur"
+                                        preset="input.blue"
+                                    />
+                                </c-col>
+                                <c-col
+                                    cols="12"
+                                    sm="6"
+                                >
+                                    <c-text-field
+                                        v-model="payment.cvv"
+                                        label="CVV"
+                                        type="password"
+                                        :rules="cvvRule"
+                                        validate-on="blur"
+                                        preset="input.blue"
+                                    >
+                                        <template #prepend>
+                                            <c-icon
+                                                name="fas:shield-alt"
+                                                :size="13"
+                                                source="fa"
+                                            />
+                                        </template>
+                                    </c-text-field>
+                                </c-col>
+                            </c-row>
                         </div>
 
                         <!-- Success -->
@@ -490,11 +530,6 @@
   margin: 0 8px;
 }
 
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-
 .class-btn {
   padding: 5px 14px;
   border-radius: 20px;
@@ -555,7 +590,6 @@
 }
 
 @media (max-width: 480px) {
-  .form-row { grid-template-columns: 1fr; }
   .steps { gap: 12px; }
   .step-label { display: none; }
 }

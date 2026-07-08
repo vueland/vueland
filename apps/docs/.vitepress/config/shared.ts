@@ -10,7 +10,17 @@ export const sharedConfig: UserConfig = {
     lastUpdated: true,
     vite: {
         plugins: [
-            utilsJIT() as any,
+            utilsJIT({
+                breakpoints: {
+                    xs: 0,
+                    sm: 680,
+                    md: 1024,
+                    lg: 1280,
+                    xl: 1920,
+                    xxl: 2560,
+                    tablet: 1400,
+                },
+            }) as any,
         ],
         css: {
             preprocessorOptions: {

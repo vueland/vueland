@@ -8,42 +8,51 @@
 </script>
 
 <template>
-    <div class="d-flex flex-wrap gap-4 pa-8 justify-center">
-        <c-tooltip
-            v-for="item in delays"
-            :key="item.label"
-            width="auto"
-            open-on-hover
-            close-on-leave
-            align="bottom-center"
-            :offset-y="10"
-            :open-delay="item.open"
-            :close-delay="item.close"
-        >
-            <template #activator="{ on, activator }">
-                <c-card
-                    class="delay-card elevation-2 radius-12 pa-5 d-flex flex-col align-center gap-3"
-                    v-bind="activator"
-                    v-on="on"
+    <div class="pa-8">
+        <c-row class="gap-y-4">
+            <c-col
+                v-for="item in delays"
+                :key="item.label"
+                cols="12"
+                sm="6"
+                md="3"
+                class="d-flex justify-center"
+            >
+                <c-tooltip
+                    width="auto"
+                    open-on-hover
+                    close-on-leave
+                    align="bottom-center"
+                    :offset-y="10"
+                    :open-delay="item.open"
+                    :close-delay="item.close"
                 >
-                    <div
-                        class="icon-bg radius-10"
-                        :class="item.bg"
-                    >
-                        <c-icon
-                            :name="item.icon"
-                            source="fa"
-                            :size="18"
-                        />
-                    </div>
-                    <div class="d-flex flex-col align-center gap-1">
-                        <span class="card-label">{{ item.label }}</span>
-                        <span class="card-sub">{{ item.sub }}</span>
-                    </div>
-                </c-card>
-            </template>
-            <span>{{ item.tip }}</span>
-        </c-tooltip>
+                    <template #activator="{ on, activator }">
+                        <c-card
+                            class="delay-card elevation-2 radius-12 pa-5 d-flex flex-col align-center gap-3"
+                            v-bind="activator"
+                            v-on="on"
+                        >
+                            <div
+                                class="icon-bg radius-10"
+                                :class="item.bg"
+                            >
+                                <c-icon
+                                    :name="item.icon"
+                                    source="fa"
+                                    :size="18"
+                                />
+                            </div>
+                            <div class="d-flex flex-col align-center gap-1">
+                                <span class="card-label">{{ item.label }}</span>
+                                <span class="card-sub">{{ item.sub }}</span>
+                            </div>
+                        </c-card>
+                    </template>
+                    <span>{{ item.tip }}</span>
+                </c-tooltip>
+            </c-col>
+        </c-row>
     </div>
 </template>
 

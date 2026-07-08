@@ -31,67 +31,85 @@
 </script>
 
 <template>
-    <div class="ex-wrap">
-        <c-text-field
-            v-model="email"
-            label="Email"
-            :rules="emailRules"
-            validate-on="blur"
-            details="We'll never share your email"
-            preset="input.blue"
+    <c-row>
+        <c-col
+            cols="6"
+            offset-xl="3"
+            class="px-2"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:envelope"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-        </c-text-field>
+            <c-text-field
+                v-model="email"
+                label="Email"
+                :rules="emailRules"
+                validate-on="blur"
+                details="We'll never share your email"
+                preset="input.blue"
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:envelope"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+            </c-text-field>
+        </c-col>
 
-        <c-text-field
-            v-model="password"
-            :type="showPwd ? 'text' : 'password'"
-            label="Password"
-            :rules="passwordRules"
-            validate-on="blur"
-            preset="input.deepPurple"
+        <c-col
+            cols="6"
+            offset-xl="3"
+            class="px-2"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:lock"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-            <template #append>
-                <c-icon
-                    :name="showPwd ? 'fas:eye-slash' : 'fas:eye'"
-                    :size="16"
-                    source="fa"
-                    style="cursor:pointer"
-                    @click="showPwd = !showPwd"
-                />
-            </template>
-        </c-text-field>
+            <c-text-field
+                v-model="password"
+                :type="showPwd ? 'text' : 'password'"
+                label="Password"
+                :rules="passwordRules"
+                validate-on="blur"
+                preset="input.deepPurple"
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:lock"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+                <template #append>
+                    <c-icon
+                        :name="showPwd ? 'fas:eye-slash' : 'fas:eye'"
+                        :size="16"
+                        source="fa"
+                        style="cursor:pointer"
+                        @click="showPwd = !showPwd"
+                    />
+                </template>
+            </c-text-field>
+        </c-col>
 
-        <c-text-field
-            v-model="phone"
-            label="Phone"
-            :rules="phoneRules"
-            validate-on="blur"
-            preset="input.teal"
+        <c-col
+            xl="6"
+            offset-xl="3"
+            class="px-2"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:phone"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-        </c-text-field>
+            <c-text-field
+                v-model="phone"
+                label="Phone"
+                :rules="phoneRules"
+                validate-on="blur"
+                preset="input.teal"
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:phone"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+            </c-text-field>
+        </c-col>
 
-        <div class="ex-actions">
+        <div class="px-2">
             <c-btn
                 class="bg-blue elevation-1"
                 style="color:#fff"
@@ -112,7 +130,7 @@
         >
             ✓ Submitted successfully!
         </p>
-    </div>
+    </c-row>
 </template>
 
 <style scoped>

@@ -120,15 +120,13 @@ const densities = [
     </CListItem>
   </CList>
 
-  <div class="d-flex flex-wrap items-center gap-2 mt-4">
-    <span
-      v-for="s in selected"
-      :key="s"
-      class="radius-pill bg-teal text-white px-3 py-1 fs-xs fw-semi-bold text-capitalize"
-    >
-      {{ s }}
-    </span>
-  </div>
+  <CRow class="gap-y-2 mt-4" align="center">
+    <CCol v-for="s in selected" :key="s" cols="6" class="d-flex justify-center">
+      <span class="radius-pill bg-teal text-white px-3 py-1 fs-xs fw-semi-bold text-capitalize">
+        {{ s }}
+      </span>
+    </CCol>
+  </CRow>
 </template>
 
 <script setup lang="ts">

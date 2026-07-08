@@ -84,79 +84,97 @@
         </c-card>
 
         <!-- Pills -->
-        <div class="d-flex align-center gap-3 flex-wrap justify-center">
-            <c-tooltip
-                width="auto"
-                open-on-hover
-                close-on-leave
-                align="bottom-center"
-                :offset-y="8"
+        <c-row class="w-100 gap-y-3">
+            <c-col
+                cols="12"
+                sm="4"
+                class="d-flex justify-center"
             >
-                <template #activator="{ on, activator }">
-                    <c-btn
-                        class="bg-indigo elevation-2 text-white"
-                        v-bind="activator"
-                        style="gap:8px"
-                        v-on="on"
-                    >
-                        <c-icon
-                            name="fas:bell"
-                            source="fa"
-                            :size="13"
-                        /> Subscribe
-                    </c-btn>
-                </template>
-                Get notified on every release
-            </c-tooltip>
+                <c-tooltip
+                    width="auto"
+                    open-on-hover
+                    close-on-leave
+                    align="bottom-center"
+                    :offset-y="8"
+                >
+                    <template #activator="{ on, activator }">
+                        <c-btn
+                            class="bg-indigo elevation-2 text-white"
+                            v-bind="activator"
+                            style="gap:8px"
+                            v-on="on"
+                        >
+                            <c-icon
+                                name="fas:bell"
+                                source="fa"
+                                :size="13"
+                            /> Subscribe
+                        </c-btn>
+                    </template>
+                    Get notified on every release
+                </c-tooltip>
+            </c-col>
 
-            <c-tooltip
-                width="auto"
-                open-on-hover
-                close-on-leave
-                align="top-center"
-                :offset-y="8"
+            <c-col
+                cols="12"
+                sm="4"
+                class="d-flex justify-center"
             >
-                <template #activator="{ on, activator }">
-                    <c-btn
-                        class="bg-teal elevation-2 text-white"
-                        v-bind="activator"
-                        style="gap:8px"
-                        v-on="on"
-                    >
-                        <c-icon
-                            name="fas:star"
-                            source="fa"
-                            :size="13"
-                        /> Star
-                    </c-btn>
-                </template>
-                Star this repository on GitHub
-            </c-tooltip>
+                <c-tooltip
+                    width="auto"
+                    open-on-hover
+                    close-on-leave
+                    align="top-center"
+                    :offset-y="8"
+                >
+                    <template #activator="{ on, activator }">
+                        <c-btn
+                            class="bg-teal elevation-2 text-white"
+                            v-bind="activator"
+                            style="gap:8px"
+                            v-on="on"
+                        >
+                            <c-icon
+                                name="fas:star"
+                                source="fa"
+                                :size="13"
+                            /> Star
+                        </c-btn>
+                    </template>
+                    Star this repository on GitHub
+                </c-tooltip>
+            </c-col>
 
-            <c-tooltip
-                width="auto"
-                open-on-hover
-                close-on-leave
-                align="right-center"
-                :offset-x="8"
+            <c-col
+                cols="12"
+                sm="4"
+                class="d-flex justify-center"
             >
-                <template #activator="{ on, activator }">
-                    <c-btn
-                        class="bg-deep-purple elevation-2 text-white"
-                        v-bind="activator"
-                        style="gap:8px"
-                        v-on="on"
-                    >
-                        <c-icon
-                            name="fas:share-alt"
-                            source="fa"
-                            :size="13"
-                        /> Share
-                    </c-btn>
-                </template>
-                Copy the sharing link
-            </c-tooltip>
-        </div>
+                <c-tooltip
+                    width="auto"
+                    open-on-hover
+                    close-on-leave
+                    align="right-center"
+                    :offset-x="8"
+                >
+                    <template #activator="{ on, activator }">
+                        <c-btn
+                            class="bg-deep-purple elevation-2 text-white"
+                            v-bind="activator"
+                            style="gap:8px"
+                            v-on="on"
+                        >
+                            <c-icon
+                                name="fas:share-alt"
+                                source="fa"
+                                :size="13"
+                            /> Share
+                        </c-btn>
+                    </template>
+                    Copy the sharing link
+                </c-tooltip>
+            </c-col>
+        </c-row>
 
         <transition name="toast">
             <c-chip

@@ -42,21 +42,31 @@
             class="canvas pa-5 radius-10 select-none"
             @contextmenu.prevent="onContextMenu"
         >
-            <div class="d-flex flex-wrap gap-3 justify-center">
-                <c-card
+            <c-row
+                class="gap-y-3"
+                justify="center"
+            >
+                <c-col
                     v-for="file in files"
                     :key="file.name"
-                    class="file-card pa-3 d-flex flex-col align-center gap-2 radius-8 elevation-1"
+                    cols="6"
+                    sm="4"
+                    md="2"
+                    class="d-flex justify-center"
                 >
-                    <c-icon
-                        :name="file.icon"
-                        source="fa"
-                        :size="22"
-                        :style="{ color: file.color }"
-                    />
-                    <span class="file-name">{{ file.name }}</span>
-                </c-card>
-            </div>
+                    <c-card
+                        class="file-card pa-3 d-flex flex-col align-center gap-2 radius-8 elevation-1"
+                    >
+                        <c-icon
+                            :name="file.icon"
+                            source="fa"
+                            :size="22"
+                            :style="{ color: file.color }"
+                        />
+                        <span class="file-name">{{ file.name }}</span>
+                    </c-card>
+                </c-col>
+            </c-row>
             <div class="hint mt-3">
                 Right-click anywhere to open context menu
             </div>

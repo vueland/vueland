@@ -6,95 +6,137 @@
 </script>
 
 <template>
-    <div class="ex-grid">
-        <c-text-field
-            v-model="val"
-            label="Default"
-        />
-
-        <c-text-field
-            v-model="val"
-            label="Clearable"
-            clearable
-            preset="input.blue"
+    <c-row class="gap-y-4">
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:search"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-        </c-text-field>
+            <c-text-field
+                v-model="val"
+                label="Default"
+            />
+        </c-col>
 
-        <c-text-field
-            v-model="val"
-            label="Disabled"
-            disabled
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:lock"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-        </c-text-field>
+            <c-text-field
+                v-model="val"
+                label="Clearable"
+                clearable
+                preset="input.blue"
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:search"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+            </c-text-field>
+        </c-col>
 
-        <c-text-field
-            v-model="readonly"
-            label="Readonly"
-            readonly
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:pen"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-        </c-text-field>
+            <c-text-field
+                v-model="val"
+                label="Disabled"
+                disabled
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:lock"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+            </c-text-field>
+        </c-col>
 
-        <c-text-field
-            v-model="val"
-            label="With details"
-            details="Hint text below the field"
-            preset="input.indigo"
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:bell"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-        </c-text-field>
+            <c-text-field
+                v-model="readonly"
+                label="Readonly"
+                readonly
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:pen"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+            </c-text-field>
+        </c-col>
 
-        <c-text-field
-            v-model="val"
-            label="With error"
-            :rules="[() => ({ valid: false, message: 'This field has an error' })]"
-            validate-on="blur"
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:shield-alt"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-        </c-text-field>
-    </div>
+            <c-text-field
+                v-model="val"
+                label="With details"
+                details="Hint text below the field"
+                preset="input.indigo"
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:bell"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+            </c-text-field>
+        </c-col>
+
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
+        >
+            <c-text-field
+                v-model="val"
+                label="With error"
+                :rules="[() => ({ valid: false, message: 'This field has an error' })]"
+                validate-on="blur"
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:shield-alt"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+            </c-text-field>
+        </c-col>
+    </c-row>
 </template>
-
-<style scoped>
-.ex-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding: 16px;
-}
-@media (max-width: 600px) {
-  .ex-grid { grid-template-columns: 1fr; }
-}
-</style>
