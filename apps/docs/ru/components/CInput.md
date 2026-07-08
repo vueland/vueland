@@ -66,31 +66,41 @@ const pinRules = [(v: string) => ({ valid: /^\d{4}$/.test(v), message: 'Введ
 
 Плоский пресет (`ZonePreset`) — это карта **зон** в списки классов. Зоны маппятся 1:1 на отрисованный DOM:
 
-| Зона      | Элемент                          |
-| --------- | -------------------------------- |
-| `root`    | обёртка `.c-input`               |
-| `field`   | коробка `.c-field` (рамка / фон) |
-| `input`   | нативный `<input>`               |
-| `label`   | плавающий лейбл                  |
-| `details` | строка подсказки / ошибки        |
-| `prepend` | обёртка prepend-слота            |
-| `append`  | обёртка append-слота             |
+У самого `CInput` две зоны:
+
+| Зона      | Элемент                   |
+| --------- | ------------------------- |
+| `root`    | обёртка `.c-input`        |
+| `details` | строка подсказки / ошибки |
+
+Вложенные части описываются собственными пресетами компонентов и подставляются в снимок инпута **по значению** — тот же формат, что у standalone-компонентов:
+
+| Поле    | Тип пресета    | Зоны                                                     | Состояния                                        |
+| ------- | -------------- | -------------------------------------------------------- | ------------------------------------------------ |
+| `field` | `CFieldPreset` | `root` (.c-field), `input`, `label`, `prepend`, `append` | `focused` `filled` `error` `disabled` `readonly` |
+| `menu`  | `CMenuPreset`  | `root` (.c-menu)                                         | `opened` `closed`                                |
+| `list`  | `CListPreset`  | `root` (.c-list), `option` (.c-list-item)                | `disabled` `readonly`                            |
 
 ### Тип CInputPreset
 
 Пресет — это **набор плоских пресетов по состояниям**. `base` — спокойный вид, каждое состояние — отдельный полный плоский пресет:
 
 ```ts
-type CInputZone = 'root' | 'field' | 'input' | 'label' | 'details' | 'prepend' | 'append'
+type CInputZone = 'root' | 'details'
 type CInputState = 'focused' | 'filled' | 'error' | 'disabled' | 'readonly'
 
-type ZonePreset = Partial<Record<CInputZone, string[]>>
+// один снимок: свои зоны + вложенные пресеты частей (по значению)
+type CInputSnapshot = Partial<Record<CInputZone, string[]>> & {
+  field?: CFieldPreset
+  menu?: CMenuPreset
+  list?: CListPreset
+}
 
-// base + опциональные плоские пресеты по состояниям — всё опционально
-type CInputPreset = Partial<Record<'base' | CInputState, ZonePreset>>
+// base + опциональные снимки по состояниям — всё опционально
+type CInputPreset = Partial<Record<'base' | CInputState, CInputSnapshot>>
 ```
 
-**Составных состояний нет** и нет вложенности — состояние это просто ещё один плоский пресет.
+**Составных состояний нет.** Вложенность — только по компонентам: вложенный пресет кладут в `base`, а его состояния компонент резолвит сам.
 
 ### Одно состояние за раз
 
@@ -114,12 +124,17 @@ import type { CInputPreset } from '@vueland/ui/types'
 
 function makePreset(color: string): CInputPreset {
   return {
-    base: { label: [color] },
-    focused: { label: [color], field: [color] },
-    filled: { label: [color] },
-    error: { label: ['text-red'], field: ['text-red'], details: ['text-red'] },
-    readonly: { label: ['text-grey'] },
-    // `disabled` притеняется компонентом; зона нужна только для оверрайда
+    base: {
+      field: {
+        base: { label: [color] },
+        focused: { label: [color], root: [color] },
+        filled: { label: [color] },
+        error: { label: ['text-red'], root: ['text-red'] },
+        readonly: { label: ['text-grey'] },
+        // `disabled` притеняется компонентом; состояние нужно только для оверрайда
+      },
+    },
+    error: { details: ['text-red'] },
   }
 }
 
@@ -142,7 +157,7 @@ const vueland = createVuelandUI({
 
 ### Распределение CInput → CField
 
-Вы пишете **один** пресет. `CInput` его резолвит, применяет свои зоны (`root`, `details`) и раздаёт набор в поддерево поля через `provide`/`inject`. `CField` его инжектит и применяет `field`, `input`, `label`, `prepend`, `append`. Отдельный пресет для поля писать не нужно, и ничего не мутируется глобально.
+Вы пишете **один** пресет. `CInput` его резолвит, применяет свои зоны (`root`, `details`) и раздаёт набор в поддерево через `provide`/`inject`. `CField`, `CMenu` и `CList` берут из `base`-снимка свои вложенные пресеты (`field`/`menu`/`list`) и резолвят собственные состояния сами. У каждого из них есть и свой проп `preset` — он перекрывает контекст, поэтому standalone-режим работает без изменений. Ничего не мутируется глобально.
 
 ### Все состояния наглядно
 

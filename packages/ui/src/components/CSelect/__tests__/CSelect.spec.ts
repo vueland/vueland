@@ -13,7 +13,7 @@ import {
     shallowRef,
 } from 'vue'
 
-import { $APP_API_KEY } from '@/constants'
+import { $APP_API_KEY, $VUELAND_UI_KEY } from '@/constants'
 import { wait } from '@/helpers'
 
 import {
@@ -46,7 +46,7 @@ let mounted: ReturnType<typeof mount>[] = []
 // CSelect монтируется внутри хост-компонента с настоящим v-model:
 // модель проверяем снаружи, как это делает пользователь библиотеки.
 // shallowRef — чтобы объектные значения сохраняли ссылку (deep ref их проксирует).
-function mountSelect(props: Record<string, unknown> = {}) {
+function mountSelect(props: Record<string, unknown> = {}, slots?: Record<string, unknown>) {
     const {
         modelValue,
         ...rest
@@ -62,7 +62,7 @@ function mountSelect(props: Record<string, unknown> = {}) {
                 'onUpdate:modelValue': (v: unknown) => {
                     model.value = v
                 },
-            })
+            }, slots)
         },
     }), {
         attachTo: document.body,
@@ -83,7 +83,7 @@ async function openMenu(wrapper: ReturnType<typeof mount>) {
     await nextTick()
 }
 
-const options = () => document.querySelectorAll<HTMLElement>('.c-list-item')
+const options = () => Array.from(document.querySelectorAll<HTMLElement>('.c-list-item'))
 
 describe('CSelect', () => {
     afterEach(() => {
@@ -92,20 +92,26 @@ describe('CSelect', () => {
         document.body.innerHTML = ''
     })
 
-    it('связывает aria-controls с внешним id списка', async () => {
+    it('a11y: aria-controls из CTextField указывает на id меню, aria-expanded отражает состояние', async () => {
         const { wrapper } = mountSelect({ items: ['first', 'second'], modelValue: '' })
 
         const field = wrapper.get('.c-field-input')
-        const listId = field.attributes('aria-controls')
 
-        expect(listId).toMatch(/^c-select-list-.+$/)
+        expect(field.attributes('aria-haspopup')).toBe('listbox')
+        expect(field.attributes('aria-expanded')).toBe('false')
+
+        const menuId = field.attributes('aria-controls')
+
+        expect(menuId).toBeTruthy()
 
         await openMenu(wrapper)
 
-        const list = document.getElementById(listId!)
+        expect(field.attributes('aria-expanded')).toBe('true')
 
-        expect(list).toBeTruthy()
-        expect(list?.classList.contains('c-list')).toBe(true)
+        const menu = document.getElementById(menuId!)
+
+        expect(menu).toBeTruthy()
+        expect(menu?.querySelectorAll('.c-list-item')).toHaveLength(2)
     })
 
     it('single: клик по опции пишет значение во внешний v-model', async () => {
@@ -212,6 +218,14 @@ describe('CSelect', () => {
         expect(document.querySelector('.c-menu--visible')).toBeNull()
     })
 
+    it('readonly: фокус не открывает меню', async () => {
+        const { wrapper } = mountSelect({ items: ['a', 'b'], readonly: true })
+
+        await openMenu(wrapper)
+
+        expect(document.querySelector('.c-menu--visible')).toBeNull()
+    })
+
     it('clear очищает внешний v-model (single)', async () => {
         const { wrapper, model } = mountSelect({ items: ['a', 'b'], modelValue: 'a', clearable: true })
 
@@ -264,7 +278,7 @@ describe('CSelect', () => {
         await nextTick()
 
         expect(model.value).toEqual({ name: 'Vitaly' })
-        expect(document.querySelector('.c-select__items')?.textContent?.trim()).toBe('Vitaly')
+        expect(wrapper.get('.c-field__core').text()).toBe('Vitaly')
     })
 
     it('valueKey: в модель кладётся value, а поле показывает title', async () => {
@@ -276,15 +290,15 @@ describe('CSelect', () => {
         await nextTick()
 
         expect(model.value).toBe(2)
-        expect(document.querySelector('.c-select__items')?.textContent?.trim()).toBe('Vitaly')
+        expect(wrapper.get('.c-field__core').text()).toBe('Vitaly')
     })
 
     it('показывает выбранные значения в поле (multiple, без chips)', async () => {
-        mountSelect({ items: ['a', 'b', 'c'], multiple: true, modelValue: ['a', 'c'] })
+        const { wrapper } = mountSelect({ items: ['a', 'b', 'c'], multiple: true, modelValue: ['a', 'c'] })
 
         await nextTick()
 
-        expect(document.querySelector('.c-select__items')?.textContent?.trim()).toBe('a, c')
+        expect(wrapper.get('.c-field__core').text()).toBe('a,c')
     })
 
     it('нативный input показывает строку выбранных значений', async () => {
@@ -300,7 +314,7 @@ describe('CSelect', () => {
 
         await nextTick()
 
-        expect(document.querySelector('.c-select__items')?.textContent?.trim()).toBe('a')
+        expect(wrapper.get('.c-field__core').text()).toBe('a')
         expect((wrapper.get('.c-field-input').element as HTMLInputElement).value).toBe('a')
     })
 
@@ -326,7 +340,7 @@ describe('CSelect', () => {
 
         await nextTick()
 
-        expect(document.querySelector('.c-select__items')?.textContent?.trim()).toBe('Vitaly')
+        expect(wrapper.get('.c-field__core').text()).toBe('Vitaly')
         expect((wrapper.get('.c-field-input').element as HTMLInputElement).value).toBe('Vitaly')
     })
 
@@ -336,13 +350,13 @@ describe('CSelect', () => {
         model.value = 'b'
         await nextTick()
 
-        expect(document.querySelector('.c-select__items')?.textContent?.trim()).toBe('b')
+        expect(wrapper.get('.c-field__core').text()).toBe('b')
         expect((wrapper.get('.c-field-input').element as HTMLInputElement).value).toBe('b')
 
         model.value = undefined
         await nextTick()
 
-        expect(document.querySelector('.c-select__items')).toBeNull()
+        expect(wrapper.get('.c-field__core').text()).toBe('')
         expect((wrapper.get('.c-field-input').element as HTMLInputElement).value).toBe('')
     })
 
@@ -356,13 +370,13 @@ describe('CSelect', () => {
         model.value = ['a', 'c']
         await nextTick()
 
-        expect(document.querySelector('.c-select__items')?.textContent?.trim()).toBe('a, c')
+        expect(wrapper.get('.c-field__core').text()).toBe('a,c')
         expect((wrapper.get('.c-field-input').element as HTMLInputElement).value).toBe('a, c')
 
         model.value = []
         await nextTick()
 
-        expect(document.querySelector('.c-select__items')).toBeNull()
+        expect(wrapper.get('.c-field__core').text()).toBe('')
         expect((wrapper.get('.c-field-input').element as HTMLInputElement).value).toBe('')
     })
 
@@ -391,6 +405,211 @@ describe('CSelect', () => {
         await nextTick()
 
         expect(model.value).toBe(undefined)
+    })
+
+    it('preset: зона menu из пресета комбобокса применяется к выпадашке', async () => {
+        const wrapper = mount(defineComponent({
+            setup() {
+                return () => h(CSelect as any, {
+                    items: ['a', 'b'],
+                    preset: 'combo',
+                })
+            },
+        }), {
+            attachTo: document.body,
+            global: {
+                ...global,
+                provide: {
+                    ...global.provide,
+                    [$VUELAND_UI_KEY as symbol]: {
+                        presets: {
+                            combo: {
+                                base: {
+                                    root: ['text-red'],
+                                    menu: { base: { root: ['bg-indigo'] } },
+                                    list: {
+                                        base: {
+                                            root: ['pa-2'],
+                                            option: ['radius-6'],
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        })
+        mounted.push(wrapper)
+
+        await openMenu(wrapper)
+
+        const menu = document.querySelector('.c-menu')
+
+        expect(menu?.classList.contains('bg-indigo')).toBe(true)
+        // root верхнего уровня — зона .c-input, на меню попадать не должна
+        expect(menu?.classList.contains('text-red')).toBe(false)
+        expect(document.querySelector('.c-list')?.classList.contains('pa-2')).toBe(true)
+        expect(options()[0].classList.contains('radius-6')).toBe(true)
+    })
+
+    describe('слоты', () => {
+        it('prepend: рендерит контент перед полем', () => {
+            const { wrapper } = mountSelect({ items: ['a'] }, {
+                prepend: () => h('span', { class: 'custom-prepend' }, 'prep'),
+            })
+
+            expect(wrapper.get('.custom-prepend').text()).toBe('prep')
+        })
+
+        it('append: по умолчанию рендерит иконку дропдауна', () => {
+            const { wrapper } = mountSelect({ items: ['a'] })
+
+            expect(wrapper.find('.c-field__append .c-icon').exists()).toBe(true)
+        })
+
+        it('append: переопределяет иконку дропдауна', () => {
+            const { wrapper } = mountSelect({ items: ['a'] }, {
+                append: () => h('span', { class: 'custom-append' }, 'app'),
+            })
+
+            expect(wrapper.get('.custom-append').text()).toBe('app')
+            expect(wrapper.find('.c-field__append .c-icon').exists()).toBe(false)
+        })
+
+        it('chips: получает выбранные значения и заменяет дефолтный рендер', () => {
+            const { wrapper } = mountSelect({
+                items: ['a', 'b'],
+                multiple: true,
+                modelValue: ['a', 'b'],
+                chips: true,
+            }, {
+                chips: ({ items }: { items: string[] }) =>
+                    items.map(item => h('i', { class: 'custom-chip' }, item)),
+            })
+
+            expect(wrapper.findAll('.custom-chip').map(chip => chip.text())).toEqual(['a', 'b'])
+            expect(wrapper.find('.c-chip').exists()).toBe(false)
+        })
+
+        it('details: слот получает details и заменяет дефолтный рендер', () => {
+            const { wrapper } = mountSelect({ items: ['a'], details: 'hint text' }, {
+                details: ({ details }: { details?: string }) =>
+                    h('em', { class: 'custom-details' }, details),
+            })
+
+            expect(wrapper.get('.custom-details').text()).toBe('hint text')
+        })
+
+        it('no-items-message: дефолтный текст при пустых items', async () => {
+            const { wrapper } = mountSelect({ items: [] })
+
+            await openMenu(wrapper)
+
+            expect(options()[0].textContent?.trim()).toBe('No items')
+        })
+
+        it('no-items-message: options.noItemsMessage меняет текст', async () => {
+            const { wrapper } = mountSelect({
+                items: [],
+                options: { noItemsMessage: 'Пусто' },
+            })
+
+            await openMenu(wrapper)
+
+            expect(options()[0].textContent?.trim()).toBe('Пусто')
+        })
+
+        it('no-items-message: слот заменяет текст', async () => {
+            const { wrapper } = mountSelect({ items: [] }, {
+                'no-items-message': () => 'Ничего не нашлось',
+            })
+
+            await openMenu(wrapper)
+
+            expect(options()[0].textContent?.trim()).toBe('Ничего не нашлось')
+        })
+
+        it('menu: получает нормализованные items и onSelect', async () => {
+            let slotProps: any
+
+            const { wrapper, model } = mountSelect({ items: ['a', 'b'] }, {
+                menu: (props: any) => {
+                    slotProps = props
+
+                    return h('div', { class: 'custom-menu' })
+                },
+            })
+
+            await openMenu(wrapper)
+
+            expect(document.body.querySelector('.custom-menu')).toBeTruthy()
+            expect(slotProps.items.map((it: any) => it.title)).toEqual(['a', 'b'])
+            expect(slotProps.items[0]).toMatchObject({ raw: 'a', value: 'a' })
+
+            slotProps.onSelect('b')
+            await nextTick()
+
+            expect(model.value).toBe('b')
+        })
+
+        it('menu: кастомное меню на CList управляется с клавиатуры без обвязки', async () => {
+            const { wrapper, model } = mountSelect({ items: ['first', 'second'] }, {
+                menu: ({ items, onSelect }: any) => h(CList as any, { variant: 'listbox' }, () =>
+                    items.map((item: any) => h(CListItem as any, {
+                        key: item.key,
+                        value: item.raw,
+                        onClick: () => onSelect(item.raw),
+                    }, () => h(CListItemTitle as any, () => item.title)))),
+            })
+
+            await openMenu(wrapper)
+
+            const input = wrapper.get('.c-field-input')
+
+            await input.trigger('keydown', { key: 'ArrowDown' })
+            await nextTick()
+
+            expect(options()[0].classList.contains('c-list-item--focused')).toBe(true)
+
+            await input.trigger('keydown', { key: 'ArrowDown' })
+            await nextTick()
+
+            expect(options()[1].classList.contains('c-list-item--focused')).toBe(true)
+
+            await input.trigger('keydown', { key: 'Enter' })
+            await nextTick()
+
+            expect(model.value).toBe('second')
+        })
+
+        it('menu: onSelect работает как toggle при multiple', async () => {
+            let slotProps: any
+
+            const { wrapper, model } = mountSelect({
+                items: ['a', 'b'],
+                multiple: true,
+                modelValue: ['a'],
+            }, {
+                menu: (props: any) => {
+                    slotProps = props
+
+                    return h('div')
+                },
+            })
+
+            await openMenu(wrapper)
+
+            slotProps.onSelect('a')
+            await nextTick()
+
+            expect(model.value).toEqual([])
+
+            slotProps.onSelect('b')
+            await nextTick()
+
+            expect(model.value).toEqual(['b'])
+        })
     })
 
     describe('валидация', () => {

@@ -12,21 +12,17 @@ import {
     reactive,
 } from 'vue'
 
-import { type CFieldProps, type CFieldSlots } from '@/components'
+import { type CFieldProps } from '@/components'
 import { $PRESET_KEY, $VUELAND_UI_KEY } from '@/constants'
 
 import { useFieldPresets } from '../use-field-presets'
 
-type TestFieldProps = CFieldProps
-
 function mountUseFieldPresets({
     props: initialProps,
-    slots: initialSlots,
     presets = {},
     injected,
 }: {
-    props?: Partial<TestFieldProps>
-    slots?: Partial<CFieldSlots>
+    props?: Partial<CFieldProps>
     presets?: Record<string, any>
     injected?: Record<string, any>
 } = {}) {
@@ -40,9 +36,7 @@ function mountUseFieldPresets({
         disabled: false,
         readonly: false,
         ...initialProps,
-    }) as Reactive<TestFieldProps>
-
-    const slots = { ...initialSlots } as CFieldSlots
+    }) as Reactive<CFieldProps>
 
     const provide: Record<symbol, unknown> = {
         [$VUELAND_UI_KEY as symbol]: { presets },
@@ -55,7 +49,7 @@ function mountUseFieldPresets({
     const wrapper = mount(
         defineComponent({
             setup() {
-                result = useFieldPresets({ props, slots })
+                result = useFieldPresets({ props })
 
                 return () => h('div')
             },
@@ -66,15 +60,15 @@ function mountUseFieldPresets({
     return {
         wrapper,
         props,
-        slots,
         result,
     }
 }
 
-// Набор пресета. CField читает зоны field/input/label/prepend/append.
+// Набор CField: свои зоны и состояния. Один и тот же формат работает и через
+// собственный проп, и вложенным в пресет инпута (поле `field`).
 const fieldSet = {
     base: {
-        field: ['base-field'],
+        root: ['base-root'],
         input: ['base-input'],
         label: ['base-label'],
         prepend: ['base-prepend'],
@@ -82,6 +76,16 @@ const fieldSet = {
     },
     focused: { input: ['focused-input'] },
     error: { input: ['error-input'] },
+}
+
+// Набор инпута (CInputPreset): вложенный пресет поля подставлен по значению.
+// root верхнего уровня — зона .c-input, поле её брать не должно.
+const inputSet = {
+    base: {
+        root: ['input-root'],
+        details: ['input-details'],
+        field: fieldSet,
+    },
 }
 
 describe('useFieldPresets', () => {
@@ -104,7 +108,7 @@ describe('useFieldPresets', () => {
         })
 
         expect(result.value).toEqual({
-            root: ['base-field'],
+            root: ['base-root'],
             input: ['base-input'],
             label: ['base-label'],
             prepend: ['base-prepend'],
@@ -116,7 +120,7 @@ describe('useFieldPresets', () => {
         const { result } = mountUseFieldPresets({
             props: { preset: 'fields.text.primary' },
             presets: {
-                fields: { text: { primary: { base: { field: ['primary'] } } } },
+                fields: { text: { primary: { base: { root: ['primary'] } } } },
             },
         })
 
@@ -150,29 +154,28 @@ describe('useFieldPresets', () => {
         expect(result.value.input).toEqual(['error-input'])
     })
 
-    it('берёт набор из контекста (inject), когда своего нет', () => {
-        const { result } = mountUseFieldPresets({
-            injected: {
-                base: {
-                    field: ['injected-field'],
-                    input: ['injected-input'],
-                },
-            },
+    it('из контекста читает вложенный пресет поля с его состояниями', () => {
+        const { result, props } = mountUseFieldPresets({
+            injected: inputSet,
         })
 
-        expect(result.value.root).toEqual(['injected-field'])
-        expect(result.value.input).toEqual(['injected-input'])
+        expect(result.value.root).toEqual(['base-root'])
+        expect(result.value.input).toEqual(['base-input'])
+
+        props.focused = true
+
+        expect(result.value.input).toEqual(['focused-input'])
     })
 
     it('собственный preset-prop перекрывает контекст', () => {
         const { result } = mountUseFieldPresets({
             props: { preset: 'myField' },
-            injected: { base: { field: ['injected-field'] } },
+            injected: inputSet,
             presets: {
-                myField: { base: { field: ['local-field'] } },
+                myField: { base: { root: ['local-root'] } },
             },
         })
 
-        expect(result.value.root).toEqual(['local-field'])
+        expect(result.value.root).toEqual(['local-root'])
     })
 })

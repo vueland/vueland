@@ -139,17 +139,19 @@ const fa = createFontAwesomeResolver({
 })
 
 function makeInputPreset(color: string): CInputPreset {
-    // `field` colors the .c-field border (currentColor), `label` the floating label.
+    // Пресет поля вкладывается по значению; `root` красит рамку .c-field
+    // (currentColor), `label` — плавающий лейбл. Состояния резолвит сам CField.
     return {
-        base: { field: [color], label: [color] },
-        focused: { field: [color], label: [color] },
-        filled: { field: [color], label: [color] },
-        error: {
-            field: ['text-red'],
-            label: ['text-red'],
-            details: ['text-red'],
+        base: {
+            field: {
+                base: { root: [color], label: [color] },
+                focused: { root: [color], label: [color] },
+                filled: { root: [color], label: [color] },
+                error: { root: ['text-red'], label: ['text-red'] },
+                readonly: { root: ['text-grey'], label: ['text-grey'] },
+            },
         },
-        readonly: { field: ['text-grey'], label: ['text-grey'] },
+        error: { details: ['text-red'] },
     }
 }
 

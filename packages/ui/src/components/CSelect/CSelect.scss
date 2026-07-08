@@ -9,18 +9,10 @@
     padding: 8px 0;
   }
 
-  &__chips {
+  & > .c-input__field > .c-text-field > .c-field > .c-field__core {
     display: flex;
     gap: getCssVar('select', 'chips-gap');
     flex-wrap: wrap;
-
-    & > .c-chip {
-      --c-chip-elevation: #{getCssVar('sys', 'elevation', '2')};
-    }
-  }
-
-  &__items {
-    color: getCssVar('sys', 'color', 'on', 'background');
   }
 
   & > .c-input__field > .c-text-field > .c-field > .c-field__append {
@@ -36,6 +28,7 @@
     caret-color: transparent;
     color: transparent;
     position: absolute;
+    opacity: 0;
     z-index: -1;
   }
 }

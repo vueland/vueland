@@ -67,8 +67,10 @@
                                 title-key="email"
                                 multiple
                                 clearable
+                                chips
                                 value-key="name"
                                 autocomplete="off"
+                                preset="input.soft"
                                 autocorrect="off"
                                 autocapitalize="off"
                                 spellcheck="false"

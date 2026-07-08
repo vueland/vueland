@@ -35,10 +35,7 @@
     const slots = useSlots()
     const attrs = useAttrs()
 
-    const presets = useFieldPresets({
-        slots,
-        props,
-    })
+    const presets = useFieldPresets({ props })
 
     const clearable = computed(() => props.clearable
         && props.focused

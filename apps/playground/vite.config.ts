@@ -23,14 +23,14 @@ export default defineConfig({
                 tablet: 1400,
             },
             rules: [
-                defineRule({
-                    name: 'field-radius',
-                    matcher: /^field-radius-\[(.+)\]$/,
-                    validate: v => !!v,
-                    declaration: value => ({
-                        '--c-sys-shape-md': `${value}`,
-                    }),
-                }),
+                // defineRule({
+                //     name: 'field-radius',
+                //     matcher: /^field-radius-\[(.+)\]$/,
+                //     validate: v => !!v,
+                //     declaration: value => ({
+                //         '--c-sys-shape-md': `${value}`,
+                //     }),
+                // }),
                 defineRule({
                     name: 'flex-center',
                     matcher: /^flex-center$/,

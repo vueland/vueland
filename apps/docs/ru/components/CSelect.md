@@ -23,19 +23,35 @@ import CustomMenuExample from '../../examples/CSelect/CustomMenuExample.vue'
 ```vue
 <template>
   <CSelect
-    v-model="framework"
-    label="Framework"
+    v-model="environment"
+    label="Environment"
     placeholder="Choose one"
-    :items="frameworks"
+    :items="environments"
     clearable
   />
+
+  <div class="d-flex items-center gap-2 fs-sm text-blue-grey mt-4">
+    Deploys to
+    <span class="radius-pill text-white px-3 py-1 fs-xs fw-semi-bold" :class="badge">
+      {{ environment ?? 'nowhere' }}
+    </span>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
-const framework = ref()
-const frameworks = ['Vue', 'React', 'Svelte', 'Angular', 'Solid', 'Qwik']
+const environment = ref('Staging')
+const environments = ['Preview', 'Staging', 'Production']
+
+const badge = computed(
+  () =>
+    ({
+      Preview: 'bg-blue-grey',
+      Staging: 'bg-orange',
+      Production: 'bg-green',
+    })[environment.value ?? ''] ?? 'bg-blue-grey',
+)
 </script>
 ```
 
@@ -89,10 +105,10 @@ const members = [
 ```vue
 <template>
   <CSelect
-    v-model="skills"
-    label="Skills"
-    placeholder="Add skills"
-    :items="allSkills"
+    v-model="channels"
+    label="Channels"
+    placeholder="Where do we ping you?"
+    :items="allChannels"
     multiple
     chips
     clearable
@@ -102,8 +118,8 @@ const members = [
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const skills = ref(['Vue', 'TypeScript'])
-const allSkills = ['Vue', 'React', 'TypeScript', 'Node.js', 'Go', 'Rust']
+const channels = ref(['Email', 'Slack'])
+const allChannels = ['Email', 'Slack', 'Push', 'SMS', 'Webhook']
 </script>
 ```
 
@@ -180,7 +196,7 @@ const channelRules = [(value?: string) => ({ valid: !!value, message: 'Select a 
 
 ## Кастомный рендеринг
 
-Слот `selects` заменяет отображение выбранных значений внутри поля, а слот `menu` позволяет полностью пересобрать выпадающий список. В `menu` приходит нормализованный массив `items` и функция `onSelect`, которая обновляет модель.
+Слот `chips` заменяет отображение выбранных значений внутри поля, а слот `menu` позволяет полностью пересобрать выпадающий список. В `menu` приходит нормализованный массив `items` и функция `onSelect`, которая обновляет модель: в `multiple` повторный вызов с уже выбранным значением снимает его (toggle). Если внутри слота стоит [`CList`](/ru/components/CList), клавиатура работает из коробки: список сам регистрируется в клавиатурном контуре селекта, и стрелки, typeahead и `Enter` / `Space` из поля доезжают до него без обвязки.
 
 <CustomMenuExample />
 
@@ -196,7 +212,7 @@ const channelRules = [(value?: string) => ({ valid: !!value, message: 'Select a 
     value-key="code"
     clearable
   >
-    <template #selects="{ items }">
+    <template #chips="{ items }">
       <div v-if="items.length && selectedRegion" class="region-value">
         <span :class="['region-mark', selectedRegion.color]">
           {{ selectedRegion.code.toUpperCase() }}
@@ -260,6 +276,7 @@ const selectedRegion = computed(() => regions.find((item) => item.code === regio
 - Ввод символов работает как typeahead: фокус переходит к ближайшему подходящему пункту.
 - В одиночном режиме повторный выбор текущего пункта не очищает модель; используйте `clearable`, если значение можно сбрасывать.
 - В `multiple` выбранный пункт можно снять повторным кликом в меню. `mandatory` запрещает снять последний пункт через меню.
+- `readonly` не открывает меню: значение остаётся видимым, но изменить его нельзя.
 
 ---
 
@@ -276,8 +293,24 @@ const selectedRegion = computed(() => regions.find((item) => item.code === regio
 | `multiple`   | `boolean`                       | `false`      | Собирать выбор в массив                                   |
 | `mandatory`  | `boolean`                       | `false`      | В `multiple` запрещает снять последний пункт через список |
 | `chips`      | `boolean`                       | `false`      | Показывать выбранные значения как чипы                    |
+| `options`    | `{ noItemsMessage?: string }`   | —            | Текст пункта при пустом списке                            |
 
 Также доступны пропсы внутреннего поля: `label`, `placeholder`, `details`, `clearable`, `disabled`, `readonly`, `rules`, `validate-on`, `preset`, `id`, `no-details` и другие пропсы [`CInput`](/ru/components/CInput#props) / [`CTextField`](/ru/components/CTextField#api). Функции из `rules` вызываются со значением модели (`v-model`), а не с отображаемой строкой.
+
+Пресеты компонуются по значению: в поля `menu` и `list` пресета инпута подставляются обычные `CMenuPreset` и `CListPreset` — тот же формат, что у standalone-компонентов. [`CMenu`](/ru/components/CMenu), [`CList`](/ru/components/CList) и `CListItem` получают их из того же набора через контекст.
+
+```ts
+import { menuRounded } from './presets/menu' // CMenuPreset: зона root, состояния opened/closed
+import { listCompact } from './presets/list' // CListPreset: зоны root/option, состояния disabled/readonly
+
+const combo: CInputPreset = {
+  base: {
+    field: ['text-indigo'],
+    menu: menuRounded,
+    list: listCompact,
+  },
+}
+```
 
 ### События CSelect
 
@@ -287,11 +320,16 @@ const selectedRegion = computed(() => regions.find((item) => item.code === regio
 
 ### Слоты CSelect
 
-| Слот      | Пропы                                         | Описание                                            |
-| --------- | --------------------------------------------- | --------------------------------------------------- |
-| `selects` | `{ items: unknown[] }`                        | Заменяет отображение выбранных значений внутри поля |
-| `menu`    | `{ items: NormalizedItem<T>[], onSelect }`    | Заменяет содержимое выпадающего меню                |
-| `details` | `{ errorMessage?: string, details?: string }` | Заменяет строку подсказки или ошибки                |
+| Слот               | Пропы                                                    | Описание                                            |
+| ------------------ | -------------------------------------------------------- | --------------------------------------------------- |
+| `chips`            | `{ items: unknown[] }`                                   | Заменяет отображение выбранных значений внутри поля |
+| `menu`             | `{ items: NormalizedItem<T>[], onSelect } & KeyboardAPI` | Заменяет содержимое выпадающего меню                |
+| `details`          | `{ errorMessage?: string, details?: string }`            | Заменяет строку подсказки или ошибки                |
+| `prepend`          | —                                                        | Контент перед полем                                 |
+| `append`           | —                                                        | Контент после поля; заменяет иконку дропдауна       |
+| `no-items-message` | —                                                        | Текст пункта при пустом списке `items`              |
+
+Помимо `items` и `onSelect`, слот `menu` получает keyboard-api селекта: `register` / `unregister` — встроить собственную цель в клавиатурный контур, `forward` — переслать событие активной цели, `blur` — сбросить её фокусное состояние. Кастомному меню на [`CList`](/ru/components/CList) это не нужно — список регистрируется сам.
 
 ### NormalizedItem
 

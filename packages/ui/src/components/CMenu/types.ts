@@ -4,12 +4,14 @@ import type { COverlayProps } from '@/components/COverlay'
 import type { ActivatorListeners, ActivatorProps } from '@/composables/use-activator'
 import type { AutoPositionProps } from '@/composables/use-auto-position'
 import type { DelayProps } from '@/composables/use-delay-actions'
+import type { PresetProps } from '@/composables/use-presets'
 import type { DimensionsProps } from '@/types'
 
 type CMenuBaseProps = ActivatorProps &
     DimensionsProps &
     AutoPositionProps &
     DelayProps &
+    PresetProps &
     Partial<COverlayProps>
 
 export type CMenuProps = CMenuBaseProps & {

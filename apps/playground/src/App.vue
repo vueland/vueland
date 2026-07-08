@@ -3,6 +3,7 @@
     import { shallowRef, unref } from 'vue'
 
     import FormDemo from './FormDemo.vue'
+    import PresetsDemo from './PresetsDemo.vue'
 
     const core = useCore()
     const isDarkMode = shallowRef(false)
@@ -27,6 +28,7 @@
                 </c-toolbar-logo>
             </c-toolbar>
             <form-demo />
+            <presets-demo />
         </c-main>
     </c-app>
 </template>

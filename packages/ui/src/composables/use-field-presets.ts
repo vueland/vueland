@@ -1,24 +1,41 @@
-import { computed } from 'vue'
+import {
+    computed,
+    inject,
+    unref,
+} from 'vue'
 
-import type { CFieldProps, CFieldSlots } from '@/components/CField/types'
-import { isDef } from '@/helpers'
-import type { CInputState } from '@/types'
+import type { CFieldProps } from '@/components/CField/types'
+import { $PRESET_KEY } from '@/constants'
+import { isDef, resolveStatePreset } from '@/helpers'
+import type {
+    CFieldState,
+    CFieldZone,
+    CInputSnapshot,
+} from '@/types'
 
-import { C_INPUT_STATE_PRECEDENCE } from './use-input-presets'
-import { useInjectPreset, usePresetZones } from './use-presets'
+import { usePresetZones, useReadPreset } from './use-presets'
 
-export function useFieldPresets({
-    props,
-    slots: _slots,
-}: {
-    props: CFieldProps
-    slots: CFieldSlots
-}) {
-    // CField — потребитель: берёт набор из контекста (его провайдит host-CInput),
-    // а в standalone-режиме откатывается на собственный проп `preset`.
-    const raw = useInjectPreset(props)
+/** Порядок схлопывания состояний поля: кто выше — тот текущий статус. */
+export const C_FIELD_STATE_PRECEDENCE: readonly CFieldState[] = [
+    'disabled',
+    'readonly',
+    'error',
+    'focused',
+    'filled',
+]
 
-    const active = (): Partial<Record<CInputState, boolean>> => ({
+export function useFieldPresets({ props }: { props: CFieldProps }) {
+    // Оба источника несут один и тот же формат — CFieldPreset: собственный
+    // проп `preset` резолвится из реестра, а контекст (его провайдит
+    // host-CInput) держит вложенный пресет поля в base-снимке. Own перекрывает
+    // контекст.
+    const own = useReadPreset(props)
+    const injected = inject($PRESET_KEY, null)
+
+    const raw = computed(() =>
+        own.value ?? (resolveStatePreset(unref(injected), {}, []) as CInputSnapshot).field)
+
+    const active = (): Partial<Record<CFieldState, boolean>> => ({
         focused: !!props.focused,
         filled: !!props.dirty || isDef(props.modelValue),
         error: !!props.error,
@@ -26,19 +43,12 @@ export function useFieldPresets({
         readonly: !!props.readonly,
     })
 
-    const zones = usePresetZones<'field' | 'input' | 'label' | 'prepend' | 'append', CInputState>(
+    const zones = usePresetZones<CFieldZone, CFieldState>(
         raw,
-        ['field', 'input', 'label', 'prepend', 'append'],
+        ['root', 'input', 'label', 'prepend', 'append'],
         active,
-        C_INPUT_STATE_PRECEDENCE,
+        C_FIELD_STATE_PRECEDENCE,
     )
 
-    return computed(() => ({
-        // Обёртка `.c-field` читает зону `field`.
-        root: zones.value.field,
-        input: zones.value.input,
-        label: zones.value.label,
-        prepend: zones.value.prepend,
-        append: zones.value.append,
-    }))
+    return zones
 }

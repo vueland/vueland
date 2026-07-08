@@ -16,6 +16,7 @@
     import { useDelayedActions } from '@/composables/use-delay-actions'
     import { useId } from '@/composables/use-id'
     import { useKeyboard } from '@/composables/use-keyboard'
+    import { useMenuPresets } from '@/composables/use-menu-presets'
     import { $MENU_API_KEY } from '@/constants'
     import { vClickOutside } from '@/directives'
     import { isDef } from '@/helpers'
@@ -60,7 +61,7 @@
 
     const { openDelay, closeDelay } = useDelayedActions(props)
 
-    const _generatedId = useId(undefined, { prefix: 'c-menu' })
+    const uid = useId(undefined, { prefix: 'c-menu' })
 
     const { onKeydown } = useKeyboard({
         Escape: () => close(),
@@ -80,7 +81,7 @@
         update()
     }, THROTTLE_DELAY)
 
-    const menuId = computed(() => attrs.id as string ?? _generatedId)
+    const menuId = computed(() => attrs.id as string ?? uid)
     const detached = computed(() => isDef(props.positionX) || isDef(props.positionY))
 
     const sizesStyles = computed(() => ({
@@ -98,7 +99,12 @@
         ...unref(sizesStyles)
     }))
 
-    const classes = computed(() => ({ 'c-menu--visible': unref(model) }))
+    const presetClasses = useMenuPresets({ props, opened: model })
+
+    const classes = computed(() => [
+        { 'c-menu--visible': unref(model) },
+        ...unref(presetClasses),
+    ])
 
     function open() {
         mounted.value = true

@@ -202,10 +202,15 @@ createVuelandUI({
   presets: {
     input: {
       blue: {
-        base: { label: ['text-blue'] },
-        focused: { label: ['text-blue'], field: ['text-blue'] },
-        filled: { label: ['text-blue'] },
-        error: { label: ['text-red'], details: ['text-red'] },
+        base: {
+          field: {
+            base: { label: ['text-blue'] },
+            focused: { label: ['text-blue'], root: ['text-blue'] },
+            filled: { label: ['text-blue'] },
+            error: { label: ['text-red'] },
+          },
+        },
+        error: { details: ['text-red'] },
       } satisfies CInputPreset,
     },
   },
@@ -214,19 +219,24 @@ createVuelandUI({
 
 ### CInputPreset structure
 
-A preset is a set of **flat presets keyed by state** — `base` plus optional per-state overrides. No compound states, no nesting:
+A preset is a set of **snapshots keyed by state** — `base` plus optional per-state overrides. `CInput` owns the `root` and `details` zones, while the field preset (`CFieldPreset`) is composed in by value:
 
 ```ts
-type CInputZone = 'root' | 'field' | 'input' | 'label' | 'details' | 'prepend' | 'append'
+type CInputZone = 'root' | 'details'
 type CInputState = 'focused' | 'filled' | 'error' | 'disabled' | 'readonly'
 
-type ZonePreset = Partial<Record<CInputZone, string[]>>
-type CInputPreset = Partial<Record<'base' | CInputState, ZonePreset>>
+type CInputSnapshot = Partial<Record<CInputZone, string[]>> & {
+  field?: CFieldPreset
+  menu?: CMenuPreset
+  list?: CListPreset
+}
+
+type CInputPreset = Partial<Record<'base' | CInputState, CInputSnapshot>>
 ```
 
-The component is in a single current state, and that state's preset is applied — its zones replace `base` per-zone, no stacking and no priorities. See [CInput → Preset system](/en/components/CInput#preset-system) for the full model.
+The component is in a single current state, and that state's snapshot is applied — its zones replace `base` per-zone, no stacking and no priorities. See [CInput → Preset system](/en/components/CInput#preset-system) for the full model.
 
-The preset is distributed automatically: `CInput` applies `root` and `details`, and shares the set with `CField` via provide/inject, which applies `field`, `input`, `label`, `prepend`, `append`.
+The preset is distributed automatically: `CInput` applies `root` and `details` and shares the set with the subtree via provide/inject; `CField` picks up the nested `field` preset from the `base` snapshot and resolves its own states (field `root`, `input`, `label`, `prepend`, `append`) itself.
 
 ---
 

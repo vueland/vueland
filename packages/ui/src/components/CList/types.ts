@@ -2,11 +2,13 @@ import type { VNode } from 'vue'
 
 import type { LoosePath } from '@/composables'
 import type { AriaListRole, AriaListVariant } from '@/composables/use-aria-listbox'
+import type { PresetProps } from '@/composables/use-presets'
+import type { CListZone } from '@/types'
 
 export type CListRole = AriaListRole
 export type CListVariant = AriaListVariant
 
-export type CListProps<T> = {
+export type CListProps<T> = PresetProps & {
     modelValue?: T | T[] | null
     multiple?: boolean
     mandatory?: boolean
@@ -26,6 +28,7 @@ export type ListItem = {
     blur(): void
     click(): void
     getText(): string
+    getElement(): HTMLElement | undefined
     isDisabled(): boolean
 }
 
@@ -38,4 +41,6 @@ export type ListAPI<T = unknown> = {
     unselect(value: T): void
     toggle(value: T): void
     isSelected(value: T): boolean
+    /** Зоны пресета листа — пункт сам достаёт свою зону `option`. */
+    getPreset(): Record<CListZone, string[]>
 }

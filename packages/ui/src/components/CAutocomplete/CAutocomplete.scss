@@ -9,22 +9,42 @@
     padding: 5px 0;
   }
 
-  &-item {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    flex: 0 1 auto;
-    max-width: 100%;
+  & > .c-input__field > .c-text-field > .c-field > .c-field__core {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+
+    & > .c-chip {
+      --c-chip-elevation: #{getCssVar('sys', 'elevation', '2')};
+    }
   }
 
-  & > .c-field > .c-field__append {
+  & > .c-input__field > .c-text-field > .c-field > .c-field__append {
     transition: transform 0.1s linear;
   }
 
-  & > .c-field--focused > .c-field__append {
+  & > .c-input__field > .c-text-field > .c-field--focused > .c-field__append {
     transform: rotate(180deg);
   }
 
-  &__chip {
+  & > .c-input__field > .c-text-field > .c-field > .c-field__core > .c-field-input {
+    flex: 1 1;
+    min-width: 64px;
+  }
+
+  &
+    > .c-input__field
+    > .c-text-field
+    > .c-field:not(.c-field--focused)
+    > .c-field__core
+    > .c-field-input {
+    min-width: 0;
+    position: absolute;
+  }
+
+  &-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
   }
 }
