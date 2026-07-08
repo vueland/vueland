@@ -42,14 +42,6 @@
         && (!!unref(value) || props.dirty)
     )
 
-    const isDefault = computed(() =>
-        !props.focused
-        && !props.error
-        && !props.disabled
-        && !props.readonly
-        && !props.dirty
-    )
-
     const classes = computed(() => [
         {
             'c-field--focused': props.focused,
@@ -58,7 +50,6 @@
             'c-field--disabled': props.disabled,
             'c-field--readonly': props.readonly,
             'c-field--error': props.error,
-            'c-field--default': unref(isDefault),
         },
         ...unref(presets).root,
     ])
@@ -115,12 +106,15 @@
             aria-hidden="true"
             class="c-field__outline"
         >
-            <span :class="presets.label">{{ label }}</span>
+            <span :class="presets.label">
+                {{ label }}
+            </span>
         </div>
 
         <div
             v-if="$slots.prepend"
             class="c-field__prepend"
+            :class="presets.prepend"
         >
             <slot name="prepend"></slot>
         </div>
@@ -129,17 +123,17 @@
             :id="`${$attrs.id}-label`"
             :for="($attrs.id as string)"
             tag="label"
-            class="c-field-label"
+            class="c-field__label"
             :class="presets.label"
         >
             {{ label }}
         </c-label>
         <div class="c-field__core">
-            <slot name="before"></slot>
+            <slot name="before" />
 
             <element />
 
-            <slot name="after"></slot>
+            <slot name="after" />
         </div>
 
         <transition name="fade">
@@ -160,6 +154,7 @@
         <div
             v-if="$slots.append"
             class="c-field__append"
+            :class="presets.append"
         >
             <slot name="append" />
         </div>

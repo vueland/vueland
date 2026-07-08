@@ -340,41 +340,37 @@ type ValidateFn = (value: any) => ValidateResult | Promise<ValidateResult>
 
 ### CInput (корневой элемент)
 
-| Переменная                      | По умолчанию                          | Описание                        |
-| ------------------------------- | ------------------------------------- | ------------------------------- |
-| `--c-input-details-height`      | `var(--c-sys-control-height-sm)`      | Высота блока details            |
-| `--c-input-transition-duration` | `var(--c-sys-motion-duration-medium)` | Длительность перехода цвета     |
-| `--c-input-primary-color`       | `var(--c-sys-color-primary)`          | Цвет текста в состоянии default |
-| `--c-input-error-color`         | `var(--c-sys-color-error)`            | Цвет текста при ошибке          |
-| `--c-input-disabled-color`      | `var(--c-sys-color-disabled)`         | Цвет текста при disabled        |
-| `--c-input-readonly-color`      | `var(--c-sys-color-readonly)`         | Цвет текста при readonly        |
+| Переменная                      | По умолчанию                          | Описание                    |
+| ------------------------------- | ------------------------------------- | --------------------------- |
+| `--c-input-details-height`      | `var(--c-sys-control-height-sm)`      | Высота блока details        |
+| `--c-input-transition-duration` | `var(--c-sys-motion-duration-medium)` | Длительность перехода цвета |
+| `--c-input-primary-color`       | `var(--c-sys-color-primary)`          | Базовый цвет текста         |
+| `--c-input-error-color`         | `var(--c-sys-color-error)`            | Цвет текста при ошибке      |
+| `--c-input-disabled-color`      | `var(--c-sys-color-disabled)`         | Цвет текста при disabled    |
+| `--c-input-readonly-color`      | `var(--c-sys-color-readonly)`         | Цвет текста при readonly    |
 
 ### CField (рамка и лейбл)
 
-| Переменная                       | По умолчанию                            | Описание                    |
-| -------------------------------- | --------------------------------------- | --------------------------- |
-| `--c-field-min-height`           | `var(--c-sys-control-height-md)`        | Минимальная высота поля     |
-| `--c-field-prepend-min-width`    | `var(--c-sys-control-height-md)`        | Мин. ширина зоны prepend    |
-| `--c-field-append-min-width`     | `var(--c-sys-control-icon-size)`        | Мин. ширина зоны append     |
-| `--c-field-padding-inline`       | `var(--c-sys-control-padding-inline)`   | Горизонтальный отступ поля  |
-| `--c-field-border-radius`        | `var(--c-sys-shape-md)`                 | Скругление поля             |
-| `--c-field-transition-duration`  | `var(--c-sys-motion-duration-medium)`   | Длительность переходов поля |
-| `--c-field-density-offset`       | `var(--c-sys-density-scale)`            | Добавка к высоте поля       |
-| `--c-field-bg-color`             | `var(--c-sys-color-surface)`            | Фон поля                    |
-| `--c-field-focused-bg-color`     | `var(--c-sys-color-surface-bright)`     | Фон поля в фокусе           |
-| `--c-field-disabled-bg-color`    | `var(--c-sys-color-surface-dim)`        | Фон поля при disabled       |
-| `--c-field-label-color`          | `var(--c-sys-color-primary)`            | Цвет лейбла                 |
-| `--c-field-focused-border-color` | `var(--c-sys-color-focus-ring)`         | Цвет рамки в фокусе         |
-| `--c-field-border-color`         | `var(--c-sys-color-outline)`            | Цвет рамки                  |
-| `--c-field-border-width`         | `var(--c-sys-border-width-thin)`        | Толщина рамки               |
-| `--c-field-focused-border-width` | `var(--c-sys-border-width-medium)`      | Толщина рамки в фокусе      |
-| `--c-field-input-text-color`     | `var(--c-sys-color-on-surface)`         | Цвет вводимого текста       |
-| `--c-field-placeholder-color`    | `var(--c-sys-color-placeholder)`        | Цвет placeholder            |
-| `--c-field-error-bg-color`       | `var(--c-sys-color-surface)`            | Фон поля при ошибке         |
-| `--c-field-error-text-color`     | `var(--c-sys-color-error)`              | Цвет текста при ошибке      |
-| `--c-field-error-border-color`   | `var(--c-sys-color-error)`              | Цвет рамки при ошибке       |
-| `--c-field-readonly-bg-color`    | `var(--c-sys-color-readonly-container)` | Фон поля при readonly       |
-| `--c-field-disabled-opacity`     | `var(--c-sys-state-disabled-opacity)`   | Прозрачность при disabled   |
+| Переменная                      | По умолчанию                            | Описание                    |
+| ------------------------------- | --------------------------------------- | --------------------------- |
+| `--c-field-min-height`          | `var(--c-sys-control-height-md)`        | Минимальная высота поля     |
+| `--c-field-prepend-min-width`   | `var(--c-sys-control-height-md)`        | Мин. ширина зоны prepend    |
+| `--c-field-append-min-width`    | `var(--c-sys-control-icon-size)`        | Мин. ширина зоны append     |
+| `--c-field-padding-inline`      | `var(--c-sys-control-padding-inline)`   | Горизонтальный отступ поля  |
+| `--c-field-border-radius`       | `var(--c-sys-shape-md)`                 | Скругление поля             |
+| `--c-field-transition-duration` | `var(--c-sys-motion-duration-medium)`   | Длительность переходов поля |
+| `--c-field-density-offset`      | `var(--c-sys-density-scale)`            | Добавка к высоте поля       |
+| `--c-field-bg-color`            | `var(--c-sys-color-surface)`            | Фон поля                    |
+| `--c-field-focused-bg-color`    | `var(--c-sys-color-surface-bright)`     | Фон поля в фокусе           |
+| `--c-field-disabled-bg-color`   | `var(--c-sys-color-surface-dim)`        | Фон поля при disabled       |
+| `--c-field-border-color`        | `var(--c-sys-color-outline)`            | Цвет рамки                  |
+| `--c-field-border-width`        | `var(--c-sys-border-width-thin)`        | Толщина рамки               |
+| `--c-field-input-text-color`    | `var(--c-sys-color-on-surface)`         | Цвет вводимого текста       |
+| `--c-field-placeholder-color`   | `var(--c-sys-color-placeholder)`        | Цвет placeholder            |
+| `--c-field-error-bg-color`      | `var(--c-sys-color-surface-bright)`     | Фон поля при ошибке         |
+| `--c-field-error-border-color`  | `var(--c-sys-color-error)`              | Цвет рамки при ошибке       |
+| `--c-field-readonly-bg-color`   | `var(--c-sys-color-readonly-container)` | Фон поля при readonly       |
+| `--c-field-disabled-opacity`    | `var(--c-sys-state-disabled-opacity)`   | Прозрачность при disabled   |
 
 ### Пример переопределения
 
@@ -393,17 +389,16 @@ type ValidateFn = (value: any) => ValidateResult | Promise<ValidateResult>
 
 ## CSS-классы состояний
 
-| Класс                  | Условие                              |
-| ---------------------- | ------------------------------------ |
-| `c-input--default`     | Нет ошибки, не disabled, не readonly |
-| `c-input--focused`     | Поле в фокусе                        |
-| `c-input--has-error`   | Есть ошибка валидации                |
-| `c-input--disabled`    | `disabled = true`                    |
-| `c-input--readonly`    | `readonly = true`                    |
-| `c-input--clearable`   | `clearable = true`                   |
-| `c-input--validating`  | Идёт async-валидация                 |
-| `c-field--focused`     | Рамка в фокусе                       |
-| `c-field--filled`      | Поле имеет значение (лейбл поднят)   |
-| `c-field--disabled`    | Рамка disabled                       |
-| `c-field--readonly`    | Рамка readonly (пунктирная рамка)    |
-| `c-field--has-prepend` | Есть слот prepend                    |
+| Класс                  | Условие                                             |
+| ---------------------- | --------------------------------------------------- |
+| `c-input--focused`     | Поле в фокусе                                       |
+| `c-input--has-error`   | Ошибка валидации (и не `disabled`, и не `readonly`) |
+| `c-input--disabled`    | `disabled = true`                                   |
+| `c-input--readonly`    | `readonly = true`                                   |
+| `c-input--clearable`   | `clearable = true`                                  |
+| `c-field--focused`     | Рамка в фокусе                                      |
+| `c-field--filled`      | Поле имеет значение (лейбл поднят)                  |
+| `c-field--error`       | Есть ошибка валидации                               |
+| `c-field--disabled`    | Рамка disabled                                      |
+| `c-field--readonly`    | Рамка readonly                                      |
+| `c-field--has-prepend` | Есть слот prepend                                   |

@@ -25,6 +25,7 @@
             message: 'Email is required',
         })
     ]
+
 </script>
 
 <template>
@@ -50,6 +51,7 @@
                                 label="Select user"
                                 title-key="name"
                                 value-key="email"
+                                preset="input.soft"
                                 :items
                                 chips
                                 clearable
@@ -59,7 +61,11 @@
                                 :options="{
                                     noItemsMessage: 'No items',
                                 }"
-                            />
+                            >
+                                <template #prepend>
+                                    <c-icon :name="IconAliases.CALENDAR" />
+                                </template>
+                            </c-select>
 
                             <c-autocomplete
                                 v-model="email"

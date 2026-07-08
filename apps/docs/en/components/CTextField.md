@@ -340,41 +340,37 @@ type ValidateFn = (value: any) => ValidateResult | Promise<ValidateResult>
 
 ### CInput (root element)
 
-| Variable                        | Default                               | Description                 |
-| ------------------------------- | ------------------------------------- | --------------------------- |
-| `--c-input-details-height`      | `var(--c-sys-control-height-sm)`      | Height of the details area  |
-| `--c-input-transition-duration` | `var(--c-sys-motion-duration-medium)` | Color transition duration   |
-| `--c-input-primary-color`       | `var(--c-sys-color-primary)`          | Text color in default state |
-| `--c-input-error-color`         | `var(--c-sys-color-error)`            | Text color on error         |
-| `--c-input-disabled-color`      | `var(--c-sys-color-disabled)`         | Text color when disabled    |
-| `--c-input-readonly-color`      | `var(--c-sys-color-readonly)`         | Text color when readonly    |
+| Variable                        | Default                               | Description                |
+| ------------------------------- | ------------------------------------- | -------------------------- |
+| `--c-input-details-height`      | `var(--c-sys-control-height-sm)`      | Height of the details area |
+| `--c-input-transition-duration` | `var(--c-sys-motion-duration-medium)` | Color transition duration  |
+| `--c-input-primary-color`       | `var(--c-sys-color-primary)`          | Base text color            |
+| `--c-input-error-color`         | `var(--c-sys-color-error)`            | Text color on error        |
+| `--c-input-disabled-color`      | `var(--c-sys-color-disabled)`         | Text color when disabled   |
+| `--c-input-readonly-color`      | `var(--c-sys-color-readonly)`         | Text color when readonly   |
 
 ### CField (border and label)
 
-| Variable                         | Default                                 | Description                    |
-| -------------------------------- | --------------------------------------- | ------------------------------ |
-| `--c-field-min-height`           | `var(--c-sys-control-height-md)`        | Minimum field height           |
-| `--c-field-prepend-min-width`    | `var(--c-sys-control-height-md)`        | Min width of the prepend zone  |
-| `--c-field-append-min-width`     | `var(--c-sys-control-icon-size)`        | Min width of the append zone   |
-| `--c-field-padding-inline`       | `var(--c-sys-control-padding-inline)`   | Horizontal field padding       |
-| `--c-field-border-radius`        | `var(--c-sys-shape-md)`                 | Field border radius            |
-| `--c-field-transition-duration`  | `var(--c-sys-motion-duration-medium)`   | Field transition duration      |
-| `--c-field-density-offset`       | `var(--c-sys-density-scale)`            | Added height offset            |
-| `--c-field-bg-color`             | `var(--c-sys-color-surface)`            | Field background               |
-| `--c-field-focused-bg-color`     | `var(--c-sys-color-surface-bright)`     | Field background on focus      |
-| `--c-field-disabled-bg-color`    | `var(--c-sys-color-surface-dim)`        | Field background when disabled |
-| `--c-field-label-color`          | `var(--c-sys-color-primary)`            | Label color                    |
-| `--c-field-focused-border-color` | `var(--c-sys-color-focus-ring)`         | Focus border color             |
-| `--c-field-border-color`         | `var(--c-sys-color-outline)`            | Border color                   |
-| `--c-field-border-width`         | `var(--c-sys-border-width-thin)`        | Border width                   |
-| `--c-field-focused-border-width` | `var(--c-sys-border-width-medium)`      | Focus border width             |
-| `--c-field-input-text-color`     | `var(--c-sys-color-on-surface)`         | Typed text color               |
-| `--c-field-placeholder-color`    | `var(--c-sys-color-placeholder)`        | Placeholder color              |
-| `--c-field-error-bg-color`       | `var(--c-sys-color-surface)`            | Field background on error      |
-| `--c-field-error-text-color`     | `var(--c-sys-color-error)`              | Text color on error            |
-| `--c-field-error-border-color`   | `var(--c-sys-color-error)`              | Border color on error          |
-| `--c-field-readonly-bg-color`    | `var(--c-sys-color-readonly-container)` | Field background when readonly |
-| `--c-field-disabled-opacity`     | `var(--c-sys-state-disabled-opacity)`   | Opacity when disabled          |
+| Variable                        | Default                                 | Description                    |
+| ------------------------------- | --------------------------------------- | ------------------------------ |
+| `--c-field-min-height`          | `var(--c-sys-control-height-md)`        | Minimum field height           |
+| `--c-field-prepend-min-width`   | `var(--c-sys-control-height-md)`        | Min width of the prepend zone  |
+| `--c-field-append-min-width`    | `var(--c-sys-control-icon-size)`        | Min width of the append zone   |
+| `--c-field-padding-inline`      | `var(--c-sys-control-padding-inline)`   | Horizontal field padding       |
+| `--c-field-border-radius`       | `var(--c-sys-shape-md)`                 | Field border radius            |
+| `--c-field-transition-duration` | `var(--c-sys-motion-duration-medium)`   | Field transition duration      |
+| `--c-field-density-offset`      | `var(--c-sys-density-scale)`            | Added height offset            |
+| `--c-field-bg-color`            | `var(--c-sys-color-surface)`            | Field background               |
+| `--c-field-focused-bg-color`    | `var(--c-sys-color-surface-bright)`     | Field background on focus      |
+| `--c-field-disabled-bg-color`   | `var(--c-sys-color-surface-dim)`        | Field background when disabled |
+| `--c-field-border-color`        | `var(--c-sys-color-outline)`            | Border color                   |
+| `--c-field-border-width`        | `var(--c-sys-border-width-thin)`        | Border width                   |
+| `--c-field-input-text-color`    | `var(--c-sys-color-on-surface)`         | Typed text color               |
+| `--c-field-placeholder-color`   | `var(--c-sys-color-placeholder)`        | Placeholder color              |
+| `--c-field-error-bg-color`      | `var(--c-sys-color-surface-bright)`     | Field background on error      |
+| `--c-field-error-border-color`  | `var(--c-sys-color-error)`              | Border color on error          |
+| `--c-field-readonly-bg-color`   | `var(--c-sys-color-readonly-container)` | Field background when readonly |
+| `--c-field-disabled-opacity`    | `var(--c-sys-state-disabled-opacity)`   | Opacity when disabled          |
 
 ### Override example
 
@@ -393,17 +389,16 @@ type ValidateFn = (value: any) => ValidateResult | Promise<ValidateResult>
 
 ## State CSS classes
 
-| Class                  | Condition                            |
-| ---------------------- | ------------------------------------ |
-| `c-input--default`     | No error, not disabled, not readonly |
-| `c-input--focused`     | Field is focused                     |
-| `c-input--has-error`   | Validation error is active           |
-| `c-input--disabled`    | `disabled = true`                    |
-| `c-input--readonly`    | `readonly = true`                    |
-| `c-input--clearable`   | `clearable = true`                   |
-| `c-input--validating`  | Async validation is running          |
-| `c-field--focused`     | Border is focused                    |
-| `c-field--filled`      | Field has a value (label is raised)  |
-| `c-field--disabled`    | Border disabled                      |
-| `c-field--readonly`    | Border readonly (dashed)             |
-| `c-field--has-prepend` | prepend slot is present              |
+| Class                  | Condition                                                  |
+| ---------------------- | ---------------------------------------------------------- |
+| `c-input--focused`     | Field is focused                                           |
+| `c-input--has-error`   | Validation error is active (and not `disabled`/`readonly`) |
+| `c-input--disabled`    | `disabled = true`                                          |
+| `c-input--readonly`    | `readonly = true`                                          |
+| `c-input--clearable`   | `clearable = true`                                         |
+| `c-field--focused`     | Border is focused                                          |
+| `c-field--filled`      | Field has a value (label is raised)                        |
+| `c-field--error`       | Validation error is active                                 |
+| `c-field--disabled`    | Border disabled                                            |
+| `c-field--readonly`    | Border readonly                                            |
+| `c-field--has-prepend` | prepend slot is present                                    |

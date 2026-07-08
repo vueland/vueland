@@ -64,6 +64,7 @@
     <c-input
         ref="cInputRef"
         :model-value="model"
+        :dirty="!!model"
         v-bind="rootAttrs"
     >
         <template #field="{focused, attrs, uid, dirty, label, clearable, readonly, disabled, hasError}">

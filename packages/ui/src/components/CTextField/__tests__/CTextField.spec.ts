@@ -146,8 +146,8 @@ describe('CTextField', () => {
             label: 'Username',
         })
 
-        expect(wrapper.get('.c-field-label').attributes('id')).toBe('username-label')
-        expect(wrapper.get('.c-field-label').text()).toBe('Username')
+        expect(wrapper.get('.c-field__label').attributes('id')).toBe('username-label')
+        expect(wrapper.get('.c-field__label').text()).toBe('Username')
         expect(wrapper.get('input.c-field-input').attributes('aria-labelledby')).toBe('username-label')
     })
 

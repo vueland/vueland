@@ -4,7 +4,7 @@ import type { CListPreset } from '@vueland/ui/types'
 export const soft: CListPreset = {
     base: {
         root: ['pa-2'],
-        option: ['radius-8 mt-2'],
+        option: ['radius-8 mt-1'],
     },
 }
 

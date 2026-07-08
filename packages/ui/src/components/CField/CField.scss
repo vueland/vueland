@@ -17,16 +17,12 @@ $self: '.c-field';
   --c-field-bg-color: #{getCssVar('sys', 'color', 'surface')};
   --c-field-focused-bg-color: #{getCssVar('sys', 'color', 'surface-bright')};
   --c-field-disabled-bg-color: #{getCssVar('sys', 'color', 'surface-dim')};
-  --c-field-label-color: #{getCssVar('sys', 'color', 'primary')};
-  --c-field-focused-border-color: #{getCssVar('sys', 'color', 'focus-ring')};
   --c-field-border-color: #{getCssVar('sys', 'color', 'outline')};
   --c-field-border-width: #{getCssVar('sys', 'border-width', 'thin')};
-  --c-field-focused-border-width: #{getCssVar('sys', 'border-width', 'medium')};
   --c-field-input-text-color: #{getCssVar('sys', 'color', 'on-surface')};
   --c-field-placeholder-color: #{getCssVar('sys', 'color', 'placeholder')};
   --c-field-error-bg-color: #{getCssVar('sys', 'color', 'surface-bright')};
   --c-field-error-border-color: #{getCssVar('sys', 'color', 'error')};
-  --c-field-error-text-color: #{getCssVar('sys', 'color', 'error')};
   --c-field-readonly-bg-color: #{getCssVar('sys', 'color', 'readonly-container')};
   --c-field-disabled-opacity: #{getCssVar('sys', 'state', 'disabled-opacity')};
 
@@ -38,7 +34,7 @@ $self: '.c-field';
   min-height: calc(#{getCssVar('field', 'min-height')} + #{getCssVar('field', 'density-offset')});
   padding: 1px getCssVar('field', 'padding-inline');
   border-radius: getCssVar('field', 'border-radius');
-  border: getCssVar('field', 'border-width') solid;
+  border: getCssVar('field', 'border-width') solid getCssVar('field', 'border-color');
   transition:
     color getCssVar('field', 'transition-duration') $primary-transition,
     opacity getCssVar('field', 'transition-duration') $primary-transition;
@@ -73,12 +69,13 @@ $self: '.c-field';
     }
   }
 
-  &-label {
+  &__label {
     position: absolute;
     top: 50%;
     left: getCssVar('field', 'border-radius');
     line-height: 0.9;
     transform: translate(0, -50%);
+    color: currentColor;
     transition:
       top getCssVar('field', 'transition-duration') $primary-transition,
       left getCssVar('field', 'transition-duration') $primary-transition,
@@ -102,6 +99,7 @@ $self: '.c-field';
     justify-content: center;
     min-width: getCssVar('field', 'prepend-min-width');
     min-height: getCssVar('field', 'min-height');
+    color: currentColor;
   }
 
   &__clear {
@@ -110,7 +108,7 @@ $self: '.c-field';
     justify-content: center;
     width: 24px;
     min-height: getCssVar('field', 'min-height');
-    color: getCssVar('field', 'label-color');
+    color: currentColor;
     cursor: pointer;
   }
 
@@ -120,10 +118,10 @@ $self: '.c-field';
     justify-content: center;
     min-width: getCssVar('field', 'append-min-width');
     min-height: getCssVar('field', 'min-height');
+    color: currentColor;
   }
 
   &-input {
-    //flex: 1 1;
     min-width: 100%;
     outline: none;
     cursor: inherit;
@@ -135,13 +133,9 @@ $self: '.c-field';
     }
   }
 
-  &--default {
-    border-color: getCssVar('field', 'border-color');
-  }
-
   &--focused {
     background-color: getCssVar('field', 'focused-bg-color');
-    //border-width: getCssVar('field', 'focused-border-width');
+    border-color: currentColor;
 
     #{$self}-input::placeholder {
       opacity: 1;
@@ -156,8 +150,8 @@ $self: '.c-field';
     }
   }
 
-  &--focused > &-label,
-  &--filled > &-label {
+  &--focused > #{$self}__label,
+  &--filled > #{$self}__label {
     top: 0;
     left: getCssVar('field', 'border-radius');
     transform: translate(0, -50%) scale(0.8);
@@ -187,7 +181,6 @@ $self: '.c-field';
   &--error {
     background-color: getCssVar('field', 'error-bg-color');
     border-color: getCssVar('field', 'error-border-color');
-    color: getCssVar('field', 'error-text-color');
   }
 
   &--readonly {
@@ -198,7 +191,7 @@ $self: '.c-field';
   &--has-prepend {
     padding-left: 0;
 
-    & > #{$self}-label {
+    & > #{$self}__label {
       left: getCssVar('field', 'prepend-min-width');
     }
 
@@ -207,8 +200,8 @@ $self: '.c-field';
     }
   }
 
-  &--has-prepend#{$self}--focused > &-label,
-  &--has-prepend#{$self}--filled > &-label {
+  &--has-prepend#{$self}--focused > &__label,
+  &--has-prepend#{$self}--filled > &__label {
     top: 0;
     left: getCssVar('field', 'border-radius');
     transform: translate(0, -50%) scale(0.8);
