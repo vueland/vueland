@@ -24,7 +24,7 @@ const softField: CFieldPreset = {
         label: ['text-uppercase', 'text-green-darken-2'],
     },
     error: {
-        root: ['bg-red-lighten-5', 'radius-8'],
+        root: ['bg-red-lighten-5', 'radius-8', 'text-red-darken-2'],
         label: ['text-uppercase', 'text-red-darken-2'],
     },
     disabled: {
@@ -61,6 +61,7 @@ const outlineField: CFieldPreset = {
     error: {
         root: ['bg-red-lighten-5', 'radius-12'],
         label: ['text-red-darken-2'],
+        prepend: ['text-red-darken-2'],
     },
     disabled: {
         root: ['bg-grey-lighten-3', 'radius-12'],

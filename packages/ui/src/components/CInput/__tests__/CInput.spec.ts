@@ -475,10 +475,9 @@ describe('CInput', () => {
     })
 
     describe('state classes', () => {
-        it('добавляет default class без ошибки', () => {
+        it('не добавляет error class без ошибки', () => {
             const wrapper = createWrapper()
 
-            expect(wrapper.classes()).toContain('c-input--default')
             expect(wrapper.classes()).not.toContain('c-input--has-error')
         })
 
@@ -499,7 +498,6 @@ describe('CInput', () => {
             await nextTick()
 
             expect(wrapper.classes()).toContain('c-input--has-error')
-            expect(wrapper.classes()).not.toContain('c-input--default')
         })
 
         it('добавляет focused class после focus', async () => {

@@ -332,14 +332,14 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 
 ## CSS-переменные
 
-| Переменная                      | По умолчанию                          | Описание                        |
-| ------------------------------- | ------------------------------------- | ------------------------------- |
-| `--c-input-details-height`      | `var(--c-sys-control-height-sm)`      | Высота блока details            |
-| `--c-input-transition-duration` | `var(--c-sys-motion-duration-medium)` | Длительность перехода цвета     |
-| `--c-input-primary-color`       | `var(--c-sys-color-primary)`          | Цвет текста в состоянии default |
-| `--c-input-error-color`         | `var(--c-sys-color-error)`            | Цвет текста при ошибке          |
-| `--c-input-disabled-color`      | `var(--c-sys-color-disabled)`         | Цвет текста при disabled        |
-| `--c-input-readonly-color`      | `var(--c-sys-color-readonly)`         | Цвет текста при readonly        |
+| Переменная                      | По умолчанию                          | Описание                    |
+| ------------------------------- | ------------------------------------- | --------------------------- |
+| `--c-input-details-height`      | `var(--c-sys-control-height-sm)`      | Высота блока details        |
+| `--c-input-transition-duration` | `var(--c-sys-motion-duration-medium)` | Длительность перехода цвета |
+| `--c-input-primary-color`       | `var(--c-sys-color-primary)`          | Базовый цвет текста         |
+| `--c-input-error-color`         | `var(--c-sys-color-error)`            | Цвет текста при ошибке      |
+| `--c-input-disabled-color`      | `var(--c-sys-color-disabled)`         | Цвет текста при disabled    |
+| `--c-input-readonly-color`      | `var(--c-sys-color-readonly)`         | Цвет текста при readonly    |
 
 > Фон поля в состояниях `focused`/`readonly`/`disabled`/`error` отрисовывает компонент `CField` (`--c-field-focused-bg-color`, `--c-field-readonly-bg-color`, `--c-field-disabled-bg-color`, `--c-field-error-bg-color`), а не `CInput`.
 
@@ -347,13 +347,11 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 
 ## CSS-классы состояний
 
-| Класс                 | Условие                              |
-| --------------------- | ------------------------------------ |
-| `c-input--default`    | Нет ошибки, не disabled, не readonly |
-| `c-input--focused`    | В фокусе                             |
-| `c-input--has-error`  | Ошибка валидации                     |
-| `c-input--disabled`   | `disabled = true`                    |
-| `c-input--readonly`   | `readonly = true`                    |
-| `c-input--dirty`      | `dirty = true`                       |
-| `c-input--clearable`  | `clearable = true`                   |
-| `c-input--validating` | Идёт async-валидация                 |
+| Класс                | Условие                                             |
+| -------------------- | --------------------------------------------------- |
+| `c-input--focused`   | В фокусе                                            |
+| `c-input--has-error` | Ошибка валидации (и не `disabled`, и не `readonly`) |
+| `c-input--disabled`  | `disabled = true`                                   |
+| `c-input--readonly`  | `readonly = true`                                   |
+| `c-input--dirty`     | `dirty = true`                                      |
+| `c-input--clearable` | `clearable = true`                                  |

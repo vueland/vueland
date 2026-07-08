@@ -104,8 +104,7 @@
 
     const classes = computed(() => [
         {
-            'c-input--has-error': errors.hasError,
-            'c-input--default': !errors.hasError && !props.disabled && !props.readonly,
+            'c-input--has-error': errors.hasError && !props.disabled && !props.readonly,
             'c-input--focused': state.focused,
             'c-input--disabled': props.disabled,
             'c-input--readonly': props.readonly,

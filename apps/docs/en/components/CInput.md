@@ -333,14 +333,14 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 
 ## CSS variables
 
-| Variable                        | Default                               | Description                 |
-| ------------------------------- | ------------------------------------- | --------------------------- |
-| `--c-input-details-height`      | `var(--c-sys-control-height-sm)`      | Height of the details area  |
-| `--c-input-transition-duration` | `var(--c-sys-motion-duration-medium)` | Color transition duration   |
-| `--c-input-primary-color`       | `var(--c-sys-color-primary)`          | Text color in default state |
-| `--c-input-error-color`         | `var(--c-sys-color-error)`            | Text color on error         |
-| `--c-input-disabled-color`      | `var(--c-sys-color-disabled)`         | Text color when disabled    |
-| `--c-input-readonly-color`      | `var(--c-sys-color-readonly)`         | Text color when readonly    |
+| Variable                        | Default                               | Description                |
+| ------------------------------- | ------------------------------------- | -------------------------- |
+| `--c-input-details-height`      | `var(--c-sys-control-height-sm)`      | Height of the details area |
+| `--c-input-transition-duration` | `var(--c-sys-motion-duration-medium)` | Color transition duration  |
+| `--c-input-primary-color`       | `var(--c-sys-color-primary)`          | Base text color            |
+| `--c-input-error-color`         | `var(--c-sys-color-error)`            | Text color on error        |
+| `--c-input-disabled-color`      | `var(--c-sys-color-disabled)`         | Text color when disabled   |
+| `--c-input-readonly-color`      | `var(--c-sys-color-readonly)`         | Text color when readonly   |
 
 > Field backgrounds for `focused`/`readonly`/`disabled`/`error` states are rendered by `CField` (`--c-field-focused-bg-color`, `--c-field-readonly-bg-color`, `--c-field-disabled-bg-color`, `--c-field-error-bg-color`), not `CInput`.
 
@@ -348,13 +348,11 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 
 ## State CSS classes
 
-| Class                 | Condition                            |
-| --------------------- | ------------------------------------ |
-| `c-input--default`    | No error, not disabled, not readonly |
-| `c-input--focused`    | Field is focused                     |
-| `c-input--has-error`  | Validation error is active           |
-| `c-input--disabled`   | `disabled = true`                    |
-| `c-input--readonly`   | `readonly = true`                    |
-| `c-input--dirty`      | `dirty = true`                       |
-| `c-input--clearable`  | `clearable = true`                   |
-| `c-input--validating` | Async validation is running          |
+| Class                | Condition                                                  |
+| -------------------- | ---------------------------------------------------------- |
+| `c-input--focused`   | Field is focused                                           |
+| `c-input--has-error` | Validation error is active (and not `disabled`/`readonly`) |
+| `c-input--disabled`  | `disabled = true`                                          |
+| `c-input--readonly`  | `readonly = true`                                          |
+| `c-input--dirty`     | `dirty = true`                                             |
+| `c-input--clearable` | `clearable = true`                                         |

@@ -17,16 +17,10 @@ $self: '.c-input';
   flex-direction: column;
   flex: 1 1 auto;
   transition: color getCssVar('input', 'transition-duration') $primary-transition;
-  color: currentColor;
+  color: getCssVar('input', 'primary-color');
   position: relative;
 
   &--focused {
-    #{$self}__field {
-      border-color: currentColor;
-    }
-  }
-
-  &--default {
     color: getCssVar('input', 'primary-color');
   }
 
@@ -55,6 +49,7 @@ $self: '.c-input';
     align-items: center;
     position: relative;
     line-height: 1;
+    color: currentColor;
 
     & > * {
       position: absolute;
