@@ -16,7 +16,7 @@
 </script>
 
 <template>
-    <div class="select-states">
+    <div class="d-flex justify-center pa-4 sm:pa-8">
         <c-card class="select-states__card elevation-3 radius-16 pa-6">
             <div class="d-flex items-center justify-between gap-4 mb-5">
                 <div>
@@ -30,63 +30,78 @@
                 <span class="select-states__status">Live</span>
             </div>
 
-            <div class="select-states__grid">
-                <c-select
-                    v-model="plan"
-                    label="Plan"
-                    placeholder="Choose a plan"
-                    :items="plans"
-                    details="Current billing plan"
-                    clearable
-                    preset="input.indigo"
-                />
-
-                <c-select
-                    v-model="region"
-                    label="Region"
-                    :items="regions"
-                    details="Keeps the selected value visible"
-                    readonly
-                    preset="input.teal"
-                />
-
-                <c-select
-                    model-value="Production"
-                    label="Environment"
-                    :items="environments"
-                    details="Disabled blocks focus and changes"
-                    disabled
-                    preset="input.orange"
-                />
-
-                <c-select
-                    v-model="channel"
-                    label="Release channel"
-                    placeholder="Required before deploy"
-                    :items="channels"
-                    :rules="channelRules"
-                    validate-on="blur"
-                    details="Validation runs on blur"
-                    clearable
-                    preset="input.pink"
+            <c-row class="gap-y-5">
+                <c-col
+                    cols="12"
+                    sm="6"
                 >
-                    <template #details="{ errorMessage, details }">
-                        <span :class="{ 'select-states__error': !!errorMessage }">
-                            {{ errorMessage || details }}
-                        </span>
-                    </template>
-                </c-select>
-            </div>
+                    <c-select
+                        v-model="plan"
+                        label="Plan"
+                        placeholder="Choose a plan"
+                        :items="plans"
+                        details="Current billing plan"
+                        clearable
+                        preset="input.indigo"
+                    />
+                </c-col>
+
+                <c-col
+                    cols="12"
+                    sm="6"
+                >
+                    <c-select
+                        v-model="region"
+                        label="Region"
+                        :items="regions"
+                        details="Keeps the selected value visible"
+                        readonly
+                        preset="input.teal"
+                    />
+                </c-col>
+
+                <c-col
+                    cols="12"
+                    sm="6"
+                >
+                    <c-select
+                        model-value="Production"
+                        label="Environment"
+                        :items="environments"
+                        details="Disabled blocks focus and changes"
+                        disabled
+                        preset="input.orange"
+                    />
+                </c-col>
+
+                <c-col
+                    cols="12"
+                    sm="6"
+                >
+                    <c-select
+                        v-model="channel"
+                        label="Release channel"
+                        placeholder="Required before deploy"
+                        :items="channels"
+                        :rules="channelRules"
+                        validate-on="blur"
+                        details="Validation runs on blur"
+                        clearable
+                        preset="input.pink"
+                    >
+                        <template #details="{ errorMessage, details }">
+                            <span :class="{ 'select-states__error': !!errorMessage }">
+                                {{ errorMessage || details }}
+                            </span>
+                        </template>
+                    </c-select>
+                </c-col>
+            </c-row>
         </c-card>
     </div>
 </template>
 
 <style scoped>
-.select-states {
-  display: flex;
-  justify-content: center;
-  padding: 32px;
-}
 .select-states__card {
   width: min(100%, 720px);
 }
@@ -101,20 +116,7 @@
   font-size: 12px;
   font-weight: 700;
 }
-.select-states__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
-}
 .select-states__error {
   color: var(--c-sys-color-error);
-}
-@media (max-width: 640px) {
-  .select-states {
-    padding: 16px;
-  }
-  .select-states__grid {
-    grid-template-columns: 1fr;
-  }
 }
 </style>

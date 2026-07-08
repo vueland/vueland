@@ -50,87 +50,98 @@
 </script>
 
 <template>
-    <div class="d-flex align-center gap-4 pa-8 flex-wrap justify-center">
-        <c-menu
-            v-for="m in menus"
-            :key="m.label"
-            width="auto"
-            open-on-click
-            close-on-click-outside
-            close-on-content-click
-            align="bottom"
-            :offset-y="4"
+    <div class="pa-8">
+        <c-row
+            class="gap-y-4"
+            align="center"
         >
-            <template #activator="{ on, activator }">
-                <c-btn
-                    :class="m.bg"
-                    class="elevation-2 text-white"
-                    v-bind="activator"
-                    style="gap:8px"
-                    v-on="on"
-                >
-                    <c-icon
-                        :name="m.icon"
-                        source="fa"
-                        :size="14"
-                    />
-                    {{ m.label }}
-                    <c-icon
-                        name="fas:chevron-down"
-                        source="fa"
-                        :size="10"
-                    />
-                </c-btn>
-            </template>
-
-            <c-card
-                class="elevation-4"
-                style="min-width:220px"
+            <c-col
+                v-for="m in menus"
+                :key="m.label"
+                cols="12"
+                sm="4"
+                class="d-flex justify-center"
             >
-                <c-card-body class="py-1 px-0">
-                    <c-list>
-                        <c-list-item
-                            v-for="item in m.items"
-                            :key="item.label"
-                            class="px-4"
-                            style="gap:12px"
-                            @click="notify(item.label)"
+                <c-menu
+                    width="auto"
+                    open-on-click
+                    close-on-click-outside
+                    close-on-content-click
+                    align="bottom"
+                    :offset-y="4"
+                >
+                    <template #activator="{ on, activator }">
+                        <c-btn
+                            :class="m.bg"
+                            class="elevation-2 text-white"
+                            v-bind="activator"
+                            style="gap:8px"
+                            v-on="on"
                         >
                             <c-icon
-                                :name="item.icon"
+                                :name="m.icon"
                                 source="fa"
-                                :size="13"
-                                style="width:14px;opacity:.55"
+                                :size="14"
                             />
-                            <span style="flex:1">{{ item.label }}</span>
-                            <span
-                                v-if="item.kb"
-                                class="kb"
-                            >{{ item.kb }}</span>
-                        </c-list-item>
-                    </c-list>
-
-                    <template v-if="m.danger">
-                        <div class="sep" />
-                        <c-list>
-                            <c-list-item
-                                class="px-4 text-red"
-                                style="gap:12px"
-                                @click="notify(m.danger.label)"
-                            >
-                                <c-icon
-                                    :name="m.danger.icon"
-                                    source="fa"
-                                    :size="13"
-                                    style="width:14px"
-                                />
-                                {{ m.danger.label }}
-                            </c-list-item>
-                        </c-list>
+                            {{ m.label }}
+                            <c-icon
+                                name="fas:chevron-down"
+                                source="fa"
+                                :size="10"
+                            />
+                        </c-btn>
                     </template>
-                </c-card-body>
-            </c-card>
-        </c-menu>
+
+                    <c-card
+                        class="elevation-4"
+                        style="min-width:220px"
+                    >
+                        <c-card-body class="py-1 px-0">
+                            <c-list>
+                                <c-list-item
+                                    v-for="item in m.items"
+                                    :key="item.label"
+                                    class="px-4"
+                                    style="gap:12px"
+                                    @click="notify(item.label)"
+                                >
+                                    <c-icon
+                                        :name="item.icon"
+                                        source="fa"
+                                        :size="13"
+                                        style="width:14px;opacity:.55"
+                                    />
+                                    <span style="flex:1">{{ item.label }}</span>
+                                    <span
+                                        v-if="item.kb"
+                                        class="kb"
+                                    >{{ item.kb }}</span>
+                                </c-list-item>
+                            </c-list>
+
+                            <template v-if="m.danger">
+                                <div class="sep" />
+                                <c-list>
+                                    <c-list-item
+                                        class="px-4 text-red"
+                                        style="gap:12px"
+                                        @click="notify(m.danger.label)"
+                                    >
+                                        <c-icon
+                                            :name="m.danger.icon"
+                                            source="fa"
+                                            :size="13"
+                                            style="width:14px"
+                                        />
+                                        {{ m.danger.label }}
+                                    </c-list-item>
+                                </c-list>
+                            </template>
+                        </c-card-body>
+                    </c-card>
+                </c-menu>
+            </c-col>
+        </c-row>
 
         <transition name="toast">
             <c-chip

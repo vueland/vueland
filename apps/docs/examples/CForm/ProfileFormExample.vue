@@ -69,22 +69,32 @@
                 <c-form ref="formRef">
                     <template #default="{ validate }">
                         <div class="d-flex flex-col gap-4">
-                            <div class="form-row gap-4">
-                                <c-text-field
-                                    v-model="form.firstName"
-                                    label="First name"
-                                    :rules="requiredRule"
-                                    validate-on="blur"
-                                    preset="input.blue"
-                                />
-                                <c-text-field
-                                    v-model="form.lastName"
-                                    label="Last name"
-                                    :rules="requiredRule"
-                                    validate-on="blur"
-                                    preset="input.blue"
-                                />
-                            </div>
+                            <c-row class="gap-y-4">
+                                <c-col
+                                    cols="12"
+                                    sm="6"
+                                >
+                                    <c-text-field
+                                        v-model="form.firstName"
+                                        label="First name"
+                                        :rules="requiredRule"
+                                        validate-on="blur"
+                                        preset="input.blue"
+                                    />
+                                </c-col>
+                                <c-col
+                                    cols="12"
+                                    sm="6"
+                                >
+                                    <c-text-field
+                                        v-model="form.lastName"
+                                        label="Last name"
+                                        :rules="requiredRule"
+                                        validate-on="blur"
+                                        preset="input.blue"
+                                    />
+                                </c-col>
+                            </c-row>
 
                             <c-text-field
                                 v-model="form.email"
@@ -209,11 +219,6 @@
   line-height: 1;
 }
 
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-
 .btn-primary {
   background: linear-gradient(135deg, #27d98c, #2f8cff);
   color: #fff !important;
@@ -225,9 +230,5 @@
   background: transparent !important;
   border: 1.5px solid var(--vp-c-divider, #ddd) !important;
   color: var(--vp-c-text-2) !important;
-}
-
-@media (max-width: 480px) {
-  .form-row { grid-template-columns: 1fr; }
 }
 </style>

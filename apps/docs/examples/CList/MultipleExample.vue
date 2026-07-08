@@ -52,21 +52,28 @@
             </c-list>
         </c-card>
 
-        <div
-            class="d-flex flex-wrap justify-center items-center gap-2"
-            style="max-width:300px"
+        <c-row
+            class="w-[300px] max-w-full gap-y-2"
+            justify="center"
+            align="center"
         >
-            <span
+            <c-col
                 v-for="s in selected"
                 :key="s"
-                class="radius-pill bg-teal text-white px-3 py-1 fs-xs fw-semi-bold text-capitalize"
+                cols="6"
+                class="d-flex justify-center"
             >
-                {{ s }}
-            </span>
-            <span
+                <span class="radius-pill bg-teal text-white px-3 py-1 fs-xs fw-semi-bold text-capitalize">
+                    {{ s }}
+                </span>
+            </c-col>
+            <c-col
                 v-if="!selected.length"
-                class="fs-sm text-blue-grey"
-            >Nothing selected yet</span>
-        </div>
+                cols="12"
+                class="d-flex justify-center"
+            >
+                <span class="fs-sm text-blue-grey">Nothing selected yet</span>
+            </c-col>
+        </c-row>
     </div>
 </template>

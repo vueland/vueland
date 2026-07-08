@@ -98,57 +98,71 @@ A multi-field profile editor with a two-column layout, a readonly field, and an 
 <template>
   <CForm ref="formRef">
     <template #default="{ validate, reset }">
-      <div class="form-grid">
-        <CTextField
-          v-model="form.firstName"
-          label="First name"
-          :rules="requiredRule"
-          validate-on="blur"
-          preset="input.indigo"
-        />
-        <CTextField
-          v-model="form.lastName"
-          label="Last name"
-          :rules="requiredRule"
-          validate-on="blur"
-          preset="input.indigo"
-        />
+      <CRow class="gap-y-4">
+        <CCol cols="12" sm="6">
+          <CTextField
+            v-model="form.firstName"
+            label="First name"
+            :rules="requiredRule"
+            validate-on="blur"
+            preset="input.indigo"
+          />
+        </CCol>
+        <CCol cols="12" sm="6">
+          <CTextField
+            v-model="form.lastName"
+            label="Last name"
+            :rules="requiredRule"
+            validate-on="blur"
+            preset="input.indigo"
+          />
+        </CCol>
 
-        <CTextField
-          v-model="form.email"
-          label="Email"
-          type="email"
-          :rules="emailRules"
-          validate-on="blur"
-          preset="input.indigo"
-        >
-          <template #prepend><CIcon name="fas:envelope" :size="14" source="fa" /></template>
-        </CTextField>
+        <CCol cols="12" sm="6">
+          <CTextField
+            v-model="form.email"
+            label="Email"
+            type="email"
+            :rules="emailRules"
+            validate-on="blur"
+            preset="input.indigo"
+          >
+            <template #prepend><CIcon name="fas:envelope" :size="14" source="fa" /></template>
+          </CTextField>
+        </CCol>
 
-        <CTextField
-          v-model="form.phone"
-          label="Phone"
-          type="tel"
-          :rules="phoneRules"
-          validate-on="blur"
-          preset="input.indigo"
-        >
-          <template #prepend><CIcon name="fas:phone" :size="14" source="fa" /></template>
-        </CTextField>
+        <CCol cols="12" sm="6">
+          <CTextField
+            v-model="form.phone"
+            label="Phone"
+            type="tel"
+            :rules="phoneRules"
+            validate-on="blur"
+            preset="input.indigo"
+          >
+            <template #prepend><CIcon name="fas:phone" :size="14" source="fa" /></template>
+          </CTextField>
+        </CCol>
 
-        <!-- readonly field — username cannot be changed -->
-        <CTextField v-model="form.username" label="Username" readonly preset="input.indigo">
-          <template #prepend><CIcon name="fas:at" :size="14" source="fa" /></template>
-          <template #details>
-            <span style="opacity:.6; font-size:12px">Username cannot be changed</span>
-          </template>
-        </CTextField>
+        <CCol cols="12">
+          <!-- readonly field — username cannot be changed -->
+          <CTextField v-model="form.username" label="Username" readonly preset="input.indigo">
+            <template #prepend><CIcon name="fas:at" :size="14" source="fa" /></template>
+            <template #details>
+              <span style="opacity:.6; font-size:12px">Username cannot be changed</span>
+            </template>
+          </CTextField>
+        </CCol>
 
-        <div>
-          <CBtn class="bg-indigo" style="color:#fff" @click="() => handleSave(validate)">Save</CBtn>
-          <CBtn variant="text" @click="handleReset">Cancel</CBtn>
-        </div>
-      </div>
+        <CCol cols="12">
+          <div class="d-flex gap-2">
+            <CBtn class="bg-indigo" style="color:#fff" @click="() => handleSave(validate)"
+              >Save</CBtn
+            >
+            <CBtn variant="text" @click="handleReset">Cancel</CBtn>
+          </div>
+        </CCol>
+      </CRow>
     </template>
   </CForm>
 </template>

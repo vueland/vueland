@@ -98,59 +98,71 @@ function handleReset() {
 <template>
   <CForm ref="formRef">
     <template #default="{ validate, reset }">
-      <div class="form-grid">
-        <CTextField
-          v-model="form.firstName"
-          label="Имя"
-          :rules="requiredRule"
-          validate-on="blur"
-          preset="input.indigo"
-        />
-        <CTextField
-          v-model="form.lastName"
-          label="Фамилия"
-          :rules="requiredRule"
-          validate-on="blur"
-          preset="input.indigo"
-        />
+      <CRow class="gap-y-4">
+        <CCol cols="12" sm="6">
+          <CTextField
+            v-model="form.firstName"
+            label="Имя"
+            :rules="requiredRule"
+            validate-on="blur"
+            preset="input.indigo"
+          />
+        </CCol>
+        <CCol cols="12" sm="6">
+          <CTextField
+            v-model="form.lastName"
+            label="Фамилия"
+            :rules="requiredRule"
+            validate-on="blur"
+            preset="input.indigo"
+          />
+        </CCol>
 
-        <CTextField
-          v-model="form.email"
-          label="Email"
-          type="email"
-          :rules="emailRules"
-          validate-on="blur"
-          preset="input.indigo"
-        >
-          <template #prepend><CIcon name="fas:envelope" :size="14" source="fa" /></template>
-        </CTextField>
-
-        <CTextField
-          v-model="form.phone"
-          label="Телефон"
-          type="tel"
-          :rules="phoneRules"
-          validate-on="blur"
-          preset="input.indigo"
-        >
-          <template #prepend><CIcon name="fas:phone" :size="14" source="fa" /></template>
-        </CTextField>
-
-        <!-- readonly поле — логин изменить нельзя -->
-        <CTextField v-model="form.username" label="Логин" readonly preset="input.indigo">
-          <template #prepend><CIcon name="fas:at" :size="14" source="fa" /></template>
-          <template #details>
-            <span style="opacity:.6; font-size:12px">Логин нельзя изменить</span>
-          </template>
-        </CTextField>
-
-        <div>
-          <CBtn class="bg-indigo" style="color:#fff" @click="() => handleSave(validate)"
-            >Сохранить</CBtn
+        <CCol cols="12" sm="6">
+          <CTextField
+            v-model="form.email"
+            label="Email"
+            type="email"
+            :rules="emailRules"
+            validate-on="blur"
+            preset="input.indigo"
           >
-          <CBtn variant="text" @click="handleReset">Отмена</CBtn>
-        </div>
-      </div>
+            <template #prepend><CIcon name="fas:envelope" :size="14" source="fa" /></template>
+          </CTextField>
+        </CCol>
+
+        <CCol cols="12" sm="6">
+          <CTextField
+            v-model="form.phone"
+            label="Телефон"
+            type="tel"
+            :rules="phoneRules"
+            validate-on="blur"
+            preset="input.indigo"
+          >
+            <template #prepend><CIcon name="fas:phone" :size="14" source="fa" /></template>
+          </CTextField>
+        </CCol>
+
+        <CCol cols="12">
+          <!-- readonly поле — логин изменить нельзя -->
+          <CTextField v-model="form.username" label="Логин" readonly preset="input.indigo">
+            <template #prepend><CIcon name="fas:at" :size="14" source="fa" /></template>
+            <template #details>
+              <span style="opacity:.6; font-size:12px">Логин нельзя изменить</span>
+            </template>
+          </CTextField>
+        </CCol>
+
+        <CCol cols="12">
+          <div class="d-flex gap-2">
+            <CBtn class="bg-indigo" style="color:#fff" @click="() => handleSave(validate)"
+              >Сохранить</CBtn
+            >
+            <CBtn variant="text" @click="handleReset">Отмена</CBtn>
+          </div>
+        </CCol>
+      </CRow>
     </template>
   </CForm>
 </template>

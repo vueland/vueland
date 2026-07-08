@@ -14,69 +14,81 @@
 </script>
 
 <template>
-    <div class="d-flex flex-wrap gap-4 pa-10 justify-center align-center">
-        <c-menu
-            v-for="pos in positions"
-            :key="pos.label"
-            v-bind="pos.props"
-            width="auto"
-            open-on-click
-            close-on-click-outside
-            close-on-content-click
+    <div class="pa-10">
+        <c-row
+            class="gap-y-4"
+            align="center"
         >
-            <template #activator="{ on, activator }">
-                <c-btn
-                    :class="pos.bg"
-                    class="elevation-2 text-white"
-                    v-bind="activator"
-                    style="gap:8px;min-width:110px"
-                    v-on="on"
-                >
-                    <c-icon
-                        :name="pos.icon"
-                        source="fa"
-                        :size="13"
-                    />
-                    {{ pos.label }}
-                </c-btn>
-            </template>
-
-            <c-card
-                class="elevation-3"
-                style="min-width:180px"
+            <c-col
+                v-for="pos in positions"
+                :key="pos.label"
+                cols="12"
+                sm="6"
+                md="3"
+                class="d-flex justify-center"
             >
-                <c-card-body class="py-1 px-0">
-                    <div
-                        class="pos-label px-4 py-2 d-flex align-center gap-2"
-                        :style="{ color: pos.accent }"
-                    >
-                        <c-icon
-                            :name="pos.icon"
-                            source="fa"
-                            :size="12"
-                        />
-                        <span style="font-size:12px;font-weight:600">Opens {{ pos.label.toLowerCase() }}</span>
-                    </div>
-                    <div class="sep" />
-                    <c-list>
-                        <c-list-item
-                            v-for="item in options"
-                            :key="item.label"
-                            class="px-4"
-                            style="gap:10px"
+                <c-menu
+                    v-bind="pos.props"
+                    width="auto"
+                    open-on-click
+                    close-on-click-outside
+                    close-on-content-click
+                >
+                    <template #activator="{ on, activator }">
+                        <c-btn
+                            :class="pos.bg"
+                            class="elevation-2 text-white"
+                            v-bind="activator"
+                            style="gap:8px;min-width:110px"
+                            v-on="on"
                         >
                             <c-icon
-                                name="fas:check"
+                                :name="pos.icon"
                                 source="fa"
-                                :size="11"
-                                style="width:14px;opacity:.4"
+                                :size="13"
                             />
-                            {{ item.label }}
-                        </c-list-item>
-                    </c-list>
-                </c-card-body>
-            </c-card>
-        </c-menu>
+                            {{ pos.label }}
+                        </c-btn>
+                    </template>
+
+                    <c-card
+                        class="elevation-3"
+                        style="min-width:180px"
+                    >
+                        <c-card-body class="py-1 px-0">
+                            <div
+                                class="pos-label px-4 py-2 d-flex align-center gap-2"
+                                :style="{ color: pos.accent }"
+                            >
+                                <c-icon
+                                    :name="pos.icon"
+                                    source="fa"
+                                    :size="12"
+                                />
+                                <span style="font-size:12px;font-weight:600">Opens {{ pos.label.toLowerCase() }}</span>
+                            </div>
+                            <div class="sep" />
+                            <c-list>
+                                <c-list-item
+                                    v-for="item in options"
+                                    :key="item.label"
+                                    class="px-4"
+                                    style="gap:10px"
+                                >
+                                    <c-icon
+                                        name="fas:check"
+                                        source="fa"
+                                        :size="11"
+                                        style="width:14px;opacity:.4"
+                                    />
+                                    {{ item.label }}
+                                </c-list-item>
+                            </c-list>
+                        </c-card-body>
+                    </c-card>
+                </c-menu>
+            </c-col>
+        </c-row>
     </div>
 </template>
 

@@ -7,100 +7,138 @@
 </script>
 
 <template>
-    <div class="ex-wrap">
-        <div class="states-grid">
-            <div class="state-block">
-                <div class="state-label">
-                    Default
+    <div>
+        <c-row>
+            <c-col
+                xxl="4"
+                xl="4"
+                lg="6"
+                md="6"
+                sm="12"
+                class="px-2"
+            >
+                <div class="d-flex flex-col gap-2">
+                    <div class="state-label">
+                        Default
+                    </div>
+                    <c-text-field
+                        v-model="val"
+                        label="Label"
+                        preset="input.blue"
+                    />
                 </div>
-                <c-text-field
-                    v-model="val"
-                    label="Label"
-                    preset="input.blue"
-                />
-            </div>
-            <div class="state-block">
-                <div class="state-label">
-                    Focused
+            </c-col>
+            <c-col
+                xxl="4"
+                xl="4"
+                lg="6"
+                md="6"
+                sm="12"
+                class="px-2"
+            >
+                <div class="d-flex flex-col gap-2">
+                    <div class="state-label">
+                        Focused
+                    </div>
+                    <c-text-field
+                        v-model="val"
+                        label="Label"
+                        preset="input.blue"
+                        :focused="true"
+                    />
                 </div>
-                <c-text-field
-                    v-model="val"
-                    label="Label"
-                    preset="input.blue"
-                    :focused="true"
-                />
-            </div>
-            <div class="state-block">
-                <div class="state-label">
-                    Filled
+            </c-col>
+            <c-col
+                xxl="4"
+                xl="4"
+                lg="6"
+                md="6"
+                sm="12"
+                class="px-2"
+            >
+                <div class="d-flex flex-col gap-2">
+                    <div class="state-label">
+                        Filled
+                    </div>
+                    <c-text-field
+                        v-model="filled"
+                        label="Label"
+                        preset="input.blue"
+                    />
                 </div>
-                <c-text-field
-                    v-model="filled"
-                    label="Label"
-                    preset="input.blue"
-                />
-            </div>
-            <div class="state-block">
-                <div class="state-label">
-                    Error
+            </c-col>
+            <c-col
+                xxl="4"
+                xl="4"
+                lg="6"
+                md="6"
+                sm="12"
+                class="px-2"
+            >
+                <div class="d-flex flex-col gap-2">
+                    <div class="state-label">
+                        Error
+                    </div>
+                    <c-text-field
+                        v-model="val"
+                        label="Label"
+                        preset="input.blue"
+                        :rules="[() => ({ valid: false, message: 'Validation error' })]"
+                        validate-on="blur"
+                        :focused="false"
+                    />
                 </div>
-                <c-text-field
-                    v-model="val"
-                    label="Label"
-                    preset="input.blue"
-                    :rules="[() => ({ valid: false, message: 'Validation error' })]"
-                    validate-on="blur"
-                    :focused="false"
-                />
-            </div>
-            <div class="state-block">
-                <div class="state-label">
-                    Disabled
+            </c-col>
+            <c-col
+                xxl="4"
+                xl="4"
+                lg="6"
+                md="6"
+                sm="12"
+                class="px-2"
+            >
+                <div class="d-flex flex-col gap-2">
+                    <div class="state-label">
+                        Disabled
+                    </div>
+                    <c-text-field
+                        v-model="val"
+                        label="Label"
+                        preset="input.blue"
+                        disabled
+                    />
                 </div>
-                <c-text-field
-                    v-model="val"
-                    label="Label"
-                    preset="input.blue"
-                    disabled
-                />
-            </div>
-            <div class="state-block">
-                <div class="state-label">
-                    Readonly
+            </c-col>
+            <c-col
+                xxl="4"
+                xl="4"
+                lg="6"
+                md="6"
+                sm="12"
+                class="px-2"
+            >
+                <div class="d-flex flex-col gap-2">
+                    <div class="state-label">
+                        Readonly
+                    </div>
+                    <c-text-field
+                        v-model="readonly"
+                        label="Label"
+                        preset="input.blue"
+                        readonly
+                    />
                 </div>
-                <c-text-field
-                    v-model="readonly"
-                    label="Label"
-                    preset="input.blue"
-                    readonly
-                />
-            </div>
-        </div>
+            </c-col>
+        </c-row>
     </div>
 </template>
 
 <style scoped>
-.ex-wrap {
-  padding: 24px;
-}
-.states-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-.state-block {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
 .state-label {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.6px;
   opacity: .5;
-}
-@media (max-width: 600px) {
-  .states-grid { grid-template-columns: 1fr 1fr; }
 }
 </style>

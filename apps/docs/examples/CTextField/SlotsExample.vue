@@ -14,117 +14,162 @@
 </script>
 
 <template>
-    <div class="ex-grid">
-        <!-- Prepend icon -->
-        <c-text-field
-            v-model="search"
-            label="Search"
-            clearable
-            preset="input.blue"
+    <c-row class="gap-y-4">
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:search"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-        </c-text-field>
+            <!-- Prepend icon -->
+            <c-text-field
+                v-model="search"
+                label="Search"
+                clearable
+                preset="input.blue"
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:search"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+            </c-text-field>
+        </c-col>
 
-        <!-- Prepend text prefix -->
-        <c-text-field
-            v-model="username"
-            label="Username"
-            preset="input.deepPurple"
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
         >
-            <template #prepend>
-                <span class="prefix">@</span>
-            </template>
-        </c-text-field>
+            <!-- Prepend text prefix -->
+            <c-text-field
+                v-model="username"
+                label="Username"
+                preset="input.deepPurple"
+            >
+                <template #prepend>
+                    <span class="prefix">@</span>
+                </template>
+            </c-text-field>
+        </c-col>
 
-        <!-- Append icon -->
-        <c-text-field
-            v-model="github"
-            label="GitHub profile"
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
         >
-            <template #append>
-                <c-icon
-                    name="fab:github"
-                    :size="18"
-                    source="fa"
-                />
-            </template>
-        </c-text-field>
+            <!-- Append icon -->
+            <c-text-field
+                v-model="github"
+                label="GitHub profile"
+            >
+                <template #append>
+                    <c-icon
+                        name="fab:github"
+                        :size="18"
+                        source="fa"
+                    />
+                </template>
+            </c-text-field>
+        </c-col>
 
-        <!-- Append text suffix -->
-        <c-text-field
-            v-model="amount"
-            label="Amount"
-            type="number"
-            preset="input.green"
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
         >
-            <template #append>
-                <span class="suffix">USD</span>
-            </template>
-        </c-text-field>
+            <!-- Append text suffix -->
+            <c-text-field
+                v-model="amount"
+                label="Amount"
+                type="number"
+                preset="input.green"
+            >
+                <template #append>
+                    <span class="suffix">USD</span>
+                </template>
+            </c-text-field>
+        </c-col>
 
-        <!-- Custom details slot -->
-        <c-text-field
-            v-model="nickname"
-            label="Nickname"
-            :rules="nicknameRules"
-            validate-on="input"
-            preset="input.orange"
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:hashtag"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-            <template #details="{ errorMessage, hasError }">
-                <span :style="{ color: hasError ? 'var(--c-sys-color-error)' : 'inherit' }">
-                    {{ errorMessage || `${nickname.length}/20 characters` }}
-                </span>
-            </template>
-        </c-text-field>
+            <!-- Custom details slot -->
+            <c-text-field
+                v-model="nickname"
+                label="Nickname"
+                :rules="nicknameRules"
+                validate-on="input"
+                preset="input.orange"
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:hashtag"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+                <template #details="{ errorMessage, hasError }">
+                    <span :style="{ color: hasError ? 'var(--c-sys-color-error)' : 'inherit' }">
+                        {{ errorMessage || `${nickname.length}/20 characters` }}
+                    </span>
+                </template>
+            </c-text-field>
+        </c-col>
 
-        <!-- Prepend + Append -->
-        <c-text-field
-            v-model="promo"
-            label="Promo code"
-            preset="input.pink"
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:percent"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-            <template #append>
-                <c-icon
-                    name="fas:check"
-                    :size="16"
-                    source="fa"
-                    style="color:var(--c-sys-color-success, #4caf50)"
-                />
-            </template>
-        </c-text-field>
-    </div>
+            <!-- Prepend + Append -->
+            <c-text-field
+                v-model="promo"
+                label="Promo code"
+                preset="input.pink"
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:percent"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+                <template #append>
+                    <c-icon
+                        name="fas:check"
+                        :size="16"
+                        source="fa"
+                        style="color:var(--c-sys-color-success, #4caf50)"
+                    />
+                </template>
+            </c-text-field>
+        </c-col>
+    </c-row>
 </template>
 
 <style scoped>
-.ex-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding: 16px;
-}
-@media (max-width: 600px) {
-  .ex-grid { grid-template-columns: 1fr; }
-}
 .prefix, .suffix {
   font-size: 13px;
   opacity: .6;

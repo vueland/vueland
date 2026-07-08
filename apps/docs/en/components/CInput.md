@@ -19,27 +19,47 @@ import PresetStatesExample from '../../examples/CInput/PresetStatesExample.vue'
 
 ```vue
 <template>
-  <CInput v-model="pin" id="custom-pin" label="PIN code" :rules="pinRules" validate-on="blur">
+  <CInput v-model="search">
     <template #field="field">
-      <div class="pin-wrap" :class="{ 'has-error': field.hasError }">
-        <label :for="field.uid">PIN code</label>
+      <div class="search-bar" :class="{ 'search-bar--focused': field.focused }">
+        <svg
+          class="search-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.35-4.35" />
+        </svg>
         <input
           v-bind="field.attrs"
-          :id="field.uid"
-          type="password"
-          maxlength="4"
-          inputmode="numeric"
-          :value="pin"
-          @input="(e: any) => (pin = (e.target as HTMLInputElement).value)"
+          class="search-input"
+          placeholder="Search anything…"
+          :value="search"
+          @input="
+            (e: any) => {
+              search = e.target.value
+              field.input(e.target.value)
+            }
+          "
           @focus="field.focus"
           @blur="field.blur"
         />
+        <kbd v-if="!search" class="search-kbd">⌘K</kbd>
+        <button v-else class="search-clear" @click="search = ''">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            width="14"
+            height="14"
+          >
+            <path d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
       </div>
-    </template>
-    <template #details="{ errorMessage, hasError }">
-      <span :style="{ color: hasError ? 'var(--c-sys-color-error)' : 'inherit' }">
-        {{ errorMessage || '4-digit PIN' }}
-      </span>
     </template>
   </CInput>
 </template>
@@ -47,8 +67,7 @@ import PresetStatesExample from '../../examples/CInput/PresetStatesExample.vue'
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const pin = ref('')
-const pinRules = [(v: string) => ({ valid: /^\d{4}$/.test(v), message: 'Enter a 4-digit PIN' })]
+const search = ref('')
 </script>
 ```
 

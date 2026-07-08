@@ -1,3 +1,5 @@
+@use '../../styles/mixins/functions' as *;
+
 .c-autocomplete {
   flex: 1 1 auto;
   min-width: 0;
@@ -13,10 +15,6 @@
     display: flex;
     gap: 4px;
     flex-wrap: wrap;
-
-    & > .c-chip {
-      --c-chip-elevation: #{getCssVar('sys', 'elevation', '2')};
-    }
   }
 
   & > .c-input__field > .c-text-field > .c-field > .c-field__append {
@@ -40,6 +38,7 @@
     > .c-field-input {
     min-width: 0;
     position: absolute;
+    z-index: -1;
   }
 
   &-chips {

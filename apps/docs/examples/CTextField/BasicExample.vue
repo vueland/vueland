@@ -11,112 +11,153 @@
 </script>
 
 <template>
-    <div class="ex-grid">
-        <c-text-field
-            v-model="name"
-            label="Full name"
-            clearable
+    <c-row>
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:user"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-        </c-text-field>
+            <c-text-field
+                v-model="name"
+                label="Full name"
+                clearable
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:user"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+            </c-text-field>
+        </c-col>
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
+        >
+            <c-text-field
+                v-model="email"
+                label="Email"
+                preset="input.blue"
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:envelope"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+            </c-text-field>
+        </c-col>
 
-        <c-text-field
-            v-model="email"
-            label="Email"
-            preset="input.blue"
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:envelope"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-        </c-text-field>
+            <c-text-field
+                v-model="password"
+                :type="showPwd ? 'text' : 'password'"
+                label="Password"
+                preset="input.deepPurple"
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:lock"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+                <template #append>
+                    <c-icon
+                        :name="showPwd ? 'fas:eye-slash' : 'fas:eye'"
+                        :size="16"
+                        source="fa"
+                        style="cursor:pointer"
+                        @click="showPwd = !showPwd"
+                    />
+                </template>
+            </c-text-field>
+        </c-col>
 
-        <c-text-field
-            v-model="password"
-            :type="showPwd ? 'text' : 'password'"
-            label="Password"
-            preset="input.deepPurple"
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:lock"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-            <template #append>
-                <c-icon
-                    :name="showPwd ? 'fas:eye-slash' : 'fas:eye'"
-                    :size="16"
-                    source="fa"
-                    style="cursor:pointer"
-                    @click="showPwd = !showPwd"
-                />
-            </template>
-        </c-text-field>
+            <c-text-field
+                v-model="phone"
+                label="Phone"
+                preset="input.teal"
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:phone"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+            </c-text-field>
+        </c-col>
 
-        <c-text-field
-            v-model="phone"
-            label="Phone"
-            preset="input.teal"
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:phone"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-        </c-text-field>
+            <c-text-field
+                v-model="location"
+                label="Location"
+                preset="input.orange"
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:map-marker-alt"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+            </c-text-field>
+        </c-col>
 
-        <c-text-field
-            v-model="location"
-            label="Location"
-            preset="input.orange"
+        <c-col
+            xxl="4"
+            xl="4"
+            lg="6"
+            md="6"
+            sm="12"
+            class="px-2"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:map-marker-alt"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-        </c-text-field>
-
-        <c-text-field
-            v-model="amount"
-            label="Amount"
-            type="number"
-            preset="input.green"
-        >
-            <template #prepend>
-                <c-icon
-                    name="fas:dollar-sign"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-        </c-text-field>
-    </div>
+            <c-text-field
+                v-model="amount"
+                label="Amount"
+                type="number"
+                preset="input.green"
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:dollar-sign"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+            </c-text-field>
+        </c-col>
+    </c-row>
 </template>
-
-<style scoped>
-.ex-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding: 16px;
-}
-@media (max-width: 600px) {
-  .ex-grid { grid-template-columns: 1fr; }
-}
-</style>

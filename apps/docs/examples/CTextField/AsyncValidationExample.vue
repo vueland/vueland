@@ -25,85 +25,100 @@
 </script>
 
 <template>
-    <div class="ex-wrap">
-        <c-text-field
-            v-model="username"
-            label="Username"
-            :rules="usernameRules"
-            validate-on="blur"
-            preset="input.indigo"
+    <c-row class="gap-y-2 gap-x-1">
+        <c-col
+            xl="6"
+            lg="6"
+            offset-xl="3"
+            offset-lg="3"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:at"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-            <template #details="{ errorMessage, hasError, validating }">
-                <span
-                    v-if="validating"
-                    style="color:var(--c-sys-color-primary)"
-                >
-                    Checking availability…
-                </span>
-                <span
-                    v-else-if="hasError"
-                    style="color:var(--c-sys-color-error)"
-                >
-                    {{ errorMessage }}
-                </span>
-                <span
-                    v-else-if="username.length >= 3"
-                    style="color:#4caf50"
-                >
-                    ✓ Username is available
-                </span>
-                <span
-                    v-else
-                    style="opacity:.6"
-                >Min 3 characters, must be unique</span>
-            </template>
-        </c-text-field>
+            <c-text-field
+                v-model="username"
+                label="Username"
+                :rules="usernameRules"
+                validate-on="blur"
+                preset="input.indigo"
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:at"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+                <template #details="{ errorMessage, hasError, validating }">
+                    <span
+                        v-if="validating"
+                        style="color:var(--c-sys-color-primary)"
+                    >
+                        Checking availability…
+                    </span>
+                    <span
+                        v-else-if="hasError"
+                        style="color:var(--c-sys-color-error)"
+                    >
+                        {{ errorMessage }}
+                    </span>
+                    <span
+                        v-else-if="username.length >= 3"
+                        style="color:#4caf50"
+                    >
+                        ✓ Username is available
+                    </span>
+                    <span
+                        v-else
+                        style="opacity:.6"
+                    >Min 3 characters, must be unique</span>
+                </template>
+            </c-text-field>
+        </c-col>
 
-        <c-text-field
-            v-model="email"
-            label="Email"
-            :rules="emailRules"
-            validate-on="blur"
-            preset="input.blue"
+        <c-col
+            xl="6"
+            lg="6"
+            offset-xl="3"
+            offset-lg="3"
         >
-            <template #prepend>
-                <c-icon
-                    name="fas:envelope"
-                    :size="16"
-                    source="fa"
-                />
-            </template>
-            <template #details="{ errorMessage, hasError, validating }">
-                <span
-                    v-if="validating"
-                    style="color:var(--c-sys-color-primary)"
-                >
-                    Verifying email…
-                </span>
-                <span
-                    v-else-if="hasError"
-                    style="color:var(--c-sys-color-error)"
-                >
-                    {{ errorMessage }}
-                </span>
-                <span
-                    v-else
-                    style="opacity:.6"
-                >We'll send a verification link</span>
-            </template>
-        </c-text-field>
-
-        <p class="ex-hint">
-            Try: <code>admin</code>, <code>user</code>, <code>root</code> (taken) or <code>test@taken.com</code>
-        </p>
-    </div>
+            <c-text-field
+                v-model="email"
+                label="Email"
+                :rules="emailRules"
+                validate-on="blur"
+                preset="input.blue"
+            >
+                <template #prepend>
+                    <c-icon
+                        name="fas:envelope"
+                        :size="16"
+                        source="fa"
+                    />
+                </template>
+                <template #details="{ errorMessage, hasError, validating }">
+                    <span
+                        v-if="validating"
+                        style="color:var(--c-sys-color-primary)"
+                    >
+                        Verifying email…
+                    </span>
+                    <span
+                        v-else-if="hasError"
+                        style="color:var(--c-sys-color-error)"
+                    >
+                        {{ errorMessage }}
+                    </span>
+                    <span
+                        v-else
+                        style="opacity:.6"
+                    >We'll send a verification link</span>
+                </template>
+            </c-text-field>
+        </c-col>
+        <c-col>
+            <p class="ex-hint">
+                Try: <code>admin</code>, <code>user</code>, <code>root</code> (taken) or <code>test@taken.com</code>
+            </p>
+        </c-col>
+    </c-row>
 </template>
 
 <style scoped>
