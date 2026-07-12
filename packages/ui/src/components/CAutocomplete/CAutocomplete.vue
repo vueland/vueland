@@ -17,7 +17,7 @@
     import { CTextField } from '@/components/CTextField'
     import { useSelectedChips } from '@/composables'
     import { useAutocomplete } from '@/composables/use-autocomplete'
-    import { type KeyboardHandlers, useKeyboard } from '@/composables/use-keyboard'
+    import { useKeyboard } from '@/composables/use-keyboard'
     import { IconAliases } from '@/enums'
     import { isDef } from '@/helpers'
 
@@ -71,7 +71,7 @@
     // Выбор с клавиатуры делает сам список (Enter/Space → активация пункта);
     // здесь — только эффекты автокомплита. Провайдер вешает их на тот список,
     // который фактически отрендерен.
-    function onListKeyboardSelect() {
+    function onSelect() {
         if (props.multiple) {
             unref(inputRef).blur()
             nextTick(() => unref(inputRef).focus())
@@ -80,10 +80,10 @@
         }
     }
 
-    const listHandlers: KeyboardHandlers = {
-        Enter: onListKeyboardSelect,
-        Space: onListKeyboardSelect,
-    }
+    const { onKeydown: onListKeydown } = useKeyboard({
+        Enter: onSelect,
+        Space: onSelect,
+    })
 
     function resetListFocus() {
         unref(keyboardRef)?.blur()
@@ -178,7 +178,7 @@
                     <c-keyboard-provider
                         ref="keyboardRef"
                         v-slot="keyboard"
-                        :handlers="listHandlers"
+                        @keydown="onListKeydown"
                     >
                         <slot
                             name="menu"
