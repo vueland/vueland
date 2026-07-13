@@ -8,7 +8,7 @@ export const toCamelCase = (...args: string[]): string =>
         return res
     }, '')
 
-export const isDef = (val: any) => (val ?? null) !== null
+export const isDef = <T = any>(val: T): val is NonNullable<T> => (val ?? null) !== null
 export const isNotEmpty = (val: any) => isDef(val) && !!`${val}`.trim()
 
 export const unique = (length: number): string => {

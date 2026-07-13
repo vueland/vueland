@@ -10,15 +10,8 @@
 </script>
 
 <template>
-    <c-row class="gap-y-4">
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+    <div class="text-field-demo d-flex flex-wrap gap-4">
+        <div class="text-field-demo__item">
             <c-text-field
                 v-model="v1"
                 label="Blue"
@@ -32,16 +25,9 @@
                     />
                 </template>
             </c-text-field>
-        </c-col>
+        </div>
 
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+        <div class="text-field-demo__item">
             <c-text-field
                 v-model="v2"
                 label="Teal"
@@ -55,16 +41,9 @@
                     />
                 </template>
             </c-text-field>
-        </c-col>
+        </div>
 
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+        <div class="text-field-demo__item">
             <c-text-field
                 v-model="v3"
                 label="Green"
@@ -78,16 +57,9 @@
                     />
                 </template>
             </c-text-field>
-        </c-col>
+        </div>
 
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+        <div class="text-field-demo__item">
             <c-text-field
                 v-model="v4"
                 label="Deep Purple"
@@ -101,16 +73,9 @@
                     />
                 </template>
             </c-text-field>
-        </c-col>
+        </div>
 
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+        <div class="text-field-demo__item">
             <c-text-field
                 v-model="v5"
                 label="Orange"
@@ -124,16 +89,9 @@
                     />
                 </template>
             </c-text-field>
-        </c-col>
+        </div>
 
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+        <div class="text-field-demo__item">
             <c-text-field
                 v-model="v6"
                 label="Pink"
@@ -147,6 +105,13 @@
                     />
                 </template>
             </c-text-field>
-        </c-col>
-    </c-row>
+        </div>
+    </div>
 </template>
+
+<style scoped>
+.text-field-demo__item {
+  flex: 1 1 280px;
+  min-width: min(100%, 260px);
+}
+</style>

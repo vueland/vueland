@@ -245,6 +245,18 @@
   overflow-wrap: normal;
 }
 
+.vp-doc .vl-table-wrap--tokens.vl-table-wrap--cols-2 .vl-table {
+  min-width: 100%;
+}
+
+.vp-doc .vl-table-wrap--tokens.vl-table-wrap--cols-2 .vl-table__cell:nth-child(1) {
+  width: 48%;
+}
+
+.vp-doc .vl-table-wrap--tokens.vl-table-wrap--cols-2 .vl-table__cell:nth-child(2) {
+  width: 52%;
+}
+
 .vp-doc .vl-table-wrap--tokens.vl-table-wrap--cols-3 .vl-table {
   min-width: 980px;
 }

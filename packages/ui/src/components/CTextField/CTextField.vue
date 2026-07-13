@@ -2,7 +2,8 @@
     import {
         shallowRef,
         unref,
-        useAttrs
+        useAttrs,
+        useSlots
     } from 'vue'
 
     import { CField } from '@/components/CField'
@@ -15,15 +16,18 @@
         reset(): void
         blur(): void
         focus(): void
+        isReadonly(): boolean
+        isDisabled(): boolean
     }
 
     defineOptions({ name: 'CTextField' })
-    defineEmits<CTextFieldEmits<T>>()
+    const emit = defineEmits<CTextFieldEmits<T>>()
     defineSlots<CTextFieldSlots>()
 
     const model = defineModel<string | number | undefined | null>()
 
     const rootAttrs = useAttrs()
+    const slots = useSlots()
 
     const cInputRef = shallowRef<CInputExpose>()
 
@@ -37,6 +41,7 @@
 
     function onClear() {
         model.value = undefined
+        emit('clear')
     }
 
     function onFocus() {
@@ -44,7 +49,7 @@
     }
 
     function onBlur() {
-        if (rootAttrs.role === 'combobox') {
+        if (slots.menu) {
             return
         }
 
@@ -55,7 +60,9 @@
         validate,
         reset,
         blur: () => unref(cInputRef)?.blur(),
-        focus: () => unref(cInputRef)?.focus()
+        focus: () => unref(cInputRef)?.focus(),
+        isReadonly: () => unref(cInputRef)?.isReadonly(),
+        isDisabled: () => unref(cInputRef)?.isDisabled()
     })
 
 </script>

@@ -1,201 +1,216 @@
 <script setup lang="ts">
     import {
         computed,
-        ref,
-        unref
+        shallowRef,
+        unref,
     } from 'vue'
 
     import {
         CDatePicker,
-        type DatePickerDate,
-        type DatePickerEnrichedDate,
-        type DatePickerSlotApi,
-        datePickerValueToString,
-        type DatePickerWeekDay,
-        type DisabledDates
+        dateToFormatString,
+        isDateDisabled,
+        parseDate,
+        parseDateString
     } from '@/components/CDatePicker'
-    import { CField } from '@/components/CField'
     import { CIcon } from '@/components/CIcon'
-    import { CInput } from '@/components/CInput'
+    import { CKeyboardProvider } from '@/components/CKeyboardProvider'
     import { CMenu } from '@/components/CMenu'
-    import type { PresetProps } from '@/composables/use-presets'
-    import type { ValidateProps } from '@/composables/use-validate'
+    import { CTextField } from '@/components/CTextField'
+    import { useKeyboard } from '@/composables/use-keyboard'
     import { IconAliases } from '@/enums'
 
-    export type CDateInputProps = ValidateProps & PresetProps & {
-        modelValue?: Date | null
-        label?: string
-        details?: string
-        noDetails?: boolean
-        clearable?: boolean
-        disabled?: boolean
-        readonly?: boolean
-        typeable?: boolean
-        placeholder?: string
-        lang?: string
-        format?: string
-        mondayFirst?: boolean
-        disabledDates?: DisabledDates
-        highlightedDates?: (Date | string)[]
-        minDate?: Date | string
-        maxDate?: Date | string
-    }
+    import type { CDateInputProps, CDateInputSlots } from './types'
 
-    defineOptions({
-        name: 'CDateInput',
-        inheritAttrs: false
-    })
+    defineOptions({ name: 'CDateInput' })
 
     const props = defineProps<CDateInputProps>()
 
-    const emit = defineEmits<{
-        'update:modelValue': [value: Date | null]
-        focus: []
-        blur: []
-    }>()
-
-    defineSlots<{
-        prepend?(): any
-        append?(): any
-        date?(props: DatePickerDate & { isSelected: boolean; isToday: boolean }): any
-        week?(props: { days: DatePickerWeekDay[] }): any
-        dates?(props: { dates: DatePickerEnrichedDate[]; onSelect: (d: DatePickerDate) => void }): any
-        'before-header'?(props: DatePickerSlotApi): any
-        header?(props: DatePickerSlotApi): any
-        'before-body'?(props: DatePickerSlotApi): any
-        body?(props: DatePickerSlotApi): any
-        footer?(props: DatePickerSlotApi): any
-    }>()
+    defineSlots<CDateInputSlots>()
 
     const model = defineModel<Date | null>()
 
-    const menuOpen = ref(false)
-
-    const inputRef = ref()
-
-    const fieldRef = ref()
+    const cTextFieldRef = shallowRef()
+    const keyboardRef = shallowRef()
+    const menu = shallowRef(false)
 
     const displayValue = computed(() =>
-        datePickerValueToString(model.value, props.format ?? 'dd.MM.yyyy', props.lang ?? 'en'),
+        dateToFormatString(model.value, props.format ?? 'dd.MM.yyyy', props.locale),
     )
+
+    const classes = computed(() => ({
+        'c-date-input--typeable': props.typeable
+    }))
+
+    const canOpen = () => !unref(cTextFieldRef)?.isReadonly() && !unref(cTextFieldRef)?.isDisabled()
 
     function onDateSelect(value: Date | null) {
         model.value = value
-        emit('update:modelValue', value)
-        menuOpen.value = false
+        menu.value = false
     }
 
-    function onFieldClear() {
+    function onClear() {
         model.value = null
-        emit('update:modelValue', null)
     }
 
-    function onCloseMenu() {
-        unref(inputRef).blur()
-    }
-
-    function onTypeInput(val: string | number | null | undefined) {
-        if (!props.typeable) {
+    function onFocus() {
+        if (!canOpen()) {
             return
         }
 
-        const parsed = new Date(val as string)
+        menu.value = true
+    }
 
-        if (!isNaN(parsed.getTime())) {
-            model.value = parsed
-            emit('update:modelValue', parsed)
+    function onMenuClose() {
+        unref(cTextFieldRef)?.blur()
+    }
+
+    // В non-typeable поле не редактируется — дата приходит только из пикера
+    function onBeforeInput(e: Event) {
+        if (!props.typeable) {
+            e.preventDefault()
         }
     }
 
+    // Ввод коммитится только когда строка целиком совпала с маской формата,
+    // дата существует и не запрещена — тем же isDateDisabled, что и сетка
+    function onTypeInput(val: string | number | undefined | null) {
+        if (
+            !props.typeable
+            || unref(cTextFieldRef).isReadonly()
+            || unref(cTextFieldRef).isDisabled()
+        ) {
+            return
+        }
+
+        const parsed = parseDateString(`${val ?? ''}`, props.format ?? 'dd.MM.yyyy')
+
+        if (!parsed) {
+            return
+        }
+
+        const date = parseDate(parsed)
+
+        const bounds = {
+            disabledDates: props.disabledDates,
+            minDate: props.minDate ? parseDate(props.minDate) : null,
+            maxDate: props.maxDate ? parseDate(props.maxDate) : null,
+        }
+
+        if (!isDateDisabled(date, bounds)) {
+            model.value = parsed
+        }
+    }
+
+    // Фокус остаётся в поле — клавиши форвардятся пикеру через клавиатурный
+    // контур. В typeable-режиме навигация принадлежит редактированию текста:
+    // меню открывается фокусом или ArrowDown, выбор в пикере — мышью.
+    const open = (e: KeyboardEvent) => {
+        if (!canOpen()) {
+            return
+        }
+
+        // if (unref(menu)) return
+        e.preventDefault()
+        menu.value = true
+        unref(cTextFieldRef)?.focus()
+        unref(keyboardRef)?.forward(e)
+    }
+
+    const openOrType = (e: KeyboardEvent) => {
+        if (!canOpen()) {
+            return
+        }
+
+        if (!props.typeable && !unref(menu)) {
+            open(e)
+        }
+
+        unref(keyboardRef)?.forward(e)
+    }
+
+    const { onKeydown } = useKeyboard({
+        Tab: () => {
+            menu.value = false
+            unref(cTextFieldRef)?.blur()
+        },
+        Escape: () => {
+            menu.value = false
+            unref(cTextFieldRef)?.blur()
+        },
+        Enter: openOrType,
+        ArrowDown: open,
+        Space: openOrType,
+        '*': (e) => {
+            if (!props.typeable && unref(menu)) {
+                unref(keyboardRef)?.forward(e)
+            }
+        },
+    })
 </script>
 
 <template>
-    <c-input
-        ref="inputRef"
-        :model-value="model"
+    <c-text-field
+        ref="cTextFieldRef"
+        :model-value="displayValue"
+        :validation-value="model"
+        class="c-date-input"
+        :class="classes"
+        :inputmode="typeable ? undefined : 'none'"
+        :dirty="!!model"
         v-bind="$attrs"
-        :label
-        :details
-        :no-details
-        :clearable
-        :disabled
-        :readonly
-        :rules
-        :validate-on
-        :preset
-        @focus="emit('focus')"
-        @blur="emit('blur')"
+        @beforeinput="onBeforeInput"
+        @paste="onBeforeInput"
+        @drop="onBeforeInput"
+        @keydown="onKeydown"
+        @update:model-value="onTypeInput"
+        @clear="onClear"
+        @focus="onFocus"
     >
-        <template #field="field">
+        <template #prepend>
+            <slot name="prepend">
+                <c-icon
+                    :name="IconAliases.CALENDAR"
+                    :size="18"
+                />
+            </slot>
+        </template>
+        <template
+            v-if="$slots.append"
+            #append
+        >
+            <slot name="append" />
+        </template>
+        <template
+            v-if="$slots.details"
+            #details="slotProps"
+        >
+            <slot
+                name="details"
+                v-bind="slotProps"
+            />
+        </template>
+        <template #menu="{ id }">
             <c-menu
-                v-model="menuOpen"
+                :id
+                v-model="menu"
+                activator="parent"
                 align="bottom-left"
                 :offset-y="2"
                 :width="320"
                 close-on-click-outside
-                :close-on-content-click="false"
                 strategy="reverse"
-                @close="onCloseMenu"
+                @close="onMenuClose"
             >
-                <template #activator="{ activator }">
-                    <div
-                        class="c-date-input"
-                        v-bind="activator"
-                    >
-                        <c-field
-                            :id="field.uid"
-                            ref="fieldRef"
-                            :model-value="displayValue"
-                            :label="field.label"
-                            :focused="field.focused"
-                            :error="field.hasError"
-                            :clearable="field.clearable"
-                            :readonly="field.readonly"
-                            :no-input="!typeable"
-                            :disabled="disabled"
-                            v-bind="field.attrs"
-                            @update:model-value="onTypeInput"
-                            @focus="() => { field.focus(); if (!typeable) menuOpen = true }"
-                            @clear="onFieldClear"
-                        >
-                            <template #prepend>
-                                <slot
-                                    v-if="$slots.prepend"
-                                    name="prepend"
-                                ></slot>
-                                <span
-                                    v-else
-                                    style="cursor:pointer"
-                                    @click="menuOpen = !menuOpen"
-                                >
-                                    <c-icon
-                                        :name="IconAliases.CALENDAR"
-                                        :size="18"
-                                    />
-                                </span>
-                            </template>
-                            <template
-                                v-if="$slots.append"
-                                #append
-                            >
-                                <slot name="append"></slot>
-                            </template>
-                        </c-field>
-                    </div>
-                </template>
-
-                <template #default>
+                <c-keyboard-provider ref="keyboardRef">
                     <c-date-picker
                         :model-value="model"
-                        :lang="lang"
-                        :format="format"
+                        :locale="locale"
                         :monday-first="mondayFirst"
-                        :disabled-dates="(disabledDates as DisabledDates | undefined)"
+                        :disabled-dates="disabledDates"
+                        :highlighted-dates="highlightedDates"
                         :min-date="minDate"
                         :max-date="maxDate"
-                        :highlighted-dates="highlightedDates"
                         @update:model-value="onDateSelect"
-                        @selected="onDateSelect"
                     >
                         <template
                             v-if="$slots.date"
@@ -204,7 +219,7 @@
                             <slot
                                 name="date"
                                 v-bind="slotProps"
-                            ></slot>
+                            />
                         </template>
                         <template
                             v-if="$slots.week"
@@ -213,7 +228,7 @@
                             <slot
                                 name="week"
                                 v-bind="slotProps"
-                            ></slot>
+                            />
                         </template>
                         <template
                             v-if="$slots.dates"
@@ -222,7 +237,7 @@
                             <slot
                                 name="dates"
                                 v-bind="slotProps"
-                            ></slot>
+                            />
                         </template>
                         <template
                             v-if="$slots['before-header']"
@@ -231,16 +246,7 @@
                             <slot
                                 name="before-header"
                                 v-bind="slotProps"
-                            ></slot>
-                        </template>
-                        <template
-                            v-if="$slots.header"
-                            #header="slotProps"
-                        >
-                            <slot
-                                name="header"
-                                v-bind="slotProps"
-                            ></slot>
+                            />
                         </template>
                         <template
                             v-if="$slots['before-body']"
@@ -249,16 +255,7 @@
                             <slot
                                 name="before-body"
                                 v-bind="slotProps"
-                            ></slot>
-                        </template>
-                        <template
-                            v-if="$slots.body"
-                            #body="slotProps"
-                        >
-                            <slot
-                                name="body"
-                                v-bind="slotProps"
-                            ></slot>
+                            />
                         </template>
                         <template
                             v-if="$slots.footer"
@@ -267,11 +264,11 @@
                             <slot
                                 name="footer"
                                 v-bind="slotProps"
-                            ></slot>
+                            />
                         </template>
                     </c-date-picker>
-                </template>
+                </c-keyboard-provider>
             </c-menu>
         </template>
-    </c-input>
+    </c-text-field>
 </template>

@@ -3,18 +3,19 @@
     import { CIcon } from '@/components/CIcon'
     import { IconAliases } from '@/enums'
 
+    import type {
+        DatePickerHeaderEmits,
+        DatePickerHeaderProps,
+        DatePickerHeaderSlots,
+    } from './types'
+
     defineOptions({ name: 'CDatePickerHeader' })
 
-    defineProps<{
-        disablePrev: boolean
-        disableNext: boolean
-    }>()
+    defineProps<DatePickerHeaderProps>()
 
-    const emit = defineEmits<{
-        next: []
-        prev: []
-        table: []
-    }>()
+    const emit = defineEmits<DatePickerHeaderEmits>()
+
+    defineSlots<DatePickerHeaderSlots>()
 </script>
 
 <template>
@@ -23,6 +24,7 @@
             <c-btn
                 :class="['c-date-picker__header-btn', disablePrev && 'c-date-picker__header-btn--disabled']"
                 :disabled="disablePrev"
+                aria-label="Previous period"
                 @click="emit('prev')"
             >
                 <c-icon
@@ -31,16 +33,19 @@
                 />
             </c-btn>
 
-            <div
+            <button
+                type="button"
                 class="c-date-picker__header-display"
+                aria-label="Change calendar view"
                 @click="emit('table')"
             >
                 <slot></slot>
-            </div>
+            </button>
 
             <c-btn
                 :class="['c-date-picker__header-btn', disableNext && 'c-date-picker__header-btn--disabled']"
                 :disabled="disableNext"
+                aria-label="Next period"
                 @click="emit('next')"
             >
                 <c-icon

@@ -18,7 +18,10 @@ Toolbar, article header, and paginator — three common patterns where `CSpacer`
 <template>
   <!-- Toolbar: logo left, links + button right -->
   <c-row align="center" no-gutter>
-    <div>⚡ Dashboard</div>
+    <div class="d-flex items-center gap-2">
+      <c-icon name="fas:bolt" source="fa" />
+      Dashboard
+    </div>
     <c-spacer />
     <div class="d-flex gap-3">
       <span>Docs</span>
@@ -32,18 +35,18 @@ Toolbar, article header, and paginator — three common patterns where `CSpacer`
     <div>Jane Doe</div>
     <c-spacer />
     <div class="d-flex gap-2">
-      <button>🔖</button>
-      <button>❤️</button>
+      <button><c-icon name="fas:bookmark" source="fa" /></button>
+      <button><c-icon name="fas:heart" source="fa" /></button>
     </div>
   </c-row>
 
   <!-- Pagination: prev left, page center, next right -->
   <c-row align="center" no-gutter>
-    <button>← Prev</button>
+    <button><c-icon name="fas:arrow-left" source="fa" /> Prev</button>
     <c-spacer />
     <span>Page 3 of 12</span>
     <c-spacer />
-    <button>Next →</button>
+    <button>Next <c-icon name="fas:arrow-right" source="fa" /></button>
   </c-row>
 </template>
 ```

@@ -1,5 +1,6 @@
 import type { CFieldPreset, CInputPreset } from '@vueland/ui/types'
 
+import { soft as datePickerSoft } from './date-picker-presets'
 import { compact as listCompact, soft as listSoft } from './list-presets'
 import { dark as menuDark, soft as menuSoft } from './menu-presets'
 
@@ -12,28 +13,28 @@ import { dark as menuDark, soft as menuSoft } from './menu-presets'
  */
 const softField: CFieldPreset = {
     base: {
-        root: ['bg-blue-grey-lighten-5', 'radius-8'],
-        label: ['text-uppercase', 'text-blue-grey-darken-1'],
+        root: ['radius-8'],
+        label: ['text-blue-grey-darken-1'],
     },
     focused: {
-        root: ['bg-blue-lighten-5', 'radius-8'],
-        label: ['text-uppercase', 'text-blue-darken-2'],
+        root: ['radius-8'],
+        label: ['text-blue-darken-2'],
     },
     filled: {
-        root: ['bg-green-lighten-5', 'radius-8'],
-        label: ['text-uppercase', 'text-green-darken-2'],
+        root: ['radius-8'],
+        label: ['text-green-darken-2'],
     },
     error: {
-        root: ['bg-red-lighten-5', 'radius-8', 'text-red-darken-2'],
-        label: ['text-uppercase', 'text-red-darken-2'],
+        root: ['radius-8', 'text-red-darken-2'],
+        label: ['text-red-darken-2'],
     },
     disabled: {
         root: ['bg-grey-lighten-3', 'radius-8'],
-        label: ['text-uppercase', 'text-grey'],
+        label: ['text-grey'],
     },
     readonly: {
         root: ['bg-grey-lighten-4', 'radius-8'],
-        label: ['text-uppercase', 'text-blue-grey'],
+        label: ['text-blue-grey'],
     },
 }
 
@@ -49,6 +50,7 @@ export const soft: CInputPreset = {
         field: softField,
         menu: menuSoft,
         list: listSoft,
+        datePicker: datePickerSoft,
     },
     error: {
         root: ['mb-2'],

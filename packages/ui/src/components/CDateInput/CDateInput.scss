@@ -1,3 +1,13 @@
+@use '../../styles/mixins/functions' as *;
+
 .c-date-input {
   width: 100%;
+
+  & > .c-input__field > .c-text-field > .c-field > .c-field__core > .c-field-input {
+    caret-color: transparent;
+  }
+
+  &--typeable > .c-input__field > .c-text-field > .c-field > .c-field__core > .c-field-input {
+    caret-color: getCssVar('sys', 'color', 'on-surface');
+  }
 }

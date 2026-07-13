@@ -18,7 +18,10 @@ import SpacerExample from '../../examples/CGrid/SpacerExample.vue'
 <template>
   <!-- Тулбар: логотип слева, ссылки + кнопка справа -->
   <c-row align="center" no-gutter>
-    <div>⚡ Dashboard</div>
+    <div class="d-flex items-center gap-2">
+      <c-icon name="fas:bolt" source="fa" />
+      Dashboard
+    </div>
     <c-spacer />
     <div class="d-flex gap-3">
       <span>Docs</span>
@@ -32,18 +35,18 @@ import SpacerExample from '../../examples/CGrid/SpacerExample.vue'
     <div>Jane Doe</div>
     <c-spacer />
     <div class="d-flex gap-2">
-      <button>🔖</button>
-      <button>❤️</button>
+      <button><c-icon name="fas:bookmark" source="fa" /></button>
+      <button><c-icon name="fas:heart" source="fa" /></button>
     </div>
   </c-row>
 
   <!-- Пагинация: назад слева, страница по центру, вперёд справа -->
   <c-row align="center" no-gutter>
-    <button>← Пред</button>
+    <button><c-icon name="fas:arrow-left" source="fa" /> Пред</button>
     <c-spacer />
     <span>Страница 3 из 12</span>
     <c-spacer />
-    <button>След →</button>
+    <button>След <c-icon name="fas:arrow-right" source="fa" /></button>
   </c-row>
 </template>
 ```

@@ -3,11 +3,12 @@
         computed,
         h,
         nextTick,
+        onMounted,
         shallowRef,
         unref,
         useAttrs,
         useSlots,
-        watch,
+        watch
     } from 'vue'
 
     import { CIcon } from '@/components/CIcon'
@@ -30,6 +31,8 @@
     }>()
 
     const value = defineModel<string | number | undefined | null>()
+    const focused = defineModel<boolean>('focused', { default: false })
+
     const inputRef = shallowRef<HTMLElement>()
 
     const slots = useSlots()
@@ -38,13 +41,13 @@
     const presets = useFieldPresets({ props })
 
     const clearable = computed(() => props.clearable
-        && props.focused
+        && unref(focused)
         && (!!unref(value) || props.dirty)
     )
 
     const classes = computed(() => [
         {
-            'c-field--focused': props.focused,
+            'c-field--focused': unref(focused),
             'c-field--filled': isNotEmpty(unref(value)) || props.dirty,
             'c-field--has-prepend': !!slots.prepend,
             'c-field--disabled': props.disabled,
@@ -85,15 +88,18 @@
     })
 
     defineExpose({
-        blur: () => unref(inputRef)?.blur(),
-        focus: () => unref(inputRef)?.focus()
+        blur: () => focused.value = false,
+        focus: () => focused.value = true
     })
 
-    watch(() => props.focused, (value) => {
-        if (value) {
-            nextTick(() => unref(inputRef)?.focus())
-        }
-    }, { immediate: true })
+    watch(focused, (value) => {
+        if (value) nextTick(() => unref(inputRef)?.focus())
+        else nextTick(() => unref(inputRef)?.blur())
+    })
+
+    onMounted(() => {
+        if (unref(focused)) unref(inputRef)?.focus()
+    })
 </script>
 
 <template>

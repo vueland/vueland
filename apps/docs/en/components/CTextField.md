@@ -306,12 +306,14 @@ The preset is distributed automatically: `CInput` applies `root` and `details` a
 
 Methods available via template ref:
 
-| Method     | Signature                | Description                      |
-| ---------- | ------------------------ | -------------------------------- |
-| `validate` | `() => Promise<boolean>` | Trigger validation manually      |
-| `reset`    | `() => void`             | Clear the error state            |
-| `focus`    | `() => void`             | Programmatically focus the field |
-| `blur`     | `() => void`             | Programmatically remove focus    |
+| Method       | Signature                    | Description                                                        |
+| ------------ | ---------------------------- | ------------------------------------------------------------------ |
+| `validate`   | `() => Promise<boolean>`     | Trigger validation manually                                        |
+| `reset`      | `() => void`                 | Clear the error state                                              |
+| `focus`      | `() => void`                 | Programmatically focus the field; no-op when `disabled`/`readonly` |
+| `blur`       | `() => void`                 | Programmatically remove focus                                      |
+| `isReadonly` | `() => boolean \| undefined` | Return the current `readonly` prop value                           |
+| `isDisabled` | `() => boolean \| undefined` | Return the current `disabled` prop value                           |
 
 ```vue
 <template>

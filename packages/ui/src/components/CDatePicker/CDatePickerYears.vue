@@ -1,109 +1,169 @@
 <script setup lang="ts">
     import {
         computed,
+        inject,
+        onBeforeUnmount,
+        onMounted,
         shallowRef,
         watch
     } from 'vue'
 
-    import { isDef } from '@/helpers'
+    import type { KeyboardTarget } from '@/components/CKeyboardProvider/types'
+    import { useKeyboard } from '@/composables/use-keyboard'
+    import { $DATE_PICKER_PRESET_KEY, $KEYBOARD_API_KEY } from '@/constants'
 
-    export type EnrichedYear = {
-        year: number
-        disabled: boolean
-        isSelected: boolean
-        isCurrent: boolean
-        onSelect: () => void
-    }
+    import { chunk } from './helpers'
+    import type {
+        DatePickerEnrichedYear,
+        DatePickerYearsEmits,
+        DatePickerYearsProps,
+        DatePickerYearsSlots,
+    } from './types'
 
     defineOptions({ name: 'CDatePickerYears' })
 
-    const props = defineProps<{
-        year: number
-        minYear?: number
-        maxYear?: number
-    }>()
-
-    const emit = defineEmits<{
-        'update:year': [year: number]
-    }>()
-
-    defineSlots<{
-        years?(props: { years: EnrichedYear[] }): any
-        year?(props: EnrichedYear): any
-    }>()
-
+    const props = defineProps<DatePickerYearsProps>()
+    const emit = defineEmits<DatePickerYearsEmits>()
+    defineSlots<DatePickerYearsSlots>()
     defineExpose({ onNext, onPrev })
 
+    const rootRef = shallowRef<HTMLElement>()
     const pageIndex = shallowRef(0)
-
+    const focused = shallowRef<number | null>(null)
     const transitionName = shallowRef('c-date-slide-left')
 
+    const presetZones = inject($DATE_PICKER_PRESET_KEY, null)
+
     const CELLS_IN_ROW = 4
-
     const ON_TABLE = 20
-
-    const LIMIT = 100
-
+    const DEFAULT_YEAR_SPAN = 100
     const CURRENT_YEAR = new Date().getFullYear()
 
-    const allPages = buildYearPages(CURRENT_YEAR - LIMIT, LIMIT)
+    const yearBounds = computed(() => {
+        const {
+            maxYear,
+            minYear,
+            year,
+        } = props
+        const fallbackFrom = Math.min(CURRENT_YEAR - DEFAULT_YEAR_SPAN, year)
+        const fallbackTo = Math.max(CURRENT_YEAR + DEFAULT_YEAR_SPAN, year)
+        const from = minYear ?? fallbackFrom
+        const to = maxYear ?? fallbackTo
 
-    const enrichedYears = computed<EnrichedYear[]>(() =>
-        (allPages[pageIndex.value] ?? []).map((y) => {
-            const disabled = (isDef(props.minYear) && y < props.minYear!) || (isDef(props.maxYear) && y > props.maxYear!)
+        return {
+            from: Math.min(from, to),
+            to: Math.max(from, to),
+        }
+    })
+
+    // Диапазон пикера по умолчанию ±100 лет от текущего, но расширяется до
+    // выбранного года. min/max, если заданы, становятся границами навигации.
+    const allYears = computed(() => {
+        const { from, to } = yearBounds.value
+
+        return Array.from({ length: to - from + 1 }, (_, i) => from + i)
+    })
+    const allPages = computed(() => chunk(allYears.value, ON_TABLE))
+
+    const minRangeYear = computed(() => allYears.value[0])
+    const maxRangeYear = computed(() => allYears.value[allYears.value.length - 1])
+
+    const currentPage = computed(() => allPages.value[pageIndex.value] ?? [])
+
+    const enrichedYears = computed<DatePickerEnrichedYear[]>(() =>
+        currentPage.value.map((y) => {
             return {
                 year: y,
-                disabled,
-                isSelected: y === props.year,
+                isSelected: y === props.value?.year,
                 isCurrent: y === CURRENT_YEAR,
-                onSelect: () => { if (!disabled) emit('update:year', y) },
+                isFocused: y === focused.value,
+                onSelect: () => { emit('update:year', y) },
             }
         }),
     )
 
-    const rows = computed(() => {
-        const result: EnrichedYear[][] = []
-        for (let i = 0; i < enrichedYears.value.length; i += CELLS_IN_ROW) {
-            result.push(enrichedYears.value.slice(i, i + CELLS_IN_ROW))
-        }
-        return result
-    })
+    const rows = computed(() => chunk(enrichedYears.value, CELLS_IN_ROW))
 
-    function buildYearPages(from: number, limit: number): number[][] {
-        const pages: number[][] = []
-        let page: number[] = []
-        for (let i = 0; i <= limit * 2; i++) {
-            page.push(from + i)
-            if (page.length === ON_TABLE) {
-                pages.push(page)
-                page = []
-            }
-        }
-        if (page.length) pages.push(page)
-        return pages
+    function pageOf(year: number): number {
+        return allPages.value.findIndex((page) => page.includes(year))
+    }
+
+    // Единственный владелец листания: направление анимации + текущая страница
+    function turnPage(page: number, forward: boolean) {
+        transitionName.value = forward ? 'c-date-slide-left' : 'c-date-slide-right'
+        pageIndex.value = page
     }
 
     function onNext() {
-        if (pageIndex.value < allPages.length - 1) {
-            transitionName.value = 'c-date-slide-left'
-            pageIndex.value++
+        if (pageIndex.value < allPages.value.length - 1) {
+            turnPage(pageIndex.value + 1, true)
         }
     }
 
     function onPrev() {
         if (pageIndex.value > 0) {
-            transitionName.value = 'c-date-slide-right'
-            pageIndex.value--
+            turnPage(pageIndex.value - 1, false)
         }
     }
 
-    watch(() => props.year, (year) => {
-        pageIndex.value = allPages.findIndex((p) => p.includes(year)) ?? 0
+    // Первое нажатие ставит курсор на текущий год, дальше — шаг в пределах
+    // диапазона; страница следует за курсором
+    function moveFocus(delta: number) {
+        if (focused.value === null) {
+            focused.value = props.year
+            return
+        }
+
+        const next = Math.min(Math.max(focused.value + delta, minRangeYear.value), maxRangeYear.value)
+        const page = pageOf(next)
+
+        focused.value = next
+
+        if (page >= 0 && page !== pageIndex.value) {
+            turnPage(page, delta > 0)
+        }
+    }
+
+    function selectFocused() {
+        if (focused.value !== null) {
+            enrichedYears.value.find((item) => item.year === focused.value)?.onSelect()
+        }
+    }
+
+    const { onKeydown } = useKeyboard({
+        ArrowLeft: () => moveFocus(-1),
+        ArrowRight: () => moveFocus(1),
+        ArrowUp: () => moveFocus(-CELLS_IN_ROW),
+        ArrowDown: () => moveFocus(CELLS_IN_ROW),
+        Home: () => { focused.value = currentPage.value[0] },
+        End: () => { focused.value = currentPage.value[currentPage.value.length - 1] },
+        Enter: selectFocused,
+        Space: selectFocused,
+    }, { prevent: true })
+
+    // Вьюха сама встаёт под клавиатурный контур пикера — семантика клавиш у неё
+    const keyboard = inject($KEYBOARD_API_KEY, null)
+
+    const keyboardTarget: KeyboardTarget = {
+        onKeydown,
+        blur: () => { focused.value = null },
+        getElement: () => rootRef.value,
+    }
+
+    onMounted(() => keyboard?.register(keyboardTarget))
+    onBeforeUnmount(() => keyboard?.unregister(keyboardTarget))
+
+    watch(() => [props.year, yearBounds.value.from, yearBounds.value.to] as const, ([year]) => {
+        pageIndex.value = Math.max(pageOf(year), 0)
     }, { immediate: true })
 </script>
 
 <template>
-    <div class="c-date-picker-years">
+    <div
+        ref="rootRef"
+        class="c-date-picker-years"
+        role="grid"
+    >
         <slot
             v-if="$slots.years"
             name="years"
@@ -117,11 +177,13 @@
             <div
                 :key="pageIndex"
                 class="c-date-picker-years__grid"
+                role="rowgroup"
             >
                 <div
                     v-for="(row, ri) in rows"
                     :key="ri"
                     class="c-date-picker-years__row"
+                    role="row"
                 >
                     <template
                         v-for="item in row"
@@ -136,10 +198,13 @@
                             v-else
                             :class="[
                                 'c-date-picker-years__cell',
+                                ...(presetZones?.cell ?? []),
                                 item.isSelected && 'c-date-picker-years__cell--selected',
                                 item.isCurrent && 'c-date-picker-years__cell--current',
-                                item.disabled && 'c-date-picker-years__cell--disabled',
+                                item.isFocused && 'c-date-picker-years__cell--focused',
                             ]"
+                            role="gridcell"
+                            :aria-selected="item.isSelected"
                             @click="item.onSelect"
                         >
                             {{ item.year }}

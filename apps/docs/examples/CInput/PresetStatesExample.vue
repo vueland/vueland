@@ -7,133 +7,94 @@
 </script>
 
 <template>
-    <div>
-        <c-row>
-            <c-col
-                xxl="4"
-                xl="4"
-                lg="6"
-                md="6"
-                sm="12"
-                class="px-2"
-            >
-                <div class="d-flex flex-col gap-2">
-                    <div class="state-label">
-                        Default
-                    </div>
-                    <c-text-field
-                        v-model="val"
-                        label="Label"
-                        preset="input.blue"
-                    />
+    <div class="input-state-demo d-flex flex-wrap gap-4">
+        <div class="input-state-demo__item">
+            <div class="d-flex flex-col gap-2">
+                <div class="state-label">
+                    Default
                 </div>
-            </c-col>
-            <c-col
-                xxl="4"
-                xl="4"
-                lg="6"
-                md="6"
-                sm="12"
-                class="px-2"
-            >
-                <div class="d-flex flex-col gap-2">
-                    <div class="state-label">
-                        Focused
-                    </div>
-                    <c-text-field
-                        v-model="val"
-                        label="Label"
-                        preset="input.blue"
-                        :focused="true"
-                    />
+                <c-text-field
+                    v-model="val"
+                    label="Label"
+                    preset="input.blue"
+                />
+            </div>
+        </div>
+        <div class="input-state-demo__item">
+            <div class="d-flex flex-col gap-2">
+                <div class="state-label">
+                    Focused
                 </div>
-            </c-col>
-            <c-col
-                xxl="4"
-                xl="4"
-                lg="6"
-                md="6"
-                sm="12"
-                class="px-2"
-            >
-                <div class="d-flex flex-col gap-2">
-                    <div class="state-label">
-                        Filled
-                    </div>
-                    <c-text-field
-                        v-model="filled"
-                        label="Label"
-                        preset="input.blue"
-                    />
+                <c-text-field
+                    v-model="val"
+                    label="Label"
+                    preset="input.blue"
+                    :focused="true"
+                />
+            </div>
+        </div>
+        <div class="input-state-demo__item">
+            <div class="d-flex flex-col gap-2">
+                <div class="state-label">
+                    Filled
                 </div>
-            </c-col>
-            <c-col
-                xxl="4"
-                xl="4"
-                lg="6"
-                md="6"
-                sm="12"
-                class="px-2"
-            >
-                <div class="d-flex flex-col gap-2">
-                    <div class="state-label">
-                        Error
-                    </div>
-                    <c-text-field
-                        v-model="val"
-                        label="Label"
-                        preset="input.blue"
-                        :rules="[() => ({ valid: false, message: 'Validation error' })]"
-                        validate-on="blur"
-                        :focused="false"
-                    />
+                <c-text-field
+                    v-model="filled"
+                    label="Label"
+                    preset="input.blue"
+                />
+            </div>
+        </div>
+        <div class="input-state-demo__item">
+            <div class="d-flex flex-col gap-2">
+                <div class="state-label">
+                    Error
                 </div>
-            </c-col>
-            <c-col
-                xxl="4"
-                xl="4"
-                lg="6"
-                md="6"
-                sm="12"
-                class="px-2"
-            >
-                <div class="d-flex flex-col gap-2">
-                    <div class="state-label">
-                        Disabled
-                    </div>
-                    <c-text-field
-                        v-model="val"
-                        label="Label"
-                        preset="input.blue"
-                        disabled
-                    />
+                <c-text-field
+                    v-model="val"
+                    label="Label"
+                    preset="input.blue"
+                    :rules="[() => ({ valid: false, message: 'Validation error' })]"
+                    validate-on="blur"
+                    :focused="false"
+                />
+            </div>
+        </div>
+        <div class="input-state-demo__item">
+            <div class="d-flex flex-col gap-2">
+                <div class="state-label">
+                    Disabled
                 </div>
-            </c-col>
-            <c-col
-                xxl="4"
-                xl="4"
-                lg="6"
-                md="6"
-                sm="12"
-                class="px-2"
-            >
-                <div class="d-flex flex-col gap-2">
-                    <div class="state-label">
-                        Readonly
-                    </div>
-                    <c-text-field
-                        v-model="readonly"
-                        label="Label"
-                        preset="input.blue"
-                        readonly
-                    />
+                <c-text-field
+                    v-model="val"
+                    label="Label"
+                    preset="input.blue"
+                    disabled
+                />
+            </div>
+        </div>
+        <div class="input-state-demo__item">
+            <div class="d-flex flex-col gap-2">
+                <div class="state-label">
+                    Readonly
                 </div>
-            </c-col>
-        </c-row>
+                <c-text-field
+                    v-model="readonly"
+                    label="Label"
+                    preset="input.blue"
+                    readonly
+                />
+            </div>
+        </div>
     </div>
 </template>
 
 <style scoped>
+.input-state-demo__item {
+  flex: 1 1 280px;
+  min-width: min(100%, 260px);
+}
+
 .state-label {
   font-size: 11px;
   font-weight: 600;

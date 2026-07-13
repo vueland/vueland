@@ -15,7 +15,7 @@
     })
 
     defineSlots<CKeyboardProviderSlots>()
-    const attrs = useAttrs() as any
+    const attrs = useAttrs() as Record<string, any>
 
     let target: KeyboardTarget | null = null
 

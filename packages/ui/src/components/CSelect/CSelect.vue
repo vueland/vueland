@@ -1,9 +1,5 @@
 <script setup lang="ts" generic="T">
-    import {
-        shallowRef,
-        unref,
-        useAttrs,
-    } from 'vue'
+    import { shallowRef, unref } from 'vue'
 
     import { CKeyboardProvider } from '@/components/CKeyboardProvider'
     import { CMenu } from '@/components/CMenu'
@@ -12,7 +8,6 @@
     import { useNormalizedItems } from '@/composables/use-normalized-items'
     import { useSelectedChips } from '@/composables/use-selected-chips'
     import { IconAliases } from '@/enums'
-    import { isDef } from '@/helpers'
 
     import type { CSelectProps, CSelectSlots } from './types'
 
@@ -27,10 +22,6 @@
     const cTextFieldRef = shallowRef()
     const keyboardRef = shallowRef()
     const menu = shallowRef(false)
-
-    const attrs = useAttrs()
-
-    const isReadonly = () => isDef(attrs.readonly) && attrs.readonly !== false
 
     const normalizedItems = useNormalizedItems(props)
 
@@ -54,13 +45,13 @@
             '*': (e) => unref(keyboardRef)?.forward(e)
         }, { prevent: ['ArrowDown', 'ArrowUp'] })
 
-    function onBlur() {
+    function onClose() {
         unref(cTextFieldRef).blur()
         menu.value = false
     }
 
     function onFocus() {
-        if (isReadonly()) {
+        if (unref(cTextFieldRef).isReadonly()) {
             return
         }
 
@@ -130,7 +121,7 @@
                 :offset-y="2"
                 max-height="300"
                 strategy="reverse"
-                @close="onBlur"
+                @close="onClose"
             >
                 <template #default>
                     <c-keyboard-provider

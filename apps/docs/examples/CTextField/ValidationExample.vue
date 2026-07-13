@@ -16,10 +16,6 @@
         (v: string) => ({ valid: v.length >= 8, message: 'Minimum 8 characters' }),
         (v: string) => ({ valid: /[A-Z]/.test(v), message: 'At least one uppercase letter' }),
     ]
-    const phoneRules = [
-        (v: string) => ({ valid: !!v, message: 'Phone is required' }),
-        (v: string) => ({ valid: /^\+?[\d\s\-()]{7,}$/.test(v), message: 'Invalid phone number' }),
-    ]
 
     function submit() { submitted.value = true }
     function reset() {
@@ -31,12 +27,8 @@
 </script>
 
 <template>
-    <c-row>
-        <c-col
-            cols="6"
-            offset-xl="3"
-            class="px-2"
-        >
+    <div class="validation-demo d-flex flex-col gap-4">
+        <div>
             <c-text-field
                 v-model="email"
                 label="Email"
@@ -53,13 +45,9 @@
                     />
                 </template>
             </c-text-field>
-        </c-col>
+        </div>
 
-        <c-col
-            cols="6"
-            offset-xl="3"
-            class="px-2"
-        >
+        <div>
             <c-text-field
                 v-model="password"
                 :type="showPwd ? 'text' : 'password'"
@@ -85,31 +73,9 @@
                     />
                 </template>
             </c-text-field>
-        </c-col>
+        </div>
 
-        <c-col
-            xl="6"
-            offset-xl="3"
-            class="px-2"
-        >
-            <c-text-field
-                v-model="phone"
-                label="Phone"
-                :rules="phoneRules"
-                validate-on="blur"
-                preset="input.teal"
-            >
-                <template #prepend>
-                    <c-icon
-                        name="fas:phone"
-                        :size="16"
-                        source="fa"
-                    />
-                </template>
-            </c-text-field>
-        </c-col>
-
-        <div class="px-2">
+        <div class="ex-actions">
             <c-btn
                 class="bg-blue elevation-1"
                 style="color:#fff"
@@ -130,22 +96,20 @@
         >
             ✓ Submitted successfully!
         </p>
-    </c-row>
+    </div>
 </template>
 
 <style scoped>
-.ex-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 16px;
+.validation-demo {
   max-width: 420px;
+  margin-inline: auto;
 }
+
 .ex-actions {
   display: flex;
   gap: 8px;
-  margin-top: 8px;
 }
+
 .ex-success {
   color: #4caf50;
   font-weight: 500;

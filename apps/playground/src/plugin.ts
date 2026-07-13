@@ -8,6 +8,7 @@ import { createFontAwesomeResolver } from '@vueland/ui/resolvers'
 
 // Пресеты
 import * as buttonPresets from './presets/button-presets'
+import * as datePickerPresets from './presets/date-picker-presets'
 import * as inputPresets from './presets/input-presets'
 import * as listPresets from './presets/list-presets'
 import * as menuPresets from './presets/menu-presets'
@@ -92,6 +93,7 @@ export const ui = createVuelandUI({
     },
     presets: {
         button: buttonPresets,
+        datePicker: datePickerPresets,
         input: inputPresets,
         list: listPresets,
         menu: menuPresets,
