@@ -69,11 +69,8 @@
                 <c-form ref="formRef">
                     <template #default="{ validate }">
                         <div class="d-flex flex-col gap-4">
-                            <c-row class="gap-y-4">
-                                <c-col
-                                    cols="12"
-                                    sm="6"
-                                >
+                            <div class="profile-field-grid">
+                                <div class="profile-field-grid__item">
                                     <c-text-field
                                         v-model="form.firstName"
                                         label="First name"
@@ -81,11 +78,8 @@
                                         validate-on="blur"
                                         preset="input.blue"
                                     />
-                                </c-col>
-                                <c-col
-                                    cols="12"
-                                    sm="6"
-                                >
+                                </div>
+                                <div class="profile-field-grid__item">
                                     <c-text-field
                                         v-model="form.lastName"
                                         label="Last name"
@@ -93,8 +87,8 @@
                                         validate-on="blur"
                                         preset="input.blue"
                                     />
-                                </c-col>
-                            </c-row>
+                                </div>
+                            </div>
 
                             <c-text-field
                                 v-model="form.email"
@@ -205,6 +199,17 @@
 .form-card { max-width: 480px; width: 100%; }
 
 .form-header { border-bottom: 1px solid var(--vp-c-divider, #e5e5e5); }
+
+.profile-field-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px 16px;
+}
+
+.profile-field-grid__item {
+  flex: 1 1 190px;
+  min-width: min(100%, 190px);
+}
 
 .header-icon {
   width: 40px;

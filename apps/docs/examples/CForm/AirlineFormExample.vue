@@ -139,11 +139,8 @@
                             >
                                 Flight details
                             </div>
-                            <c-row class="gap-y-4">
-                                <c-col
-                                    cols="12"
-                                    sm="6"
-                                >
+                            <div class="airline-field-grid">
+                                <div class="airline-field-grid__item">
                                     <c-text-field
                                         v-model="flight.from"
                                         label="From"
@@ -159,11 +156,8 @@
                                             />
                                         </template>
                                     </c-text-field>
-                                </c-col>
-                                <c-col
-                                    cols="12"
-                                    sm="6"
-                                >
+                                </div>
+                                <div class="airline-field-grid__item">
                                     <c-text-field
                                         v-model="flight.to"
                                         label="To"
@@ -179,13 +173,8 @@
                                             />
                                         </template>
                                     </c-text-field>
-                                </c-col>
-                            </c-row>
-                            <c-row class="gap-y-4">
-                                <c-col
-                                    cols="12"
-                                    sm="6"
-                                >
+                                </div>
+                                <div class="airline-field-grid__item">
                                     <c-date-input
                                         v-model="flight.departure"
                                         label="Departure date"
@@ -195,11 +184,8 @@
                                         clearable
                                         preset="input.blue"
                                     />
-                                </c-col>
-                                <c-col
-                                    cols="12"
-                                    sm="6"
-                                >
+                                </div>
+                                <div class="airline-field-grid__item">
                                     <c-text-field
                                         v-model="flight.passengers"
                                         label="Passengers"
@@ -216,8 +202,8 @@
                                             />
                                         </template>
                                     </c-text-field>
-                                </c-col>
-                            </c-row>
+                                </div>
+                            </div>
                             <div class="d-flex align-center gap-3">
                                 <span
                                     class="fs-sm"
@@ -248,11 +234,8 @@
                             >
                                 Passenger information
                             </div>
-                            <c-row class="gap-y-4">
-                                <c-col
-                                    cols="12"
-                                    sm="6"
-                                >
+                            <div class="airline-field-grid">
+                                <div class="airline-field-grid__item">
                                     <c-text-field
                                         v-model="passenger.firstName"
                                         label="First name"
@@ -260,11 +243,8 @@
                                         validate-on="blur"
                                         preset="input.blue"
                                     />
-                                </c-col>
-                                <c-col
-                                    cols="12"
-                                    sm="6"
-                                >
+                                </div>
+                                <div class="airline-field-grid__item">
                                     <c-text-field
                                         v-model="passenger.lastName"
                                         label="Last name"
@@ -272,8 +252,8 @@
                                         validate-on="blur"
                                         preset="input.blue"
                                     />
-                                </c-col>
-                            </c-row>
+                                </div>
+                            </div>
                             <c-text-field
                                 v-model="passenger.passport"
                                 label="Passport number"
@@ -363,11 +343,8 @@
                                     />
                                 </template>
                             </c-text-field>
-                            <c-row class="gap-y-4">
-                                <c-col
-                                    cols="12"
-                                    sm="6"
-                                >
+                            <div class="airline-field-grid">
+                                <div class="airline-field-grid__item">
                                     <c-text-field
                                         v-model="payment.expiry"
                                         label="Expiry (MM/YY)"
@@ -375,11 +352,8 @@
                                         validate-on="blur"
                                         preset="input.blue"
                                     />
-                                </c-col>
-                                <c-col
-                                    cols="12"
-                                    sm="6"
-                                >
+                                </div>
+                                <div class="airline-field-grid__item">
                                     <c-text-field
                                         v-model="payment.cvv"
                                         label="CVV"
@@ -396,8 +370,8 @@
                                             />
                                         </template>
                                     </c-text-field>
-                                </c-col>
-                            </c-row>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Success -->
@@ -469,6 +443,17 @@
 .airline-header {
   background: linear-gradient(135deg, #1a6ef5 0%, #0fb8d4 100%);
   color: #fff;
+}
+
+.airline-field-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px 16px;
+}
+
+.airline-field-grid__item {
+  flex: 1 1 220px;
+  min-width: min(100%, 220px);
 }
 
 .brand {
@@ -592,5 +577,9 @@
 @media (max-width: 480px) {
   .steps { gap: 12px; }
   .step-label { display: none; }
+
+  .airline-field-grid__item {
+    flex-basis: 100%;
+  }
 }
 </style>
