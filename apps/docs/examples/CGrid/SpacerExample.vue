@@ -7,7 +7,14 @@
                     align="center"
                     no-gutter
                 >
-                    <span class="font-weight-bold text-white">⚡ Dashboard</span>
+                    <span class="font-weight-bold text-white d-flex items-center gap-2">
+                        <c-icon
+                            name="fas:bolt"
+                            source="fa"
+                            :size="14"
+                        />
+                        Dashboard
+                    </span>
                     <c-spacer />
                     <div class="d-flex items-center gap-3">
                         <span class="text-white nav-link">Docs</span>
@@ -53,19 +60,31 @@
                             variant="outlined"
                             class="radius-8 text-white"
                         >
-                            🔖
+                            <c-icon
+                                name="fas:bookmark"
+                                source="fa"
+                                :size="14"
+                            />
                         </c-btn>
                         <c-btn
                             variant="outlined"
                             class="radius-8 text-white"
                         >
-                            ❤️
+                            <c-icon
+                                name="fas:heart"
+                                source="fa"
+                                :size="14"
+                            />
                         </c-btn>
                         <c-btn
                             variant="outlined"
                             class="radius-8 text-white"
                         >
-                            ↗️
+                            <c-icon
+                                name="fas:arrow-up-right-from-square"
+                                source="fa"
+                                :size="14"
+                            />
                         </c-btn>
                     </div>
                 </c-row>
@@ -83,7 +102,12 @@
                         variant="outlined"
                         class="radius-8 text-white"
                     >
-                        ← Prev
+                        <c-icon
+                            name="fas:arrow-left"
+                            source="fa"
+                            :size="13"
+                        />
+                        Prev
                     </c-btn>
                     <c-spacer />
                     <span
@@ -95,7 +119,12 @@
                         variant="outlined"
                         class="radius-8 text-white"
                     >
-                        Next →
+                        Next
+                        <c-icon
+                            name="fas:arrow-right"
+                            source="fa"
+                            :size="13"
+                        />
                     </c-btn>
                 </c-row>
             </c-card-header>

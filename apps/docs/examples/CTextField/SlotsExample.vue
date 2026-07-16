@@ -14,15 +14,8 @@
 </script>
 
 <template>
-    <c-row class="gap-y-4">
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+    <div class="text-field-demo d-flex flex-wrap gap-4">
+        <div class="text-field-demo__item">
             <!-- Prepend icon -->
             <c-text-field
                 v-model="search"
@@ -38,16 +31,9 @@
                     />
                 </template>
             </c-text-field>
-        </c-col>
+        </div>
 
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+        <div class="text-field-demo__item">
             <!-- Prepend text prefix -->
             <c-text-field
                 v-model="username"
@@ -58,16 +44,9 @@
                     <span class="prefix">@</span>
                 </template>
             </c-text-field>
-        </c-col>
+        </div>
 
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+        <div class="text-field-demo__item">
             <!-- Append icon -->
             <c-text-field
                 v-model="github"
@@ -81,16 +60,9 @@
                     />
                 </template>
             </c-text-field>
-        </c-col>
+        </div>
 
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+        <div class="text-field-demo__item">
             <!-- Append text suffix -->
             <c-text-field
                 v-model="amount"
@@ -102,16 +74,9 @@
                     <span class="suffix">USD</span>
                 </template>
             </c-text-field>
-        </c-col>
+        </div>
 
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+        <div class="text-field-demo__item">
             <!-- Custom details slot -->
             <c-text-field
                 v-model="nickname"
@@ -133,16 +98,9 @@
                     </span>
                 </template>
             </c-text-field>
-        </c-col>
+        </div>
 
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+        <div class="text-field-demo__item">
             <!-- Prepend + Append -->
             <c-text-field
                 v-model="promo"
@@ -165,11 +123,16 @@
                     />
                 </template>
             </c-text-field>
-        </c-col>
-    </c-row>
+        </div>
+    </div>
 </template>
 
 <style scoped>
+.text-field-demo__item {
+  flex: 1 1 280px;
+  min-width: min(100%, 260px);
+}
+
 .prefix, .suffix {
   font-size: 13px;
   opacity: .6;

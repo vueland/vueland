@@ -7,7 +7,7 @@
         shallowReactive,
         Transition,
         unref,
-        useAttrs,
+        useAttrs
     } from 'vue'
 
     import { useAriaActivator } from '@/composables/use-aria-activator'
@@ -177,6 +177,8 @@
         focus,
         blur,
         reset,
+        isReadonly: () => props.readonly ?? false,
+        isDisabled: () => props.disabled ?? false,
     })
 </script>
 

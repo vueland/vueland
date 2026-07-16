@@ -7,7 +7,7 @@
         shallowRef,
         unref,
         useAttrs,
-        watch
+        watch,
     } from 'vue'
 
     import { COverlay } from '@/components/COverlay'
@@ -122,10 +122,10 @@
 
     function close() {
         closeDelay(() => {
-            emit('close')
-
             mounted.value = props.ssr ?? false
             model.value = false
+
+            emit('close')
         })
     }
 
@@ -171,6 +171,7 @@
         watch(model, (value) => {
             if (isDef(props.modelValue)) {
                 value && open()
+                !value && close()
             }
 
             if (value) {
@@ -187,10 +188,6 @@
         onMounted(() => {
             if (isParentActivator) {
                 bindListeners(listeners)
-            }
-
-            if (!isDef(props.modelValue) && unref(model)) {
-                open()
             }
         })
 

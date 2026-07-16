@@ -4,9 +4,14 @@ import {
     faTwitter,
 } from '@fortawesome/free-brands-svg-icons'
 import {
+    faArrowLeft,
+    faArrowRight,
+    faArrowUpRightFromSquare,
     faAt,
     faBan,
     faBell,
+    faBolt,
+    faBookmark,
     faBox,
     faBriefcase,
     faCalendarAlt,
@@ -60,6 +65,7 @@ import { ALIASES } from '@vueland/ui/constants'
 import { createFontAwesomeResolver } from '@vueland/ui/resolvers'
 import type {
     CButtonPreset,
+    CDatePickerPreset,
     CInputPreset,
     CProgressCircularPreset,
     CProgressLinearPreset,
@@ -102,7 +108,12 @@ const fa = createFontAwesomeResolver({
         'fas:pen': faPen,
         'fas:key': faKey,
         'fas:at': faAt,
+        'fas:arrow-left': faArrowLeft,
+        'fas:arrow-right': faArrowRight,
+        'fas:arrow-up-right-from-square': faArrowUpRightFromSquare,
         'fas:hashtag': faHashtag,
+        'fas:bolt': faBolt,
+        'fas:bookmark': faBookmark,
         'fas:code': faCode,
         'fas:briefcase': faBriefcase,
         'fas:shield-alt': faShieldAlt,
@@ -154,6 +165,54 @@ function makeInputPreset(color: string): CInputPreset {
         error: { details: ['text-red'] },
     }
 }
+
+function makeDateInputPreset(color: string, datePicker: CDatePickerPreset): CInputPreset {
+    const input = makeInputPreset(color)
+
+    return {
+        ...input,
+        base: {
+            ...input.base,
+            datePicker,
+        },
+    }
+}
+
+const datePickerNeonPreset: CDatePickerPreset = {
+    base: {
+        root: ['radius-12'],
+        display: ['bg-indigo', 'text-white'],
+        week: ['text-indigo'],
+        cell: ['radius-8'],
+    },
+    months: {
+        cell: ['radius-10'],
+    },
+    years: {
+        cell: ['radius-10'],
+    },
+}
+
+const datePickerAgendaPreset: CDatePickerPreset = {
+    base: {
+        root: ['radius-8'],
+        display: ['bg-teal', 'text-white'],
+        week: ['text-teal'],
+        cell: ['radius-6'],
+    },
+    dates: {
+        cell: ['fw-semi-bold'],
+    },
+    months: {
+        cell: ['fw-semi-bold'],
+    },
+    years: {
+        cell: ['fw-semi-bold'],
+    },
+}
+
+const dateInputBookingPreset = makeDateInputPreset('text-teal', datePickerAgendaPreset)
+const dateInputCampaignPreset = makeDateInputPreset('text-indigo', datePickerNeonPreset)
 
 // Демо для страниц CProgressCircular / CProgressLinear: complete перекрашивает
 // прогресс в зелёный, когда value доходит до 100. Кольцо и подложка — SVG,
@@ -218,6 +277,8 @@ export default {
                     orange: makeInputPreset('text-orange'),
                     pink: makeInputPreset('text-pink'),
                     cyan: makeInputPreset('text-cyan'),
+                    dateBooking: dateInputBookingPreset,
+                    dateCampaign: dateInputCampaignPreset,
                 },
                 progress: {
                     upload: uploadProgressPreset,
@@ -226,6 +287,10 @@ export default {
                 button: {
                     save: saveButtonPreset,
                     pill: pillButtonPreset,
+                },
+                datePicker: {
+                    neon: datePickerNeonPreset,
+                    agenda: datePickerAgendaPreset,
                 },
             },
         })

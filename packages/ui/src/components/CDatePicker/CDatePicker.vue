@@ -1,140 +1,94 @@
 <script setup lang="ts">
     import {
         computed,
+        inject,
+        onBeforeUnmount,
+        onMounted,
         reactive,
         shallowRef,
-        unref,
-        type VNodeChild,
         watch
     } from 'vue'
 
-    import { isDef } from '@/helpers'
+    import { CKeyboardProvider } from '@/components/CKeyboardProvider'
+    import type { KeyboardTarget } from '@/components/CKeyboardProvider/types'
+    import { useDatePickerPresets } from '@/composables/use-date-picker-presets'
+    import { useKeyboard } from '@/composables/use-keyboard'
+    import { $KEYBOARD_API_KEY } from '@/constants'
 
-    import CDatePickerDates, { type EnrichedDate } from './CDatePickerDates.vue'
+    import CDatePickerDates from './CDatePickerDates.vue'
     import CDatePickerHeader from './CDatePickerHeader.vue'
-    import CDatePickerMonths, { type EnrichedMonth } from './CDatePickerMonths.vue'
-    import CDatePickerYears, { type EnrichedYear } from './CDatePickerYears.vue'
-    import { parseDate } from './helpers'
-    import type { DatePickerDate, DisabledDates } from './types'
-    import { LOCALE } from './utils'
-
-    const enum ViewMode {
-        DATES = 0,
-        MONTHS = 1,
-        YEARS = 2,
-    }
-
-    type PickerRef = InstanceType<typeof CDatePickerDates> | InstanceType<typeof CDatePickerMonths> | InstanceType<typeof CDatePickerYears> | null
-
-    export type DatePickerSlotApi = {
-        view: ViewMode
-        value: string
-        selected: DatePickerDate
-        disablePrev: boolean
-        disableNext: boolean
-        onNext: () => void
-        onPrev: () => void
-        onTable: () => void
-        onToday: () => void
-    }
-
-    export type DatePickerWeekDay = {
-        day: number
-        label: string | undefined
-    }
-
-    export type DatePickerEnrichedDate = EnrichedDate
-
-    export type DatePickerEnrichedMonth = EnrichedMonth
-
-    export type DatePickerEnrichedYear = EnrichedYear
-
-    export type CDatePickerProps = {
-        modelValue?: Date | string | null
-        lang?: string
-        format?: string
-        mondayFirst?: boolean
-        disabledDates?: DisabledDates
-        highlightedDates?: (Date | string)[]
-        minDate?: Date | string
-        maxDate?: Date | string
-    }
+    import CDatePickerMonths from './CDatePickerMonths.vue'
+    import CDatePickerYears from './CDatePickerYears.vue'
+    import { isValidDateValue, parseDate } from './helpers'
+    import { mergeLocale } from './locales'
+    import type {
+        CDatePickerEmits,
+        CDatePickerProps,
+        CDatePickerSlots,
+        DatePickerDate,
+        DatePickerSlotApi,
+        DatePickerView,
+        DatePickerViewApi,
+    } from './types'
 
     defineOptions({ name: 'CDatePicker' })
 
-    const props = withDefaults(defineProps<CDatePickerProps>(), {
-        lang: 'en',
-        format: 'dd.MM.yyyy',
-    })
+    const props = defineProps<CDatePickerProps>()
 
-    const emit = defineEmits<{
-        'update:modelValue': [value: Date | null]
-        selected: [value: Date | null]
-    }>()
+    const emit = defineEmits<CDatePickerEmits>()
 
-    defineSlots<{
-        'before-header'?(props: DatePickerSlotApi): VNodeChild
-        header?(props: DatePickerSlotApi): VNodeChild
-        'before-body'?(props: DatePickerSlotApi): VNodeChild
-        body?(props: DatePickerSlotApi): VNodeChild
-        footer?(props: DatePickerSlotApi): VNodeChild
-        week?(props: { days: DatePickerWeekDay[] }): VNodeChild
-        dates?(props: {
-            dates: EnrichedDate[]
-            onSelect: (d: DatePickerDate) => void }
-        ): any
-        date?(props: DatePickerDate & {
-            isSelected: boolean;
-            isToday: boolean
-        }): VNodeChild
-        months?(props: { months: EnrichedMonth[] }): VNodeChild
-        month?(props: EnrichedMonth): VNodeChild
-        years?(props: { years: EnrichedYear[] }): VNodeChild
-        year?(props: EnrichedYear): VNodeChild
-    }>()
+    defineSlots<CDatePickerSlots>()
 
-    const picker = shallowRef<PickerRef>(null)
+    const picker = shallowRef<DatePickerViewApi | null>(null)
+    const keyboardRef = shallowRef()
+    const rootRef = shallowRef<HTMLElement>()
+
+    const keyboard = inject($KEYBOARD_API_KEY, null)
+
+    const tabIndex = keyboard ? -1 : 0
+    const today = parseDate(new Date())
+
+    const selected = computed<DatePickerDate | null>(() =>
+        isValidDateValue(props.modelValue) ? parseDate(props.modelValue) : null,
+    )
+    const displayValue = computed<DatePickerDate>(() => selected.value ?? today)
 
     const state = reactive({
-        tableMonth: 0,
-        tableYear: 0,
-        view: ViewMode.DATES as ViewMode,
+        tableMonth: displayValue.value.month,
+        tableYear: displayValue.value.year,
+        view: 'dates' as DatePickerView,
         bodyTransition: 'c-date-slide-left',
     })
 
-    const today = parseDate(new Date())
+    const presetZones = useDatePickerPresets({
+        props,
+        view: () => state.view,
+    })
 
-    const selected = computed<DatePickerDate>(() =>
-        props.modelValue ? parseDate(new Date(props.modelValue)) : today,
-    )
-
-    const locale = computed(() => LOCALE[props.lang] ?? LOCALE['en'])
-
-    const minDate = computed(() => props.minDate ? parseDate(new Date(props.minDate)) : null)
-
-    const maxDate = computed(() => props.maxDate ? parseDate(new Date(props.maxDate)) : null)
+    const dateLocale = computed(() => mergeLocale(props.locale))
+    const minDate = computed(() => isValidDateValue(props.minDate) ? parseDate(props.minDate) : null)
+    const maxDate = computed(() => isValidDateValue(props.maxDate) ? parseDate(props.maxDate) : null)
 
     const headerValue = computed(() => {
-        if (state.view === ViewMode.YEARS) {
+        if (state.view === 'years') {
             return `${state.tableYear}`
         }
 
-        if (state.view === ViewMode.MONTHS) {
-            return `${unref(locale).monthsAbbr[state.tableMonth]}`
+        if (state.view === 'months') {
+            return dateLocale.value.monthsAbbr[state.tableMonth]
         }
 
-        return `${unref(locale).monthsAbbr[state.tableMonth]} ${state.tableYear}`
+        return `${dateLocale.value.monthsAbbr[state.tableMonth]} ${state.tableYear}`
     })
-
-    const displayYear = computed(() => selected.value.year)
 
     const displayDate = computed(() => {
         const {
             month,
             date,
             day
-        } = unref(selected)
-        return `${locale.value.monthsAbbr[month]} ${date}, ${locale.value.week[day]}`
+        } = displayValue.value
+
+        return `${dateLocale.value.monthsAbbr[month]} ${date}, ${dateLocale.value.week[day]}`
     })
 
     const disablePrev = computed(() => {
@@ -142,12 +96,12 @@
             return false
         }
 
-        if (state.view === ViewMode.YEARS) {
-            return state.tableYear <= unref(minDate)!.year && state.tableMonth <= unref(minDate)!.month
+        if (state.view === 'dates') {
+            return compareMonth(state.tableYear, state.tableMonth, minDate.value) <= 0
         }
 
-        if (state.view === ViewMode.MONTHS) {
-            return state.tableYear <= unref(minDate)!.year
+        if (state.view === 'months') {
+            return state.tableYear <= minDate.value.year
         }
 
         return false
@@ -158,12 +112,12 @@
             return false
         }
 
-        if (state.view === ViewMode.DATES) {
-            return state.tableYear >= unref(maxDate)!.year && state.tableMonth >= unref(maxDate)!.month
+        if (state.view === 'dates') {
+            return compareMonth(state.tableYear, state.tableMonth, maxDate.value) >= 0
         }
 
-        if (state.view === ViewMode.MONTHS) {
-            return state.tableYear >= unref(maxDate)!.year
+        if (state.view === 'months') {
+            return state.tableYear >= maxDate.value.year
         }
 
         return false
@@ -175,77 +129,101 @@
         selected: selected.value,
         disablePrev: disablePrev.value,
         disableNext: disableNext.value,
-        onNext: () => unref(picker)?.onNext(),
-        onPrev: () => unref(picker)?.onPrev(),
+        preset: presetZones.value,
+        onNext: () => picker.value?.onNext(),
+        onPrev: () => picker.value?.onPrev(),
         onTable: onTogglePicker,
         onToday,
     }))
 
+    function setView(view: DatePickerView, transition: string) {
+        state.bodyTransition = transition
+        state.view = view
+    }
+
+    function compareMonth(year: number, month: number, date: DatePickerDate): number {
+        return (year * 12 + month) - (date.year * 12 + date.month)
+    }
+
+    // Клик по хедеру поднимает вьюху крупнее: dates → months → years, из years — назад в months
     function onTogglePicker() {
-        if (state.view === ViewMode.DATES) {
-            state.bodyTransition = 'c-date-slide-up'
-            state.view = ViewMode.MONTHS
-            return
-        }
-
-        if (state.view === ViewMode.MONTHS) {
-            state.bodyTransition = 'c-date-slide-up'
-            state.view = ViewMode.YEARS
-            return
-        }
-
-        if (state.view === ViewMode.YEARS) {
-            state.bodyTransition = 'c-date-slide-down'
-            state.view = ViewMode.MONTHS
+        if (state.view === 'dates') {
+            setView('months', 'c-date-slide-up')
+        } else if (state.view === 'months') {
+            setView('years', 'c-date-slide-up')
+        } else {
+            setView('months', 'c-date-slide-down')
         }
     }
 
     function onYearUpdate(year: number) {
         state.tableYear = year
-        state.bodyTransition = 'c-date-slide-down'
-        state.view = ViewMode.MONTHS
+        setView('months', 'c-date-slide-down')
     }
 
     function onMonthUpdate(month: number) {
         state.tableMonth = month
-        state.bodyTransition = 'c-date-slide-down'
-        state.view = ViewMode.DATES
+        setView('dates', 'c-date-slide-down')
     }
 
     function onMonthChange(params: {
-        month: number;
-        year?: number }) {
-            state.tableMonth = params.month
-            if (isDef(params.year)) state.tableYear = params.year!
-        }
+        month: number
+        year: number
+    }) {
+        state.tableMonth = params.month
+        state.tableYear = params.year
+    }
+
+    function onYearChange(year: number) {
+        state.tableYear = year
+    }
 
     function onDateSelect(date: DatePickerDate) {
         state.tableMonth = date.month
         state.tableYear = date.year
 
-        const value = new Date(date.year, date.month, date.date as number)
+        const value = new Date(date.year, date.month, date.date)
 
         emit('update:modelValue', value)
-        emit('selected', value)
     }
 
     function onToday() {
         state.tableMonth = today.month
         state.tableYear = today.year
-        state.view = ViewMode.DATES
+        setView('dates', 'c-date-slide-down')
     }
 
-    watch(selected, (val) => {
+    watch(displayValue, (val) => {
         state.tableMonth = val.month
         state.tableYear = val.year
-    }, { immediate: true })
+    })
+
+    // Активная вьюха сама регистрируется во внутреннем контуре — пикер только
+    // доставляет события: с корня (standalone) или из контура хоста (CDateInput),
+    // где фокус остаётся в поле.
+
+    const { onKeydown } = useKeyboard({ '*': (e) => keyboardRef.value?.forward(e) })
+
+    const keyboardTarget: KeyboardTarget = {
+        onKeydown,
+        blur: () => rootRef.value?.blur(),
+        getElement: () => rootRef.value,
+    }
+
+    onMounted(() => keyboard?.register(keyboardTarget))
+    onBeforeUnmount(() => keyboard?.unregister(keyboardTarget))
 </script>
 
 <template>
-    <div class="c-date-picker">
-        <div class="c-date-picker__display">
+    <div
+        ref="rootRef"
+        :class="['c-date-picker', ...presetZones.root]"
+        :tabindex="tabIndex"
+        @keydown="onKeydown"
+    >
+        <div :class="['c-date-picker__display', ...presetZones.display]">
             <div class="c-date-picker__display-year">
-                {{ displayYear }}
+                {{ displayValue.year }}
             </div>
             <transition
                 name="c-date-fade"
@@ -264,15 +242,10 @@
             v-if="$slots['before-header']"
             name="before-header"
             v-bind="slotApi"
-        ></slot>
+        />
 
-        <slot
-            v-if="$slots.header"
-            name="header"
-            v-bind="slotApi"
-        ></slot>
         <c-date-picker-header
-            v-else
+            :class="presetZones.header"
             :disable-prev
             :disable-next
             @next="picker?.onNext()"
@@ -286,131 +259,129 @@
             v-if="$slots['before-body']"
             name="before-body"
             v-bind="slotApi"
-        ></slot>
+        />
 
         <div class="c-date-picker__body">
-            <slot
-                v-if="$slots.body"
-                name="body"
-                v-bind="slotApi"
-            ></slot>
-            <transition
-                v-else
-                :name="state.bodyTransition"
-                mode="out-in"
-            >
-                <c-date-picker-years
-                    v-if="state.view === ViewMode.YEARS"
-                    key="years"
-                    ref="picker"
-                    :year="state.tableYear"
-                    :min-year="minDate?.year"
-                    :max-year="maxDate?.year"
-                    @update:year="onYearUpdate"
+            <c-keyboard-provider ref="keyboardRef">
+                <transition
+                    :name="state.bodyTransition"
+                    mode="out-in"
                 >
-                    <template
-                        v-if="$slots.years"
-                        #years="slotProps"
+                    <c-date-picker-years
+                        v-if="state.view === 'years'"
+                        key="years"
+                        ref="picker"
+                        :year="state.tableYear"
+                        :value="selected"
+                        :min-year="minDate?.year"
+                        :max-year="maxDate?.year"
+                        @update:year="onYearUpdate"
                     >
-                        <slot
-                            name="years"
-                            v-bind="slotProps"
-                        ></slot>
-                    </template>
-                    <template
-                        v-if="$slots.year"
-                        #year="slotProps"
-                    >
-                        <slot
-                            name="year"
-                            v-bind="slotProps"
-                        ></slot>
-                    </template>
-                </c-date-picker-years>
+                        <template
+                            v-if="$slots.years"
+                            #years="slotProps"
+                        >
+                            <slot
+                                name="years"
+                                v-bind="slotProps"
+                            />
+                        </template>
+                        <template
+                            v-if="$slots.year"
+                            #year="slotProps"
+                        >
+                            <slot
+                                name="year"
+                                v-bind="slotProps"
+                            />
+                        </template>
+                    </c-date-picker-years>
 
-                <c-date-picker-months
-                    v-else-if="state.view === ViewMode.MONTHS"
-                    key="months"
-                    ref="picker"
-                    :month="state.tableMonth"
-                    :year="state.tableYear"
-                    :locale="locale.monthsAbbr"
-                    :min-date="minDate"
-                    :max-date="maxDate"
-                    @update:month="onMonthUpdate"
-                    @update:year="(y) => { state.tableYear = y }"
-                >
-                    <template
-                        v-if="$slots.months"
-                        #months="slotProps"
+                    <c-date-picker-months
+                        v-else-if="state.view === 'months'"
+                        key="months"
+                        ref="picker"
+                        :month="state.tableMonth"
+                        :year="state.tableYear"
+                        :value="selected"
+                        :locale="dateLocale.monthsAbbr"
+                        :min-date="minDate"
+                        :max-date="maxDate"
+                        @update:month="onMonthUpdate"
+                        @update:year="onYearChange"
                     >
-                        <slot
-                            name="months"
-                            v-bind="slotProps"
-                        ></slot>
-                    </template>
-                    <template
-                        v-if="$slots.month"
-                        #month="slotProps"
-                    >
-                        <slot
-                            name="month"
-                            v-bind="slotProps"
-                        ></slot>
-                    </template>
-                </c-date-picker-months>
+                        <template
+                            v-if="$slots.months"
+                            #months="slotProps"
+                        >
+                            <slot
+                                name="months"
+                                v-bind="slotProps"
+                            />
+                        </template>
+                        <template
+                            v-if="$slots.month"
+                            #month="slotProps"
+                        >
+                            <slot
+                                name="month"
+                                v-bind="slotProps"
+                            />
+                        </template>
+                    </c-date-picker-months>
 
-                <c-date-picker-dates
-                    v-else
-                    key="dates"
-                    ref="picker"
-                    :year="state.tableYear"
-                    :month="state.tableMonth"
-                    :value="selected"
-                    :locale="locale.week"
-                    :monday-first="mondayFirst"
-                    :disabled-dates="disabledDates"
-                    :highlighted-dates="highlightedDates"
-                    :min-date="minDate"
-                    :max-date="maxDate"
-                    @update:value="onDateSelect"
-                    @update:month="onMonthChange"
-                >
-                    <template
-                        v-if="$slots.week"
-                        #week="slotProps"
+                    <c-date-picker-dates
+                        v-else
+                        key="dates"
+                        ref="picker"
+                        :model-value="selected"
+                        :year="state.tableYear"
+                        :month="state.tableMonth"
+                        :locale="dateLocale.week"
+                        :monday-first="mondayFirst"
+                        :disabled-dates="disabledDates"
+                        :highlighted-dates="highlightedDates"
+                        :min-date="minDate"
+                        :max-date="maxDate"
+                        @update:model-value="onDateSelect"
+                        @update:month="onMonthChange"
                     >
-                        <slot
-                            name="week"
-                            v-bind="slotProps"
-                        ></slot>
-                    </template>
-                    <template
-                        v-if="$slots.dates"
-                        #dates="slotProps"
-                    >
-                        <slot
-                            name="dates"
-                            v-bind="slotProps"
-                        ></slot>
-                    </template>
-                    <template
-                        v-if="$slots.date"
-                        #date="slotProps"
-                    >
-                        <slot
-                            name="date"
-                            v-bind="slotProps"
-                        ></slot>
-                    </template>
-                </c-date-picker-dates>
-            </transition>
+                        <template
+                            v-if="$slots.week"
+                            #week="slotProps"
+                        >
+                            <slot
+                                name="week"
+                                v-bind="slotProps"
+                            />
+                        </template>
+                        <template
+                            v-if="$slots.dates"
+                            #dates="slotProps"
+                        >
+                            <slot
+                                name="dates"
+                                v-bind="slotProps"
+                            />
+                        </template>
+                        <template
+                            v-if="$slots.date"
+                            #date="slotProps"
+                        >
+                            <slot
+                                name="date"
+                                v-bind="slotProps"
+                            />
+                        </template>
+                    </c-date-picker-dates>
+                </transition>
+            </c-keyboard-provider>
         </div>
 
         <slot
             v-if="$slots.footer"
             name="footer"
             v-bind="slotApi"
-        ></slot>
+        />
     </div>
 </template>

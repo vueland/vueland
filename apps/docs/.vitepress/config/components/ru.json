@@ -63,6 +63,19 @@
             {
                 "file": "CAutocomplete",
                 "title": "CAutocomplete ★"
+            },
+            {
+                "file": "CDateInput",
+                "title": "CDateInput ★"
+            }
+        ]
+    },
+    {
+        "title": "Пикеры",
+        "items": [
+            {
+                "file": "CDatePicker",
+                "title": "CDatePicker ★"
             }
         ]
     },

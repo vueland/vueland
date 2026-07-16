@@ -21,4 +21,5 @@ export type CTextFieldSlots = {
 
 export type CTextFieldEmits<T = any> = {
     (e: 'update:modelValue', val: T) :void
+    (e: 'clear') :void
 }

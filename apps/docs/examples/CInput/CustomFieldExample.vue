@@ -9,118 +9,111 @@
 </script>
 
 <template>
-    <div class="max-w-full">
-        <c-row class="gap-y-2">
-            <c-col
-                cols="6"
-                offset="3"
-            >
-                <!-- Search bar -->
-                <c-input v-model="search">
-                    <template #field="field">
-                        <div
-                            class="search-bar"
-                            :class="{ 'search-bar--focused': field.focused }"
-                        >
-                            <svg
-                                class="search-icon"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <circle
-                                    cx="11"
-                                    cy="11"
-                                    r="8"
-                                />
-                                <path d="m21 21-4.35-4.35" />
-                            </svg>
-                            <input
-                                v-bind="field.attrs"
-                                class="search-input"
-                                placeholder="Search anything…"
-                                :value="search"
-                                @input="(e: any) => { search = e.target.value; field.input(e.target.value) }"
-                                @focus="field.focus"
-                                @blur="field.blur"
-                            />
-                            <kbd
-                                v-if="!search"
-                                class="search-kbd"
-                            >⌘K</kbd>
-                            <button
-                                v-else
-                                class="search-clear"
-                                @click="search = ''"
-                            >
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2.5"
-                                    width="14"
-                                    height="14"
-                                >
-                                    <path d="M18 6 6 18M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-                    </template>
-                </c-input>
-            </c-col>
-
-            <c-col
-                cols="6"
-                offset="3"
-            >
-                <!-- Textarea with counter -->
-                <c-input
-                    v-model="bio"
-                    :rules="bioRules"
-                    validate-on="input"
+    <div class="custom-input-demo d-flex flex-col gap-5">
+        <!-- Search bar -->
+        <c-input v-model="search">
+            <template #field="field">
+                <div
+                    class="search-bar"
+                    :class="{ 'search-bar--focused': field.focused }"
                 >
-                    <template #field="field">
-                        <div
-                            class="rich-textarea"
-                            :class="{ 'rich-textarea--focused': field.focused, 'rich-textarea--error': field.hasError }"
+                    <svg
+                        class="search-icon"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <circle
+                            cx="11"
+                            cy="11"
+                            r="8"
+                        />
+                        <path d="m21 21-4.35-4.35" />
+                    </svg>
+                    <input
+                        v-bind="field.attrs"
+                        class="search-input"
+                        placeholder="Search anything…"
+                        :value="search"
+                        @input="(e: any) => { search = e.target.value }"
+                        @focus="field.focus"
+                        @blur="field.blur"
+                    />
+                    <kbd
+                        v-if="!search"
+                        class="search-kbd"
+                    >⌘K</kbd>
+                    <button
+                        v-else
+                        class="search-clear"
+                        @click="search = ''"
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.5"
+                            width="14"
+                            height="14"
                         >
-                            <div class="rich-textarea__header">
-                                <span class="rich-textarea__label">About me</span>
-                                <span
-                                    class="rich-textarea__counter"
-                                    :class="{ 'rich-textarea__counter--warn': bio.length > 180, 'rich-textarea__counter--error': field.hasError }"
-                                >
-                                    {{ bio.length }}/200
-                                </span>
-                            </div>
-                            <textarea
-                                v-bind="field.attrs"
-                                class="rich-textarea__input"
-                                placeholder="Tell the world something about yourself…"
-                                rows="4"
-                                :value="bio"
-                                @input="(e: any) => { bio = e.target.value; field.input(e.target.value) }"
-                                @focus="field.focus"
-                                @blur="field.blur"
-                            />
-                            <div class="rich-textarea__footer">
-                                <span
-                                    class="rich-textarea__hint"
-                                    :style="{ color: field.hasError ? 'var(--c-sys-color-error)' : '' }"
-                                >
-                                    {{ field.hasError ? 'Maximum 200 characters' : 'Markdown supported' }}
-                                </span>
-                            </div>
-                        </div>
-                    </template>
-                </c-input>
-            </c-col>
-        </c-row>
+                            <path d="M18 6 6 18M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+            </template>
+        </c-input>
+
+        <!-- Textarea with counter -->
+        <c-input
+            v-model="bio"
+            :rules="bioRules"
+            validate-on="input"
+        >
+            <template #field="field">
+                <div
+                    class="rich-textarea"
+                    :class="{ 'rich-textarea--focused': field.focused, 'rich-textarea--error': field.hasError }"
+                >
+                    <div class="rich-textarea__header">
+                        <span class="rich-textarea__label">About me</span>
+                        <span
+                            class="rich-textarea__counter"
+                            :class="{ 'rich-textarea__counter--warn': bio.length > 180, 'rich-textarea__counter--error': field.hasError }"
+                        >
+                            {{ bio.length }}/200
+                        </span>
+                    </div>
+                    <textarea
+                        v-bind="field.attrs"
+                        class="rich-textarea__input"
+                        placeholder="Tell the world something about yourself…"
+                        rows="4"
+                        :value="bio"
+                        @input="(e: any) => { bio = e.target.value }"
+                        @focus="field.focus"
+                        @blur="field.blur"
+                    />
+                    <div class="rich-textarea__footer">
+                        <span
+                            class="rich-textarea__hint"
+                            :style="{ color: field.hasError ? 'var(--c-sys-color-error)' : '' }"
+                        >
+                            {{ field.hasError ? 'Maximum 200 characters' : 'Markdown supported' }}
+                        </span>
+                    </div>
+                </div>
+            </template>
+        </c-input>
     </div>
 </template>
 
 <style scoped lang="scss">
+.custom-input-demo {
+  max-width: 560px;
+  margin-inline: auto;
+}
+
 /* ---- OTP ---- */
 .otp-wrap {
   display: flex;

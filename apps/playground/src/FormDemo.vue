@@ -5,6 +5,7 @@
 
     const value = shallowRef([])
     const email = shallowRef([])
+    const date = shallowRef()
 
     const rules = [
         val => ({
@@ -17,13 +18,6 @@
         { name: 'Alex', email: 'aaa@mail.ru' },
         { name: 'Vitaly', email: 'vvv@mail.ru' },
         { name: 'Mikhail', email: 'mmm@mail.ru' },
-    ]
-
-    const emailRules = [
-        (val: string) => ({
-            valid: !!val,
-            message: 'Email is required',
-        })
     ]
 
 </script>
@@ -88,10 +82,15 @@
                                 </template>
                             </c-autocomplete>
 
-                            <c-text-field
-                                v-model="email"
-                                label="Email address"
-                                :rules="emailRules"
+                            <c-date-input
+                                v-model="date"
+                                :disabled-dates="{to: new Date(2026, 4, 10)}"
+                                label="date"
+                                format="MM-dd-yyyy"
+                                locale="ru"
+                                monday-first
+                                clearable
+                                preset="input.soft"
                             />
                         </c-form>
                     </c-card-body>

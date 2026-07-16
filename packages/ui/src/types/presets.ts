@@ -52,6 +52,18 @@ export type CFieldState = 'focused' | 'filled' | 'error' | 'disabled' | 'readonl
 export type CFieldPreset = StatePresets<CFieldZone, CFieldState>
 
 // ---------------------------------------------------------------------------
+// DatePicker
+// ---------------------------------------------------------------------------
+
+/** `display` — верхний блок с выбранной датой, `cell` — ячейка любой вьюхи (дата/месяц/год). */
+export type CDatePickerZone = 'root' | 'display' | 'header' | 'week' | 'cell'
+
+/** Активная вьюха пикера — взаимоисключающие в моменте. */
+export type CDatePickerState = 'dates' | 'months' | 'years'
+
+export type CDatePickerPreset = StatePresets<CDatePickerZone, CDatePickerState>
+
+// ---------------------------------------------------------------------------
 // Input
 // ---------------------------------------------------------------------------
 
@@ -73,6 +85,7 @@ export type CInputSnapshot = ZonePreset<CInputZone> & {
     field?: CFieldPreset
     menu?: CMenuPreset
     list?: CListPreset
+    datePicker?: CDatePickerPreset
 }
 
 /** Набор пресета инпута по состояниям — то, что кладут в реестр. */

@@ -25,13 +25,8 @@
 </script>
 
 <template>
-    <c-row class="gap-y-2 gap-x-1">
-        <c-col
-            xl="6"
-            lg="6"
-            offset-xl="3"
-            offset-lg="3"
-        >
+    <div class="async-demo d-flex flex-col gap-4">
+        <div>
             <c-text-field
                 v-model="username"
                 label="Username"
@@ -71,14 +66,9 @@
                     >Min 3 characters, must be unique</span>
                 </template>
             </c-text-field>
-        </c-col>
+        </div>
 
-        <c-col
-            xl="6"
-            lg="6"
-            offset-xl="3"
-            offset-lg="3"
-        >
+        <div>
             <c-text-field
                 v-model="email"
                 label="Email"
@@ -112,23 +102,19 @@
                     >We'll send a verification link</span>
                 </template>
             </c-text-field>
-        </c-col>
-        <c-col>
-            <p class="ex-hint">
-                Try: <code>admin</code>, <code>user</code>, <code>root</code> (taken) or <code>test@taken.com</code>
-            </p>
-        </c-col>
-    </c-row>
+        </div>
+        <p class="ex-hint">
+            Try: <code>admin</code>, <code>user</code>, <code>root</code> (taken) or <code>test@taken.com</code>
+        </p>
+    </div>
 </template>
 
 <style scoped>
-.ex-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 16px;
+.async-demo {
   max-width: 400px;
+  margin-inline: auto;
 }
+
 .ex-hint {
   font-size: 13px;
   opacity: .6;

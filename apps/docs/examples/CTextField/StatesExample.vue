@@ -6,29 +6,15 @@
 </script>
 
 <template>
-    <c-row class="gap-y-4">
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+    <div class="text-field-demo d-flex flex-wrap gap-4">
+        <div class="text-field-demo__item">
             <c-text-field
                 v-model="val"
                 label="Default"
             />
-        </c-col>
+        </div>
 
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+        <div class="text-field-demo__item">
             <c-text-field
                 v-model="val"
                 label="Clearable"
@@ -43,16 +29,9 @@
                     />
                 </template>
             </c-text-field>
-        </c-col>
+        </div>
 
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+        <div class="text-field-demo__item">
             <c-text-field
                 v-model="val"
                 label="Disabled"
@@ -66,16 +45,9 @@
                     />
                 </template>
             </c-text-field>
-        </c-col>
+        </div>
 
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+        <div class="text-field-demo__item">
             <c-text-field
                 v-model="readonly"
                 label="Readonly"
@@ -89,16 +61,9 @@
                     />
                 </template>
             </c-text-field>
-        </c-col>
+        </div>
 
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+        <div class="text-field-demo__item">
             <c-text-field
                 v-model="val"
                 label="With details"
@@ -113,16 +78,9 @@
                     />
                 </template>
             </c-text-field>
-        </c-col>
+        </div>
 
-        <c-col
-            xxl="4"
-            xl="4"
-            lg="6"
-            md="6"
-            sm="12"
-            class="px-2"
-        >
+        <div class="text-field-demo__item">
             <c-text-field
                 v-model="val"
                 label="With error"
@@ -137,6 +95,13 @@
                     />
                 </template>
             </c-text-field>
-        </c-col>
-    </c-row>
+        </div>
+    </div>
 </template>
+
+<style scoped>
+.text-field-demo__item {
+  flex: 1 1 280px;
+  min-width: min(100%, 260px);
+}
+</style>

@@ -3,7 +3,6 @@
         nextTick,
         shallowRef,
         unref,
-        useAttrs,
         watch,
     } from 'vue'
 
@@ -17,9 +16,8 @@
     import { CTextField } from '@/components/CTextField'
     import { useSelectedChips } from '@/composables'
     import { useAutocomplete } from '@/composables/use-autocomplete'
-    import { type KeyboardHandlers, useKeyboard } from '@/composables/use-keyboard'
+    import { useKeyboard } from '@/composables/use-keyboard'
     import { IconAliases } from '@/enums'
-    import { isDef } from '@/helpers'
 
     import {
         type CAutocompleteEmits,
@@ -35,13 +33,9 @@
 
     const model = defineModel<T | T[] | undefined | null>()
 
-    const inputRef = shallowRef()
+    const cTextFieldRef = shallowRef()
     const keyboardRef = shallowRef()
     const menu = shallowRef(false)
-
-    const attrs = useAttrs()
-
-    const isReadonly = () => isDef(attrs.readonly) && attrs.readonly !== false
 
     const {
         hasValue,
@@ -57,7 +51,7 @@
     }
 
     function onFocus() {
-        if (isReadonly()) {
+        if (unref(cTextFieldRef)?.isReadonly()) {
             return
         }
 
@@ -65,25 +59,25 @@
     }
 
     function onClose() {
-        unref(inputRef).blur()
+        unref(cTextFieldRef).blur()
     }
 
     // Выбор с клавиатуры делает сам список (Enter/Space → активация пункта);
     // здесь — только эффекты автокомплита. Провайдер вешает их на тот список,
     // который фактически отрендерен.
-    function onListKeyboardSelect() {
+    function onSelect() {
         if (props.multiple) {
-            unref(inputRef).blur()
-            nextTick(() => unref(inputRef).focus())
+            unref(cTextFieldRef).blur()
+            nextTick(() => unref(cTextFieldRef).focus())
         } else {
             inputValue.value = ''
         }
     }
 
-    const listHandlers: KeyboardHandlers = {
-        Enter: onListKeyboardSelect,
-        Space: onListKeyboardSelect,
-    }
+    const { onKeydown: onListKeydown } = useKeyboard({
+        Enter: onSelect,
+        Space: onSelect,
+    })
 
     function resetListFocus() {
         unref(keyboardRef)?.blur()
@@ -91,7 +85,7 @@
 
     const { onKeydown } = useKeyboard({
         Backspace: () => {
-            if (isReadonly() || unref(inputValue)) {
+            if (unref(cTextFieldRef).isReadonly() || unref(inputValue)) {
                 return
             }
 
@@ -104,11 +98,11 @@
             resetListFocus()
         },
         Tab: () => {
-            unref(inputRef).blur()
+            unref(cTextFieldRef).blur()
             menu.value = false
         },
         Escape: () => {
-            unref(inputRef).blur()
+            unref(cTextFieldRef).blur()
             menu.value = false
         },
         ArrowDown: (e) => unref(keyboardRef)?.forward(e),
@@ -132,7 +126,7 @@
 
 <template>
     <c-text-field
-        ref="inputRef"
+        ref="cTextFieldRef"
         v-model="inputValue"
         :validation-value="model"
         :dirty="hasValue"
@@ -178,7 +172,7 @@
                     <c-keyboard-provider
                         ref="keyboardRef"
                         v-slot="keyboard"
-                        :handlers="listHandlers"
+                        @keydown="onListKeydown"
                     >
                         <slot
                             name="menu"

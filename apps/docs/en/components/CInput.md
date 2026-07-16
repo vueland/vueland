@@ -40,7 +40,6 @@ import PresetStatesExample from '../../examples/CInput/PresetStatesExample.vue'
           @input="
             (e: any) => {
               search = e.target.value
-              field.input(e.target.value)
             }
           "
           @focus="field.focus"
@@ -268,19 +267,22 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 
 ### Events
 
-| Event   | Arguments | Description          |
-| ------- | --------- | -------------------- |
-| `focus` | `boolean` | Field received focus |
-| `blur`  | —         | Field lost focus     |
+| Event            | Arguments | Description         |
+| ---------------- | --------- | ------------------- |
+| `update:focused` | `boolean` | Focus state changed |
+
+`CInput` is a renderless primitive: it accepts `modelValue` for validation and state, but it does not know how to update a custom field value. Update your source value inside the `field` slot.
 
 ### Expose
 
-| Method     | Signature                | Description                      |
-| ---------- | ------------------------ | -------------------------------- |
-| `validate` | `() => Promise<boolean>` | Trigger validation manually      |
-| `reset`    | `() => void`             | Clear the error state            |
-| `focus`    | `() => void`             | Programmatically focus the field |
-| `blur`     | `() => void`             | Programmatically remove focus    |
+| Method       | Signature                | Description                                                        |
+| ------------ | ------------------------ | ------------------------------------------------------------------ |
+| `validate`   | `() => Promise<boolean>` | Trigger validation manually                                        |
+| `reset`      | `() => void`             | Clear the validation error                                         |
+| `focus`      | `() => void`             | Programmatically focus the field; no-op when `disabled`/`readonly` |
+| `blur`       | `() => void`             | Programmatically remove focus                                      |
+| `isReadonly` | `() => boolean`          | Return the current `readonly` prop value                           |
+| `isDisabled` | `() => boolean`          | Return the current `disabled` prop value                           |
 
 ---
 
