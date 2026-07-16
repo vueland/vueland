@@ -232,10 +232,10 @@ type DatePickerSlotApi = {
   disablePrev: boolean
   disableNext: boolean
   preset: Record<CDatePickerZone, string[]>
-  onNext(): void
-  onPrev(): void
-  onTable(): void // переключить вьюху
-  onToday(): void // вернуться к сегодня
+  showNextPage(): void
+  showPreviousPage(): void
+  toggleView(): void // переключить вьюху
+  showToday(): void // вернуться к сегодня
 }
 ```
 

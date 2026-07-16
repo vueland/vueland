@@ -5,8 +5,6 @@ import type { CDatePickerZone } from '@/types'
 
 import type { DateLocale } from './locales'
 
-// Всегда продукт parseDate — все поля даты заполнены.
-// isHoliday/isHighlighted дописываются при обогащении ячеек.
 export type DatePickerDate = {
     year: number
     month: number
@@ -65,8 +63,8 @@ export type DatePickerEnrichedYear = {
 // Контракт, который каждая вьюха (dates/months/years) отдаёт через defineExpose.
 // Клавиатура сюда не входит: вьюхи сами регистрируются в клавиатурном контуре.
 export type DatePickerViewApi = {
-    onNext: () => void
-    onPrev: () => void
+    showNextPage: () => void
+    showPreviousPage: () => void
 }
 
 export type DatePickerSlotApi = {
@@ -77,10 +75,10 @@ export type DatePickerSlotApi = {
     disableNext: boolean
     // Те же зоны пресета, что применяет внутренний рендер, — для кастомных слотов
     preset: Record<CDatePickerZone, string[]>
-    onNext: () => void
-    onPrev: () => void
-    onTable: () => void
-    onToday: () => void
+    showNextPage: () => void
+    showPreviousPage: () => void
+    toggleView: () => void
+    showToday: () => void
 }
 
 // CDatePickerHeader
@@ -91,9 +89,9 @@ export type DatePickerHeaderProps = {
 }
 
 export type DatePickerHeaderEmits = {
-    (e: 'next'): void
-    (e: 'prev'): void
-    (e: 'table'): void
+    (e: 'next-page'): void
+    (e: 'previous-page'): void
+    (e: 'toggle-view'): void
 }
 
 export type DatePickerHeaderSlots = {

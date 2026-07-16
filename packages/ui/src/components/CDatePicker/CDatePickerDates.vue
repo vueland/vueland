@@ -36,8 +36,8 @@
     defineSlots<DatePickerDatesSlots>()
 
     defineExpose({
-        onNext: () => updateMonth(true),
-        onPrev: () => updateMonth(false),
+        showNextPage: showNextMonth,
+        showPreviousPage: showPreviousMonth,
     })
 
     const rootRef = shallowRef<HTMLElement>()
@@ -116,15 +116,23 @@
     }
 
     // Date сам нормализует перекат через границу года
-    function updateMonth(isNext: boolean) {
-        const next = parseDate(new Date(props.year, props.month + (isNext ? 1 : -1), 1))
+    function showAdjacentMonth(offset: 1 | -1) {
+        const next = parseDate(new Date(props.year, props.month + offset, 1))
 
-        transitionName.value = isNext ? 'c-date-slide-left' : 'c-date-slide-right'
+        transitionName.value = offset > 0 ? 'c-date-slide-left' : 'c-date-slide-right'
 
         emit('update:month', {
             month: next.month,
             year: next.year,
         })
+    }
+
+    function showNextMonth() {
+        showAdjacentMonth(1)
+    }
+
+    function showPreviousMonth() {
+        showAdjacentMonth(-1)
     }
 
     function isHighlighted(date: DatePickerDate): boolean {
@@ -133,7 +141,7 @@
 
     // Стартовая точка курсора: выбранная дата или сегодня, если видны в текущем
     // месяце, иначе 1-е число
-    function focusStartPoint(): DatePickerDate {
+    function getInitialFocusedDate(): DatePickerDate {
         const {
             modelValue,
             month,
@@ -153,32 +161,32 @@
 
     // Первое нажатие ставит курсор на стартовую точку, дальше — шаг от текущей.
     // Курсор за границей месяца перелистывает таблицу (шаг ≤ 7 дней — месяц всегда соседний)
-    function moveFocus(delta: number) {
+    function moveDateFocus(delta: number) {
         const from = unref(focusedDate)
 
         const next = from
             ? parseDate(new Date(from.year, from.month, from.date + delta))
-            : focusStartPoint()
+            : getInitialFocusedDate()
 
         focusedDate.value = next
 
         if (next.month !== props.month || next.year !== props.year) {
-            updateMonth(delta > 0)
+            showAdjacentMonth(delta > 0 ? 1 : -1)
         }
     }
 
-    function focusDay(day: number) {
+    function focusDateByDay(day: number) {
         focusedDate.value = parseDate(new Date(props.year, props.month, day))
     }
 
     // Единая точка выбора: клик по ячейке, onSelect из слота, Enter/Space
-    function select(date: DatePickerDate) {
+    function selectDate(date: DatePickerDate) {
         if (!date.isHoliday) {
             emit('update:modelValue', date)
         }
     }
 
-    function selectFocused() {
+    function selectFocusedDate() {
         const date = unref(focusedDate)
 
         if (date && !isDateDisabled(date, props)) {
@@ -187,14 +195,14 @@
     }
 
     const { onKeydown } = useKeyboard({
-        ArrowLeft: () => moveFocus(-1),
-        ArrowRight: () => moveFocus(1),
-        ArrowUp: () => moveFocus(-7),
-        ArrowDown: () => moveFocus(7),
-        Home: () => focusDay(1),
-        End: () => focusDay(unref(daysInMonth)),
-        Enter: selectFocused,
-        Space: selectFocused,
+        ArrowLeft: () => moveDateFocus(-1),
+        ArrowRight: () => moveDateFocus(1),
+        ArrowUp: () => moveDateFocus(-7),
+        ArrowDown: () => moveDateFocus(7),
+        Home: () => focusDateByDay(1),
+        End: () => focusDateByDay(unref(daysInMonth)),
+        Enter: selectFocusedDate,
+        Space: selectFocusedDate,
     }, { prevent: true })
 
     const keyboardTarget: KeyboardTarget = {
@@ -237,7 +245,7 @@
             v-if="$slots.dates"
             name="dates"
             :dates="enrichedDates"
-            :on-select="select"
+            :on-select="selectDate"
         />
         <transition
             v-else
@@ -278,7 +286,7 @@
                             role="gridcell"
                             :aria-selected="item.isSelected"
                             :aria-disabled="item.disabled || undefined"
-                            @click="select(item.dateObj!)"
+                            @click="selectDate(item.dateObj!)"
                         >
                             <slot
                                 v-if="$slots.date"

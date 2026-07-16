@@ -186,23 +186,23 @@ describe('CDatePickerDates', () => {
                 : 'c-date-picker-dates__cell--today')
     })
 
-    it('onNext/onPrev перекатывают месяц через границу года', () => {
+    it('showNextPage/showPreviousPage перекатывают месяц через границу года', () => {
         const december = mountDates({ month: 11 })
-        december.vm.onNext()
+        december.vm.showNextPage()
         expect(december.emitted('update:month')![0][0]).toEqual({
             month: 0,
             year: YEAR + 1,
         })
 
         const january = mountDates({ month: 0 })
-        january.vm.onPrev()
+        january.vm.showPreviousPage()
         expect(january.emitted('update:month')![0][0]).toEqual({
             month: 11,
             year: YEAR - 1,
         })
 
         const june = mountDates({ month: 5 })
-        june.vm.onNext()
+        june.vm.showNextPage()
         expect(june.emitted('update:month')![0][0]).toEqual({
             month: 6,
             year: YEAR,
@@ -423,11 +423,11 @@ describe('CDatePickerMonths', () => {
         }
     })
 
-    it('onNext/onPrev листают год', () => {
+    it('showNextPage/showPreviousPage листают год', () => {
         const wrapper = mountMonths()
 
-        wrapper.vm.onNext()
-        wrapper.vm.onPrev()
+        wrapper.vm.showNextPage()
+        wrapper.vm.showPreviousPage()
 
         expect(wrapper.emitted('update:year')).toEqual([[YEAR + 1], [YEAR - 1]])
     })
@@ -514,11 +514,11 @@ describe('CDatePickerYears', () => {
         expect(wrapper.emitted('update:year')![0]).toEqual([first + 2])
     })
 
-    it('onNext листает страницу на 20 лет вперёд', async () => {
+    it('showNextPage листает страницу на 20 лет вперёд', async () => {
         const wrapper = mountYears()
         const first = Number(yearCells(wrapper)[0].text())
 
-        wrapper.vm.onNext()
+        wrapper.vm.showNextPage()
         await wrapper.vm.$nextTick()
 
         expect(Number(yearCells(wrapper)[0].text())).toBe(first + 20)
@@ -550,7 +550,7 @@ describe('CDatePickerYears', () => {
         })
 
         expect(Number(yearCells(wrapper)[0].text())).toBe(1800)
-        wrapper.vm.onNext()
+        wrapper.vm.showNextPage()
         await wrapper.vm.$nextTick()
         expect(Number(yearCells(wrapper).at(-1)!.text())).toBe(1825)
     })
@@ -716,11 +716,11 @@ describe('CDatePicker', () => {
         })
         expect(api.preset).toMatchObject({ root: [] })
 
-        api.onTable()
+        api.toggleView()
         await wrapper.vm.$nextTick()
         expect(api.view).toBe('months')
 
-        api.onToday()
+        api.showToday()
         await wrapper.vm.$nextTick()
         expect(api.view).toBe('dates')
     })
