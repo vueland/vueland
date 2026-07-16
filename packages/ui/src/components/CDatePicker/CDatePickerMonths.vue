@@ -28,8 +28,8 @@
     defineSlots<DatePickerMonthsSlots>()
 
     defineExpose({
-        onNext: () => emit('update:year', props.year + 1),
-        onPrev: () => emit('update:year', props.year - 1),
+        showNextPage: showNextYear,
+        showPreviousPage: showPreviousYear,
     })
 
     const rootRef = shallowRef<HTMLElement>()
@@ -45,7 +45,7 @@
 
     const enrichedMonths = computed<DatePickerEnrichedMonth[]>(() =>
         MONTHS.map((m) => {
-            const disabled = isDisabled(m)
+            const disabled = isMonthDisabled(m)
 
             return {
                 month: m,
@@ -54,29 +54,43 @@
                 isSelected: m === props.value?.month && props.year === props.value.year,
                 isCurrent: m === CURRENT_MONTH && props.year === CURRENT_YEAR,
                 isFocused: m === focused.value,
-                onSelect: () => { if (!disabled) emit('update:month', m) },
+                onSelect: () => selectMonth(m),
             }
         }),
     )
 
     const rows = computed(() => chunk(enrichedMonths.value, CELLS_IN_ROW))
 
-    function isDisabled(m: number): boolean {
+    function showNextYear() {
+        emit('update:year', props.year + 1)
+    }
+
+    function showPreviousYear() {
+        emit('update:year', props.year - 1)
+    }
+
+    function selectMonth(month: number) {
+        if (!isMonthDisabled(month)) {
+            emit('update:month', month)
+        }
+    }
+
+    function isMonthDisabled(month: number): boolean {
         const {
             minDate,
             maxDate,
             year
         } = props
 
-        if (minDate && (year < minDate.year || (year === minDate.year && m < minDate.month))) return true
-        if (maxDate && (year > maxDate.year || (year === maxDate.year && m > maxDate.month))) return true
+        if (minDate && (year < minDate.year || (year === minDate.year && month < minDate.month))) return true
+        if (maxDate && (year > maxDate.year || (year === maxDate.year && month > maxDate.month))) return true
 
         return false
     }
 
     // Первое нажатие ставит курсор на текущий месяц; выход за границы
     // года листает год, курсор заворачивается
-    function moveFocus(delta: number) {
+    function moveMonthFocus(delta: number) {
         if (focused.value === null) {
             focused.value = props.month
             return
@@ -84,27 +98,27 @@
 
         const next = focused.value + delta
 
-        if (next < 0) emit('update:year', props.year - 1)
-        if (next > 11) emit('update:year', props.year + 1)
+        if (next < 0) showPreviousYear()
+        if (next > 11) showNextYear()
 
         focused.value = (next + 12) % 12
     }
 
-    function selectFocused() {
+    function selectFocusedMonth() {
         if (focused.value !== null) {
             enrichedMonths.value[focused.value]?.onSelect()
         }
     }
 
     const { onKeydown } = useKeyboard({
-        ArrowLeft: () => moveFocus(-1),
-        ArrowRight: () => moveFocus(1),
-        ArrowUp: () => moveFocus(-CELLS_IN_ROW),
-        ArrowDown: () => moveFocus(CELLS_IN_ROW),
+        ArrowLeft: () => moveMonthFocus(-1),
+        ArrowRight: () => moveMonthFocus(1),
+        ArrowUp: () => moveMonthFocus(-CELLS_IN_ROW),
+        ArrowDown: () => moveMonthFocus(CELLS_IN_ROW),
         Home: () => { focused.value = 0 },
         End: () => { focused.value = 11 },
-        Enter: selectFocused,
-        Space: selectFocused,
+        Enter: selectFocusedMonth,
+        Space: selectFocusedMonth,
     }, { prevent: true })
 
     // Вьюха сама встаёт под клавиатурный контур пикера — семантика клавиш у неё

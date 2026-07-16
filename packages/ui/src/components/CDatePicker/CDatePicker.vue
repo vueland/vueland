@@ -39,7 +39,7 @@
 
     defineSlots<CDatePickerSlots>()
 
-    const picker = shallowRef<DatePickerViewApi | null>(null)
+    const activeViewRef = shallowRef<DatePickerViewApi | null>(null)
     const keyboardRef = shallowRef()
     const rootRef = shallowRef<HTMLElement>()
 
@@ -97,7 +97,7 @@
         }
 
         if (state.view === 'dates') {
-            return compareMonth(state.tableYear, state.tableMonth, minDate.value) <= 0
+            return getMonthOffset(state.tableYear, state.tableMonth, minDate.value) <= 0
         }
 
         if (state.view === 'months') {
@@ -113,7 +113,7 @@
         }
 
         if (state.view === 'dates') {
-            return compareMonth(state.tableYear, state.tableMonth, maxDate.value) >= 0
+            return getMonthOffset(state.tableYear, state.tableMonth, maxDate.value) >= 0
         }
 
         if (state.view === 'months') {
@@ -130,43 +130,43 @@
         disablePrev: disablePrev.value,
         disableNext: disableNext.value,
         preset: presetZones.value,
-        onNext: () => picker.value?.onNext(),
-        onPrev: () => picker.value?.onPrev(),
-        onTable: onTogglePicker,
-        onToday,
+        showNextPage: () => activeViewRef.value?.showNextPage(),
+        showPreviousPage: () => activeViewRef.value?.showPreviousPage(),
+        toggleView,
+        showToday,
     }))
 
-    function setView(view: DatePickerView, transition: string) {
+    function showView(view: DatePickerView, transition: string) {
         state.bodyTransition = transition
         state.view = view
     }
 
-    function compareMonth(year: number, month: number, date: DatePickerDate): number {
+    function getMonthOffset(year: number, month: number, date: DatePickerDate): number {
         return (year * 12 + month) - (date.year * 12 + date.month)
     }
 
     // Клик по хедеру поднимает вьюху крупнее: dates → months → years, из years — назад в months
-    function onTogglePicker() {
+    function toggleView() {
         if (state.view === 'dates') {
-            setView('months', 'c-date-slide-up')
+            showView('months', 'c-date-slide-up')
         } else if (state.view === 'months') {
-            setView('years', 'c-date-slide-up')
+            showView('years', 'c-date-slide-up')
         } else {
-            setView('months', 'c-date-slide-down')
+            showView('months', 'c-date-slide-down')
         }
     }
 
-    function onYearUpdate(year: number) {
+    function selectYear(year: number) {
         state.tableYear = year
-        setView('months', 'c-date-slide-down')
+        showView('months', 'c-date-slide-down')
     }
 
-    function onMonthUpdate(month: number) {
+    function selectMonth(month: number) {
         state.tableMonth = month
-        setView('dates', 'c-date-slide-down')
+        showView('dates', 'c-date-slide-down')
     }
 
-    function onMonthChange(params: {
+    function displayMonth(params: {
         month: number
         year: number
     }) {
@@ -174,11 +174,11 @@
         state.tableYear = params.year
     }
 
-    function onYearChange(year: number) {
+    function displayYear(year: number) {
         state.tableYear = year
     }
 
-    function onDateSelect(date: DatePickerDate) {
+    function selectDate(date: DatePickerDate) {
         state.tableMonth = date.month
         state.tableYear = date.year
 
@@ -187,10 +187,10 @@
         emit('update:modelValue', value)
     }
 
-    function onToday() {
+    function showToday() {
         state.tableMonth = today.month
         state.tableYear = today.year
-        setView('dates', 'c-date-slide-down')
+        showView('dates', 'c-date-slide-down')
     }
 
     watch(displayValue, (val) => {
@@ -248,9 +248,9 @@
             :class="presetZones.header"
             :disable-prev
             :disable-next
-            @next="picker?.onNext()"
-            @prev="picker?.onPrev()"
-            @table="onTogglePicker"
+            @next-page="activeViewRef?.showNextPage()"
+            @previous-page="activeViewRef?.showPreviousPage()"
+            @toggle-view="toggleView"
         >
             {{ headerValue }}
         </c-date-picker-header>
@@ -270,12 +270,12 @@
                     <c-date-picker-years
                         v-if="state.view === 'years'"
                         key="years"
-                        ref="picker"
+                        ref="activeViewRef"
                         :year="state.tableYear"
                         :value="selected"
                         :min-year="minDate?.year"
                         :max-year="maxDate?.year"
-                        @update:year="onYearUpdate"
+                        @update:year="selectYear"
                     >
                         <template
                             v-if="$slots.years"
@@ -300,15 +300,15 @@
                     <c-date-picker-months
                         v-else-if="state.view === 'months'"
                         key="months"
-                        ref="picker"
+                        ref="activeViewRef"
                         :month="state.tableMonth"
                         :year="state.tableYear"
                         :value="selected"
                         :locale="dateLocale.monthsAbbr"
                         :min-date="minDate"
                         :max-date="maxDate"
-                        @update:month="onMonthUpdate"
-                        @update:year="onYearChange"
+                        @update:month="selectMonth"
+                        @update:year="displayYear"
                     >
                         <template
                             v-if="$slots.months"
@@ -333,7 +333,7 @@
                     <c-date-picker-dates
                         v-else
                         key="dates"
-                        ref="picker"
+                        ref="activeViewRef"
                         :model-value="selected"
                         :year="state.tableYear"
                         :month="state.tableMonth"
@@ -343,8 +343,8 @@
                         :highlighted-dates="highlightedDates"
                         :min-date="minDate"
                         :max-date="maxDate"
-                        @update:model-value="onDateSelect"
-                        @update:month="onMonthChange"
+                        @update:model-value="selectDate"
+                        @update:month="displayMonth"
                     >
                         <template
                             v-if="$slots.week"

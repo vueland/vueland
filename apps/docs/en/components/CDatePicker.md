@@ -154,10 +154,10 @@ type DatePickerSlotApi = {
   disablePrev: boolean
   disableNext: boolean
   preset: Record<CDatePickerZone, string[]>
-  onNext(): void
-  onPrev(): void
-  onTable(): void
-  onToday(): void
+  showNextPage(): void
+  showPreviousPage(): void
+  toggleView(): void
+  showToday(): void
 }
 ```
 

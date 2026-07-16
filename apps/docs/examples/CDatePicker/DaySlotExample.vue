@@ -46,7 +46,7 @@
             :highlighted-dates="highlightedDates"
             preset="datePicker.neon"
         >
-            <template #before-header="{ onToday }">
+            <template #before-header="{ showToday }">
                 <div class="date-slots__toolbar">
                     <span>
                         <c-icon
@@ -58,7 +58,7 @@
                     </span>
                     <button
                         type="button"
-                        @click="onToday"
+                        @click="showToday"
                     >
                         Today
                     </button>

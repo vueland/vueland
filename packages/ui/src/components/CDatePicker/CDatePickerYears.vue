@@ -25,7 +25,10 @@
     const props = defineProps<DatePickerYearsProps>()
     const emit = defineEmits<DatePickerYearsEmits>()
     defineSlots<DatePickerYearsSlots>()
-    defineExpose({ onNext, onPrev })
+    defineExpose({
+        showNextPage,
+        showPreviousPage,
+    })
 
     const rootRef = shallowRef<HTMLElement>()
     const pageIndex = shallowRef(0)
@@ -77,68 +80,72 @@
                 isSelected: y === props.value?.year,
                 isCurrent: y === CURRENT_YEAR,
                 isFocused: y === focused.value,
-                onSelect: () => { emit('update:year', y) },
+                onSelect: () => selectYear(y),
             }
         }),
     )
 
     const rows = computed(() => chunk(enrichedYears.value, CELLS_IN_ROW))
 
-    function pageOf(year: number): number {
+    function getYearPageIndex(year: number): number {
         return allPages.value.findIndex((page) => page.includes(year))
     }
 
     // Единственный владелец листания: направление анимации + текущая страница
-    function turnPage(page: number, forward: boolean) {
+    function showPage(page: number, forward: boolean) {
         transitionName.value = forward ? 'c-date-slide-left' : 'c-date-slide-right'
         pageIndex.value = page
     }
 
-    function onNext() {
+    function showNextPage() {
         if (pageIndex.value < allPages.value.length - 1) {
-            turnPage(pageIndex.value + 1, true)
+            showPage(pageIndex.value + 1, true)
         }
     }
 
-    function onPrev() {
+    function showPreviousPage() {
         if (pageIndex.value > 0) {
-            turnPage(pageIndex.value - 1, false)
+            showPage(pageIndex.value - 1, false)
         }
+    }
+
+    function selectYear(year: number) {
+        emit('update:year', year)
     }
 
     // Первое нажатие ставит курсор на текущий год, дальше — шаг в пределах
     // диапазона; страница следует за курсором
-    function moveFocus(delta: number) {
+    function moveYearFocus(delta: number) {
         if (focused.value === null) {
             focused.value = props.year
             return
         }
 
         const next = Math.min(Math.max(focused.value + delta, minRangeYear.value), maxRangeYear.value)
-        const page = pageOf(next)
+        const page = getYearPageIndex(next)
 
         focused.value = next
 
         if (page >= 0 && page !== pageIndex.value) {
-            turnPage(page, delta > 0)
+            showPage(page, delta > 0)
         }
     }
 
-    function selectFocused() {
+    function selectFocusedYear() {
         if (focused.value !== null) {
             enrichedYears.value.find((item) => item.year === focused.value)?.onSelect()
         }
     }
 
     const { onKeydown } = useKeyboard({
-        ArrowLeft: () => moveFocus(-1),
-        ArrowRight: () => moveFocus(1),
-        ArrowUp: () => moveFocus(-CELLS_IN_ROW),
-        ArrowDown: () => moveFocus(CELLS_IN_ROW),
+        ArrowLeft: () => moveYearFocus(-1),
+        ArrowRight: () => moveYearFocus(1),
+        ArrowUp: () => moveYearFocus(-CELLS_IN_ROW),
+        ArrowDown: () => moveYearFocus(CELLS_IN_ROW),
         Home: () => { focused.value = currentPage.value[0] },
         End: () => { focused.value = currentPage.value[currentPage.value.length - 1] },
-        Enter: selectFocused,
-        Space: selectFocused,
+        Enter: selectFocusedYear,
+        Space: selectFocusedYear,
     }, { prevent: true })
 
     // Вьюха сама встаёт под клавиатурный контур пикера — семантика клавиш у неё
@@ -154,7 +161,7 @@
     onBeforeUnmount(() => keyboard?.unregister(keyboardTarget))
 
     watch(() => [props.year, yearBounds.value.from, yearBounds.value.to] as const, ([year]) => {
-        pageIndex.value = Math.max(pageOf(year), 0)
+        pageIndex.value = Math.max(getYearPageIndex(year), 0)
     }, { immediate: true })
 </script>
 

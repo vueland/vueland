@@ -25,7 +25,7 @@
                 :class="['c-date-picker__header-btn', disablePrev && 'c-date-picker__header-btn--disabled']"
                 :disabled="disablePrev"
                 aria-label="Previous period"
-                @click="emit('prev')"
+                @click="emit('previous-page')"
             >
                 <c-icon
                     :name="IconAliases.CHEVRON_LEFT"
@@ -37,7 +37,7 @@
                 type="button"
                 class="c-date-picker__header-display"
                 aria-label="Change calendar view"
-                @click="emit('table')"
+                @click="emit('toggle-view')"
             >
                 <slot></slot>
             </button>
@@ -46,7 +46,7 @@
                 :class="['c-date-picker__header-btn', disableNext && 'c-date-picker__header-btn--disabled']"
                 :disabled="disableNext"
                 aria-label="Next period"
-                @click="emit('next')"
+                @click="emit('next-page')"
             >
                 <c-icon
                     :name="IconAliases.CHEVRON_RIGHT"
