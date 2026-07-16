@@ -16,12 +16,12 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 
 ```vue
 <template>
-  <CTooltip open-on-hover close-on-leave align="bottom-center" :offset-y="6">
+  <c-tooltip open-on-hover close-on-leave align="bottom-center" :offset-y="6">
     <template #activator="{ on, activator }">
       <button v-bind="activator" v-on="on">Сохранить</button>
     </template>
     Сохранить изменения
-  </CTooltip>
+  </c-tooltip>
 </template>
 ```
 
@@ -34,12 +34,12 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 ::: details Показать код
 
 ```vue
-<CTooltip align="top-center" open-on-hover close-on-leave :offset-y="6">
+<c-tooltip align="top-center" open-on-hover close-on-leave :offset-y="6">
   <template #activator="{ on, activator }">
     <button v-bind="activator" v-on="on">Сверху</button>
   </template>
   Тултип сверху
-</CTooltip>
+</c-tooltip>
 ```
 
 :::
@@ -53,12 +53,12 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 ::: details Показать код
 
 ```vue
-<CTooltip open-on-hover close-on-leave align="bottom-center" :offset-y="6" :open-delay="500">
+<c-tooltip open-on-hover close-on-leave align="bottom-center" :offset-y="6" :open-delay="500">
   <template #activator="{ on, activator }">
     <button v-bind="activator" v-on="on">Наведи</button>
   </template>
   Появится через 500мс
-</CTooltip>
+</c-tooltip>
 ```
 
 :::
@@ -68,12 +68,12 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 По умолчанию тултип оборачивает контент (`width="auto"`). Передай `width` для фиксированной ширины.
 
 ```vue
-<CTooltip open-on-hover close-on-leave :width="240">
+<c-tooltip open-on-hover close-on-leave :width="240">
   <template #activator="{ on, activator }">
     <button v-bind="activator" v-on="on">?</button>
   </template>
   Длинное описание которому нужна фиксированная ширина
-</CTooltip>
+</c-tooltip>
 ```
 
 ## Доступность

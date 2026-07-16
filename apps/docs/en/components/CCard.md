@@ -5,11 +5,11 @@
 ## Basic usage
 
 ```vue
-<CCard>
-  <CCardHeader>Title</CCardHeader>
-  <CCardBody>Main card content</CCardBody>
-  <CCardFooter>Footer</CCardFooter>
-</CCard>
+<c-card>
+  <c-card-header>Title</c-card-header>
+  <c-card-body>Main card content</c-card-body>
+  <c-card-footer>Footer</c-card-footer>
+</c-card>
 ```
 
 ## Components
@@ -56,7 +56,7 @@ All four components accept the same props:
 Variables can be overridden via CSS or inline styles:
 
 ```vue
-<CCard style="--c-card-border-radius: 16px; --c-card-background-color: #f5f7fa">
+<c-card style="--c-card-border-radius: 16px; --c-card-background-color: #f5f7fa">
   ...
-</CCard>
+</c-card>
 ```

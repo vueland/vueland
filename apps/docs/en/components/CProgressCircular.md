@@ -25,12 +25,12 @@ const value = ref(65)
 </script>
 
 <template>
-  <CProgressCircular :value="value" size="96" width="8">
+  <c-progress-circular :value="value" size="96" width="8">
     <template #default="{ value: shown }">{{ shown }}%</template>
-  </CProgressCircular>
+  </c-progress-circular>
 
-  <CBtn @click="value = Math.max(0, value - 10)">-10</CBtn>
-  <CBtn @click="value = Math.min(100, value + 10)">+10</CBtn>
+  <c-btn @click="value = Math.max(0, value - 10)">-10</c-btn>
+  <c-btn @click="value = Math.min(100, value + 10)">+10</c-btn>
 </template>
 ```
 
@@ -45,12 +45,12 @@ const value = ref(65)
 ::: details Show code
 
 ```html
-<CProgressCircular value="70" size="48" width="5" color="indigo" />
-<CProgressCircular value="70" size="48" width="5" color="teal" />
-<CProgressCircular value="70" size="48" width="5" color="deep-purple-lighten-1" />
-<CProgressCircular value="70" size="48" width="5" color="green-darken-1" />
-<CProgressCircular value="70" size="48" width="5" color="#FFA726" />
-<CProgressCircular value="70" size="48" width="5" color="#fa5a5a" />
+<c-progress-circular value="70" size="48" width="5" color="indigo" />
+<c-progress-circular value="70" size="48" width="5" color="teal" />
+<c-progress-circular value="70" size="48" width="5" color="deep-purple-lighten-1" />
+<c-progress-circular value="70" size="48" width="5" color="green-darken-1" />
+<c-progress-circular value="70" size="48" width="5" color="#FFA726" />
+<c-progress-circular value="70" size="48" width="5" color="#fa5a5a" />
 ```
 
 :::
@@ -68,9 +68,9 @@ Endless spinner for operations with unknown duration. `size` and `width` control
 ::: details Show code
 
 ```html
-<CProgressCircular indeterminate size="24" width="3" />
-<CProgressCircular indeterminate color="green-darken-1" size="40" width="4" />
-<CProgressCircular indeterminate color="#fa5a5a" size="64" width="6" />
+<c-progress-circular indeterminate size="24" width="3" />
+<c-progress-circular indeterminate color="green-darken-1" size="40" width="4" />
+<c-progress-circular indeterminate color="#fa5a5a" size="64" width="6" />
 ```
 
 :::
@@ -108,9 +108,9 @@ createVuelandUI({
 
 ```vue
 <template>
-  <CProgressCircular preset="progress.upload" :value="value" size="96" width="8">
+  <c-progress-circular preset="progress.upload" :value="value" size="96" width="8">
     <template #default="{ value: shown }">{{ shown }}%</template>
-  </CProgressCircular>
+  </c-progress-circular>
 </template>
 ```
 

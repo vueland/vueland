@@ -1,6 +1,7 @@
 import {
     computed,
     inject,
+    type Ref,
     unref,
 } from 'vue'
 
@@ -25,7 +26,13 @@ export const C_CHECKBOX_STATE_PRECEDENCE: readonly CCheckboxState[] = [
     'checked',
 ]
 
-export function useCheckboxPresets({ props }: { props: CheckboxElementProps }) {
+export function useCheckboxPresets({
+    props,
+    focusVisible,
+}: {
+    props: CheckboxElementProps
+    focusVisible: Ref<boolean>
+}) {
     // Как и у CField: собственный проп `preset` резолвится из реестра, а
     // контекст (его провайдит host-CInput) держит вложенный пресет чекбокса
     // в base-снимке. Own перекрывает контекст.
@@ -38,7 +45,7 @@ export function useCheckboxPresets({ props }: { props: CheckboxElementProps }) {
     const active = (): Partial<Record<CCheckboxState, boolean>> => ({
         checked: !!props.checked,
         indeterminate: !!props.indeterminate,
-        focused: !!props.focused,
+        focused: !!unref(focusVisible),
         error: !!props.error,
         disabled: !!props.disabled,
         readonly: !!props.readonly,

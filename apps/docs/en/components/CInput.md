@@ -19,7 +19,7 @@ import PresetStatesExample from '../../examples/CInput/PresetStatesExample.vue'
 
 ```vue
 <template>
-  <CInput v-model="search">
+  <c-input v-model="search">
     <template #field="field">
       <div class="search-bar" :class="{ 'search-bar--focused': field.focused }">
         <svg
@@ -60,7 +60,7 @@ import PresetStatesExample from '../../examples/CInput/PresetStatesExample.vue'
         </button>
       </div>
     </template>
-  </CInput>
+  </c-input>
 </template>
 
 <script setup lang="ts">
@@ -169,8 +169,8 @@ const vueland = createVuelandUI({
 Then use the preset by name on any `CInput`-based component:
 
 ```vue
-<CTextField preset="input.blue" ... />
-<CTextField preset="input.teal" ... />
+<c-text-field preset="input.blue" ... />
+<c-text-field preset="input.teal" ... />
 ```
 
 ### CInput → CField distribution
@@ -292,9 +292,9 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 
 ```vue
 <template>
-  <CForm>
+  <c-form>
     <template #default="{ validate }">
-      <CInput v-model="pin" :rules="rules">
+      <c-input v-model="pin" :rules="rules">
         <template #field="field">
           <input
             :id="field.uid"
@@ -305,10 +305,10 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
             @blur="field.blur"
           />
         </template>
-      </CInput>
+      </c-input>
       <button @click="validate">Validate</button>
     </template>
-  </CForm>
+  </c-form>
 </template>
 ```
 

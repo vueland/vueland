@@ -19,7 +19,7 @@ Pass an array of values to `items` and bind the selection with `v-model`. Focus 
 
 ```vue
 <template>
-  <CAutocomplete
+  <c-autocomplete
     v-model="destination"
     label="City"
     placeholder="Start typing — try «B»"
@@ -28,7 +28,7 @@ Pass an array of values to `items` and bind the selection with `v-model`. Focus 
   />
 
   <div v-if="destination" class="d-flex items-center gap-2 fs-sm mt-4">
-    <CIcon name="fas:check" source="fa" :size="12" class="text-green" />
+    <c-icon name="fas:check" source="fa" :size="12" class="text-green" />
     Courier available in <b>{{ destination }}</b>
   </div>
 </template>
@@ -53,7 +53,7 @@ When items are objects, use `title-key` to pick the **displayed label** and `val
 
 ```vue
 <template>
-  <CAutocomplete
+  <c-autocomplete
     v-model="assignee"
     label="Reviewer"
     placeholder="Search a member"
@@ -67,7 +67,7 @@ When items are objects, use `title-key` to pick the **displayed label** and `val
   <div v-if="reviewer" class="d-flex items-center gap-2 mt-4">
     <b>{{ reviewer.name }}</b>
     <span class="fs-xs text-blue-grey">{{ reviewer.role }}</span>
-    <CChip>v-model: {{ assignee }}</CChip>
+    <c-chip>v-model: {{ assignee }}</c-chip>
   </div>
 </template>
 
@@ -99,7 +99,7 @@ Add `multiple` to collect an array of values, and `chips` to render each selecti
 
 ```vue
 <template>
-  <CAutocomplete
+  <c-autocomplete
     v-model="stack"
     label="Technologies"
     placeholder="Add a technology"
@@ -109,7 +109,7 @@ Add `multiple` to collect an array of values, and `chips` to render each selecti
     clearable
   />
 
-  <CProgressLinear
+  <c-progress-linear
     :value="(stack.length / 5) * 100"
     :color="stack.length >= 5 ? 'green' : 'indigo'"
     height="6"
@@ -137,7 +137,7 @@ The `menu` slot replaces the whole dropdown while keeping the component's filter
 
 ```vue
 <template>
-  <CAutocomplete
+  <c-autocomplete
     v-model="invited"
     label="Teammates"
     placeholder="Search by name"
@@ -151,7 +151,7 @@ The `menu` slot replaces the whole dropdown while keeping the component's filter
       <div v-for="member of invited" :key="member.email" class="invite-chip">
         <span class="avatar" :class="member.color">{{ initials(member) }}</span>
         {{ member.name.split(' ')[0] }}
-        <CIcon name="fas:times" source="fa" :size="10" @click.stop="uninvite(member)" />
+        <c-icon name="fas:times" source="fa" :size="10" @click.stop="uninvite(member)" />
       </div>
     </template>
 
@@ -162,29 +162,29 @@ The `menu` slot replaces the whole dropdown while keeping the component's filter
 
         <div v-if="!items.length" class="pa-4 fs-sm text-blue-grey">Nobody matches this search</div>
 
-        <CList v-else v-model="invited" multiple variant="menu">
-          <CListItem v-for="item of items" :key="item.key" :value="item.raw">
+        <c-list v-else v-model="invited" multiple variant="menu">
+          <c-list-item v-for="item of items" :key="item.key" :value="item.raw">
             <span class="avatar" :class="item.raw.color">
               {{ initials(item.raw) }}
               <i class="dot" :class="item.raw.online ? 'bg-green' : 'bg-grey'"></i>
             </span>
-            <CListItemContent>
-              <CListItemTitle>{{ item.title }}</CListItemTitle>
-              <CListItemSubtitle>{{ item.raw.email }}</CListItemSubtitle>
-            </CListItemContent>
-            <CChip>{{ item.raw.role }}</CChip>
-            <CIcon
+            <c-list-item-content>
+              <c-list-item-title>{{ item.title }}</c-list-item-title>
+              <c-list-item-subtitle>{{ item.raw.email }}</c-list-item-subtitle>
+            </c-list-item-content>
+            <c-chip>{{ item.raw.role }}</c-chip>
+            <c-icon
               v-if="invited.includes(item.raw)"
               name="fas:check"
               source="fa"
               :size="14"
               class="text-teal"
             />
-          </CListItem>
-        </CList>
+          </c-list-item>
+        </c-list>
       </div>
     </template>
-  </CAutocomplete>
+  </c-autocomplete>
 </template>
 
 <script setup lang="ts">

@@ -19,28 +19,28 @@ A login form with email and password validation triggered on blur.
 
 ```vue
 <template>
-  <CForm ref="formRef">
+  <c-form ref="formRef">
     <template #default="{ validate, reset }">
-      <CTextField
+      <c-text-field
         v-model="form.email"
         label="Email"
         type="email"
         :rules="emailRules"
         validate-on="blur"
       >
-        <template #prepend><CIcon name="fas:envelope" :size="16" source="fa" /></template>
-      </CTextField>
+        <template #prepend><c-icon name="fas:envelope" :size="16" source="fa" /></template>
+      </c-text-field>
 
-      <CTextField
+      <c-text-field
         v-model="form.password"
         :type="showPwd ? 'text' : 'password'"
         label="Password"
         :rules="passwordRules"
         validate-on="blur"
       >
-        <template #prepend><CIcon name="fas:lock" :size="16" source="fa" /></template>
+        <template #prepend><c-icon name="fas:lock" :size="16" source="fa" /></template>
         <template #append>
-          <CIcon
+          <c-icon
             :name="showPwd ? 'fas:eye-slash' : 'fas:eye'"
             :size="16"
             source="fa"
@@ -48,12 +48,12 @@ A login form with email and password validation triggered on blur.
             @click="showPwd = !showPwd"
           />
         </template>
-      </CTextField>
+      </c-text-field>
 
-      <CBtn @click="() => handleSubmit(validate)">Sign in</CBtn>
-      <CBtn variant="text" @click="handleReset">Reset</CBtn>
+      <c-btn @click="() => handleSubmit(validate)">Sign in</c-btn>
+      <c-btn variant="text" @click="handleReset">Reset</c-btn>
     </template>
-  </CForm>
+  </c-form>
 </template>
 
 <script setup lang="ts">
@@ -96,30 +96,30 @@ A multi-field profile editor with a two-column layout, a readonly field, and an 
 
 ```vue
 <template>
-  <CForm ref="formRef">
+  <c-form ref="formRef">
     <template #default="{ validate, reset }">
-      <CRow class="gap-y-4">
-        <CCol cols="12" sm="6">
-          <CTextField
+      <c-row class="gap-y-4">
+        <c-col cols="12" sm="6">
+          <c-text-field
             v-model="form.firstName"
             label="First name"
             :rules="requiredRule"
             validate-on="blur"
             preset="input.indigo"
           />
-        </CCol>
-        <CCol cols="12" sm="6">
-          <CTextField
+        </c-col>
+        <c-col cols="12" sm="6">
+          <c-text-field
             v-model="form.lastName"
             label="Last name"
             :rules="requiredRule"
             validate-on="blur"
             preset="input.indigo"
           />
-        </CCol>
+        </c-col>
 
-        <CCol cols="12" sm="6">
-          <CTextField
+        <c-col cols="12" sm="6">
+          <c-text-field
             v-model="form.email"
             label="Email"
             type="email"
@@ -127,12 +127,12 @@ A multi-field profile editor with a two-column layout, a readonly field, and an 
             validate-on="blur"
             preset="input.indigo"
           >
-            <template #prepend><CIcon name="fas:envelope" :size="14" source="fa" /></template>
-          </CTextField>
-        </CCol>
+            <template #prepend><c-icon name="fas:envelope" :size="14" source="fa" /></template>
+          </c-text-field>
+        </c-col>
 
-        <CCol cols="12" sm="6">
-          <CTextField
+        <c-col cols="12" sm="6">
+          <c-text-field
             v-model="form.phone"
             label="Phone"
             type="tel"
@@ -140,31 +140,31 @@ A multi-field profile editor with a two-column layout, a readonly field, and an 
             validate-on="blur"
             preset="input.indigo"
           >
-            <template #prepend><CIcon name="fas:phone" :size="14" source="fa" /></template>
-          </CTextField>
-        </CCol>
+            <template #prepend><c-icon name="fas:phone" :size="14" source="fa" /></template>
+          </c-text-field>
+        </c-col>
 
-        <CCol cols="12">
+        <c-col cols="12">
           <!-- readonly field — username cannot be changed -->
-          <CTextField v-model="form.username" label="Username" readonly preset="input.indigo">
-            <template #prepend><CIcon name="fas:at" :size="14" source="fa" /></template>
+          <c-text-field v-model="form.username" label="Username" readonly preset="input.indigo">
+            <template #prepend><c-icon name="fas:at" :size="14" source="fa" /></template>
             <template #details>
               <span style="opacity:.6; font-size:12px">Username cannot be changed</span>
             </template>
-          </CTextField>
-        </CCol>
+          </c-text-field>
+        </c-col>
 
-        <CCol cols="12">
+        <c-col cols="12">
           <div class="d-flex gap-2">
-            <CBtn class="bg-indigo" style="color:#fff" @click="() => handleSave(validate)"
-              >Save</CBtn
+            <c-btn class="bg-indigo" style="color:#fff" @click="() => handleSave(validate)"
+              >Save</c-btn
             >
-            <CBtn variant="text" @click="handleReset">Cancel</CBtn>
+            <c-btn variant="text" @click="handleReset">Cancel</c-btn>
           </div>
-        </CCol>
-      </CRow>
+        </c-col>
+      </c-row>
     </template>
-  </CForm>
+  </c-form>
 </template>
 
 <script setup lang="ts">
@@ -213,25 +213,25 @@ A multi-step airline booking form with per-step validation, async submission, an
 
 ```vue
 <template>
-  <CForm ref="formRef">
+  <c-form ref="formRef">
     <template #default="{ validate, reset }">
       <!-- Step 1: Flight details -->
       <div v-if="currentStep === 0">
-        <CTextField
+        <c-text-field
           v-model="flight.from"
           label="From"
           :rules="requiredRule"
           validate-on="blur"
           preset="input.blue"
         />
-        <CTextField
+        <c-text-field
           v-model="flight.to"
           label="To"
           :rules="requiredRule"
           validate-on="blur"
           preset="input.blue"
         />
-        <CTextField
+        <c-text-field
           v-model="flight.departure"
           label="Departure date"
           placeholder="DD.MM.YYYY"
@@ -239,7 +239,7 @@ A multi-step airline booking form with per-step validation, async submission, an
           validate-on="blur"
           preset="input.blue"
         />
-        <CTextField
+        <c-text-field
           v-model="flight.passengers"
           label="Passengers"
           type="number"
@@ -251,28 +251,28 @@ A multi-step airline booking form with per-step validation, async submission, an
 
       <!-- Step 2: Passenger info -->
       <div v-if="currentStep === 1">
-        <CTextField
+        <c-text-field
           v-model="passenger.firstName"
           label="First name"
           :rules="requiredRule"
           validate-on="blur"
           preset="input.teal"
         />
-        <CTextField
+        <c-text-field
           v-model="passenger.lastName"
           label="Last name"
           :rules="requiredRule"
           validate-on="blur"
           preset="input.teal"
         />
-        <CTextField
+        <c-text-field
           v-model="passenger.passport"
           label="Passport"
           :rules="passportRule"
           validate-on="blur"
           preset="input.teal"
         />
-        <CTextField
+        <c-text-field
           v-model="passenger.email"
           label="Email"
           type="email"
@@ -284,21 +284,21 @@ A multi-step airline booking form with per-step validation, async submission, an
 
       <!-- Step 3: Payment -->
       <div v-if="currentStep === 2">
-        <CTextField
+        <c-text-field
           v-model="payment.card"
           label="Card number"
           :rules="cardRule"
           validate-on="blur"
           preset="input.deepPurple"
         />
-        <CTextField
+        <c-text-field
           v-model="payment.expiry"
           label="Expiry (MM/YY)"
           :rules="expiryRule"
           validate-on="blur"
           preset="input.deepPurple"
         />
-        <CTextField
+        <c-text-field
           v-model="payment.cvv"
           label="CVV"
           type="password"
@@ -308,12 +308,12 @@ A multi-step airline booking form with per-step validation, async submission, an
         />
       </div>
 
-      <CBtn v-if="currentStep > 0" variant="text" @click="currentStep--">Back</CBtn>
-      <CBtn @click="() => handleNext(validate)">
+      <c-btn v-if="currentStep > 0" variant="text" @click="currentStep--">Back</c-btn>
+      <c-btn @click="() => handleNext(validate)">
         {{ currentStep === 2 ? 'Pay & Confirm' : 'Continue' }}
-      </CBtn>
+      </c-btn>
     </template>
-  </CForm>
+  </c-form>
 </template>
 
 <script setup lang="ts">
@@ -360,9 +360,9 @@ Rules can return a `Promise`. `CForm.validate()` runs all fields in parallel via
 
 ```vue
 <template>
-  <CForm>
+  <c-form>
     <template #default="{ validate, reset }">
-      <CTextField
+      <c-text-field
         v-model="form.username"
         label="Username"
         :rules="usernameRules"
@@ -375,9 +375,9 @@ Rules can return a `Promise`. `CForm.validate()` runs all fields in parallel via
           }}</span>
           <span v-else style="opacity:.6">Letters and numbers only</span>
         </template>
-      </CTextField>
+      </c-text-field>
 
-      <CTextField
+      <c-text-field
         v-model="form.email"
         label="Email"
         type="email"
@@ -385,9 +385,9 @@ Rules can return a `Promise`. `CForm.validate()` runs all fields in parallel via
         validate-on="blur"
       />
 
-      <CBtn @click="() => handleSubmit(validate)">Register</CBtn>
+      <c-btn @click="() => handleSubmit(validate)">Register</c-btn>
     </template>
-  </CForm>
+  </c-form>
 </template>
 
 <script setup lang="ts">
@@ -457,10 +457,10 @@ async function handleSubmit(validate: () => Promise<boolean>) {
 
 ```vue
 <template>
-  <CForm ref="formRef">
+  <c-form ref="formRef">
     <template #default><!-- fields --></template>
-  </CForm>
-  <CBtn @click="formRef?.validate()">Validate externally</CBtn>
+  </c-form>
+  <c-btn @click="formRef?.validate()">Validate externally</c-btn>
 </template>
 
 <script setup lang="ts">

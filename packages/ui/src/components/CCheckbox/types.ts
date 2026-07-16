@@ -8,12 +8,13 @@ export type CCheckboxModel<T> = T | T[] | boolean
 export type CCheckboxProps<T> = {
     /** Значение, которое кладётся в модель (или в массив модели) при отметке. */
     value?: T
-    /** Размер бокса в пикселях — прокидывается в CIcon. */
+    /** Размер бокса — уезжает в --c-checkbox-size. */
     size?: number | string
     /**
      * Объявлены здесь, а не берутся из $attrs: их нужно раздать явно и в
      * CSelectControl (он гасит toggle), и в CInput (он красит и озвучивает).
      */
+    color?: string
     disabled?: boolean
     readonly?: boolean
 }
@@ -31,7 +32,7 @@ export type CCheckboxEmits<T> = {
 
 export type CCheckboxPublicProps<T> =
     CCheckboxProps<T>
-    & CInputProps<CCheckboxModel<T>>
+    & Pick<CInputProps<CCheckboxModel<T>>, Exclude<keyof CInputProps<CCheckboxModel<T>>, 'role' | 'dirty'>>
     & { indeterminate?: boolean }
 
 /** Внутренний презентационный слой — не часть публичного API. */
@@ -39,7 +40,6 @@ export type CheckboxElementProps = PresetProps & {
     id: string
     error: boolean
     checked: boolean
-    focused: boolean
     indeterminate?: boolean
     label?: string
     size?: number | string

@@ -5,11 +5,11 @@
 ## Базовое использование
 
 ```vue
-<CCard>
-  <CCardHeader>Заголовок</CCardHeader>
-  <CCardBody>Основное содержимое карточки</CCardBody>
-  <CCardFooter>Подвал</CCardFooter>
-</CCard>
+<c-card>
+  <c-card-header>Заголовок</c-card-header>
+  <c-card-body>Основное содержимое карточки</c-card-body>
+  <c-card-footer>Подвал</c-card-footer>
+</c-card>
 ```
 
 ## Компоненты
@@ -56,7 +56,7 @@
 Переменные переопределяются через CSS или inline-стили:
 
 ```vue
-<CCard style="--c-card-border-radius: 16px; --c-card-background-color: #f5f7fa">
+<c-card style="--c-card-border-radius: 16px; --c-card-background-color: #f5f7fa">
   ...
-</CCard>
+</c-card>
 ```

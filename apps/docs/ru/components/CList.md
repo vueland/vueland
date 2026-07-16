@@ -29,22 +29,22 @@ import ObjectValuesExample from '../../examples/CList/ObjectValuesExample.vue'
 
 ```vue
 <template>
-  <CCard class="elevation-3 radius-16" style="width:360px;overflow:hidden">
+  <c-card class="elevation-3 radius-16" style="width:360px;overflow:hidden">
     <div class="px-4 pt-4 pb-2 fs-xs fw-semi-bold text-uppercase text-blue-grey">
       Contact details
     </div>
-    <CList class="pa-2">
-      <CListItem v-for="d in details" :key="d.label" class="px-3 py-2">
-        <CListItemIcon>
-          <CIcon :name="d.icon" source="fa" :size="14" class="text-blue-grey" />
-        </CListItemIcon>
-        <CListItemContent>
-          <CListItemSubtitle>{{ d.label }}</CListItemSubtitle>
-          <CListItemTitle class="fw-medium">{{ d.value }}</CListItemTitle>
-        </CListItemContent>
-      </CListItem>
-    </CList>
-  </CCard>
+    <c-list class="pa-2">
+      <c-list-item v-for="d in details" :key="d.label" class="px-3 py-2">
+        <c-list-item-icon>
+          <c-icon :name="d.icon" source="fa" :size="14" class="text-blue-grey" />
+        </c-list-item-icon>
+        <c-list-item-content>
+          <c-list-item-subtitle>{{ d.label }}</c-list-item-subtitle>
+          <c-list-item-title class="fw-medium">{{ d.value }}</c-list-item-title>
+        </c-list-item-content>
+      </c-list-item>
+    </c-list>
+  </c-card>
 </template>
 
 <script setup lang="ts">
@@ -70,20 +70,25 @@ const details = [
 
 ```vue
 <template>
-  <CCard class="elevation-3 radius-16" style="width:300px;overflow:hidden">
+  <c-card class="elevation-3 radius-16" style="width:300px;overflow:hidden">
     <div class="px-4 pt-4 pb-2 fs-xs fw-semi-bold text-uppercase text-blue-grey">
       Display density
     </div>
-    <CList v-model="selected" variant="listbox" mandatory class="pa-2">
-      <CListItem v-for="d in densities" :key="d.value" :value="d.value" class="px-3 py-2 radius-8">
-        <CListItemContent>
-          <CListItemTitle class="fw-medium">{{ d.label }}</CListItemTitle>
-          <CListItemSubtitle>{{ d.hint }}</CListItemSubtitle>
-        </CListItemContent>
-        <CIcon v-if="selected === d.value" name="fas:check" source="fa" :size="14" />
-      </CListItem>
-    </CList>
-  </CCard>
+    <c-list v-model="selected" variant="listbox" mandatory class="pa-2">
+      <c-list-item
+        v-for="d in densities"
+        :key="d.value"
+        :value="d.value"
+        class="px-3 py-2 radius-8"
+      >
+        <c-list-item-content>
+          <c-list-item-title class="fw-medium">{{ d.label }}</c-list-item-title>
+          <c-list-item-subtitle>{{ d.hint }}</c-list-item-subtitle>
+        </c-list-item-content>
+        <c-icon v-if="selected === d.value" name="fas:check" source="fa" :size="14" />
+      </c-list-item>
+    </c-list>
+  </c-card>
 </template>
 
 <script setup lang="ts">
@@ -110,23 +115,23 @@ const densities = [
 
 ```vue
 <template>
-  <CList v-model="selected" variant="listbox" multiple class="pa-2">
-    <CListItem v-for="s in skills" :key="s.value" :value="s.value" class="px-3 py-2 radius-8">
-      <CListItemIcon>
-        <CIcon :name="s.icon" source="fa" :size="14" />
-      </CListItemIcon>
+  <c-list v-model="selected" variant="listbox" multiple class="pa-2">
+    <c-list-item v-for="s in skills" :key="s.value" :value="s.value" class="px-3 py-2 radius-8">
+      <c-list-item-icon>
+        <c-icon :name="s.icon" source="fa" :size="14" />
+      </c-list-item-icon>
       <span class="grow-1 fw-medium">{{ s.label }}</span>
-      <CIcon v-if="selected.includes(s.value)" name="fas:check" source="fa" :size="14" />
-    </CListItem>
-  </CList>
+      <c-icon v-if="selected.includes(s.value)" name="fas:check" source="fa" :size="14" />
+    </c-list-item>
+  </c-list>
 
-  <CRow class="gap-y-2 mt-4" align="center">
-    <CCol v-for="s in selected" :key="s" cols="6" class="d-flex justify-center">
+  <c-row class="gap-y-2 mt-4" align="center">
+    <c-col v-for="s in selected" :key="s" cols="6" class="d-flex justify-center">
       <span class="radius-pill bg-teal text-white px-3 py-1 fs-xs fw-semi-bold text-capitalize">
         {{ s }}
       </span>
-    </CCol>
-  </CRow>
+    </c-col>
+  </c-row>
 </template>
 
 <script setup lang="ts">
@@ -161,20 +166,20 @@ const skills = [
 
 ```vue
 <template>
-  <CCard class="elevation-3 radius-16" style="width:340px;overflow:hidden">
-    <CList v-model="selected" variant="listbox" mandatory class="pa-2">
-      <CListItem v-for="f in folders" :key="f.value" :value="f.value" class="px-3 py-2 radius-8">
+  <c-card class="elevation-3 radius-16" style="width:340px;overflow:hidden">
+    <c-list v-model="selected" variant="listbox" mandatory class="pa-2">
+      <c-list-item v-for="f in folders" :key="f.value" :value="f.value" class="px-3 py-2 radius-8">
         <span
           class="d-inline-flex items-center justify-center radius-circle text-white"
           :class="f.bg"
           style="width:38px;height:38px;flex-shrink:0"
         >
-          <CIcon :name="f.icon" source="fa" :size="15" />
+          <c-icon :name="f.icon" source="fa" :size="15" />
         </span>
-        <CListItemContent>
-          <CListItemTitle class="fw-medium">{{ f.title }}</CListItemTitle>
-          <CListItemSubtitle>{{ f.subtitle }}</CListItemSubtitle>
-        </CListItemContent>
+        <c-list-item-content>
+          <c-list-item-title class="fw-medium">{{ f.title }}</c-list-item-title>
+          <c-list-item-subtitle>{{ f.subtitle }}</c-list-item-subtitle>
+        </c-list-item-content>
         <span
           v-if="f.badge"
           class="badge fs-xs fw-semi-bold"
@@ -182,9 +187,9 @@ const skills = [
         >
           {{ f.badge }}
         </span>
-      </CListItem>
-    </CList>
-  </CCard>
+      </c-list-item>
+    </c-list>
+  </c-card>
 </template>
 
 <script setup lang="ts">
@@ -257,36 +262,36 @@ const folders = [
 
 ```vue
 <template>
-  <CCard class="elevation-4 radius-12" style="width:250px;overflow:hidden">
-    <CList variant="menu" class="pa-2">
-      <CListItem
+  <c-card class="elevation-4 radius-12" style="width:250px;overflow:hidden">
+    <c-list variant="menu" class="pa-2">
+      <c-list-item
         v-for="a in actions"
         :key="a.value"
         :value="a.value"
         class="px-3 py-2 radius-8"
         @click="last = a.label"
       >
-        <CListItemIcon>
-          <CIcon :name="a.icon" source="fa" :size="14" class="text-blue-grey" />
-        </CListItemIcon>
+        <c-list-item-icon>
+          <c-icon :name="a.icon" source="fa" :size="14" class="text-blue-grey" />
+        </c-list-item-icon>
         <span class="grow-1 fw-medium">{{ a.label }}</span>
         <span class="kbd fs-xs fw-medium">{{ a.kb }}</span>
-      </CListItem>
+      </c-list-item>
 
       <div class="divider my-1 mx-2" />
 
-      <CListItem
+      <c-list-item
         value="delete"
         class="px-3 py-2 radius-8 text-deep-orange"
         @click="last = 'Delete'"
       >
-        <CListItemIcon>
-          <CIcon name="fas:trash" source="fa" :size="14" />
-        </CListItemIcon>
+        <c-list-item-icon>
+          <c-icon name="fas:trash" source="fa" :size="14" />
+        </c-list-item-icon>
         <span class="grow-1 fw-medium">Delete</span>
-      </CListItem>
-    </CList>
-  </CCard>
+      </c-list-item>
+    </c-list>
+  </c-card>
 </template>
 
 <script setup lang="ts">
@@ -331,9 +336,9 @@ const actions = [
 
 ```vue
 <template>
-  <CCard class="elevation-3 radius-16" style="width:360px;overflow:hidden">
-    <CList v-model="selected" variant="listbox" item-key="id" multiple class="pa-2">
-      <CListItem v-for="u in users" :key="u.id" :value="u" class="px-3 py-2 radius-8">
+  <c-card class="elevation-3 radius-16" style="width:360px;overflow:hidden">
+    <c-list v-model="selected" variant="listbox" item-key="id" multiple class="pa-2">
+      <c-list-item v-for="u in users" :key="u.id" :value="u" class="px-3 py-2 radius-8">
         <span
           class="d-inline-flex items-center justify-center radius-circle text-white fs-sm fw-semi-bold"
           :class="u.bg"
@@ -341,14 +346,14 @@ const actions = [
         >
           {{ u.initials }}
         </span>
-        <CListItemContent>
-          <CListItemTitle class="fw-medium">{{ u.name }}</CListItemTitle>
-          <CListItemSubtitle>{{ u.role }}</CListItemSubtitle>
-        </CListItemContent>
-        <CIcon v-if="selectedIds.includes(u.id)" name="fas:check" source="fa" :size="15" />
-      </CListItem>
-    </CList>
-  </CCard>
+        <c-list-item-content>
+          <c-list-item-title class="fw-medium">{{ u.name }}</c-list-item-title>
+          <c-list-item-subtitle>{{ u.role }}</c-list-item-subtitle>
+        </c-list-item-content>
+        <c-icon v-if="selectedIds.includes(u.id)" name="fas:check" source="fa" :size="15" />
+      </c-list-item>
+    </c-list>
+  </c-card>
 </template>
 
 <script setup lang="ts">
@@ -374,9 +379,9 @@ const selectedIds = computed(() => selected.value.map((u) => u.id))
 `item-key` также принимает функцию:
 
 ```vue
-<CList v-model="selected" variant="listbox" :item-key="(item) => item.id">
+<c-list v-model="selected" variant="listbox" :item-key="(item) => item.id">
   <!-- ... -->
-</CList>
+</c-list>
 ```
 
 ## Обязательный выбор
@@ -384,10 +389,10 @@ const selectedIds = computed(() => selected.value.map((u) => u.id))
 С `mandatory` текущий выбранный элемент нельзя снять. В режиме `multiple` нельзя удалить последний оставшийся элемент.
 
 ```vue
-<CList v-model="tab" variant="listbox" mandatory>
-  <CListItem value="tab1">Tab 1</CListItem>
-  <CListItem value="tab2">Tab 2</CListItem>
-</CList>
+<c-list v-model="tab" variant="listbox" mandatory>
+  <c-list-item value="tab1">Tab 1</c-list-item>
+  <c-list-item value="tab2">Tab 2</c-list-item>
+</c-list>
 ```
 
 ## Readonly и disabled
@@ -395,16 +400,16 @@ const selectedIds = computed(() => selected.value.map((u) => u.id))
 `readonly` сохраняет текущий выбор видимым, но блокирует любые изменения. `disabled` дополнительно приглушает список и убирает его из таб-порядка. Отдельные элементы можно отключить пропом `disabled` — они сохраняют ARIA-контракт, но пропускаются при выборе, наведении, клике и навигации с клавиатуры.
 
 ```vue
-<CList v-model="selected" variant="listbox" readonly>
-  <CListItem value="a">Option A</CListItem>
-  <CListItem value="b">Option B</CListItem>
-</CList>
+<c-list v-model="selected" variant="listbox" readonly>
+  <c-list-item value="a">Option A</c-list-item>
+  <c-list-item value="b">Option B</c-list-item>
+</c-list>
 
-<CList v-model="selected" variant="listbox">
-  <CListItem value="a">Available</CListItem>
-  <CListItem value="b" disabled>Sold out</CListItem>
-  <CListItem value="c">Available</CListItem>
-</CList>
+<c-list v-model="selected" variant="listbox">
+  <c-list-item value="a">Available</c-list-item>
+  <c-list-item value="b" disabled>Sold out</c-list-item>
+  <c-list-item value="c">Available</c-list-item>
+</c-list>
 ```
 
 ## Навигация с клавиатуры
@@ -420,12 +425,12 @@ const selectedIds = computed(() => selected.value.map((u) => u.id))
 
 ```vue
 <template>
-  <CList ref="listRef" variant="menu">
-    <CListItem value="cut">Cut</CListItem>
-    <CListItem value="copy">Copy</CListItem>
-    <CListItem value="paste">Paste</CListItem>
-  </CList>
-  <CBtn @click="listRef?.focus()">Focus menu</CBtn>
+  <c-list ref="listRef" variant="menu">
+    <c-list-item value="cut">Cut</c-list-item>
+    <c-list-item value="copy">Copy</c-list-item>
+    <c-list-item value="paste">Paste</c-list-item>
+  </c-list>
+  <c-btn @click="listRef?.focus()">Focus menu</c-btn>
 </template>
 
 <script setup lang="ts">
@@ -442,18 +447,18 @@ const listRef = ref()
 
 ```vue
 <template>
-  <CList v-model="selected" variant="listbox">
+  <c-list v-model="selected" variant="listbox">
     <template #default="{ toggle, isActive }">
-      <CChip
+      <c-chip
         v-for="item in items"
         :key="item"
         :class="{ 'is-active': isActive(item) }"
         @click="toggle(item)"
       >
         {{ item }}
-      </CChip>
+      </c-chip>
     </template>
-  </CList>
+  </c-list>
 </template>
 
 <script setup lang="ts">

@@ -9,6 +9,8 @@ import BasicExample from '../../examples/CCheckbox/BasicExample.vue'
 import GroupExample from '../../examples/CCheckbox/GroupExample.vue'
 import IndeterminateExample from '../../examples/CCheckbox/IndeterminateExample.vue'
 import StatesExample from '../../examples/CCheckbox/StatesExample.vue'
+import ColorExample from '../../examples/CCheckbox/ColorExample.vue'
+import SizeExample from '../../examples/CCheckbox/SizeExample.vue'
 import SlotsExample from '../../examples/CCheckbox/SlotsExample.vue'
 import PresetExample from '../../examples/CCheckbox/PresetExample.vue'
 </script>
@@ -23,7 +25,7 @@ Bind a boolean with `v-model` and pass a `label`.
 
 ```vue
 <template>
-  <CCheckbox v-model="subscribed" label="Email me about releases" />
+  <c-checkbox v-model="subscribed" label="Email me about releases" />
 </template>
 
 <script setup lang="ts">
@@ -45,7 +47,7 @@ Point several checkboxes at the same array model and give each one a `value`. Ch
 
 ```vue
 <template>
-  <CCheckbox
+  <c-checkbox
     v-for="scope in available"
     :key="scope.value"
     v-model="scopes"
@@ -70,6 +72,105 @@ const available = [
 
 :::
 
+## Color
+
+`color` sets the box colour through a text utility (`text-{color}`), so it accepts palette tokens and raw CSS colours.
+
+::: tip A raw colour must be a literal
+Arbitrary classes (`text-[#e65100]`) are generated through a static source scan: `color="#e65100"` works, `:color="someVar"` with a raw value does not. Palette tokens are unaffected.
+:::
+
+<ColorExample />
+
+::: details Show code
+
+```vue
+<template>
+  <c-checkbox
+    v-for="item in variants"
+    :key="item.value"
+    v-model="selected"
+    :value="item.value"
+    :label="item.label"
+    :color="item.color"
+    no-details
+  />
+
+  <c-checkbox
+    v-model="selected"
+    value="custom"
+    label="Custom CSS color"
+    color="#e65100"
+    no-details
+  />
+
+  <c-checkbox
+    v-model="selected"
+    value="brand"
+    label="Brand variable"
+    color="var(--c-sys-color-primary)"
+    no-details
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const selected = ref(['teal', 'rose', 'amber', 'custom'])
+
+const variants = [
+  { value: 'teal', label: 'Teal', color: 'teal' },
+  { value: 'indigo', label: 'Indigo', color: 'indigo' },
+  { value: 'rose', label: 'Rose', color: 'pink-darken-1' },
+  { value: 'amber', label: 'Amber', color: 'amber-darken-2' },
+  { value: 'green', label: 'Green', color: 'green-darken-1' },
+  { value: 'cyan', label: 'Cyan', color: 'cyan-darken-2' },
+  { value: 'purple', label: 'Purple', color: 'deep-purple-lighten-1' },
+  { value: 'red', label: 'Red', color: 'red-darken-1' },
+]
+</script>
+```
+
+:::
+
+## Size
+
+`size` changes only the box size, leaving the row height and label typography alone. Numbers become pixels, while strings are passed through as CSS values.
+
+<SizeExample />
+
+::: details Show code
+
+```vue
+<template>
+  <c-checkbox
+    v-for="item in variants"
+    :key="item.value"
+    v-model="selected"
+    :value="item.value"
+    :label="item.label"
+    :size="item.size"
+    color="indigo"
+    no-details
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const selected = ref(['compact'])
+
+const variants = [
+  { value: 'compact', label: 'Compact 16', size: 16 },
+  { value: 'regular', label: 'Regular 20', size: 20 },
+  { value: 'comfortable', label: 'Comfortable 24', size: 24 },
+  { value: 'large', label: 'Large 28', size: '28px' },
+]
+</script>
+```
+
+:::
+
 ## Indeterminate
 
 `indeterminate` renders the third state and sets the native `indeterminate` property on the input, so assistive tech reports the checkbox as _mixed_. It is independent of `modelValue`: a checkbox can be unchecked and mixed at the same time.
@@ -82,9 +183,9 @@ Toggling clears it — the component emits `update:indeterminate` with `false`. 
 
 ```vue
 <template>
-  <CCheckbox v-model="allInvited" :indeterminate="someInvited" label="All teams" no-details />
+  <c-checkbox v-model="allInvited" :indeterminate="someInvited" label="All teams" no-details />
 
-  <CCheckbox
+  <c-checkbox
     v-for="team in teams"
     :key="team"
     v-model="invited"
@@ -123,7 +224,7 @@ const someInvited = computed(() => invited.value.length > 0 && invited.value.len
 
 ```vue
 <template>
-  <CCheckbox
+  <c-checkbox
     v-model="terms"
     label="I accept the terms of service"
     :rules="termsRules"
@@ -133,7 +234,7 @@ const someInvited = computed(() => invited.value.length > 0 && invited.value.len
     <template #details="{ errorMessage, details }">
       <span :class="{ error: !!errorMessage }">{{ errorMessage || details }}</span>
     </template>
-  </CCheckbox>
+  </c-checkbox>
 </template>
 
 <script setup lang="ts">
@@ -157,9 +258,9 @@ The default slot replaces the `label` text and receives the current state; `icon
 
 ```vue
 <template>
-  <CCheckbox v-model="starred" no-details>
+  <c-checkbox v-model="starred" no-details>
     <template #icon="{ checked }">
-      <CIcon
+      <c-icon
         name="fas:star"
         source="fa"
         :size="18"
@@ -167,16 +268,16 @@ The default slot replaces the `label` text and receives the current state; `icon
       />
     </template>
     Star this repository
-  </CCheckbox>
+  </c-checkbox>
 
-  <CCheckbox v-model="accepted" no-details>
+  <c-checkbox v-model="accepted" no-details>
     <template #default="{ checked }">
       <span class="d-flex items-center gap-2">
         Watch releases
-        <CChip v-if="checked" class="bg-indigo text-white fs-xs">on</CChip>
+        <c-chip v-if="checked" class="bg-indigo text-white fs-xs">on</c-chip>
       </span>
     </template>
-  </CCheckbox>
+  </c-checkbox>
 </template>
 ```
 
@@ -186,7 +287,7 @@ The label is not a click target of its own — the native input covers the whole
 
 ## Presets
 
-The checkbox reads its preset from the input set: the nested `checkbox` field of the `base` snapshot takes a plain `CCheckboxPreset`, the same way `field` takes a `CFieldPreset`. Zones are `root`, `icon` and `label`; states collapse in the order `disabled > readonly > error > focused > indeterminate > checked`.
+The checkbox reads its preset from the input set: the nested `checkbox` field of the `base` snapshot takes a plain `CCheckboxPreset`, the same way `field` takes a `CFieldPreset`. Zones are `root`, `icon` and `label`; states collapse in the order `disabled > readonly > error > focused > indeterminate > checked`. For checkboxes, `focused` applies only on `:focus-visible`.
 
 <PresetExample />
 
@@ -212,7 +313,7 @@ const consent: CInputPreset = {
 
 ```vue
 <template>
-  <CCheckbox v-model="allEnabled" label="All channels" preset="input.consent" />
+  <c-checkbox v-model="allEnabled" label="All channels" preset="input.consent" />
 </template>
 ```
 
@@ -223,7 +324,22 @@ const consent: CInputPreset = {
 - **Keyboard** — the native input handles it: `Tab` focuses, `Space` toggles.
 - **Readonly** — the checkbox stays focusable and keeps its value visible, but toggling is cancelled and the model never changes. It is exposed as `aria-readonly`, since a native checkbox has no readonly of its own.
 - **Disabled** — blocks focus and changes, and rules are not evaluated.
-- **Icons** — the box comes from the `checkboxOn` / `checkboxOff` / `checkboxIndeterminate` [icon aliases](/en/guide/icons), so a whole app can be reskinned from the icon config.
+- **Animation** — checking fills the box and draws the tick with `stroke-dashoffset`; the indeterminate dash scales and rotates in. Both use the system motion tokens and collapse to instant under `prefers-reduced-motion: reduce`.
+
+## Styling
+
+The box is not an icon: it is a CSS border, while the tick and dash take their geometry from the `checkboxCheckMark` and `checkboxIndeterminateMark` aliases and render inside one `CIcon` SVG layer as centreline paths. That is what makes the tick drawable — a filled glyph from an icon set has no centreline to run a dash along, so `checkboxOn` and `checkboxIndeterminate` play no part here. Use the `icon` slot to replace the box entirely.
+
+Overriding those aliases through `icons.aliases` reskins the marks app-wide. Supply centreline paths, not silhouettes — with a filled glyph the dash traces the outline instead of drawing the mark. Both marks share one SVG whose `viewBox` comes from the check-mark entry, so author them in the same coordinate system.
+
+Two custom properties are exposed on `.c-checkbox__icon`:
+
+| Variable                  | Default                    | Description                                  |
+| ------------------------- | -------------------------- | -------------------------------------------- |
+| `--c-checkbox-size`       | `20px`                     | Box size; the `size` prop sets this          |
+| `--c-checkbox-mark-color` | `--c-sys-color-on-primary` | Tick and dash colour, against the filled box |
+
+The box itself is painted with `currentColor`, so colour utilities and preset zones drive it.
 
 ## API
 
@@ -234,7 +350,8 @@ const consent: CInputPreset = {
 | `modelValue`    | `T \| T[] \| boolean` | `false` | Checked state, or the array collecting `value`s in group mode |
 | `value`         | `T`                   | —       | Value added to / removed from the model when toggled          |
 | `indeterminate` | `boolean`             | `false` | Third state; cleared on toggle                                |
-| `size`          | `number \| string`    | —       | Box size in pixels; forwarded to `CIcon`                      |
+| `color`         | `string`              | —       | Box colour: palette token or raw CSS colour                   |
+| `size`          | `number \| string`    | `20px`  | Box size; sets `--c-checkbox-size`                            |
 | `disabled`      | `boolean`             | `false` | Blocks focus and changes                                      |
 | `readonly`      | `boolean`             | `false` | Keeps the value visible and focusable, but blocks changes     |
 

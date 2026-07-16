@@ -20,7 +20,7 @@ import PresetsExample from '../../examples/CDatePicker/PresetsExample.vue'
 
 ```vue
 <template>
-  <CDatePicker v-model="date" />
+  <c-date-picker v-model="date" />
 </template>
 
 <script setup lang="ts">
@@ -58,7 +58,7 @@ type DisabledDates = {
 
 ```vue
 <template>
-  <CDatePicker
+  <c-date-picker
     v-model="date"
     :min-date="minDate"
     :max-date="maxDate"
@@ -102,7 +102,7 @@ const highlightedDates = [shift(3), shift(9), shift(18)]
 
 ```vue
 <template>
-  <CDatePicker :locale="locale" :monday-first="locale !== 'en'" />
+  <c-date-picker :locale="locale" :monday-first="locale !== 'en'" />
 </template>
 
 <script setup lang="ts">
@@ -118,7 +118,7 @@ const locale = shallowRef('ru')
 
 ```vue
 <!-- en-месяцы, но своя неделя -->
-<CDatePicker :locale="{ week: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'] }" />
+<c-date-picker :locale="{ week: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'] }" />
 ```
 
 Комбинация «другой тег + своё переопределение» собирается через `resolveLocale`:
@@ -139,7 +139,7 @@ const locale = { ...resolveLocale('uz'), week: ['Ya', 'Du', 'Se', 'Ch', 'Psh', '
 
 ```vue
 <template>
-  <CDatePicker v-model="date" :highlighted-dates="highlightedDates">
+  <c-date-picker v-model="date" :highlighted-dates="highlightedDates">
     <template #date="{ date: day, isHighlighted }">
       <div class="d-flex flex-column items-center">
         <span>{{ day }}</span>
@@ -150,7 +150,7 @@ const locale = { ...resolveLocale('uz'), week: ['Ya', 'Du', 'Se', 'Ch', 'Psh', '
         ></span>
       </div>
     </template>
-  </CDatePicker>
+  </c-date-picker>
 </template>
 ```
 
@@ -166,7 +166,7 @@ const locale = { ...resolveLocale('uz'), week: ['Ya', 'Du', 'Se', 'Ch', 'Psh', '
 
 ```vue
 <template>
-  <CDatePicker v-model="date" preset="datePicker.neon" :highlighted-dates="highlightedDates" />
+  <c-date-picker v-model="date" preset="datePicker.neon" :highlighted-dates="highlightedDates" />
 </template>
 ```
 

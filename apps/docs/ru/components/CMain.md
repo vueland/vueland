@@ -6,11 +6,11 @@
 
 ```vue
 <template>
-  <CApp>
-    <CMain>
+  <c-app>
+    <c-main>
       <!-- содержимое страницы -->
-    </CMain>
-  </CApp>
+    </c-main>
+  </c-app>
 </template>
 ```
 
