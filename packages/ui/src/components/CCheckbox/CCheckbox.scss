@@ -15,6 +15,7 @@ $self: '.c-checkbox';
   &--default,
   &--readonly,
   &--focused,
+  &--indeterminate,
   &--checked {
     & > #{$self}__label {
       color: getCssVar('sys', 'color', 'on-surface');

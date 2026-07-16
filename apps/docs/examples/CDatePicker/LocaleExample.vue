@@ -15,50 +15,65 @@
 
 <template>
     <div class="date-locale">
-        <div class="date-locale__rail">
-            <button
-                v-for="item in locales"
-                :key="item.tag"
-                :class="['date-locale__tab', item.tag === locale && 'date-locale__tab--active']"
-                type="button"
-                @click="locale = item.tag"
-            >
-                <c-icon
-                    :name="item.tag === locale ? 'fas:check' : 'fas:globe'"
-                    source="fa"
-                    :size="12"
-                />
-                <span>{{ item.label }}</span>
-                <small>{{ item.zone }}</small>
-            </button>
-        </div>
-
-        <c-date-picker
-            :locale="locale"
-            :monday-first="locale !== 'en'"
-            preset="datePicker.neon"
+        <c-row
+            class="gap-y-5"
+            align="stretch"
         >
-            <template #before-body>
-                <div class="date-locale__banner">
-                    <c-icon
-                        name="fas:globe"
-                        source="fa"
-                        :size="13"
-                    />
-                    {{ active.zone }} calendar
+            <c-col
+                cols="12"
+                md="5"
+            >
+                <div class="date-locale__rail">
+                    <button
+                        v-for="item in locales"
+                        :key="item.tag"
+                        :class="['date-locale__tab', item.tag === locale && 'date-locale__tab--active']"
+                        type="button"
+                        @click="locale = item.tag"
+                    >
+                        <span class="date-locale__tab-icon">
+                            <c-icon
+                                :name="item.tag === locale ? 'fas:check' : 'fas:globe'"
+                                source="fa"
+                                :size="12"
+                            />
+                        </span>
+                        <span class="date-locale__tab-content">
+                            <span class="date-locale__tab-label">{{ item.label }}</span>
+                            <small>{{ item.zone }}</small>
+                        </span>
+                    </button>
                 </div>
-            </template>
-        </c-date-picker>
+            </c-col>
+
+            <c-col
+                cols="12"
+                md="7"
+                class="d-flex justify-center"
+            >
+                <c-date-picker
+                    :locale="locale"
+                    :monday-first="locale !== 'en'"
+                    preset="datePicker.neon"
+                >
+                    <template #before-body>
+                        <div class="date-locale__banner">
+                            <c-icon
+                                name="fas:globe"
+                                source="fa"
+                                :size="13"
+                            />
+                            {{ active.zone }} calendar
+                        </div>
+                    </template>
+                </c-date-picker>
+            </c-col>
+        </c-row>
     </div>
 </template>
 
 <style scoped>
 .date-locale {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: stretch;
-  justify-content: center;
-  gap: 20px;
   padding: 30px;
   border-radius: 18px;
   background:
@@ -79,14 +94,15 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  min-width: 220px;
+  height: 100%;
 }
 
 .date-locale__tab {
   display: flex;
-  flex-wrap: wrap;
-  gap: 2px 10px;
   align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 72px;
   padding: 12px 14px;
   border: 0;
   border-radius: 14px;
@@ -96,14 +112,31 @@
   text-align: left;
 }
 
-.date-locale__tab span,
-.date-locale__tab small {
-  flex: 1 1 calc(100% - 28px);
+.date-locale__tab-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 24px;
+  width: 24px;
+}
+
+.date-locale__tab-content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.date-locale__tab-label {
+  font-size: 15px;
+  line-height: 1.25;
 }
 
 .date-locale__tab small {
-  margin-left: 22px;
   color: var(--c-sys-color-on-surface-variant);
+  font-size: 12px;
+  line-height: 1.2;
 }
 
 .date-locale__tab--active {
