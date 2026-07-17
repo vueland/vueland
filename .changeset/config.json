@@ -12,5 +12,5 @@
     "access": "public",
     "baseBranch": "master",
     "updateInternalDependencies": "patch",
-    "ignore": ["@vueland/docs", "playground"]
+    "ignore": ["@vueland/docs", "playground", "@vueland/e2e"]
 }

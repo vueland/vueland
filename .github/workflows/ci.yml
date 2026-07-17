@@ -90,3 +90,38 @@ jobs:
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: echo "$PR_TITLE" | pnpm exec commitlint --verbose
+
+  branch-name:
+    name: Branch name
+    # Only meaningful on PRs — validates the head branch against the naming convention.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      # No setup/deps: the script uses only Node built-ins (runner has Node preinstalled).
+      - name: Validate branch name
+        env:
+          GITHUB_HEAD_REF: ${{ github.head_ref }}
+        run: node scripts/check-branch-name.mjs
+
+  e2e:
+    name: E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      # Chromium only — matches the CI project in apps/e2e/playwright.config.ts.
+      - name: Install Playwright Chromium
+        run: pnpm --filter @vueland/e2e exec playwright install --with-deps chromium
+      - name: Run Playwright e2e
+        # Playwright's webServer boots the playground (vite) itself.
+        run: pnpm run test:e2e
+      - name: Upload Playwright report
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: apps/e2e/playwright-report/
+          retention-days: 7
