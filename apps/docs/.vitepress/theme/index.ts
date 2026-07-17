@@ -214,6 +214,34 @@ const datePickerAgendaPreset: CDatePickerPreset = {
 const dateInputBookingPreset = makeDateInputPreset('text-teal', datePickerAgendaPreset)
 const dateInputCampaignPreset = makeDateInputPreset('text-indigo', datePickerNeonPreset)
 
+// Демо для страницы CCheckbox: вложенный пресет чекбокса лежит в base-снимке
+// инпута — там же, где field. Состояния резолвит сам чекбокс.
+const consentCheckboxPreset: CInputPreset = {
+    base: {
+        checkbox: {
+            base: {
+                icon: ['text-blue-grey'],
+                label: ['text-blue-grey'],
+            },
+            checked: {
+                icon: ['text-indigo'],
+                label: ['text-indigo', 'fw-semi-bold'],
+            },
+            indeterminate: { icon: ['text-indigo'] },
+            focused: { icon: ['text-indigo-darken-2'] },
+            error: {
+                icon: ['text-red'],
+                label: ['text-red'],
+            },
+            disabled: {
+                icon: ['text-grey-lighten-1'],
+                label: ['text-grey-lighten-1'],
+            },
+        },
+    },
+    error: { details: ['text-red'] },
+}
+
 // Демо для страниц CProgressCircular / CProgressLinear: complete перекрашивает
 // прогресс в зелёный, когда value доходит до 100. Кольцо и подложка — SVG,
 // text-* красит их через currentColor.
@@ -279,6 +307,7 @@ export default {
                     cyan: makeInputPreset('text-cyan'),
                     dateBooking: dateInputBookingPreset,
                     dateCampaign: dateInputCampaignPreset,
+                    consent: consentCheckboxPreset,
                 },
                 progress: {
                     upload: uploadProgressPreset,

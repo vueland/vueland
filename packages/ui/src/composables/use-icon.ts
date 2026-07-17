@@ -4,54 +4,32 @@ import {
     type ComputedRef,
 } from 'vue'
 
+import { ALIASES } from '@/constants/icons'
+import type {
+    IconResolverResult,
+    SvgIconData,
+    UseIconOptions,
+} from '@/types'
+
 import { useCore } from './use-core'
 
-export type IconMode = 'sprite' | 'component' | 'raw' | 'fa' | 'md'
-
-export interface UseIconOptions {
-    name?: string | number
-    source?: IconMode
-    component?: Component | null
-    body?: string
-    viewBox?: string
-    spritePrefix?: string
-    spritePath?: string
-}
-
-export interface SvgIconData {
-    body: string
-    viewBox?: string
-    size?: number
-}
-
-export interface FontIconData {
-    text: string
-    className: string
-}
-
-export interface ComponentIconData {
-    component: Component
-}
-
-export interface SpriteIconData {
-    href: string
-    viewBox?: string
-}
-
-export type IconResolverResult =
-    | ({ kind: 'svg' } & SvgIconData)
-    | ({ kind: 'font' } & FontIconData)
-    | ({ kind: 'component' } & ComponentIconData)
-    | ({ kind: 'sprite' } & SpriteIconData)
-    | null
-    | undefined
-
-export type IconResolver = (name: string | number, options: UseIconOptions) => IconResolverResult
+// Типы иконок живут в '@/types'; реэкспорт сохраняет прежние точки импорта.
+export type {
+    ComponentIconData,
+    FontIconData,
+    IconMode,
+    IconResolver,
+    IconResolverResult,
+    SpriteIconData,
+    SvgIconData,
+    UseIconOptions,
+} from '@/types'
 
 export interface ResolvedIcon {
     kind: 'svg' | 'component' | 'sprite' | 'font'
     component: Component | null
     body: string
+    path: string
     viewBox: string
     href: string
     text: string
@@ -66,6 +44,7 @@ const emptyIcon = (viewBox = DEFAULT_VIEW_BOX): ResolvedIcon => ({
     kind: 'svg',
     component: null,
     body: '',
+    path: '',
     viewBox,
     href: '',
     text: '',
@@ -83,6 +62,7 @@ function normalizeIcon(icon: IconResolverResult, fallbackViewBox = DEFAULT_VIEW_
             kind: 'component',
             component: icon.component,
             body: '',
+            path: '',
             viewBox: fallbackViewBox,
             href: '',
             text: '',
@@ -96,9 +76,10 @@ function normalizeIcon(icon: IconResolverResult, fallbackViewBox = DEFAULT_VIEW_
             kind: 'font',
             component: null,
             body: '',
+            path: '',
             viewBox: fallbackViewBox,
             href: '',
-            text: icon.text,
+            text: icon.text ?? '',
             className: icon.className,
             found: true,
         }
@@ -109,6 +90,7 @@ function normalizeIcon(icon: IconResolverResult, fallbackViewBox = DEFAULT_VIEW_
             kind: 'sprite',
             component: null,
             body: '',
+            path: '',
             viewBox: icon.viewBox || fallbackViewBox,
             href: icon.href,
             text: '',
@@ -120,7 +102,8 @@ function normalizeIcon(icon: IconResolverResult, fallbackViewBox = DEFAULT_VIEW_
     return {
         kind: 'svg',
         component: null,
-        body: icon.body,
+        body: icon.body ?? '',
+        path: icon.path ?? '',
         viewBox: icon.viewBox || fallbackViewBox,
         href: '',
         text: '',
@@ -151,6 +134,18 @@ export function useIcon(props: UseIconOptions): ComputedRef<ResolvedIcon> {
                 {
                     kind: 'svg',
                     body: props.body,
+                    path: props.path,
+                    viewBox: props.viewBox,
+                },
+                fallbackViewBox,
+            )
+        }
+
+        if (props.path) {
+            return normalizeIcon(
+                {
+                    kind: 'svg',
+                    path: props.path,
                     viewBox: props.viewBox,
                 },
                 fallbackViewBox,
@@ -184,13 +179,15 @@ export function useIcon(props: UseIconOptions): ComputedRef<ResolvedIcon> {
             }
         }
 
-        const icon = icons?.aliases?.[props.name]
+        const builtInAliases = ALIASES as Record<string, SvgIconData | undefined>
+        const icon = icons?.aliases?.[props.name] ?? builtInAliases[String(props.name)]
 
         return normalizeIcon(
             icon
                 ? {
                     kind: 'svg',
                     body: icon.body,
+                    path: icon.path,
                     viewBox: icon.viewBox,
                     size: icon.size,
                 }

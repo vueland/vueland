@@ -21,9 +21,9 @@ import PresetColorExample from '../../examples/CBtn/PresetColorExample.vue'
 
 ```vue
 <template>
-  <CBtn @click="count++">Click me</CBtn>
-  <CBtn disabled>Disabled</CBtn>
-  <CBtn block @click="count++">Block button</CBtn>
+  <c-btn @click="count++">Click me</c-btn>
+  <c-btn disabled>Disabled</c-btn>
+  <c-btn block @click="count++">Block button</c-btn>
 </template>
 ```
 
@@ -38,7 +38,7 @@ import PresetColorExample from '../../examples/CBtn/PresetColorExample.vue'
 ::: details Показать код
 
 ```html
-<CBtn>Flat</CBtn> <CBtn variant="outlined">Outlined</CBtn>
+<c-btn>Flat</c-btn> <c-btn variant="outlined">Outlined</c-btn>
 ```
 
 :::
@@ -57,13 +57,13 @@ import PresetColorExample from '../../examples/CBtn/PresetColorExample.vue'
 ::: details Показать код
 
 ```html
-<CBtn color="red-darken-1">red-darken-1</CBtn>
-<CBtn color="teal">teal</CBtn>
-<CBtn color="#7C4DFF">#7C4DFF</CBtn>
-<CBtn color="rgb(0,150,136)">rgb(0,150,136)</CBtn>
+<c-btn color="red-darken-1">red-darken-1</c-btn>
+<c-btn color="teal">teal</c-btn>
+<c-btn color="#7C4DFF">#7C4DFF</c-btn>
+<c-btn color="rgb(0,150,136)">rgb(0,150,136)</c-btn>
 
-<CBtn variant="outlined" color="red-darken-1">outlined red</CBtn>
-<CBtn variant="outlined" color="#7C4DFF">outlined #7C4DFF</CBtn>
+<c-btn variant="outlined" color="red-darken-1">outlined red</c-btn>
+<c-btn variant="outlined" color="#7C4DFF">outlined #7C4DFF</c-btn>
 ```
 
 :::
@@ -75,7 +75,7 @@ Arbitrary-классы генерируются статическим скан�
 Цвет текста у залитой кнопки остаётся `on-primary` (белый). Если фон требует тёмного текста — добавьте `text-*` класс:
 
 ```html
-<CBtn color="amber-lighten-3" class="text-black">Light button</CBtn>
+<c-btn color="amber-lighten-3" class="text-black">Light button</c-btn>
 ```
 
 ## Загрузка
@@ -88,14 +88,14 @@ Arbitrary-классы генерируются статическим скан�
 
 ```vue
 <template>
-  <CBtn :loading="loading" @click="submit">Submit</CBtn>
+  <c-btn :loading="loading" @click="submit">Submit</c-btn>
 
-  <CBtn :loading="loading" color="teal" @click="submit">
+  <c-btn :loading="loading" color="teal" @click="submit">
     Custom loader
     <template #loader>
       <span>Saving…</span>
     </template>
-  </CBtn>
+  </c-btn>
 </template>
 ```
 
@@ -127,7 +127,7 @@ createVuelandUI({
 
 ```vue
 <template>
-  <CBtn preset="button.save" :loading="loading" :disabled="disabled" @click="save"> Save </CBtn>
+  <c-btn preset="button.save" :loading="loading" :disabled="disabled" @click="save"> Save </c-btn>
 </template>
 ```
 
@@ -154,9 +154,9 @@ createVuelandUI({
 ```
 
 ```html
-<CBtn preset="button.pill" color="teal">teal</CBtn>
-<CBtn preset="button.pill" color="red-darken-1">red</CBtn>
-<CBtn preset="button.pill" color="#7C4DFF">#7C4DFF</CBtn>
+<c-btn preset="button.pill" color="teal">teal</c-btn>
+<c-btn preset="button.pill" color="red-darken-1">red</c-btn>
+<c-btn preset="button.pill" color="#7C4DFF">#7C4DFF</c-btn>
 ```
 
 :::
@@ -174,9 +174,9 @@ createVuelandUI({
 По умолчанию кнопка рендерится с `type="button"` — внутри формы она не триггерит submit. Для сабмит-кнопки передайте атрибут явно:
 
 ```html
-<CForm @submit="onSubmit">
-  <CBtn type="submit">Отправить</CBtn>
-</CForm>
+<c-form @submit="onSubmit">
+  <c-btn type="submit">Отправить</c-btn>
+</c-form>
 ```
 
 ---

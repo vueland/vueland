@@ -148,7 +148,7 @@
             <slot name="append">
                 <c-icon
                     :name="IconAliases.DROPDOWN"
-                    size="24"
+                    size="20"
                 />
             </slot>
         </template>

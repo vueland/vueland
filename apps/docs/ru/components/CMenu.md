@@ -17,7 +17,7 @@ import ContextMenuExample from '../../examples/CMenu/ContextMenuExample.vue'
 
 ```vue
 <template>
-  <CMenu
+  <c-menu
     width="auto"
     open-on-click
     close-on-click-outside
@@ -26,37 +26,37 @@ import ContextMenuExample from '../../examples/CMenu/ContextMenuExample.vue'
     :offset-y="4"
   >
     <template #activator="{ on, activator }">
-      <CBtn class="bg-indigo" v-bind="activator" v-on="on" style="gap:8px">
-        <CIcon name="fas:folder" source="fa" :size="14" />
+      <c-btn class="bg-indigo" v-bind="activator" v-on="on" style="gap:8px">
+        <c-icon name="fas:folder" source="fa" :size="14" />
         File
-        <CIcon name="fas:chevron-down" source="fa" :size="10" />
-      </CBtn>
+        <c-icon name="fas:chevron-down" source="fa" :size="10" />
+      </c-btn>
     </template>
 
-    <CCard class="elevation-4" style="min-width:220px">
-      <CCardBody class="py-1 px-0">
-        <CList>
-          <CListItem class="px-4" style="gap:12px" @click="notify('New file')">
-            <CIcon name="fas:plus" source="fa" :size="13" style="width:14px;opacity:.55" />
+    <c-card class="elevation-4" style="min-width:220px">
+      <c-card-body class="py-1 px-0">
+        <c-list>
+          <c-list-item class="px-4" style="gap:12px" @click="notify('New file')">
+            <c-icon name="fas:plus" source="fa" :size="13" style="width:14px;opacity:.55" />
             <span style="flex:1">Новый файл</span>
             <span class="kb">⌘N</span>
-          </CListItem>
-          <CListItem class="px-4" style="gap:12px" @click="notify('Save')">
-            <CIcon name="fas:save" source="fa" :size="13" style="width:14px;opacity:.55" />
+          </c-list-item>
+          <c-list-item class="px-4" style="gap:12px" @click="notify('Save')">
+            <c-icon name="fas:save" source="fa" :size="13" style="width:14px;opacity:.55" />
             <span style="flex:1">Сохранить</span>
             <span class="kb">⌘S</span>
-          </CListItem>
-        </CList>
+          </c-list-item>
+        </c-list>
         <div class="sep" />
-        <CList>
-          <CListItem class="px-4" style="gap:12px;color:#f44336" @click="notify('Delete')">
-            <CIcon name="fas:trash" source="fa" :size="13" style="width:14px" />
+        <c-list>
+          <c-list-item class="px-4" style="gap:12px;color:#f44336" @click="notify('Delete')">
+            <c-icon name="fas:trash" source="fa" :size="13" style="width:14px" />
             Удалить
-          </CListItem>
-        </CList>
-      </CCardBody>
-    </CCard>
-  </CMenu>
+          </c-list-item>
+        </c-list>
+      </c-card-body>
+    </c-card>
+  </c-menu>
 </template>
 
 <script setup lang="ts">
@@ -93,7 +93,7 @@ function notify(text: string) {
 ```vue
 <template>
   <div class="d-flex align-center gap-1 pa-2 radius-8 elevation-1">
-    <CMenu
+    <c-menu
       v-for="item in nav"
       :key="item.label"
       width="auto"
@@ -105,23 +105,23 @@ function notify(text: string) {
       :close-delay="140"
     >
       <template #activator="{ on, activator }">
-        <CBtn variant="text" :class="item.color" v-bind="activator" v-on="on" style="gap:6px">
-          <CIcon :name="item.icon" source="fa" :size="13" />
+        <c-btn variant="text" :class="item.color" v-bind="activator" v-on="on" style="gap:6px">
+          <c-icon :name="item.icon" source="fa" :size="13" />
           {{ item.label }}
-        </CBtn>
+        </c-btn>
       </template>
 
-      <CCard class="elevation-4" style="min-width:180px">
-        <CCardBody class="py-1 px-0">
-          <CList>
-            <CListItem v-for="link in item.links" :key="link.label" class="px-4" style="gap:10px">
-              <CIcon :name="link.icon" source="fa" :size="12" style="width:14px;opacity:.5" />
+      <c-card class="elevation-4" style="min-width:180px">
+        <c-card-body class="py-1 px-0">
+          <c-list>
+            <c-list-item v-for="link in item.links" :key="link.label" class="px-4" style="gap:10px">
+              <c-icon :name="link.icon" source="fa" :size="12" style="width:14px;opacity:.5" />
               {{ link.label }}
-            </CListItem>
-          </CList>
-        </CCardBody>
-      </CCard>
-    </CMenu>
+            </c-list-item>
+          </c-list>
+        </c-card-body>
+      </c-card>
+    </c-menu>
   </div>
 </template>
 
@@ -172,7 +172,7 @@ const nav = [
 
 ```html
 <!-- Снизу от активатора -->
-<CMenu
+<c-menu
   width="auto"
   align="bottom"
   :offset-y="8"
@@ -181,18 +181,18 @@ const nav = [
   close-on-content-click
 >
   <template #activator="{ on, activator }">
-    <CBtn class="bg-indigo" v-bind="activator" v-on="on">Снизу</CBtn>
+    <c-btn class="bg-indigo" v-bind="activator" v-on="on">Снизу</c-btn>
   </template>
-  <CCard>...</CCard>
-</CMenu>
+  <c-card>...</c-card>
+</c-menu>
 
 <!-- Справа, с вертикальным центрированием -->
-<CMenu width="auto" align="right-center" :offset-x="8" open-on-click close-on-click-outside>
+<c-menu width="auto" align="right-center" :offset-x="8" open-on-click close-on-click-outside>
   <template #activator="{ on, activator }">
-    <CBtn class="bg-teal" v-bind="activator" v-on="on">Справа</CBtn>
+    <c-btn class="bg-teal" v-bind="activator" v-on="on">Справа</c-btn>
   </template>
-  <CCard>...</CCard>
-</CMenu>
+  <c-card>...</c-card>
+</c-menu>
 ```
 
 :::
@@ -209,7 +209,7 @@ const nav = [
 <template>
   <div class="area" @contextmenu.prevent="onContextMenu">Правый клик в этой области</div>
 
-  <CMenu
+  <c-menu
     v-model="open"
     :position-x="x"
     :position-y="y"
@@ -217,26 +217,26 @@ const nav = [
     close-on-click-outside
     close-on-content-click
   >
-    <CCard class="elevation-4" style="min-width:200px">
-      <CCardBody class="py-1 px-0">
-        <CList>
-          <CListItem class="px-4" style="gap:12px" @click="toast('Открыто')">
-            <CIcon name="fas:eye" source="fa" :size="13" style="width:14px;opacity:.5" /> Открыть
-          </CListItem>
-          <CListItem class="px-4" style="gap:12px" @click="toast('Переименовано')">
-            <CIcon name="fas:pen" source="fa" :size="13" style="width:14px;opacity:.5" />
+    <c-card class="elevation-4" style="min-width:200px">
+      <c-card-body class="py-1 px-0">
+        <c-list>
+          <c-list-item class="px-4" style="gap:12px" @click="toast('Открыто')">
+            <c-icon name="fas:eye" source="fa" :size="13" style="width:14px;opacity:.5" /> Открыть
+          </c-list-item>
+          <c-list-item class="px-4" style="gap:12px" @click="toast('Переименовано')">
+            <c-icon name="fas:pen" source="fa" :size="13" style="width:14px;opacity:.5" />
             Переименовать
-          </CListItem>
-        </CList>
+          </c-list-item>
+        </c-list>
         <div class="sep" />
-        <CList>
-          <CListItem class="px-4" style="gap:12px;color:#f44336" @click="toast('Удалено')">
-            <CIcon name="fas:trash" source="fa" :size="13" style="width:14px" /> В корзину
-          </CListItem>
-        </CList>
-      </CCardBody>
-    </CCard>
-  </CMenu>
+        <c-list>
+          <c-list-item class="px-4" style="gap:12px;color:#f44336" @click="toast('Удалено')">
+            <c-icon name="fas:trash" source="fa" :size="13" style="width:14px" /> В корзину
+          </c-list-item>
+        </c-list>
+      </c-card-body>
+    </c-card>
+  </c-menu>
 </template>
 
 <script setup lang="ts">
@@ -280,13 +280,13 @@ function toast(msg: string) {
 
 ```html
 <!-- Растягивается по ширине активатора (по умолчанию) -->
-<CMenu align="bottom">...</CMenu>
+<c-menu align="bottom">...</c-menu>
 
 <!-- Ширина определяется контентом -->
-<CMenu align="bottom" width="auto">...</CMenu>
+<c-menu align="bottom" width="auto">...</c-menu>
 
 <!-- Фиксированная ширина -->
-<CMenu align="bottom" :width="240">...</CMenu>
+<c-menu align="bottom" :width="240">...</c-menu>
 ```
 
 ## Стратегии коллизий
@@ -294,21 +294,21 @@ function toast(msg: string) {
 `strategy="reverse"` переворачивает меню при нехватке места. `strategy="bounce"` удерживает внутри viewport.
 
 ```vue
-<CMenu align="bottom" strategy="reverse" open-on-click>
+<c-menu align="bottom" strategy="reverse" open-on-click>
   ...
-</CMenu>
+</c-menu>
 ```
 
 ## v-model
 
 ```vue
 <template>
-  <CMenu v-model="open">
+  <c-menu v-model="open">
     <template #activator="{ on, activator }">
       <button v-bind="activator" v-on="on">Переключить</button>
     </template>
     <div>Контент</div>
-  </CMenu>
+  </c-menu>
 </template>
 
 <script setup lang="ts">
@@ -322,9 +322,9 @@ const open = ref(false)
 CMenu не добавляет ARIA-атрибуты самостоятельно. Передавай `role` и `aria-*` напрямую:
 
 ```vue
-<CMenu role="menu" aria-label="Действия" open-on-click>
+<c-menu role="menu" aria-label="Действия" open-on-click>
   ...
-</CMenu>
+</c-menu>
 ```
 
 ---

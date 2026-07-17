@@ -1,46 +1,97 @@
-<script setup lang="ts" generic="T">
-    import { computed, unref } from 'vue'
+<script setup lang="ts">
+    import {
+        computed,
+        shallowRef,
+        unref,
+        useAttrs
+    } from 'vue'
 
     import { CIcon } from '@/components/CIcon'
     import { CLabel } from '@/components/CLabel'
+    import { useCheckboxPresets } from '@/composables/use-checkbox-presets'
+    import { useIcon } from '@/composables/use-icon'
     import { IconAliases } from '@/enums'
+    import { convertToUnit } from '@/utils'
+
+    import type { CheckboxElementProps } from './types'
 
     defineOptions({ inheritAttrs: false })
 
-    const props = defineProps<{
-        error: boolean
-        checked: boolean
-        label?: string
-        id: string
-        disabled?: boolean
-        readonly?: boolean
-    }>()
+    const props = defineProps<CheckboxElementProps>()
 
-    defineEmits<{
+    const emit = defineEmits<{
         (e: 'toggle'): void
+        (e: 'focus'): void
+        (e: 'blur'): void
     }>()
 
-    const focused = defineModel<boolean>('focused', { default: false })
+    const checkMarkIcon = useIcon({ name: IconAliases.CHECKBOX_CHECK_MARK })
+    const indeterminateMarkIcon = useIcon({ name: IconAliases.CHECKBOX_INDETERMINATE_MARK })
+    const attrs = useAttrs()
+    const focusVisible = shallowRef(false)
+    const presets = useCheckboxPresets({
+        props,
+        focusVisible,
+    })
 
-    const { CHECKBOX_ON, CHECKBOX_OFF } = IconAliases
+    const classes = computed(() => [
+        {
+            'c-checkbox--default': !props.error
+                && !props.checked
+                && !props.indeterminate
+                && !props.readonly
+                && !props.disabled,
+            'c-checkbox--focus-visible': unref(focusVisible),
+            'c-checkbox--disabled': props.disabled,
+            'c-checkbox--checked': props.checked,
+            'c-checkbox--indeterminate': props.indeterminate,
+            'c-checkbox--readonly': props.readonly,
+            'c-checkbox--error': props.error,
+        },
+        attrs.class,
+        ...unref(presets).root,
+    ])
 
-    const isCheckable = computed(() => !props.readonly && !props.disabled)
+    const iconStyle = computed(() => props.size
+        ? { '--c-checkbox-size': convertToUnit(props.size) }
+        : undefined)
 
-    const classes = computed(() => ({
-        'c-checkbox--default': !unref(focused) && !props.error && unref(isCheckable) && !props.checked,
-        'c-checkbox--focused': unref(focused),
-        'c-checkbox--disabled': props.disabled,
-        'c-checkbox--checked': props.checked,
-        'c-checkbox--readonly': props.readonly,
-        'c-checkbox--error': props.error,
-    }))
+    // class (color-утиль) остаётся на корне; на нативный инпут — только
+    // aria-атрибуты и прочий passthrough от CInput.
+    const inputAttrs = computed(() => {
+        const {
+            class: _,
+            style: __,
+            ...rest
+        } = attrs
 
-    function focus() {
-        focused.value = true
+        return rest
+    })
+
+    function onClick(e: MouseEvent) {
+        if (props.readonly) {
+            e.preventDefault()
+        }
     }
 
-    function blur() {
-        focused.value = false
+    function isFocusVisible(target: EventTarget | null) {
+        if (!(target instanceof Element)) return false
+
+        try {
+            return target.matches(':focus-visible')
+        } catch {
+            return false
+        }
+    }
+
+    function onFocus(e: FocusEvent) {
+        focusVisible.value = isFocusVisible(e.target)
+        emit('focus')
+    }
+
+    function onBlur() {
+        focusVisible.value = false
+        emit('blur')
     }
 </script>
 
@@ -51,34 +102,59 @@
     >
         <div
             class="c-checkbox__icon"
+            :class="presets.icon"
+            :style="iconStyle"
             aria-hidden="true"
         >
             <slot
                 name="icon"
                 :checked
+                :indeterminate="!!indeterminate"
             >
-                <c-icon :name="checked ? CHECKBOX_ON : CHECKBOX_OFF" />
+                <div class="c-checkbox__box">
+                    <c-icon
+                        class="c-checkbox__marks"
+                        :view-box="checkMarkIcon.viewBox"
+                        size="100%"
+                    >
+                        <path
+                            class="c-checkbox__check"
+                            pathLength="1"
+                            :d="checkMarkIcon.path"
+                        />
+                        <path
+                            class="c-checkbox__indet"
+                            :d="indeterminateMarkIcon.path"
+                        />
+                    </c-icon>
+                </div>
             </slot>
         </div>
         <input
+            v-bind="inputAttrs"
             :id
             type="checkbox"
             :checked
-            v-bind="$attrs"
+            :indeterminate.prop="!!indeterminate"
             :disabled
-            :readonly
-            @focus="focus"
-            @blur="blur"
-            @change="$emit('toggle')"
+            @click="onClick"
+            @change="emit('toggle')"
+            @focus="onFocus"
+            @blur="onBlur"
         />
         <c-label
             :id="`${id}-label`"
-            v-memo="[label]"
             class="c-checkbox__label"
+            :class="presets.label"
             tag="label"
             :for="id"
         >
-            <slot>{{ label }}</slot>
+            <slot
+                :checked
+                :indeterminate="!!indeterminate"
+            >
+                {{ label }}
+            </slot>
         </c-label>
     </div>
 </template>

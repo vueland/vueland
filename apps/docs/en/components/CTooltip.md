@@ -17,23 +17,28 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 ```vue
 <template>
   <div class="d-flex align-center gap-3">
-    <CTooltip width="auto" open-on-hover close-on-leave align="top-center" :offset-y="6">
+    <c-tooltip width="auto" open-on-hover close-on-leave align="top-center" :offset-y="6">
       <template #activator="{ on, activator }">
-        <CBtn class="bg-indigo elevation-2 text-white" v-bind="activator" v-on="on" style="gap:8px">
-          <CIcon name="fas:bell" source="fa" :size="13" /> Subscribe
-        </CBtn>
+        <c-btn
+          class="bg-indigo elevation-2 text-white"
+          v-bind="activator"
+          v-on="on"
+          style="gap:8px"
+        >
+          <c-icon name="fas:bell" source="fa" :size="13" /> Subscribe
+        </c-btn>
       </template>
       Get notified on every release
-    </CTooltip>
+    </c-tooltip>
 
-    <CTooltip width="auto" open-on-hover close-on-leave align="bottom-center" :offset-y="6">
+    <c-tooltip width="auto" open-on-hover close-on-leave align="bottom-center" :offset-y="6">
       <template #activator="{ on, activator }">
-        <CBtn class="bg-teal elevation-2 text-white" v-bind="activator" v-on="on" style="gap:8px">
-          <CIcon name="fas:star" source="fa" :size="13" /> Star
-        </CBtn>
+        <c-btn class="bg-teal elevation-2 text-white" v-bind="activator" v-on="on" style="gap:8px">
+          <c-icon name="fas:star" source="fa" :size="13" /> Star
+        </c-btn>
       </template>
       Star this repository on GitHub
-    </CTooltip>
+    </c-tooltip>
   </div>
 </template>
 ```
@@ -50,28 +55,28 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 
 ```html
 <!-- Above, centered -->
-<CTooltip width="auto" align="top-center" :offset-y="8" open-on-hover close-on-leave>
+<c-tooltip width="auto" align="top-center" :offset-y="8" open-on-hover close-on-leave>
   <template #activator="{ on, activator }">
-    <CBtn class="bg-indigo elevation-2 text-white" v-bind="activator" v-on="on">Top</CBtn>
+    <c-btn class="bg-indigo elevation-2 text-white" v-bind="activator" v-on="on">Top</c-btn>
   </template>
   Tooltip on the top
-</CTooltip>
+</c-tooltip>
 
 <!-- To the right, vertically centered -->
-<CTooltip width="auto" align="right-center" :offset-x="8" open-on-hover close-on-leave>
+<c-tooltip width="auto" align="right-center" :offset-x="8" open-on-hover close-on-leave>
   <template #activator="{ on, activator }">
-    <CBtn class="bg-teal elevation-2 text-white" v-bind="activator" v-on="on">Right</CBtn>
+    <c-btn class="bg-teal elevation-2 text-white" v-bind="activator" v-on="on">Right</c-btn>
   </template>
   Tooltip on the right
-</CTooltip>
+</c-tooltip>
 
 <!-- Below, centered -->
-<CTooltip width="auto" align="bottom-center" :offset-y="8" open-on-hover close-on-leave>
+<c-tooltip width="auto" align="bottom-center" :offset-y="8" open-on-hover close-on-leave>
   <template #activator="{ on, activator }">
-    <CBtn class="bg-amber elevation-2 text-white" v-bind="activator" v-on="on">Bottom</CBtn>
+    <c-btn class="bg-amber elevation-2 text-white" v-bind="activator" v-on="on">Bottom</c-btn>
   </template>
   Tooltip on the bottom
-</CTooltip>
+</c-tooltip>
 ```
 
 :::
@@ -88,15 +93,15 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 <template>
   <div class="d-flex gap-4">
     <!-- No delay -->
-    <CTooltip width="auto" open-on-hover close-on-leave align="bottom-center" :offset-y="8">
+    <c-tooltip width="auto" open-on-hover close-on-leave align="bottom-center" :offset-y="8">
       <template #activator="{ on, activator }">
-        <CCard class="pa-4" v-bind="activator" v-on="on">Instant</CCard>
+        <c-card class="pa-4" v-bind="activator" v-on="on">Instant</c-card>
       </template>
       Opens immediately
-    </CTooltip>
+    </c-tooltip>
 
     <!-- Open delay -->
-    <CTooltip
+    <c-tooltip
       width="auto"
       open-on-hover
       close-on-leave
@@ -105,13 +110,13 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
       :open-delay="400"
     >
       <template #activator="{ on, activator }">
-        <CCard class="pa-4" v-bind="activator" v-on="on">Open 400ms</CCard>
+        <c-card class="pa-4" v-bind="activator" v-on="on">Open 400ms</c-card>
       </template>
       Waits 400ms before showing
-    </CTooltip>
+    </c-tooltip>
 
     <!-- Close delay -->
-    <CTooltip
+    <c-tooltip
       width="auto"
       open-on-hover
       close-on-leave
@@ -120,10 +125,10 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
       :close-delay="600"
     >
       <template #activator="{ on, activator }">
-        <CCard class="pa-4" v-bind="activator" v-on="on">Close 600ms</CCard>
+        <c-card class="pa-4" v-bind="activator" v-on="on">Close 600ms</c-card>
       </template>
       Lingers 600ms before hiding
-    </CTooltip>
+    </c-tooltip>
   </div>
 </template>
 ```
@@ -135,12 +140,12 @@ import DelayExample from '../../examples/CTooltip/DelayExample.vue'
 By default, the tooltip wraps its content (`width="auto"`). Pass `width` for a fixed size.
 
 ```html
-<CTooltip open-on-hover close-on-leave :width="240">
+<c-tooltip open-on-hover close-on-leave :width="240">
   <template #activator="{ on, activator }">
-    <CBtn v-bind="activator" v-on="on">?</CBtn>
+    <c-btn v-bind="activator" v-on="on">?</c-btn>
   </template>
   A longer description that needs a fixed width to wrap properly.
-</CTooltip>
+</c-tooltip>
 ```
 
 ## Accessibility

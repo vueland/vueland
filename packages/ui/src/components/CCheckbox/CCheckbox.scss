@@ -14,7 +14,8 @@ $self: '.c-checkbox';
 
   &--default,
   &--readonly,
-  &--focused,
+  &--focus-visible,
+  &--indeterminate,
   &--checked {
     & > #{$self}__label {
       color: getCssVar('sys', 'color', 'on-surface');
@@ -27,7 +28,7 @@ $self: '.c-checkbox';
     }
   }
 
-  &--focused {
+  &--focus-visible {
     & > #{$self}__icon {
       &::before {
         opacity: getCssVar('sys', 'state', 'focus-opacity');
@@ -36,21 +37,83 @@ $self: '.c-checkbox';
   }
 
   &__icon {
-    --c-checkbox-icon-state-bg-color: #{getCssVar('sys', 'color', 'surface-variant')};
+    --c-checkbox-size: 20px;
+    // Ореол из currentColor виден на обеих темах и тонируется под color-проп
+    // и error; surface-variant на своём же фоне был неразличим.
+    --c-checkbox-icon-state-bg-color: currentColor;
+    // Галочка ложится на залитый бокс, поэтому ей нужен контраст с currentColor.
+    --c-checkbox-mark-color: #{getCssVar('sys', 'color', 'on-primary')};
 
     position: relative;
+    flex: 0 0 auto;
+    width: getCssVar('checkbox', 'size');
+    height: getCssVar('checkbox', 'size');
 
+    // Кольцо фокуса — ореол вокруг бокса, поэтому оно выходит за его габарит.
     &::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      inset: -50%;
       background-color: getCssVar('checkbox', 'icon-state-bg-color');
-      border-radius: getCssVar('sys', 'shape', 'md');
+      border-radius: getCssVar('sys', 'shape', 'pill');
       opacity: 0;
-      transform: scale(0.7);
+      transition: opacity getCssVar('sys', 'motion', 'duration-fast')
+        getCssVar('sys', 'motion', 'easing-standard');
+    }
+  }
+
+  &__box {
+    position: absolute;
+    inset: 0;
+    box-sizing: border-box;
+    border: getCssVar('sys', 'border-width-thick') solid currentColor;
+    border-radius: getCssVar('sys', 'shape', 'xs');
+    transition: background-color getCssVar('sys', 'motion', 'duration-medium')
+      getCssVar('sys', 'motion', 'easing-emphasized');
+  }
+
+  &__marks {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  // Длина нормирована через pathLength="1", offset 1 — галочка ещё не начата.
+  &__check {
+    fill: none;
+    stroke: getCssVar('checkbox', 'mark-color');
+    stroke-width: 3.12;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  &__indet {
+    fill: getCssVar('checkbox', 'mark-color');
+    transform-origin: 50% 50%;
+    transform: rotate(-280deg) scale(0);
+  }
+
+  &--checked,
+  &--indeterminate {
+    & #{$self}__box {
+      background-color: currentColor;
+    }
+  }
+
+  &--checked {
+    & #{$self}__check {
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset getCssVar('sys', 'motion', 'duration-medium')
+        getCssVar('sys', 'motion', 'easing-emphasized');
+    }
+  }
+
+  &--indeterminate {
+    & #{$self}__indet {
+      transform: rotate(0) scale(1);
+      transition: transform getCssVar('sys', 'motion', 'duration-medium')
+        getCssVar('sys', 'motion', 'easing-emphasized');
     }
   }
 
@@ -75,5 +138,14 @@ $self: '.c-checkbox';
     left: 0;
     right: 0;
     cursor: pointer;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c-checkbox__icon::before,
+  .c-checkbox__box,
+  .c-checkbox--checked .c-checkbox__check,
+  .c-checkbox--indeterminate .c-checkbox__indet {
+    transition-duration: getCssVar('sys', 'motion', 'duration-instant');
   }
 }

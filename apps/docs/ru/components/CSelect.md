@@ -22,7 +22,7 @@ import CustomMenuExample from '../../examples/CSelect/CustomMenuExample.vue'
 
 ```vue
 <template>
-  <CSelect
+  <c-select
     v-model="environment"
     label="Environment"
     placeholder="Choose one"
@@ -67,7 +67,7 @@ const badge = computed(
 
 ```vue
 <template>
-  <CSelect
+  <c-select
     v-model="assignee"
     label="Assignee"
     placeholder="Select a member"
@@ -104,7 +104,7 @@ const members = [
 
 ```vue
 <template>
-  <CSelect
+  <c-select
     v-model="channels"
     label="Channels"
     placeholder="Where do we ping you?"
@@ -137,7 +137,7 @@ const allChannels = ['Email', 'Slack', 'Push', 'SMS', 'Webhook']
 
 ```vue
 <template>
-  <CSelect
+  <c-select
     v-model="plan"
     label="Plan"
     :items="plans"
@@ -146,7 +146,7 @@ const allChannels = ['Email', 'Slack', 'Push', 'SMS', 'Webhook']
     preset="input.indigo"
   />
 
-  <CSelect
+  <c-select
     v-model="region"
     label="Region"
     :items="regions"
@@ -155,7 +155,7 @@ const allChannels = ['Email', 'Slack', 'Push', 'SMS', 'Webhook']
     preset="input.teal"
   />
 
-  <CSelect
+  <c-select
     model-value="Production"
     label="Environment"
     :items="environments"
@@ -164,7 +164,7 @@ const allChannels = ['Email', 'Slack', 'Push', 'SMS', 'Webhook']
     preset="input.orange"
   />
 
-  <CSelect
+  <c-select
     v-model="channel"
     label="Release channel"
     :items="channels"
@@ -204,7 +204,7 @@ const channelRules = [(value?: string) => ({ valid: !!value, message: 'Select a 
 
 ```vue
 <template>
-  <CSelect
+  <c-select
     v-model="region"
     label="Data region"
     :items="regions"
@@ -223,23 +223,23 @@ const channelRules = [(value?: string) => ({ valid: !!value, message: 'Select a 
     </template>
 
     <template #menu="{ items, onSelect }">
-      <CList variant="menu" class="region-menu">
-        <CListItem
+      <c-list variant="menu" class="region-menu">
+        <c-list-item
           v-for="item in items"
           :key="item.key"
           :value="item.value"
           @click="onSelect(item.value)"
         >
-          <CListItemContent>
-            <CListItemTitle>{{ item.title }}</CListItemTitle>
-            <CListItemSubtitle>
+          <c-list-item-content>
+            <c-list-item-title>{{ item.title }}</c-list-item-title>
+            <c-list-item-subtitle>
               {{ item.raw.location }} - {{ item.raw.latency }}
-            </CListItemSubtitle>
-          </CListItemContent>
-        </CListItem>
-      </CList>
+            </c-list-item-subtitle>
+          </c-list-item-content>
+        </c-list-item>
+      </c-list>
     </template>
-  </CSelect>
+  </c-select>
 </template>
 
 <script setup lang="ts">

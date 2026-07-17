@@ -197,13 +197,24 @@ $self: '.c-date-picker';
     cursor: pointer;
     transition: background getCssVar('date-picker', 'transition-duration')
       getCssVar('date-picker', 'transition-easing');
+    position: relative;
+    overflow: hidden;
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      opacity: 0;
+      background: getCssVar('date-picker', 'hover-bg');
+      transition: opacity 0.15s;
+    }
 
     &:hover {
-      background: getCssVar('date-picker', 'hover-bg');
-      color: getCssVar('date-picker', 'hover-color');
-
-      &.c-date-picker-dates__cell--selected {
-        color: getCssVar('date-picker', 'selected-color');
+      &:before {
+        opacity: 1;
       }
     }
 

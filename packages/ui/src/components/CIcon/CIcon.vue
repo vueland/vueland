@@ -8,7 +8,7 @@
     import { useIcon } from '@/composables/use-icon'
     import { convertToUnit } from '@/utils'
 
-    import type { CIconProps } from './types'
+    import type { CIconProps, CIconSlots } from './types'
 
     defineOptions({
         name: 'CIcon',
@@ -16,6 +16,7 @@
     })
 
     const props = defineProps<CIconProps>()
+    defineSlots<CIconSlots>()
 
     const attrs = useAttrs()
 
@@ -23,9 +24,10 @@
 
     const { tag = 'span' } = props
 
+    // Явный размер главнее дефолта из реестра иконок.
     const rootStyle = computed(() => ({
-        width: convertToUnit(unref(resolvedIcon).size ?? props.width ?? props.size ?? 16),
-        height: convertToUnit(unref(resolvedIcon).size ?? props.height ?? props.size ?? 16),
+        width: convertToUnit(props.width ?? props.size ?? unref(resolvedIcon).size ?? 16),
+        height: convertToUnit(props.height ?? props.size ?? unref(resolvedIcon).size ?? 16),
     }))
 </script>
 
@@ -33,7 +35,7 @@
     <component
         :is="tag"
         class="c-icon"
-        :class="{ 'c-icon--empty': !resolvedIcon.found }"
+        :class="{ 'c-icon--empty': !resolvedIcon.found && !$slots.default }"
         :style="rootStyle"
     >
         <component
@@ -44,7 +46,7 @@
         />
 
         <svg
-            v-else-if="resolvedIcon.found"
+            v-else-if="resolvedIcon.found || $slots.default"
             class="c-icon__svg"
             xmlns="http://www.w3.org/2000/svg"
             :viewBox="resolvedIcon.viewBox"
@@ -52,14 +54,24 @@
             focusable="false"
             v-bind="attrs"
         >
+            <slot
+                v-if="$slots.default"
+                :icon="resolvedIcon"
+            />
+
             <use
-                v-if="resolvedIcon.href"
+                v-else-if="resolvedIcon.href"
                 :href="resolvedIcon.href"
             />
 
             <g
-                v-else
+                v-else-if="resolvedIcon.body"
                 v-html="resolvedIcon.body"
+            />
+
+            <path
+                v-else-if="resolvedIcon.path"
+                :d="resolvedIcon.path"
             />
         </svg>
     </component>

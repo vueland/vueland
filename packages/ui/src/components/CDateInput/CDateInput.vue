@@ -170,7 +170,7 @@
             <slot name="prepend">
                 <c-icon
                     :name="IconAliases.CALENDAR"
-                    :size="18"
+                    :size="24"
                 />
             </slot>
         </template>

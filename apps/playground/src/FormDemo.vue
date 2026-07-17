@@ -106,6 +106,11 @@
                             class="radius-8 px-4 py-2"
                         >
                             <template #activator="{ on, activator }">
+                                <c-checkbox
+                                    label="some label here"
+                                    color="green"
+                                    preset="input.soft"
+                                />
                                 <c-btn
                                     v-bind="activator"
                                     color="#7C4DFF"

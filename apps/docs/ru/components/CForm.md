@@ -19,28 +19,28 @@ import AirlineFormExample from '../../examples/CForm/AirlineFormExample.vue'
 
 ```vue
 <template>
-  <CForm ref="formRef">
+  <c-form ref="formRef">
     <template #default="{ validate, reset }">
-      <CTextField
+      <c-text-field
         v-model="form.email"
         label="Email"
         type="email"
         :rules="emailRules"
         validate-on="blur"
       >
-        <template #prepend><CIcon name="fas:envelope" :size="16" source="fa" /></template>
-      </CTextField>
+        <template #prepend><c-icon name="fas:envelope" :size="16" source="fa" /></template>
+      </c-text-field>
 
-      <CTextField
+      <c-text-field
         v-model="form.password"
         :type="showPwd ? 'text' : 'password'"
         label="Пароль"
         :rules="passwordRules"
         validate-on="blur"
       >
-        <template #prepend><CIcon name="fas:lock" :size="16" source="fa" /></template>
+        <template #prepend><c-icon name="fas:lock" :size="16" source="fa" /></template>
         <template #append>
-          <CIcon
+          <c-icon
             :name="showPwd ? 'fas:eye-slash' : 'fas:eye'"
             :size="16"
             source="fa"
@@ -48,12 +48,12 @@ import AirlineFormExample from '../../examples/CForm/AirlineFormExample.vue'
             @click="showPwd = !showPwd"
           />
         </template>
-      </CTextField>
+      </c-text-field>
 
-      <CBtn @click="() => handleSubmit(validate)">Войти</CBtn>
-      <CBtn variant="text" @click="handleReset">Сбросить</CBtn>
+      <c-btn @click="() => handleSubmit(validate)">Войти</c-btn>
+      <c-btn variant="text" @click="handleReset">Сбросить</c-btn>
     </template>
-  </CForm>
+  </c-form>
 </template>
 
 <script setup lang="ts">
@@ -96,30 +96,30 @@ function handleReset() {
 
 ```vue
 <template>
-  <CForm ref="formRef">
+  <c-form ref="formRef">
     <template #default="{ validate, reset }">
-      <CRow class="gap-y-4">
-        <CCol cols="12" sm="6">
-          <CTextField
+      <c-row class="gap-y-4">
+        <c-col cols="12" sm="6">
+          <c-text-field
             v-model="form.firstName"
             label="Имя"
             :rules="requiredRule"
             validate-on="blur"
             preset="input.indigo"
           />
-        </CCol>
-        <CCol cols="12" sm="6">
-          <CTextField
+        </c-col>
+        <c-col cols="12" sm="6">
+          <c-text-field
             v-model="form.lastName"
             label="Фамилия"
             :rules="requiredRule"
             validate-on="blur"
             preset="input.indigo"
           />
-        </CCol>
+        </c-col>
 
-        <CCol cols="12" sm="6">
-          <CTextField
+        <c-col cols="12" sm="6">
+          <c-text-field
             v-model="form.email"
             label="Email"
             type="email"
@@ -127,12 +127,12 @@ function handleReset() {
             validate-on="blur"
             preset="input.indigo"
           >
-            <template #prepend><CIcon name="fas:envelope" :size="14" source="fa" /></template>
-          </CTextField>
-        </CCol>
+            <template #prepend><c-icon name="fas:envelope" :size="14" source="fa" /></template>
+          </c-text-field>
+        </c-col>
 
-        <CCol cols="12" sm="6">
-          <CTextField
+        <c-col cols="12" sm="6">
+          <c-text-field
             v-model="form.phone"
             label="Телефон"
             type="tel"
@@ -140,31 +140,31 @@ function handleReset() {
             validate-on="blur"
             preset="input.indigo"
           >
-            <template #prepend><CIcon name="fas:phone" :size="14" source="fa" /></template>
-          </CTextField>
-        </CCol>
+            <template #prepend><c-icon name="fas:phone" :size="14" source="fa" /></template>
+          </c-text-field>
+        </c-col>
 
-        <CCol cols="12">
+        <c-col cols="12">
           <!-- readonly поле — логин изменить нельзя -->
-          <CTextField v-model="form.username" label="Логин" readonly preset="input.indigo">
-            <template #prepend><CIcon name="fas:at" :size="14" source="fa" /></template>
+          <c-text-field v-model="form.username" label="Логин" readonly preset="input.indigo">
+            <template #prepend><c-icon name="fas:at" :size="14" source="fa" /></template>
             <template #details>
               <span style="opacity:.6; font-size:12px">Логин нельзя изменить</span>
             </template>
-          </CTextField>
-        </CCol>
+          </c-text-field>
+        </c-col>
 
-        <CCol cols="12">
+        <c-col cols="12">
           <div class="d-flex gap-2">
-            <CBtn class="bg-indigo" style="color:#fff" @click="() => handleSave(validate)"
-              >Сохранить</CBtn
+            <c-btn class="bg-indigo" style="color:#fff" @click="() => handleSave(validate)"
+              >Сохранить</c-btn
             >
-            <CBtn variant="text" @click="handleReset">Отмена</CBtn>
+            <c-btn variant="text" @click="handleReset">Отмена</c-btn>
           </div>
-        </CCol>
-      </CRow>
+        </c-col>
+      </c-row>
     </template>
-  </CForm>
+  </c-form>
 </template>
 
 <script setup lang="ts">
@@ -213,25 +213,25 @@ function handleReset() {
 
 ```vue
 <template>
-  <CForm ref="formRef">
+  <c-form ref="formRef">
     <template #default="{ validate, reset }">
       <!-- Шаг 1: Детали рейса -->
       <div v-if="currentStep === 0">
-        <CTextField
+        <c-text-field
           v-model="flight.from"
           label="Откуда"
           :rules="requiredRule"
           validate-on="blur"
           preset="input.blue"
         />
-        <CTextField
+        <c-text-field
           v-model="flight.to"
           label="Куда"
           :rules="requiredRule"
           validate-on="blur"
           preset="input.blue"
         />
-        <CTextField
+        <c-text-field
           v-model="flight.departure"
           label="Дата вылета"
           placeholder="ДД.ММ.ГГГГ"
@@ -239,7 +239,7 @@ function handleReset() {
           validate-on="blur"
           preset="input.blue"
         />
-        <CTextField
+        <c-text-field
           v-model="flight.passengers"
           label="Пассажиры"
           type="number"
@@ -251,28 +251,28 @@ function handleReset() {
 
       <!-- Шаг 2: Данные пассажира -->
       <div v-if="currentStep === 1">
-        <CTextField
+        <c-text-field
           v-model="passenger.firstName"
           label="Имя"
           :rules="requiredRule"
           validate-on="blur"
           preset="input.teal"
         />
-        <CTextField
+        <c-text-field
           v-model="passenger.lastName"
           label="Фамилия"
           :rules="requiredRule"
           validate-on="blur"
           preset="input.teal"
         />
-        <CTextField
+        <c-text-field
           v-model="passenger.passport"
           label="Номер паспорта"
           :rules="passportRule"
           validate-on="blur"
           preset="input.teal"
         />
-        <CTextField
+        <c-text-field
           v-model="passenger.email"
           label="Email"
           type="email"
@@ -284,21 +284,21 @@ function handleReset() {
 
       <!-- Шаг 3: Оплата -->
       <div v-if="currentStep === 2">
-        <CTextField
+        <c-text-field
           v-model="payment.card"
           label="Номер карты"
           :rules="cardRule"
           validate-on="blur"
           preset="input.deepPurple"
         />
-        <CTextField
+        <c-text-field
           v-model="payment.expiry"
           label="Срок (ММ/ГГ)"
           :rules="expiryRule"
           validate-on="blur"
           preset="input.deepPurple"
         />
-        <CTextField
+        <c-text-field
           v-model="payment.cvv"
           label="CVV"
           type="password"
@@ -308,12 +308,12 @@ function handleReset() {
         />
       </div>
 
-      <CBtn v-if="currentStep > 0" variant="text" @click="currentStep--">Назад</CBtn>
-      <CBtn @click="() => handleNext(validate)">
+      <c-btn v-if="currentStep > 0" variant="text" @click="currentStep--">Назад</c-btn>
+      <c-btn @click="() => handleNext(validate)">
         {{ currentStep === 2 ? 'Оплатить и подтвердить' : 'Далее' }}
-      </CBtn>
+      </c-btn>
     </template>
-  </CForm>
+  </c-form>
 </template>
 
 <script setup lang="ts">
@@ -360,9 +360,9 @@ async function handleNext(validate: () => Promise<boolean>) {
 
 ```vue
 <template>
-  <CForm>
+  <c-form>
     <template #default="{ validate, reset }">
-      <CTextField v-model="form.username" label="Логин" :rules="usernameRules" validate-on="blur">
+      <c-text-field v-model="form.username" label="Логин" :rules="usernameRules" validate-on="blur">
         <template #details="{ errorMessage, hasError, validating }">
           <span v-if="validating" style="color: var(--c-sys-color-primary)">Проверяем…</span>
           <span v-else-if="hasError" style="color: var(--c-sys-color-error)">{{
@@ -370,9 +370,9 @@ async function handleNext(validate: () => Promise<boolean>) {
           }}</span>
           <span v-else style="opacity:.6">Только буквы и цифры</span>
         </template>
-      </CTextField>
+      </c-text-field>
 
-      <CTextField
+      <c-text-field
         v-model="form.email"
         label="Email"
         type="email"
@@ -380,9 +380,9 @@ async function handleNext(validate: () => Promise<boolean>) {
         validate-on="blur"
       />
 
-      <CBtn @click="() => handleSubmit(validate)">Зарегистрироваться</CBtn>
+      <c-btn @click="() => handleSubmit(validate)">Зарегистрироваться</c-btn>
     </template>
-  </CForm>
+  </c-form>
 </template>
 
 <script setup lang="ts">
@@ -452,10 +452,10 @@ async function handleSubmit(validate: () => Promise<boolean>) {
 
 ```vue
 <template>
-  <CForm ref="formRef">
+  <c-form ref="formRef">
     <template #default><!-- поля --></template>
-  </CForm>
-  <CBtn @click="formRef?.validate()">Валидировать извне</CBtn>
+  </c-form>
+  <c-btn @click="formRef?.validate()">Валидировать извне</c-btn>
 </template>
 
 <script setup lang="ts">

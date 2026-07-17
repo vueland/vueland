@@ -19,7 +19,7 @@ Pass an array of values to `items` and bind the selection with `v-model`. With p
 
 ```vue
 <template>
-  <CSelect
+  <c-select
     v-model="environment"
     label="Environment"
     placeholder="Choose one"
@@ -64,7 +64,7 @@ When items are objects, use `title-key` to pick the **displayed label** and `val
 
 ```vue
 <template>
-  <CSelect
+  <c-select
     v-model="assignee"
     label="Assignee"
     :items="members"
@@ -100,7 +100,7 @@ Add `multiple` to collect an array of values, and `chips` to render each selecti
 
 ```vue
 <template>
-  <CSelect
+  <c-select
     v-model="channels"
     label="Channels"
     placeholder="Where do we ping you?"
@@ -131,7 +131,7 @@ The `chips` slot replaces how selected values are displayed inside the field, an
 
 ```vue
 <template>
-  <CSelect
+  <c-select
     v-model="region"
     label="Data region"
     :items="regions"
@@ -150,23 +150,23 @@ The `chips` slot replaces how selected values are displayed inside the field, an
     </template>
 
     <template #menu="{ items, onSelect }">
-      <CList variant="menu" class="region-menu">
-        <CListItem
+      <c-list variant="menu" class="region-menu">
+        <c-list-item
           v-for="item in items"
           :key="item.key"
           :value="item.value"
           @click="onSelect(item.value)"
         >
-          <CListItemContent>
-            <CListItemTitle>{{ item.title }}</CListItemTitle>
-            <CListItemSubtitle>
+          <c-list-item-content>
+            <c-list-item-title>{{ item.title }}</c-list-item-title>
+            <c-list-item-subtitle>
               {{ item.raw.location }} - {{ item.raw.latency }}
-            </CListItemSubtitle>
-          </CListItemContent>
-        </CListItem>
-      </CList>
+            </c-list-item-subtitle>
+          </c-list-item-content>
+        </c-list-item>
+      </c-list>
     </template>
-  </CSelect>
+  </c-select>
 </template>
 
 <script setup lang="ts">

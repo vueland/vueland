@@ -19,7 +19,7 @@ import PresetsExample from '../../examples/CTextField/PresetsExample.vue'
 
 ```vue
 <template>
-  <CTextField v-model="value" id="basic-email" label="Email" placeholder="Enter your email" />
+  <c-text-field v-model="value" id="basic-email" label="Email" placeholder="Enter your email" />
 </template>
 
 <script setup lang="ts">
@@ -40,10 +40,10 @@ const value = ref('')
 
 ```vue
 <template>
-  <CTextField v-model="value" label="Default" />
-  <CTextField v-model="value" label="Disabled" disabled />
-  <CTextField v-model="readonly" label="Readonly" readonly />
-  <CTextField v-model="value" label="Clearable" clearable />
+  <c-text-field v-model="value" label="Default" />
+  <c-text-field v-model="value" label="Disabled" disabled />
+  <c-text-field v-model="readonly" label="Readonly" readonly />
+  <c-text-field v-model="value" label="Clearable" clearable />
 </template>
 ```
 
@@ -61,14 +61,14 @@ If `modelValue` holds the displayed text and you need to validate a different va
 
 ```vue
 <template>
-  <CTextField
+  <c-text-field
     v-model="email"
     label="Email"
     :rules="emailRules"
     validate-on="blur"
     details="We'll never share your email"
   />
-  <CTextField
+  <c-text-field
     v-model="password"
     label="Password"
     type="password"
@@ -108,27 +108,27 @@ The `prepend` and `append` slots place content inside the field borders. The `de
 ```vue
 <template>
   <!-- Prepend icon -->
-  <CTextField v-model="search" label="Search">
+  <c-text-field v-model="search" label="Search">
     <template #prepend>
-      <CIcon name="mdi-magnify" />
+      <c-icon name="mdi-magnify" />
     </template>
-  </CTextField>
+  </c-text-field>
 
   <!-- Append text -->
-  <CTextField v-model="amount" label="Amount" type="number">
+  <c-text-field v-model="amount" label="Amount" type="number">
     <template #append>
       <span style="opacity: .6; font-size: 13px">USD</span>
     </template>
-  </CTextField>
+  </c-text-field>
 
   <!-- Custom details slot -->
-  <CTextField v-model="nickname" label="Nickname" :rules="nicknameRules" validate-on="input">
+  <c-text-field v-model="nickname" label="Nickname" :rules="nicknameRules" validate-on="input">
     <template #details="{ errorMessage, hasError }">
       <span :style="{ color: hasError ? 'var(--c-sys-color-error)' : 'inherit' }">
         {{ errorMessage || `${nickname.length}/20 characters` }}
       </span>
     </template>
-  </CTextField>
+  </c-text-field>
 </template>
 ```
 
@@ -144,7 +144,7 @@ Rules may return a `Promise`. While validation is in progress, the `details` slo
 
 ```vue
 <template>
-  <CTextField v-model="username" label="Username" :rules="usernameRules" validate-on="blur">
+  <c-text-field v-model="username" label="Username" :rules="usernameRules" validate-on="blur">
     <template #details="{ errorMessage, hasError, validating }">
       <span v-if="validating" style="color: var(--c-sys-color-primary)">
         Checking availability…
@@ -154,7 +154,7 @@ Rules may return a `Promise`. While validation is in progress, the `details` slo
       </span>
       <span v-else style="opacity: .6">Must be unique</span>
     </template>
-  </CTextField>
+  </c-text-field>
 </template>
 
 <script setup lang="ts">
@@ -184,9 +184,9 @@ Presets let you define the field's appearance (label color, border) once during 
 
 ```vue
 <template>
-  <CTextField v-model="value" label="Email" preset="input.blue">
-    <template #prepend><CIcon name="fas:envelope" :size="16" source="fa" /></template>
-  </CTextField>
+  <c-text-field v-model="value" label="Email" preset="input.blue">
+    <template #prepend><c-icon name="fas:envelope" :size="16" source="fa" /></template>
+  </c-text-field>
 </template>
 ```
 
@@ -253,7 +253,7 @@ The preset is distributed automatically: `CInput` applies `root` and `details` a
 `CTextField` does **not** wrap `<input>` attributes in its own props. Thanks to `inheritAttrs`, any non-prop attribute falls through to the inner `<input>` as-is — so just use the standard HTML attributes directly:
 
 ```vue
-<CTextField
+<c-text-field
   type="number"
   placeholder="0"
   :min="0"
@@ -317,8 +317,8 @@ Methods available via template ref:
 
 ```vue
 <template>
-  <CTextField ref="fieldRef" v-model="value" label="Name" :rules="rules" />
-  <CBtn @click="fieldRef?.validate()">Validate</CBtn>
+  <c-text-field ref="fieldRef" v-model="value" label="Name" :rules="rules" />
+  <c-btn @click="fieldRef?.validate()">Validate</c-btn>
 </template>
 
 <script setup lang="ts">
@@ -377,7 +377,7 @@ type ValidateFn = (value: any) => ValidateResult | Promise<ValidateResult>
 ### Override example
 
 ```vue
-<CTextField
+<c-text-field
   v-model="value"
   label="Custom styled"
   style="

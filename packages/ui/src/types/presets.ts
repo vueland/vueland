@@ -52,6 +52,27 @@ export type CFieldState = 'focused' | 'filled' | 'error' | 'disabled' | 'readonl
 export type CFieldPreset = StatePresets<CFieldZone, CFieldState>
 
 // ---------------------------------------------------------------------------
+// Checkbox
+// ---------------------------------------------------------------------------
+
+/** `root` — .c-checkbox, `icon` — бокс с галкой, `label` — подпись. */
+export type CCheckboxZone = 'root' | 'icon' | 'label'
+
+/**
+ * Взаимоисключающие в моменте; приоритет:
+ * disabled > readonly > error > focused > indeterminate > checked.
+ */
+export type CCheckboxState =
+    | 'checked'
+    | 'indeterminate'
+    | 'focused'
+    | 'error'
+    | 'disabled'
+    | 'readonly'
+
+export type CCheckboxPreset = StatePresets<CCheckboxZone, CCheckboxState>
+
+// ---------------------------------------------------------------------------
 // DatePicker
 // ---------------------------------------------------------------------------
 
@@ -83,6 +104,7 @@ export type CInputState = 'focused' | 'filled' | 'error' | 'disabled' | 'readonl
  */
 export type CInputSnapshot = ZonePreset<CInputZone> & {
     field?: CFieldPreset
+    checkbox?: CCheckboxPreset
     menu?: CMenuPreset
     list?: CListPreset
     datePicker?: CDatePickerPreset

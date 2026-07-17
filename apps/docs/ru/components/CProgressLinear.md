@@ -26,10 +26,10 @@ const value = ref(40)
 </script>
 
 <template>
-  <CProgressLinear :value="value" height="8" />
+  <c-progress-linear :value="value" height="8" />
 
-  <CBtn @click="value = Math.max(0, value - 10)">-10</CBtn>
-  <CBtn @click="value = Math.min(100, value + 10)">+10</CBtn>
+  <c-btn @click="value = Math.max(0, value - 10)">-10</c-btn>
+  <c-btn @click="value = Math.min(100, value + 10)">+10</c-btn>
 </template>
 ```
 
@@ -44,12 +44,12 @@ const value = ref(40)
 ::: details Показать код
 
 ```html
-<CProgressLinear color="indigo" value="80" height="4" />
-<CProgressLinear color="teal" value="65" height="6" />
-<CProgressLinear color="deep-purple-lighten-1" value="50" height="8" />
-<CProgressLinear color="green-darken-1" value="90" height="10" />
-<CProgressLinear color="#FFA726" value="35" height="12" />
-<CProgressLinear color="#fa5a5a" value="20" height="14" />
+<c-progress-linear color="indigo" value="80" height="4" />
+<c-progress-linear color="teal" value="65" height="6" />
+<c-progress-linear color="deep-purple-lighten-1" value="50" height="8" />
+<c-progress-linear color="green-darken-1" value="90" height="10" />
+<c-progress-linear color="#FFA726" value="35" height="12" />
+<c-progress-linear color="#fa5a5a" value="20" height="14" />
 ```
 
 :::
@@ -68,8 +68,8 @@ Arbitrary-классы (`bg-[#fa5a5a]`) генерирует [utils-jit](/ru/plu
 
 ```vue
 <template>
-  <CProgressLinear :value="value" :buffer-value="buffer" height="8" />
-  <CProgressLinear color="green-darken-1" value="30" buffer-value="70" height="8" />
+  <c-progress-linear :value="value" :buffer-value="buffer" height="8" />
+  <c-progress-linear color="green-darken-1" value="30" buffer-value="70" height="8" />
 </template>
 ```
 
@@ -84,9 +84,9 @@ Arbitrary-классы (`bg-[#fa5a5a]`) генерирует [utils-jit](/ru/plu
 ::: details Показать код
 
 ```html
-<CProgressLinear indeterminate height="4" />
-<CProgressLinear indeterminate color="teal" height="6" />
-<CProgressLinear indeterminate color="#7C4DFF" height="8" />
+<c-progress-linear indeterminate height="4" />
+<c-progress-linear indeterminate color="teal" height="6" />
+<c-progress-linear indeterminate color="#7C4DFF" height="8" />
 ```
 
 :::
@@ -117,7 +117,7 @@ createVuelandUI({
 
 ```vue
 <template>
-  <CProgressLinear preset="progress.download" :value="value" height="8" />
+  <c-progress-linear preset="progress.download" :value="value" height="8" />
 </template>
 ```
 

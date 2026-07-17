@@ -20,7 +20,7 @@ Bind the selected date with `v-model` — the model always emits a `Date`. With 
 
 ```vue
 <template>
-  <CDatePicker v-model="date" />
+  <c-date-picker v-model="date" />
 </template>
 
 <script setup lang="ts">
@@ -88,7 +88,7 @@ The `date` slot replaces a day cell and receives the parsed date with state flag
 
 ```vue
 <template>
-  <CDatePicker v-model="date" preset="datePicker.neon" :highlighted-dates="highlightedDates" />
+  <c-date-picker v-model="date" preset="datePicker.neon" :highlighted-dates="highlightedDates" />
 </template>
 ```
 

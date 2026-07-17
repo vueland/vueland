@@ -20,7 +20,7 @@ import SlotsPresetExample from '../../examples/CDateInput/SlotsPresetExample.vue
 
 ```vue
 <template>
-  <CDateInput
+  <c-date-input
     v-model="date"
     label="Delivery date"
     details="Pick a date from the calendar"
@@ -48,8 +48,8 @@ const date = shallowRef<Date | null>(null)
 
 ```vue
 <template>
-  <CDateInput v-model="date" label="ISO" format="yyyy-MM-dd" />
-  <CDateInput v-model="date" label="Russian" format="d MMMM yyyy" locale="ru" />
+  <c-date-input v-model="date" label="ISO" format="yyyy-MM-dd" />
+  <c-date-input v-model="date" label="Russian" format="d MMMM yyyy" locale="ru" />
 </template>
 ```
 
@@ -72,7 +72,7 @@ The parser supports numeric tokens: `dd`, `d`, `MM`, `M`, `yyyy`, `yy`.
 
 ```vue
 <template>
-  <CDateInput
+  <c-date-input
     v-model="date"
     label="Departure"
     format="dd.MM.yyyy"
@@ -98,7 +98,7 @@ The parser supports numeric tokens: `dd`, `d`, `MM`, `M`, `yyyy`, `yy`.
 
 ```vue
 <template>
-  <CDateInput
+  <c-date-input
     v-model="date"
     label="Shipping date"
     :rules="rules"
@@ -133,7 +133,7 @@ const rules = [(value?: Date | null) => ({ valid: !!value, message: 'Pick a ship
 
 ```vue
 <template>
-  <CDateInput
+  <c-date-input
     v-model="launch"
     label="Launch date"
     format="d MMM yyyy"
@@ -142,7 +142,7 @@ const rules = [(value?: Date | null) => ({ valid: !!value, message: 'Pick a ship
     clearable
   >
     <template #prepend>
-      <CIcon name="fas:bell" source="fa" />
+      <c-icon name="fas:bell" source="fa" />
     </template>
 
     <template #before-body>
@@ -150,9 +150,9 @@ const rules = [(value?: Date | null) => ({ valid: !!value, message: 'Pick a ship
     </template>
 
     <template #date="{ date, isHighlighted }">
-      <span>{{ date }} <CIcon v-if="isHighlighted" name="fas:star" source="fa" /></span>
+      <span>{{ date }} <c-icon v-if="isHighlighted" name="fas:star" source="fa" /></span>
     </template>
-  </CDateInput>
+  </c-date-input>
 </template>
 ```
 
