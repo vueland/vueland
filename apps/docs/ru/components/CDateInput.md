@@ -196,13 +196,13 @@ const dateInputCampaign: CInputPreset = {
 
 Также доступны пропсы внутреннего поля: `label`, `placeholder`, `details`, `no-details`, `clearable`, `disabled`, `readonly`, `rules`, `validate-on`, `preset` и остальные пропсы [`CInput`](/ru/components/CInput#props) / [`CTextField`](/ru/components/CTextField#api).
 
-### События
+### Events
 
 | Событие             | Аргументы      | Описание                       |
 | ------------------- | -------------- | ------------------------------ |
 | `update:modelValue` | `Date \| null` | Выбор, ручной ввод или очистка |
 
-### Слоты
+### Slots
 
 | Слот            | Пропы                                           | Описание                                       |
 | --------------- | ----------------------------------------------- | ---------------------------------------------- |

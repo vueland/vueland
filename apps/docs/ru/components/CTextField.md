@@ -294,7 +294,7 @@ type CInputPreset = Partial<Record<'base' | CInputState, CInputSnapshot>>
 | `uid`          | `string`              | ID поля (совпадает с `id` нативного `<input>`) |
 | `details`      | `string \| undefined` | Значение prop `details`                        |
 
-### События
+### Events
 
 | Событие             | Аргументы                       | Описание                     |
 | ------------------- | ------------------------------- | ---------------------------- |

@@ -343,7 +343,7 @@ The box itself is painted with `currentColor`, so colour utilities and preset zo
 
 ## API
 
-### CCheckbox props
+### Props
 
 | Prop            | Type                  | Default | Description                                                   |
 | --------------- | --------------------- | ------- | ------------------------------------------------------------- |
@@ -357,14 +357,14 @@ The box itself is painted with `currentColor`, so colour utilities and preset zo
 
 Any [`CInput`](/en/components/CInput) prop — `label`, `details`, `no-details`, `rules`, `validate-on`, `preset`, … — is forwarded to the underlying input.
 
-### CCheckbox events
+### Events
 
 | Event                  | Arguments             | Description                                       |
 | ---------------------- | --------------------- | ------------------------------------------------- |
 | `update:modelValue`    | `T \| T[] \| boolean` | Emitted when the checked state changes            |
 | `update:indeterminate` | `boolean`             | Emitted with `false` when the checkbox is toggled |
 
-### CCheckbox slots
+### Slots
 
 | Slot      | Props                                                            | Description                     |
 | --------- | ---------------------------------------------------------------- | ------------------------------- |

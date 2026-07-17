@@ -227,7 +227,7 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 | `'radio'`    | Привязывает `aria-labelledby` к лейблу                                                                                           |
 | `'listbox'`  | Для контролов на основе listbox (aria + префикс `uid`)                                                                           |
 
-### Слоты
+### Slots
 
 | Слот      | Пропсы                   | Описание                                   |
 | --------- | ------------------------ | ------------------------------------------ |
@@ -265,7 +265,7 @@ type CInputRole = 'combobox' | 'checkbox' | 'radio' | 'listbox'
 | `validating`   | `boolean`             | Идёт ли async-валидация |
 | `details`      | `string \| undefined` | Значение prop `details` |
 
-### События
+### Events
 
 | Событие          | Аргументы | Описание                   |
 | ---------------- | --------- | -------------------------- |
