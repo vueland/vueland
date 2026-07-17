@@ -5,3 +5,9 @@ node_modules
 dist
 packages/docs/docs/.vitepress/cache/
 
+# Playwright e2e
+test-results/
+playwright-report/
+blob-report/
+.playwright/
+

@@ -27,11 +27,11 @@ The platform is designed around a core idea: developers should be able to use co
 
 ## Platform overview
 
-| Package | Description |
-|---|---|
-| `@vueland/ui` | UI components, grid system, composables, preset engine |
-| `@vueland/utils-jit` | Vite JIT plugin for on-demand utility class generation |
-| More coming | Plugins, adapters, and extensions are being added over time |
+| Package              | Description                                                 |
+| -------------------- | ----------------------------------------------------------- |
+| `@vueland/ui`        | UI components, grid system, composables, preset engine      |
+| `@vueland/utils-jit` | Vite JIT plugin for on-demand utility class generation      |
+| More coming          | Plugins, adapters, and extensions are being added over time |
 
 ## Why a platform, not a library?
 
@@ -87,10 +87,14 @@ Contributions are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md) for setup, b
 
 **GitHub Flow:**
 
-- `master` — stable, always production-ready. Releases are cut from here.
-- All work happens in short-lived branches from `master`, merged back via PR after CI and review.
+- `master` — stable, always production-ready. Releases are cut from here. Direct pushes are not allowed.
+- All work happens in short-lived branches from `master`, merged back via PR (squash) after CI and review.
+- Releases are automated via changesets (`changeset-release/master` PR).
 
-Branch naming: `feat/`, `fix/`, `refactor/`, `chore/`, `docs/` + short description.
+Branch naming is enforced (local `pre-push` hook + CI `Branch name` check):
+`<type>/<short-kebab-description>`, where `<type>` ∈ `feat`, `fix`, `refactor`, `chore`, `docs`, `test`, `style`, `perf`, `ci`, `revert`.
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md#стратегия-веток) for details.
 
 ## License
 
@@ -112,11 +116,11 @@ Vueland — это не просто библиотека компонентов
 
 ## Обзор платформы
 
-| Пакет | Описание |
-|---|---|
-| `@vueland/ui` | UI-компоненты, grid-система, composables, движок пресетов |
+| Пакет                | Описание                                                    |
+| -------------------- | ----------------------------------------------------------- |
+| `@vueland/ui`        | UI-компоненты, grid-система, composables, движок пресетов   |
 | `@vueland/utils-jit` | Vite JIT plugin для генерации utility-классов по требованию |
-| Больше в процессе | Плагины, адаптеры и расширения добавляются по мере развития |
+| Больше в процессе    | Плагины, адаптеры и расширения добавляются по мере развития |
 
 ## Почему платформа, а не библиотека?
 
