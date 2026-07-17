@@ -1,5 +1,15 @@
 # @vueland/ui
 
+## 0.5.0
+
+### Minor Changes
+
+- [#113](https://github.com/vueland/vueland/pull/113) [`3c690b3`](https://github.com/vueland/vueland/commit/3c690b38a60da926812e0bd693726709a8bf0384) Thanks [@wiseadme](https://github.com/wiseadme)! - Added the new `CCheckbox` component with boolean and group-model support, indeterminate state, validation, readonly and disabled states, color and size customization, slots, and accessible native checkbox behavior.
+
+  Added checkbox preset support so applications can customize `CCheckbox` zones and states through the existing preset system.
+
+  Improved `CIcon` and icon typings to support path-based aliases, built-in alias fallback, slotted SVG content, and shared icon type exports from `@vueland/ui/types`.
+
 ## 0.4.2
 
 ### Patch Changes
