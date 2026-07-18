@@ -99,7 +99,10 @@ jobs:
 
       - name: Require a changeset
         # Escape hatch for an intentional no-release change: `pnpm changeset add --empty`.
-        if: steps.pub.outputs.changed == 'true'
+        # Skip the changesets release PR: it consumes changesets and bumps versions, so it
+        # legitimately changes publishable code without adding one. The job still reports
+        # success (only this step is skipped), keeping the required check green.
+        if: steps.pub.outputs.changed == 'true' && github.head_ref != 'changeset-release/master'
         run: pnpm exec changeset status --since=origin/${{ github.base_ref }}
 
   commit-lint:
