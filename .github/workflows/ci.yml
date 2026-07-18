@@ -62,20 +62,54 @@ jobs:
       - name: Build publishable packages
         run: pnpm run build:packages
 
-  #  changeset:
-  #    name: Changeset
-  #    # Only meaningful on PRs — a release-affecting change must ship a changeset.
-  #    if: github.event_name == 'pull_request'
-  #    runs-on: ubuntu-latest
-  #    timeout-minutes: 10
-  #    steps:
-  #      - uses: actions/checkout@v5
-  #        with:
-  #          # changeset status diffs against the base branch — needs full history.
-  #          fetch-depth: 0
-  #      - uses: ./.github/actions/setup
-  #      - name: Require a changeset (run `pnpm changeset` — or `changeset add --empty`)
-  #        run: pnpm exec changeset status --since=origin/${{ github.base_ref }}
+  changeset:
+    name: Changeset
+    # A changeset is required only when a *published* package's shipping code changes.
+    # Ignored packages (docs, playground, e2e — see .changeset/config.json), CI, tooling,
+    # root configs and test-only edits never need one.
+    #
+    # Pure git against the exact base SHA — we don't use `changeset status --since`, whose
+    # internal merge-base heuristics are unreliable on a PR merge ref.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # Diffs against the PR base — needs full history.
+          fetch-depth: 0
+
+      - name: Require a changeset for publishable changes
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          publishable=$(git diff --name-only "$BASE"...HEAD -- \
+            packages/ui packages/utils-jit integrations/eslint-script-setup \
+            ':(exclude)**/__tests__/**' \
+            ':(exclude)**/*.spec.ts' \
+            ':(exclude)**/CHANGELOG.md' \
+            ':(exclude)**/tsconfig*.json' \
+            ':(exclude)**/vitest.config.ts')
+
+          if [ -z "$publishable" ]; then
+            echo 'No publishable source changed — changeset not required.'
+            exit 0
+          fi
+
+          echo 'Publishable source changed:'
+          echo "$publishable"
+
+          # A changeset (real or `pnpm changeset add --empty`) must ship with the change.
+          added=$(git diff --name-only --diff-filter=A "$BASE"...HEAD -- \
+            '.changeset/*.md' ':(exclude).changeset/README.md')
+
+          if [ -z "$added" ]; then
+            echo '::error::A published package changed but no changeset was added. Run `pnpm changeset` (or `pnpm changeset add --empty` for a no-release change).'
+            exit 1
+          fi
+
+          echo 'Changeset(s) added:'
+          echo "$added"
 
   commit-lint:
     name: Commit lint
