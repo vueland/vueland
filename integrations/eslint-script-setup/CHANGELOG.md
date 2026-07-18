@@ -1,5 +1,15 @@
 # @vueland/eslint-script-setup
 
+## 1.2.0
+
+### Minor Changes
+
+- [#116](https://github.com/vueland/vueland/pull/116) [`ed4175f`](https://github.com/vueland/vueland/commit/ed4175f9591971b7dc01cf93f8cb7970fde267b5) Thanks [@wiseadme](https://github.com/wiseadme)! - Ship ESM-only, drop the CommonJS build
+
+  All published packages now ship a single ESM build. The CJS `require` exports and the `.cjs` / `.d.cts` artifacts are removed; `main`/`types` point at the `.mjs` / `.d.mts` entries.
+
+  Modern Node (≥ 20.19 — the `engines` floor) can still `require()` these packages via native `require(ESM)`, and every real consumer is ESM-native anyway (Vite 7/8 for `utils-jit`, ESLint 9 flat config for `eslint-script-setup`, bundlers for `ui`). Going ESM-only also removes the dual-package hazard — relevant for `@vueland/ui`, whose provide/inject singletons rely on a single module identity — and cuts package size and build complexity.
+
 ## 1.1.0
 
 ### Minor Changes
