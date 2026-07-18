@@ -62,20 +62,45 @@ jobs:
       - name: Build publishable packages
         run: pnpm run build:packages
 
-  #  changeset:
-  #    name: Changeset
-  #    # Only meaningful on PRs — a release-affecting change must ship a changeset.
-  #    if: github.event_name == 'pull_request'
-  #    runs-on: ubuntu-latest
-  #    timeout-minutes: 10
-  #    steps:
-  #      - uses: actions/checkout@v5
-  #        with:
-  #          # changeset status diffs against the base branch — needs full history.
-  #          fetch-depth: 0
-  #      - uses: ./.github/actions/setup
-  #      - name: Require a changeset (run `pnpm changeset` — or `changeset add --empty`)
-  #        run: pnpm exec changeset status --since=origin/${{ github.base_ref }}
+  changeset:
+    name: Changeset
+    # A changeset is required only when a *published* package's shipping code changes.
+    # Ignored packages (docs, playground, e2e — see .changeset/config.json), CI, tooling,
+    # root configs and test-only edits never need one.
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # changeset status diffs against the base branch — needs full history.
+          fetch-depth: 0
+      - uses: ./.github/actions/setup
+
+      - name: Detect changes to publishable package source
+        id: pub
+        env:
+          BASE: origin/${{ github.base_ref }}
+        run: |
+          changed=$(git diff --name-only "$BASE"...HEAD -- \
+            packages/ui packages/utils-jit integrations/eslint-script-setup \
+            ':(exclude)**/__tests__/**' \
+            ':(exclude)**/*.spec.ts' \
+            ':(exclude)**/CHANGELOG.md' \
+            ':(exclude)**/tsconfig*.json' \
+            ':(exclude)**/vitest.config.ts')
+          if [ -n "$changed" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            printf 'Publishable source changed:\n%s\n' "$changed"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo 'No publishable source changed — changeset not required.'
+          fi
+
+      - name: Require a changeset
+        # Escape hatch for an intentional no-release change: `pnpm changeset add --empty`.
+        if: steps.pub.outputs.changed == 'true'
+        run: pnpm exec changeset status --since=origin/${{ github.base_ref }}
 
   commit-lint:
     name: Commit lint

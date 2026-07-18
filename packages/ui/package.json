@@ -46,48 +46,39 @@
   "exports": {
     ".": {
       "types": "./dist/types.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js"
     },
     "./components": {
       "types": "./dist/components/index.d.ts",
-      "import": "./dist/components/index.js",
-      "require": "./dist/components/index.js"
+      "import": "./dist/components/index.js"
     },
     "./composables": {
       "types": "./dist/composables/index.d.ts",
-      "import": "./dist/composables/index.js",
-      "require": "./dist/composables/index.js"
+      "import": "./dist/composables/index.js"
     },
     "./directives": {
       "types": "./dist/directives/index.d.ts",
-      "import": "./dist/directives/index.js",
-      "require": "./dist/directives/index.js"
+      "import": "./dist/directives/index.js"
     },
     "./resolvers": {
       "types": "./dist/resolvers/index.d.ts",
-      "import": "./dist/resolvers/index.js",
-      "require": "./dist/resolvers/index.js"
+      "import": "./dist/resolvers/index.js"
     },
     "./constants": {
       "types": "./dist/constants/index.d.ts",
-      "import": "./dist/constants/index.js",
-      "require": "./dist/constants/index.js"
+      "import": "./dist/constants/index.js"
     },
     "./constants/*": {
       "types": "./dist/constants/index.d.ts",
-      "import": "./dist/constants/*.js",
-      "require": "./dist/constants/*.js"
+      "import": "./dist/constants/*.js"
     },
     "./enums/*": {
       "types": "./dist/enums/index.d.ts",
-      "import": "./dist/enums/index.js",
-      "require": "./dist/enums/index.js"
+      "import": "./dist/enums/index.js"
     },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils/index.js",
-      "require": "./dist/utils/index.js"
+      "import": "./dist/utils/index.js"
     },
     "./types": {
       "types": "./dist/types/index.d.ts",

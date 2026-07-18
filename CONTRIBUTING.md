@@ -64,7 +64,7 @@ docs/tooltip-examples
 Рекомендованные настройки репозитория (GitHub → Settings → Branches):
 
 - Require a pull request before merging; запрет прямых пушей.
-- Require status checks: `Lint`, `Typecheck`, `Test`, `Build packages`, `Commit lint`, `Branch name`, `E2E`.
+- Require status checks: `Lint`, `Typecheck`, `Test`, `Build packages`, `Commit lint`, `Branch name`, `E2E`, `Changeset`.
 - Require linear history; squash-only merge; запрет force-push и удаления ветки.
 
 ## Коммиты
@@ -117,16 +117,23 @@ pnpm --filter @vueland/e2e test:e2e:ui   # интерактивный UI-реж�
 5. Добавь `__tests__/CMyComponent.spec.ts` — тесты
 6. Реэкспортируй из `packages/ui/src/components/index.ts`
 
-## Changeset (для публичных изменений API)
+## Changeset (для изменений published-пакетов)
 
-Если изменение влияет на публичное API пакета — нужен changeset:
+Changeset нужен, **только если меняется код published-пакета, который видит потребитель** — `@vueland/ui`, `@vueland/utils-jit`, `@vueland/eslint-script-setup` (исходники, публичное API, `exports`).
+
+**Не нужен** для: docs, playground, e2e (они в `ignore`), CI, тулинга, корневых конфигов и **чисто тестовых** правок.
 
 ```bash
 pnpm changeset
 ```
 
-Выбери пакет, тип изменения (`patch` / `minor` / `major`) и опиши что изменилось.  
-Changeset-файл коммитится вместе с изменениями.
+Выбери пакет, тип изменения (`patch` / `minor` / `major`) и опиши что изменилось. Changeset-файл коммитится вместе с изменениями.
+
+Проверяется в CI (job `Changeset`, блокирует merge): если PR трогает исходники published-пакета — changeset обязателен. Если изменение сознательно не требует релиза (например, правка внутреннего комментария):
+
+```bash
+pnpm changeset add --empty
+```
 
 ## TypeScript strictness roadmap
 
