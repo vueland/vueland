@@ -604,4 +604,52 @@ describe('useValidate', () => {
             expect(calls).toContain('sync2')
         })
     })
+
+    describe('гонки запусков и динамические правила', () => {
+        it('поздний устаревший запуск не перетирает результат свежего', async () => {
+            // Старое значение валидируется медленно и невалидно, новое — быстро и валидно.
+            // validateOn=blur, чтобы watcher не порождал дополнительных запусков.
+            const rule: ValidateFn = (value: string) =>
+                new Promise((resolve) =>
+                    setTimeout(
+                        () => resolve({
+                            valid: value === 'new',
+                            message: 'stale error',
+                        }),
+                        value === 'new' ? 5 : 40,
+                    ),
+                )
+
+            const { api, props } = mountUseValidate({
+                modelValue: 'old',
+                validateOn: 'blur',
+                rules: [rule],
+            })
+
+            const slow = api.validate() // run 1: 'old' → invalid через 40ms
+            props.modelValue = 'new'
+            const fast = api.validate() // run 2: 'new' → valid через 5ms
+
+            await Promise.all([slow, fast])
+
+            // Победил свежий (валидный) запуск, устаревшая ошибка не применилась
+            expect(api.errors.hasError).toBe(false)
+            expect(api.errors.errorMessage).toBeUndefined()
+        })
+
+        it('правила, добавленные после инициализации, включают авто-валидацию', async () => {
+            const { api, props } = mountUseValidate({ modelValue: 'x' })
+
+            expect(api.hasRules.value).toBe(false)
+
+            // rules появляются динамически уже после setup composable
+            props.rules = [createRule(false, 'now required')]
+            props.modelValue = 'y'
+            await nextTick()
+            await nextTick()
+
+            expect(api.errors.hasError).toBe(true)
+            expect(api.errors.errorMessage).toBe('now required')
+        })
+    })
 })

@@ -181,8 +181,42 @@ function getSortedIndices(keys: (SortKey | null)[]): number[] {
     })
 }
 
+// Ищет в поддереве узла ссылки, семантика которых зависит от вида функции:
+// `this`/`arguments` лексически захвачены стрелкой, `super`/`new.target` зависят от
+// контекста. Их нельзя перенести в function declaration textual-конвертацией.
+// Консервативно сканируем всё поддерево (не спускаемся только по служебным ссылкам).
+function referencesDynamicBinding(value: unknown, seen = new Set<object>()): boolean {
+    if (!value || typeof value !== 'object') return false
+    if (seen.has(value)) return false
+    seen.add(value)
+
+    const node = value as AnyNode
+    const type = node.type
+
+    if (type === 'ThisExpression' || type === 'Super') return true
+    if (type === 'Identifier' && node.name === 'arguments') return true
+    // new.target (но не import.meta — оно валидно и в function declaration)
+    if (type === 'MetaProperty' && (node.meta as AnyNode | undefined)?.name === 'new') return true
+
+    for (const key in node) {
+        if (key === 'parent' || key === 'loc' || key === 'range') continue
+        const child = node[key]
+
+        if (Array.isArray(child)) {
+            for (const item of child) {
+                if (referencesDynamicBinding(item, seen)) return true
+            }
+        } else if (referencesDynamicBinding(child, seen)) {
+            return true
+        }
+    }
+
+    return false
+}
+
 // Конвертирует const foo = () => {} / const foo = function() {} → function foo() {}
-// Возвращает null если нода не подходит для конвертации
+// Возвращает null если нода не подходит для конвертации (тогда фикс не применяется —
+// вызывающий код репортит депконфликт report-only).
 function convertArrowToFunctionDecl(
     sourceCode: SourceCode,
     node: AnyNode,
@@ -198,6 +232,14 @@ function convertArrowToFunctionDecl(
     const init = declarator.init as AnyNode | undefined
     if (!init) return null
     if (init.type !== 'ArrowFunctionExpression' && init.type !== 'FunctionExpression') return null
+
+    // Автофикс — только для доказуемо безопасного подмножества (обычные синхронные
+    // функции). Всё, что меняет семантику при переносе в function declaration, — report-only.
+    if (init.async) return null
+    if (init.generator) return null
+    if (init.type === 'FunctionExpression' && init.id) return null // named function expression
+    if (id.typeAnnotation) return null // type annotation переменной теряется
+    if (referencesDynamicBinding(init)) return null // this / arguments / super / new.target
 
     const getText = (n: AnyNode) => sourceCode.getText(n as unknown as Parameters<SourceCode['getText']>[0])
 

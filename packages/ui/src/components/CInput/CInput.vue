@@ -10,13 +10,13 @@
         useAttrs
     } from 'vue'
 
-    import { useAriaActivator } from '@/composables/use-aria-activator'
     import { useAriaField } from '@/composables/use-aria-field'
     import { useForm } from '@/composables/use-form'
     import { useId } from '@/composables/use-id'
     import { useInputPresets } from '@/composables/use-input-presets'
     import { useValidate } from '@/composables/use-validate'
     import { allowedAttrs, excludeProps } from '@/helpers/exclude-props'
+    import { ariaExpandable } from '@/utils'
 
     import type {
         CInputEmits,
@@ -93,11 +93,10 @@
         ...unref(ariaField),
         ...(isCombobox ? {
             role: 'combobox',
-            ...useAriaActivator(() => ({
-                expanded: state.focused,
+            ...ariaExpandable(state.focused, {
                 haspopup: 'listbox',
                 controls: `${fieldId}-menu`,
-            })).value
+            })
         } : {}),
         ...unref(normalizedAttrsMap),
     }))
@@ -186,6 +185,7 @@
     <div
         class="c-input"
         :class="classes"
+        :style="attrs.style"
     >
         <div class="c-input__field">
             <slot

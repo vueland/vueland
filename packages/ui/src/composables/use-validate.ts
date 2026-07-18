@@ -69,8 +69,17 @@ export function useValidate(
         errors.errorMessage = result.message
     }
 
+    // Монотонный id запуска: результат применяет только последний validate()
+    let runId = 0
+
     async function validate(): Promise<boolean> {
         if (!unref(hasRules) || props.disabled || props.readonly) return true
+
+        const myRun = ++runId
+        // Состояние (errors) пишет только последний запуск: устаревший результат
+        // медленного правила не должен перетирать свежий. Return-значение при этом —
+        // фактический результат (нужно явным вызовам, напр. submit формы).
+        const isStale = () => myRun !== runId
 
         errors.validating = true
 
@@ -79,34 +88,34 @@ export function useValidate(
                 const result = await rule(props.validationValue ?? props.modelValue)
 
                 if (!result.valid) {
-                    applyResult(result)
+                    if (!isStale()) applyResult(result)
                     return false
                 }
             }
         } finally {
-            errors.validating = false
+            if (!isStale()) errors.validating = false
         }
 
-        resetValidate()
+        if (!isStale()) resetValidate()
         return true
     }
 
-    if (unref(hasRules)) {
-        watch([modelValue, validationValue], () => {
-            const value = unref(validationValue) ?? unref(modelValue)
+    // Watchers регистрируем всегда — правила могут появиться динамически позже;
+    // отсутствие правил обрабатывается внутри validate() (ранний возврат).
+    watch([modelValue, validationValue], () => {
+        const value = unref(validationValue) ?? unref(modelValue)
 
-            if (unref(validateOn) === InputEvents.BLUR && !!value) return
+        if (unref(validateOn) === InputEvents.BLUR && !!value) return
 
-            validate()
-        })
+        validate()
+    })
 
-        watch(
-            () => state.focused,
-            (val) => {
-                if (!val) validate()
-            },
-        )
-    }
+    watch(
+        () => state.focused,
+        (val) => {
+            if (!val) validate()
+        },
+    )
 
     return {
         errors,
