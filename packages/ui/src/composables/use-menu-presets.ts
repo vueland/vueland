@@ -28,7 +28,7 @@ export function useMenuPresets({
     // host-CInput) держит вложенный пресет меню в base-снимке. Own перекрывает
     // контекст.
     const own = useReadPreset(props)
-    const injected = inject($PRESET_KEY, null)
+    const injected = inject($PRESET_KEY, undefined)
 
     const raw = computed(() =>
         own.value ?? (resolveStatePreset(unref(injected), {}, []) as CInputSnapshot).menu)

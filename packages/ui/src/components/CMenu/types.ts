@@ -26,6 +26,12 @@ export type CMenuSlots = {
     default(): VNode
 }
 
+export interface MenuAPI {
+    open(): void
+    close(): void
+    toggle(): void
+}
+
 export type CMenuEvents = {
     (e: 'outside-click'): void
     (e: 'click'): void

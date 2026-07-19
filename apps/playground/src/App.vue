@@ -10,7 +10,7 @@
 
     const onClick = () => {
         isDarkMode.value = !isDarkMode.value
-        core.applyTheme(unref(isDarkMode) ? 'dark' : 'light')
+        core?.applyTheme(unref(isDarkMode) ? 'dark' : 'light')
     }
 </script>
 
