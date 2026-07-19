@@ -33,6 +33,7 @@
     "test:jit": "pnpm run -r test:jit",
     "test:eslint": "pnpm --filter @vueland/eslint-script-setup run test",
     "test": "pnpm run test:lib && pnpm run test:jit && pnpm run test:eslint",
+    "test:pack": "node scripts/pack-smoke.mjs",
     "test:e2e": "pnpm --filter @vueland/e2e run test:e2e",
     "preview:docs": "pnpm run -r preview:docs",
     "lint:lib": "pnpm run -r lint:lib",

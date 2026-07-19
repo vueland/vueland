@@ -46,39 +46,39 @@
   "exports": {
     ".": {
       "types": "./dist/types.d.ts",
-      "import": "./dist/index.js"
+      "default": "./dist/index.js"
     },
     "./components": {
       "types": "./dist/components/index.d.ts",
-      "import": "./dist/components/index.js"
+      "default": "./dist/components/index.js"
     },
     "./composables": {
       "types": "./dist/composables/index.d.ts",
-      "import": "./dist/composables/index.js"
+      "default": "./dist/composables/index.js"
     },
     "./directives": {
       "types": "./dist/directives/index.d.ts",
-      "import": "./dist/directives/index.js"
+      "default": "./dist/directives/index.js"
     },
     "./resolvers": {
       "types": "./dist/resolvers/index.d.ts",
-      "import": "./dist/resolvers/index.js"
+      "default": "./dist/resolvers/index.js"
     },
     "./constants": {
       "types": "./dist/constants/index.d.ts",
-      "import": "./dist/constants/index.js"
+      "default": "./dist/constants/index.js"
     },
     "./constants/*": {
       "types": "./dist/constants/index.d.ts",
-      "import": "./dist/constants/*.js"
+      "default": "./dist/constants/*.js"
     },
     "./enums/*": {
       "types": "./dist/enums/index.d.ts",
-      "import": "./dist/enums/index.js"
+      "default": "./dist/enums/index.js"
     },
     "./utils": {
       "types": "./dist/utils/index.d.ts",
-      "import": "./dist/utils/index.js"
+      "default": "./dist/utils/index.js"
     },
     "./types": {
       "types": "./dist/types/index.d.ts"
@@ -112,7 +112,7 @@
     "build:types": "vue-tsc -p tsconfig.build.json --declaration --emitDeclarationOnly",
     "lint": "eslint src/**/*.vue",
     "lint:fix": "eslint src/**/*.vue --fix",
-    "test:lib": "vitest run -c vitest.config.ts",
+    "test:lib": "vitest run -c vitest.config.ts --coverage",
     "test:deploy": "vitest run -c vitest.config.ts",
     "test:watch": "vitest -c vitest.config.ts",
     "typecheck": "vue-tsc -p tsconfig.build.json --noEmit",

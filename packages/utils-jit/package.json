@@ -61,7 +61,7 @@
     "dev": "tsdown --watch",
     "clean": "rm -rf dist",
     "test:deploy": "vitest run -c vitest.config.ts",
-    "test:jit": "vitest run -c vitest.config.ts",
+    "test:jit": "vitest run -c vitest.config.ts --coverage",
     "lint:jit": "eslint .",
     "typecheck": "tsc --noEmit"
   },
