@@ -168,3 +168,25 @@ describe('useDisplay / update', () => {
         expect(display.md.value).toBe(true)
     })
 })
+
+describe('useDisplay / dispose', () => {
+    it('после dispose эффект не реагирует на update', async () => {
+        setWidth(100)
+        const {
+            createDisplay,
+            update,
+            dispose,
+        } = useDisplay()
+        const display = createDisplay()
+        await nextTick()
+        expect(display.xs.value).toBe(true)
+
+        dispose()
+
+        setWidth(1000)
+        update()
+        await nextTick()
+        expect(display.xs.value).toBe(true)
+        expect(display.md.value).toBe(false)
+    })
+})
