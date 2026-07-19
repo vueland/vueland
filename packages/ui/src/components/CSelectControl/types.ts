@@ -1,4 +1,4 @@
-import type { VNode } from 'vue'
+import type { ComputedRef, VNode } from 'vue'
 
 export interface CSelectControlProps<T = any> {
     modelValue: T | T[] | boolean
@@ -8,6 +8,13 @@ export interface CSelectControlProps<T = any> {
     disabled?: boolean
     readonly?: boolean
     name?: string
+}
+
+export interface SelectControlAPI {
+    checked: ComputedRef<boolean>
+    toggle(): void
+    checkOn(): void
+    checkOff(): void
 }
 
 export interface CSelectControlSlots {

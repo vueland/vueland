@@ -30,7 +30,7 @@ export function useFieldPresets({ props }: { props: CFieldProps }) {
     // host-CInput) держит вложенный пресет поля в base-снимке. Own перекрывает
     // контекст.
     const own = useReadPreset(props)
-    const injected = inject($PRESET_KEY, null)
+    const injected = inject($PRESET_KEY, undefined)
 
     const raw = computed(() =>
         own.value ?? (resolveStatePreset(unref(injected), {}, []) as CInputSnapshot).field)

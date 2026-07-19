@@ -68,7 +68,7 @@ export function useProvidePreset(props: PresetProps): ComputedRef<Maybe<AnySet>>
  * перекрывает контекстный — компонент продолжает работать и standalone.
  */
 export function useInjectPreset(props: PresetProps): ComputedRef<Maybe<AnySet>> {
-    const injected = inject($PRESET_KEY, null)
+    const injected = inject($PRESET_KEY, undefined)
     const own = useReadPreset(props)
 
     return computed(() => own.value ?? injected?.value)
