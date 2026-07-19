@@ -39,6 +39,15 @@ export interface LibOptions {
     ssr?: boolean
 }
 
+// Nuxt кладёт свой инстанс на vue-app как $nuxt. Типизируем структурно — ровно
+// то, что используем — чтобы не зависеть от пакета nuxt и не расширять тип App
+// глобально (augmentation утёк бы потребителям через d.ts).
+type AppWithNuxt = App & {
+    $nuxt?: {
+        hook(name: 'app:suspense:resolve', cb: () => void): void
+    }
+}
+
 export class VuelandUI {
     themes: ThemesOptions = {}
     icons: IconsOptions = {}
@@ -131,12 +140,13 @@ export class VuelandUI {
             }
 
             dispose()
-
             unmount(...args)
         }
 
-        if (options.ssr && (app as any).$nuxt) {
-            ;(app as any).$nuxt.hook('app:suspense:resolve', () => {
+        const { $nuxt } = app as AppWithNuxt
+
+        if (options.ssr && $nuxt) {
+            $nuxt.hook('app:suspense:resolve', () => {
                 if (IN_BROWSER) {
                     update()
                 }
