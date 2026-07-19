@@ -1,5 +1,34 @@
 # @vueland/ui
 
+## 0.6.1
+
+### Patch Changes
+
+- [#120](https://github.com/vueland/vueland/pull/120) [`f936208`](https://github.com/vueland/vueland/commit/f9362087e15e467da9395c20ea8c98864ad8f5ec) Thanks [@wiseadme](https://github.com/wiseadme)! - Dispose the display watch effect on app unmount
+
+  `useDisplay` now owns its breakpoint `watchEffect` via a detached `effectScope` and exposes `dispose()`; the library's `app.unmount` wrapper stops the scope alongside removing the `resize` listener. Previously the effect was created outside any scope and lived forever — leaking across app instances (tests, micro-frontends, HMR).
+
+- [#120](https://github.com/vueland/vueland/pull/120) [`f936208`](https://github.com/vueland/vueland/commit/f9362087e15e467da9395c20ea8c98864ad8f5ec) Thanks [@wiseadme](https://github.com/wiseadme)! - Remove the untyped `$ui` global property
+
+  `createVuelandUI` no longer sets `app.config.globalProperties.$ui`. The property was undocumented, untyped (`any` in templates) and unused — the supported way to reach the library instance is the `useCore()` composable (or `app.runWithContext(() => useCore())` outside a component). The plugin's `app.use` options argument is now typed as `Partial<LibOptions>` instead of `any`.
+
+- [#119](https://github.com/vueland/vueland/pull/119) [`418f605`](https://github.com/vueland/vueland/commit/418f605a1382679f456acf4dbef4655b26a63e53) Thanks [@wiseadme](https://github.com/wiseadme)! - Correctness fixes from code review
+
+  - **eslint-script-setup**: the `script-setup-order` autofix no longer rewrites unsafe functions into a function declaration. Arrow/function expressions that are `async`, generators, named function expressions, have a typed variable, or reference `this` / `arguments` / `super` / `new.target` are now report-only — previously the fixer could silently drop `async`/generator or change `this`/`arguments` semantics (even producing invalid syntax).
+  - **CInput**: a user-provided `style` attribute is now applied to the root element instead of being dropped.
+  - **CInput**: the combobox aria attributes are built via the pure `ariaExpandable` helper instead of creating a new `computed` on every recompute.
+  - **useValidate**: async validation is race-safe — only the latest run writes to the error state, so a slow stale rule can no longer overwrite a fresh result. Watchers are now always registered, so rules added dynamically after setup enable auto-validation.
+  - **@vueland/ui**: the `./types` subpath export no longer exposes a runtime `import` branch that resolved to a `.d.ts` file (type-only now).
+
+- [#120](https://github.com/vueland/vueland/pull/120) [`f936208`](https://github.com/vueland/vueland/commit/f9362087e15e467da9395c20ea8c98864ad8f5ec) Thanks [@wiseadme](https://github.com/wiseadme)! - Type all injection keys with concrete contracts
+
+  - `$MENU_API_KEY` → `InjectionKey<MenuAPI>`, `$SELECT_CONTROL_API_KEY` → `InjectionKey<SelectControlAPI>` (new interfaces exported from the component types), `$VUELAND_UI_KEY` → `InjectionKey<VuelandUI>`, `$PRESET_KEY` → `InjectionKey<ComputedRef<Maybe<StatePresets<string, string>>>>` — no more `InjectionKey<any>` in the public keys.
+  - `useCore()` now honestly returns `Maybe<VuelandUI>` instead of promising a `VuelandUI` it could not guarantee; internal preset consumers use `inject(key, undefined)` to match the `Maybe` convention.
+
+- [#121](https://github.com/vueland/vueland/pull/121) [`7444e9b`](https://github.com/vueland/vueland/commit/7444e9b55abd7865eae0a9ed9e32a86d73b4ac99) Thanks [@wiseadme](https://github.com/wiseadme)! - Use the `default` export condition for JS subpaths
+
+  Subpath exports declared only the `import` condition, so CommonJS resolution (`require('@vueland/ui')` on Node ≥ 20.19 via `require(ESM)`) failed with "No exports main defined" — resolution never reached the module. All JS subpaths now use `default` (matching `@vueland/utils-jit` / `@vueland/eslint-script-setup`), which serves both `import` and `require` consumers. Caught by the new pack smoke test.
+
 ## 0.6.0
 
 ### Minor Changes
