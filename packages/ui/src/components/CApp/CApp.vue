@@ -30,7 +30,6 @@
 <template>
     <div
         ref="appRef"
-        role="application"
         class="c-app"
         :class="classes"
     >

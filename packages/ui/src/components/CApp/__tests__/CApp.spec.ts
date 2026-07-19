@@ -53,12 +53,6 @@ describe('CApp', () => {
         expect(wrapper.find('button').exists()).toBe(true)
     })
 
-    it('имеет role="application" на корневом элементе', () => {
-        const wrapper = mount(CApp)
-
-        expect(wrapper.attributes('role')).toBe('application')
-    })
-
     it('рендерит пустой c-app__wrapper без слота', () => {
         const wrapper = mount(CApp)
 
