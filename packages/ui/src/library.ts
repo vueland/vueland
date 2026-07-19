@@ -100,7 +100,11 @@ export class VuelandUI {
             }
         }
 
-        const { createDisplay, update } = useDisplay()
+        const {
+            createDisplay,
+            update,
+            dispose,
+        } = useDisplay()
 
         const display = createDisplay(resolvedBreakpoints)
         const dialogsStack = createDialogsStack()
@@ -125,6 +129,8 @@ export class VuelandUI {
             if (IN_BROWSER) {
                 window.removeEventListener('resize', update)
             }
+
+            dispose()
 
             unmount(...args)
         }

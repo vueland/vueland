@@ -146,6 +146,35 @@ describe('VuelandUI / install', () => {
         expect(displayDefault.xs.value).toBe(false)
     })
 
+    it('app.unmount останавливает display-эффект и снимает resize-listener', async () => {
+        setWidth(100)
+        let display: any
+
+        const Consumer = defineComponent({
+            setup() {
+                display = inject($BREAKPOINTS_KEY)
+                return () => h('div')
+            },
+        })
+
+        const ui = new VuelandUI()
+        const app = createApp(Consumer)
+        app.use({ install: (a) => ui.install(a, { components: {} }) })
+        app.mount(document.createElement('div'))
+        await nextTick()
+        expect(display.xs.value).toBe(true)
+
+        app.unmount()
+
+        setWidth(1000)
+        window.dispatchEvent(new Event('resize'))
+        await nextTick()
+
+        // scope остановлен, listener снят — состояние заморожено на последнем значении
+        expect(display.xs.value).toBe(true)
+        expect(display.md.value).toBe(false)
+    })
+
     describe('__VUELAND_BREAKPOINTS__ (utils-jit интеграция)', () => {
         afterEach(() => {
             vi.unstubAllGlobals()

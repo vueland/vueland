@@ -1,4 +1,5 @@
 import {
+    effectScope,
     type Ref,
     type ShallowReactive,
     shallowReactive,
@@ -47,6 +48,7 @@ export function useDisplay(): {
     state: ShallowReactive<Breakpoints>
     createDisplay(points?: Record<BreakpointLabels, number>): Display
     update(): void
+    dispose(): void
 } {
     const state = shallowReactive<Breakpoints>({
         xxl: false,
@@ -66,6 +68,10 @@ export function useDisplay(): {
         mdAndUp: false,
         smAndUp: false,
     })
+
+    // Detached-scope: useDisplay вызывается из install() вне компонентного setup,
+    // поэтому эффекту нужен владелец, которого остановит app.unmount (см. library.ts).
+    const scope = effectScope(true)
 
     const width = shallowRef(0)
     const height = shallowRef(0)
@@ -89,40 +95,42 @@ export function useDisplay(): {
         width.value = getClientWidth()
         height.value = getClientHeight()
 
-        watchEffect(() => {
-            const {
-                xxl,
-                xl,
-                lg,
-                md,
-                sm,
-            } = points
+        scope.run(() => {
+            watchEffect(() => {
+                const {
+                    xxl,
+                    xl,
+                    lg,
+                    md,
+                    sm,
+                } = points
 
-            const screen = unref(width)
+                const screen = unref(width)
 
-            const xs = screen < sm
-            const smActive = screen < md && !xs
-            const mdActive = screen < lg && !(smActive || xs)
-            const lgActive = screen < xl && !(mdActive || smActive || xs)
-            const xlActive = screen < xxl && !(lgActive || mdActive || smActive || xs)
-            const xxlActive = screen >= xxl
+                const xs = screen < sm
+                const smActive = screen < md && !xs
+                const mdActive = screen < lg && !(smActive || xs)
+                const lgActive = screen < xl && !(mdActive || smActive || xs)
+                const xlActive = screen < xxl && !(lgActive || mdActive || smActive || xs)
+                const xxlActive = screen >= xxl
 
-            state.xs = xs
-            state.sm = smActive
-            state.md = mdActive
-            state.lg = lgActive
-            state.xl = xlActive
-            state.xxl = xxlActive
+                state.xs = xs
+                state.sm = smActive
+                state.md = mdActive
+                state.lg = lgActive
+                state.xl = xlActive
+                state.xxl = xxlActive
 
-            state.smAndUp = !xs
-            state.mdAndUp = !(xs || smActive)
-            state.lgAndUp = !(xs || smActive || mdActive)
-            state.xlAndUp = !(xs || smActive || mdActive || lgActive)
+                state.smAndUp = !xs
+                state.mdAndUp = !(xs || smActive)
+                state.lgAndUp = !(xs || smActive || mdActive)
+                state.xlAndUp = !(xs || smActive || mdActive || lgActive)
 
-            state.smAndLess = !(mdActive || lgActive || xlActive || xxlActive)
-            state.mdAndLess = !(lgActive || xlActive || xxlActive)
-            state.lgAndLess = !(xlActive || xxlActive)
-            state.xlAndLess = !xxlActive
+                state.smAndLess = !(mdActive || lgActive || xlActive || xxlActive)
+                state.mdAndLess = !(lgActive || xlActive || xxlActive)
+                state.lgAndLess = !(xlActive || xxlActive)
+                state.xlAndLess = !xxlActive
+            })
         })
 
         return {
@@ -134,5 +142,6 @@ export function useDisplay(): {
         state,
         update,
         createDisplay,
+        dispose: () => scope.stop(),
     }
 }
