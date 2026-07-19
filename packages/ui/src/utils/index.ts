@@ -1,5 +1,4 @@
 export * from './aria'
-export * from './compile-css-classes'
 export * from './convert-to-unit'
 export * from './create-simple-functional'
 export * from './globals'
