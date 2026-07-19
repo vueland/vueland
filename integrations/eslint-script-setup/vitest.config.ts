@@ -15,6 +15,13 @@ export default defineConfig({
             reporter: ['text', 'json', 'html'],
             include: ['src/**/*.ts'],
             exclude: ['src/index.ts', '**/*.d.ts'],
+            // Пороги — измеренный уровень (95/92/100/95 на 2026-07) минус ~4пп зазора.
+            thresholds: {
+                statements: 90,
+                branches: 87,
+                functions: 95,
+                lines: 90,
+            },
         },
     },
 })

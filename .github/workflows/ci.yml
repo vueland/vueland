@@ -133,6 +133,19 @@ jobs:
           GITHUB_HEAD_REF: ${{ github.head_ref }}
         run: node scripts/check-branch-name.mjs
 
+  pack-smoke:
+    name: Pack smoke
+    # Packs every publishable package, installs the tarballs into a clean fixture
+    # via npm and verifies each public subpath resolves (Node import + tsc under
+    # bundler and nodenext resolution). Guards the exports contract.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup
+      - name: Pack and verify public subpaths
+        run: pnpm run test:pack
+
   e2e:
     name: E2E
     runs-on: ubuntu-latest
@@ -140,9 +153,9 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup
-      # Chromium only — matches the CI project in apps/e2e/playwright.config.ts.
-      - name: Install Playwright Chromium
-        run: pnpm --filter @vueland/e2e exec playwright install --with-deps chromium
+      # All three engines — matches the projects in apps/e2e/playwright.config.ts.
+      - name: Install Playwright browsers
+        run: pnpm --filter @vueland/e2e exec playwright install --with-deps chromium firefox webkit
       - name: Run Playwright e2e
         # Playwright's webServer boots the playground (vite) itself.
         run: pnpm run test:e2e
