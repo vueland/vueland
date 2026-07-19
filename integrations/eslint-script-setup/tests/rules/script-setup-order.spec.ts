@@ -383,6 +383,65 @@ describe('script-setup-order', () => {
         })
     })
 
+    it('invalid: небезопасные функции НЕ конвертируются автофиксом (report-only)', () => {
+        // Тот же депконфликт, что и в предыдущем тесте, но init нельзя безопасно
+        // вынести в function declaration → фикс не применяется, остаётся depConflict.
+        const scenario = (init: string, decl = 'const useCounter =') =>
+            [
+                `${decl} ${init}`,
+                'const count = ref(0)',
+                'const counter = useCounter()',
+            ].join('\n')
+
+        tester.run('script-setup-order', scriptSetupOrder, {
+            valid: [],
+            invalid: [
+                // async: иначе получили бы function с await без async (вплоть до невалидного синтаксиса)
+                {
+                    filename: 'Component.vue',
+                    code: scenario('async () => { return ref(0) }'),
+                    output: null,
+                    errors: [{ messageId: 'depConflict' }],
+                },
+                // generator
+                {
+                    filename: 'Component.vue',
+                    code: scenario('function* () { return ref(0) }'),
+                    output: null,
+                    errors: [{ messageId: 'depConflict' }],
+                },
+                // this: меняется runtime-семантика
+                {
+                    filename: 'Component.vue',
+                    code: scenario('() => { return this }'),
+                    output: null,
+                    errors: [{ messageId: 'depConflict' }],
+                },
+                // arguments: у стрелки лексический, у function declaration — свой
+                {
+                    filename: 'Component.vue',
+                    code: scenario('() => { return arguments }'),
+                    output: null,
+                    errors: [{ messageId: 'depConflict' }],
+                },
+                // named function expression: теряется имя (рекурсия/семантика NFE)
+                {
+                    filename: 'Component.vue',
+                    code: scenario('function impl() { return ref(0) }'),
+                    output: null,
+                    errors: [{ messageId: 'depConflict' }],
+                },
+                // type annotation переменной теряется при переносе на function declaration
+                {
+                    filename: 'Component.vue',
+                    code: scenario('() => { return ref(0) }', 'const useCounter: any ='),
+                    output: null,
+                    errors: [{ messageId: 'depConflict' }],
+                },
+            ],
+        })
+    })
+
     it('invalid: autofix не добавляет пустые строки между соседними нодами', () => {
         tester.run('script-setup-order', scriptSetupOrder, {
             valid: [],

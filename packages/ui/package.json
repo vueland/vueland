@@ -81,8 +81,7 @@
       "import": "./dist/utils/index.js"
     },
     "./types": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/types/index.d.ts"
+      "types": "./dist/types/index.d.ts"
     },
     "./css/lib.css": "./dist/css/lib.css",
     "./css/utils.css": "./dist/css/utils.css",

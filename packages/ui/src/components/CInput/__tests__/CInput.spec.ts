@@ -218,6 +218,13 @@ describe('CInput', () => {
             expect(field(wrapper).classes()).not.toContain('external-root')
         })
 
+        it('применяет пользовательский style на root, а не теряет его', () => {
+            const wrapper = createWrapper({ attrs: { style: 'color: red;' } })
+
+            expect(wrapper.attributes('style')).toContain('color: red')
+            expect(field(wrapper).attributes('style')).toBeUndefined()
+        })
+
         it('не даёт attrs.id переопределить uid', () => {
             const wrapper = createWrapper({
                 props: { id: 'from-props' },
