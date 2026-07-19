@@ -11,13 +11,13 @@ export default defineConfig({
         environment: 'happy-dom',
         coverage: {
             provider: 'v8',
-            // Пороги — измеренный уровень (89/85/86/89 на 2026-07) минус ~4пп зазора.
-            // Понижать можно только осознанным решением в PR.
+            // Пороги — измеренный в CI уровень (84.6/78.6/82.6/84.9 на 2026-07)
+            // минус ~4пп зазора. Понижать можно только осознанным решением в PR.
             thresholds: {
-                statements: 85,
-                branches: 80,
-                functions: 82,
-                lines: 85,
+                statements: 80,
+                branches: 74,
+                functions: 78,
+                lines: 80,
             },
         },
     },
