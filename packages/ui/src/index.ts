@@ -8,15 +8,13 @@ export * from './types'
 
 export function createVuelandUI(options: LibOptions): Plugin {
     return {
-        install(app: App, args: any) {
+        install(app: App, args?: Partial<LibOptions>) {
             const library = new VuelandUI()
 
             library.install(app, {
                 ...options,
                 ...args,
             })
-
-            app.config.globalProperties.$ui = library
         },
     }
 }
