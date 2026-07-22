@@ -14,7 +14,7 @@ $self: '.c-checkbox';
 
   &--default,
   &--readonly,
-  &--focus-visible,
+  &--focused,
   &--indeterminate,
   &--checked {
     & > #{$self}__label {
@@ -28,7 +28,7 @@ $self: '.c-checkbox';
     }
   }
 
-  &--focus-visible {
+  &--focused {
     & > #{$self}__icon {
       &::before {
         opacity: getCssVar('sys', 'state', 'focus-opacity');

@@ -1,5 +1,6 @@
 import type { CFieldPreset, CInputPreset } from '@vueland/ui/types'
 
+import { checkboxUpper } from './checkbox-presets'
 import { soft as datePickerSoft } from './date-picker-presets'
 import { compact as listCompact, soft as listSoft } from './list-presets'
 import { dark as menuDark, soft as menuSoft } from './menu-presets'
@@ -50,6 +51,7 @@ export const soft: CInputPreset = {
         field: softField,
         menu: menuSoft,
         list: listSoft,
+        checkbox: checkboxUpper,
         datePicker: datePickerSoft,
     },
     error: {

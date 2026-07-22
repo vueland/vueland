@@ -19,9 +19,10 @@
 ---
 
 > **⚠️ Active development — not production ready**
-> APIs may change between releases without notice. Production-ready components are marked **Stable** in the docs.
+>
+> This package is still far from a production-ready UI library. APIs, behavior, styles, and accessibility details may change between releases. The component catalog shows what currently exists; **Stable** means comparatively documented and tested within the current early-development phase, not a production-readiness guarantee.
 
-`@vueland/ui` is the UI layer of the Vueland platform. It provides components built for real-world frontend needs: a 12-column grid, form controls with validation and presets, overlays, composables, and a slot-first architecture that lets you replace visual sections of complex components without losing their behavior.
+`@vueland/ui` is the early UI layer of the Vueland platform. It currently includes a 12-column grid, form controls, overlays, composables, presets, and experiments around slot-first component anatomy. Treat it as an evolving foundation for testing ideas and giving feedback, not as a finished drop-in UI kit.
 
 ## Documentation
 
@@ -83,7 +84,7 @@ Components are registered globally after `app.use(vueland)`:
 Material Design breakpoint scale, shared across the grid, utility classes, and `useDisplay`:
 
 | Name | min-width |
-|------|-----------|
+| ---- | --------- |
 | xs   | 0         |
 | sm   | 600px     |
 | md   | 960px     |

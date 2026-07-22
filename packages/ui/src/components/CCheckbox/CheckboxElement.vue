@@ -8,8 +8,7 @@
 
     import { CIcon } from '@/components/CIcon'
     import { CLabel } from '@/components/CLabel'
-    import { useCheckboxPresets } from '@/composables/use-checkbox-presets'
-    import { useIcon } from '@/composables/use-icon'
+    import { useCheckboxPresets, useIcon } from '@/composables'
     import { IconAliases } from '@/enums'
     import { convertToUnit } from '@/utils'
 
@@ -28,20 +27,21 @@
     const checkMarkIcon = useIcon({ name: IconAliases.CHECKBOX_CHECK_MARK })
     const indeterminateMarkIcon = useIcon({ name: IconAliases.CHECKBOX_INDETERMINATE_MARK })
     const attrs = useAttrs()
-    const focusVisible = shallowRef(false)
+    const focused = shallowRef(false)
     const presets = useCheckboxPresets({
         props,
-        focusVisible,
+        focused,
     })
 
     const classes = computed(() => [
         {
             'c-checkbox--default': !props.error
                 && !props.checked
+                && !unref(focused)
                 && !props.indeterminate
                 && !props.readonly
                 && !props.disabled,
-            'c-checkbox--focus-visible': unref(focusVisible),
+            'c-checkbox--focused': unref(focused),
             'c-checkbox--disabled': props.disabled,
             'c-checkbox--checked': props.checked,
             'c-checkbox--indeterminate': props.indeterminate,
@@ -85,12 +85,12 @@
     }
 
     function onFocus(e: FocusEvent) {
-        focusVisible.value = isFocusVisible(e.target)
+        focused.value = isFocusVisible(e.target)
         emit('focus')
     }
 
     function onBlur() {
-        focusVisible.value = false
+        focused.value = false
         emit('blur')
     }
 </script>
