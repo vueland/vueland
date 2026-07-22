@@ -75,13 +75,13 @@
         @keydown="onKeydown"
         @keyup="state.active = false"
     >
-        <div
+        <span
             class="c-btn__label"
             :class="[preset.label, { 'c-btn__label--hidden': loading }]"
         >
-            <slot></slot>
-        </div>
-        <div
+            <slot />
+        </span>
+        <span
             v-if="loading"
             class="c-btn__loader"
             :class="preset.loader"
@@ -94,6 +94,6 @@
                     width="2"
                 />
             </slot>
-        </div>
+        </span>
     </button>
 </template>
