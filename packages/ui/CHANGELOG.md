@@ -1,5 +1,17 @@
 # @vueland/ui
 
+## 0.6.2
+
+### Patch Changes
+
+- [#124](https://github.com/vueland/vueland/pull/124) [`d8e483b`](https://github.com/vueland/vueland/commit/d8e483be7f7361b9702d0f97a6320f5afbeb1065) Thanks [@wiseadme](https://github.com/wiseadme)! - refactor(CBtn): replace content wrapper `div` with `span`
+
+- [#126](https://github.com/vueland/vueland/pull/126) [`83cf361`](https://github.com/vueland/vueland/commit/83cf361852e97a573513656ed52f9b2639e38563) Thanks [@wiseadme](https://github.com/wiseadme)! - refactor(CCheckbox): unify focus state naming to `focused`
+
+  Rename the internal `focusVisible` state to `focused` across `CheckboxElement`,
+  `useCheckboxPresets`, and the `.c-checkbox--focused` style hook, and drop the
+  redundant boolean coercions in the preset state map.
+
 ## 0.6.1
 
 ### Patch Changes
