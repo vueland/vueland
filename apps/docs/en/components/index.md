@@ -1,8 +1,8 @@
 # Components
 
-Vueland UI provides a set of ready-to-use components for building interfaces with Vue 3. All components support the preset system, CSS-variable theming, and accessibility (ARIA).
+Vueland UI is in active early development and is not production ready. This catalog shows the components that currently exist in the package; it is not a finished UI kit.
 
-Components marked **Stable** are fully documented, covered by tests, and ready for production use. All others are available in the library but their documentation or test coverage is still in progress.
+Components marked **Stable** are comparatively more documented and tested within the current early-development phase. The label does not guarantee production readiness. All other components are available in the library, but their API, documentation, or test coverage is still in progress.
 
 ## Layout
 

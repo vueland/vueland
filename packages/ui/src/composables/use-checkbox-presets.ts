@@ -28,10 +28,10 @@ export const C_CHECKBOX_STATE_PRECEDENCE: readonly CCheckboxState[] = [
 
 export function useCheckboxPresets({
     props,
-    focusVisible,
+    focused,
 }: {
     props: CheckboxElementProps
-    focusVisible: Ref<boolean>
+    focused: Ref<boolean>
 }) {
     // Как и у CField: собственный проп `preset` резолвится из реестра, а
     // контекст (его провайдит host-CInput) держит вложенный пресет чекбокса
@@ -43,12 +43,12 @@ export function useCheckboxPresets({
         own.value ?? (resolveStatePreset(unref(injected), {}, []) as CInputSnapshot).checkbox)
 
     const active = (): Partial<Record<CCheckboxState, boolean>> => ({
-        checked: !!props.checked,
+        checked: props.checked,
         indeterminate: !!props.indeterminate,
-        focused: !!unref(focusVisible),
-        error: !!props.error,
-        disabled: !!props.disabled,
-        readonly: !!props.readonly,
+        focused: unref(focused),
+        error: props.error,
+        disabled: props.disabled,
+        readonly: props.readonly,
     })
 
     return usePresetZones<CCheckboxZone, CCheckboxState>(

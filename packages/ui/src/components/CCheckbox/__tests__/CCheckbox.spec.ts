@@ -228,7 +228,7 @@ describe('CCheckbox', () => {
         const { input, root } = mountCheckbox({ label: 'Accept' })
 
         await input().trigger('focus')
-        expect(root().classes()).not.toContain('c-checkbox--focus-visible')
+        expect(root().classes()).not.toContain('c-checkbox--focused')
 
         await input().trigger('blur')
         matches.mockImplementation(function(this: Element, selector) {
@@ -238,10 +238,10 @@ describe('CCheckbox', () => {
         })
 
         await input().trigger('focus')
-        expect(root().classes()).toContain('c-checkbox--focus-visible')
+        expect(root().classes()).toContain('c-checkbox--focused')
 
         await input().trigger('blur')
-        expect(root().classes()).not.toContain('c-checkbox--focus-visible')
+        expect(root().classes()).not.toContain('c-checkbox--focused')
     })
 
     it('красит бокс через color-токен', () => {
