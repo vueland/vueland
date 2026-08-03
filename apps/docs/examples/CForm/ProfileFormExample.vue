@@ -69,26 +69,20 @@
                 <c-form ref="formRef">
                     <template #default="{ validate }">
                         <div class="d-flex flex-col gap-4">
-                            <div class="profile-field-grid">
-                                <div class="profile-field-grid__item">
-                                    <c-text-field
-                                        v-model="form.firstName"
-                                        label="First name"
-                                        :rules="requiredRule"
-                                        validate-on="blur"
-                                        preset="input.blue"
-                                    />
-                                </div>
-                                <div class="profile-field-grid__item">
-                                    <c-text-field
-                                        v-model="form.lastName"
-                                        label="Last name"
-                                        :rules="requiredRule"
-                                        validate-on="blur"
-                                        preset="input.blue"
-                                    />
-                                </div>
-                            </div>
+                            <c-text-field
+                                v-model="form.firstName"
+                                label="First name"
+                                :rules="requiredRule"
+                                validate-on="blur"
+                                preset="input.blue"
+                            />
+                            <c-text-field
+                                v-model="form.lastName"
+                                label="Last name"
+                                :rules="requiredRule"
+                                validate-on="blur"
+                                preset="input.blue"
+                            />
 
                             <c-text-field
                                 v-model="form.email"
