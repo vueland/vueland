@@ -140,69 +140,61 @@
                                 Flight details
                             </div>
                             <div class="airline-field-grid">
-                                <div class="airline-field-grid__item">
-                                    <c-text-field
-                                        v-model="flight.from"
-                                        label="From"
-                                        :rules="requiredRule"
-                                        validate-on="blur"
-                                        preset="input.blue"
-                                    >
-                                        <template #prepend>
-                                            <c-icon
-                                                name="fas:map-marker-alt"
-                                                :size="13"
-                                                source="fa"
-                                            />
-                                        </template>
-                                    </c-text-field>
-                                </div>
-                                <div class="airline-field-grid__item">
-                                    <c-text-field
-                                        v-model="flight.to"
-                                        label="To"
-                                        :rules="requiredRule"
-                                        validate-on="blur"
-                                        preset="input.blue"
-                                    >
-                                        <template #prepend>
-                                            <c-icon
-                                                name="fas:map-marker-alt"
-                                                :size="13"
-                                                source="fa"
-                                            />
-                                        </template>
-                                    </c-text-field>
-                                </div>
-                                <div class="airline-field-grid__item">
-                                    <c-date-input
-                                        v-model="flight.departure"
-                                        label="Departure date"
-                                        :rules="departureDateRule"
-                                        :min-date="today"
-                                        validate-on="blur"
-                                        clearable
-                                        preset="input.blue"
-                                    />
-                                </div>
-                                <div class="airline-field-grid__item">
-                                    <c-text-field
-                                        v-model="flight.passengers"
-                                        label="Passengers"
-                                        type="number"
-                                        :rules="passengersRule"
-                                        validate-on="blur"
-                                        preset="input.blue"
-                                    >
-                                        <template #prepend>
-                                            <c-icon
-                                                name="fas:user"
-                                                :size="13"
-                                                source="fa"
-                                            />
-                                        </template>
-                                    </c-text-field>
-                                </div>
+                                <c-text-field
+                                    v-model="flight.from"
+                                    label="From"
+                                    :rules="requiredRule"
+                                    validate-on="blur"
+                                    preset="input.blue"
+                                >
+                                    <template #prepend>
+                                        <c-icon
+                                            name="fas:map-marker-alt"
+                                            :size="13"
+                                            source="fa"
+                                        />
+                                    </template>
+                                </c-text-field>
+                                <c-text-field
+                                    v-model="flight.to"
+                                    label="To"
+                                    :rules="requiredRule"
+                                    validate-on="blur"
+                                    preset="input.blue"
+                                >
+                                    <template #prepend>
+                                        <c-icon
+                                            name="fas:map-marker-alt"
+                                            :size="13"
+                                            source="fa"
+                                        />
+                                    </template>
+                                </c-text-field>
+                                <c-date-input
+                                    v-model="flight.departure"
+                                    label="Departure date"
+                                    :rules="departureDateRule"
+                                    :min-date="today"
+                                    validate-on="blur"
+                                    clearable
+                                    preset="input.blue"
+                                />
+                                <c-text-field
+                                    v-model="flight.passengers"
+                                    label="Passengers"
+                                    type="number"
+                                    :rules="passengersRule"
+                                    validate-on="blur"
+                                    preset="input.blue"
+                                >
+                                    <template #prepend>
+                                        <c-icon
+                                            name="fas:user"
+                                            :size="13"
+                                            source="fa"
+                                        />
+                                    </template>
+                                </c-text-field>
                             </div>
                             <div class="d-flex align-center gap-3">
                                 <span

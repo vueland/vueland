@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/vueland/vueland/master/logo.png" alt="Vueland" width="180">
+  <img src="https://raw.githubusercontent.com/vueland/vueland/master/logo.svg" alt="Vueland" width="180">
   <h1>@vueland/utils-jit</h1>
   <p><strong>Framework-agnostic JIT utility CSS for Vite.</strong></p>
   <p>Standalone by design. Part of Vueland, but not locked to Vueland.</p>

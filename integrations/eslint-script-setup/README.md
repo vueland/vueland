@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/vueland/vueland/master/logo.png" style="max-width: 100%;">
+  <img src="https://raw.githubusercontent.com/vueland/vueland/master/logo.svg" style="max-width: 100%;">
 </div>
 
 <div align="center">
