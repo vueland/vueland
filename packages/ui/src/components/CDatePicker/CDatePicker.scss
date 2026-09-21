@@ -221,6 +221,7 @@ $self: '.c-date-picker';
     &--empty {
       cursor: default;
       pointer-events: none;
+      opacity: 0.3;
 
       &:hover {
         background: none;
