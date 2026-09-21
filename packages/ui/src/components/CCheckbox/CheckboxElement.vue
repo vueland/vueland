@@ -27,7 +27,9 @@
     const checkMarkIcon = useIcon({ name: IconAliases.CHECKBOX_CHECK_MARK })
     const indeterminateMarkIcon = useIcon({ name: IconAliases.CHECKBOX_INDETERMINATE_MARK })
     const attrs = useAttrs()
+
     const focused = shallowRef(false)
+
     const presets = useCheckboxPresets({
         props,
         focused,

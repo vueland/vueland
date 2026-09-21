@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="logo.png" alt="Vueland" style="max-width: 100%;">
+  <img src="logo.svg" alt="Vueland" style="max-width: 100%;">
 
   <h1>Vueland</h1>
   <p><strong>A frontend platform for Vue 3 — components, JIT utilities, presets and theming, designed to work together.</strong></p>

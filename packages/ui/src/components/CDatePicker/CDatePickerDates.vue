@@ -50,21 +50,17 @@
 
     const DAYS = [0, 1, 2, 3, 4, 5, 6]
 
-    const EMPTY_CELL: DatePickerEnrichedDate = {
-        dateObj: null,
-        empty: true,
-        disabled: false,
-        highlighted: false,
-        isSelected: false,
-        isToday: false,
-        isFocused: false,
-    }
-
     const today = parseDate(new Date())
 
     const days = computed(() => props.mondayFirst ? [...DAYS.slice(1), DAYS[0]] : DAYS)
 
-    const daysInMonth = computed(() => new Date(props.year, props.month + 1, 0).getDate())
+    // 0 позволяет нам посмотреть последнюю дату предыдущего месяца
+    // поэтому month + 1
+    const daysInMonth = computed(() => ({
+        current: new Date(props.year, props.month + 1, 0).getDate(),
+        next: new Date(props.year, props.month + 2, 0).getDate(),
+        prev: new Date(props.year, props.month, 0).getDate(),
+    }))
 
     const weekDays = computed(() => days.value.map((day) => ({
         day,
@@ -72,13 +68,37 @@
     })))
 
     // Сетка месяца: null-ячейки до первого дня недели, дальше все числа месяца
-    const dates = computed<(DatePickerDate | null)[]>(() => {
+    const dates = computed<DatePickerEnrichedDate[]>(() => {
         const first = parseDate(new Date(props.year, props.month, 1))
-        const offset = days.value.indexOf(first.day)
-        const cells: (DatePickerDate | null)[] = Array(offset).fill(null)
 
-        for (let day = 1; day <= daysInMonth.value; day++) {
-            cells.push(parseDate(new Date(props.year, props.month, day)))
+        const offset = days.value.indexOf(first.day)
+
+        const prevDates = Array.from({ length: offset }, (_, i) => {
+            const prevDate = parseDate(
+                new Date(props.year, props.month - 1, (unref(daysInMonth).prev - offset) + ++i)
+            )
+
+            return enrichDate(prevDate, true)
+        })
+
+        const cells: (DatePickerEnrichedDate)[] = [...prevDates]
+
+        for (let date = 1; date <= daysInMonth.value.current; date++) {
+            cells.push(enrichDate(parseDate(new Date(props.year, props.month, date))))
+        }
+
+        if (DAYS.length % cells.length) {
+            const diff = Math.ceil(cells.length / DAYS.length)
+
+            for (let i = 0; i < diff; i += 1) {
+                const nextDate = parseDate(new Date(props.year, props.month + 1, i + 1))
+
+                if (nextDate.day === 1) {
+                    break
+                }
+
+                cells.push(enrichDate(nextDate, true))
+            }
         }
 
         return cells
@@ -90,13 +110,9 @@
             .map((date) => parseDate(date)) ?? [],
     )
 
-    const enrichedDates = computed<DatePickerEnrichedDate[]>(() =>
-        dates.value.map((date) => date ? enrichDate(date) : EMPTY_CELL),
-    )
+    const rows = computed(() => chunk(unref(dates), DAYS.length))
 
-    const rows = computed(() => chunk(unref(enrichedDates), DAYS.length))
-
-    function enrichDate(date: DatePickerDate): DatePickerEnrichedDate {
+    function enrichDate(date: DatePickerDate, empty = false): DatePickerEnrichedDate {
         const disabled = isDateDisabled(date, props)
         const highlighted = isHighlighted(date)
 
@@ -106,7 +122,7 @@
                 isHoliday: disabled,
                 isHighlighted: highlighted,
             },
-            empty: false,
+            empty,
             disabled,
             highlighted,
             isSelected: isEqualDates(date, props.modelValue ?? undefined),
@@ -200,7 +216,7 @@
         ArrowUp: () => moveDateFocus(-7),
         ArrowDown: () => moveDateFocus(7),
         Home: () => focusDateByDay(1),
-        End: () => focusDateByDay(unref(daysInMonth)),
+        End: () => focusDateByDay(unref(daysInMonth).current),
         Enter: selectFocusedDate,
         Space: selectFocusedDate,
     }, { prevent: true })
@@ -244,7 +260,7 @@
         <slot
             v-if="$slots.dates"
             name="dates"
-            :dates="enrichedDates"
+            :dates
             :on-select="selectDate"
         />
         <transition
@@ -271,7 +287,9 @@
                             v-if="item.empty"
                             class="c-date-picker-dates__cell c-date-picker-dates__cell--empty"
                             role="gridcell"
-                        ></div>
+                        >
+                            {{ item.dateObj?.date }}
+                        </div>
                         <div
                             v-else
                             :class="[
