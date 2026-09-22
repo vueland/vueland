@@ -6,7 +6,7 @@ title: Vueland
 <div class="vueland-home">
 <section class="vueland-hero">
 <div class="vueland-hero__logo">
-<img src="/logo.png" alt="Vueland logo">
+<img src="/logo.svg" alt="Vueland logo">
 </div>
 
 <div class="vueland-hero__content">

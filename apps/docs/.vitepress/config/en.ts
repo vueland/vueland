@@ -11,7 +11,7 @@ export const enConfig = {
     title: t.title,
     description: t.description,
     themeConfig: {
-        logo: '/logo.png',
+        logo: '/logo.svg',
         siteTitle: 'Vueland',
         nav: createNav('en'),
         sidebar: createSidebar('en'),
