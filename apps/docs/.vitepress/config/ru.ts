@@ -11,7 +11,7 @@ export const ruConfig = {
     title: t.title,
     description: t.description,
     themeConfig: {
-        logo: '/logo.png',
+        logo: '/logo.svg',
         siteTitle: 'Vueland',
         nav: createNav('ru'),
         sidebar: createSidebar('ru'),
