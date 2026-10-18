@@ -50,7 +50,7 @@ function mountDates(props: Record<string, unknown> = {}, options: Record<string,
 }
 
 const dateCells = (wrapper: ReturnType<typeof mountDates>) =>
-    wrapper.findAll('.c-date-picker-dates__cell:not(.c-date-picker-dates__cell--empty)')
+    wrapper.findAll('.c-date-picker-dates__cell:not(.c-date-picker-dates__cell--outside)')
 
 const dateCell = (wrapper: ReturnType<typeof mountDates>, text: string) =>
     dateCells(wrapper).find((cell) => cell.text() === text)!
@@ -140,8 +140,8 @@ describe('CDatePickerDates', () => {
     it('строит сетку месяца со смещением до первого дня', () => {
         const wrapper = mountDates()
 
-        expect(wrapper.findAll('.c-date-picker-dates__cell')).toHaveLength(34)
-        expect(wrapper.findAll('.c-date-picker-dates__cell--empty')).toHaveLength(3)
+        expect(wrapper.findAll('.c-date-picker-dates__cell')).toHaveLength(35)
+        expect(wrapper.findAll('.c-date-picker-dates__cell--outside')).toHaveLength(4)
         expect(dateCells(wrapper)[0].text()).toBe('1')
         expect(dateCells(wrapper)[30].text()).toBe('31')
     })
@@ -149,7 +149,7 @@ describe('CDatePickerDates', () => {
     it('mondayFirst сдвигает и неделю, и смещение сетки', () => {
         const wrapper = mountDates({ mondayFirst: true })
 
-        expect(wrapper.findAll('.c-date-picker-dates__cell--empty')).toHaveLength(2)
+        expect(wrapper.findAll('.c-date-picker-dates__cell--outside')).toHaveLength(4)
 
         const labels = wrapper.findAll('.c-date-picker-dates__day').map((d) => d.text())
         expect(labels).toEqual(['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'])
@@ -353,11 +353,11 @@ describe('CDatePickerDates', () => {
                 dates: (props: any) => h('button', {
                     class: 'dates-probe',
                     onClick: () => props.onSelect(parseDate(new Date(YEAR, JULY, 22))),
-                }, `${props.dates.length}:${props.dates[3].dateObj.date}`),
+                }, `${props.dates.length}:${props.dates[3].date}`),
             },
         } as any)
 
-        expect(wrapper.find('.dates-probe').text()).toBe('34:1')
+        expect(wrapper.find('.dates-probe').text()).toBe('35:1')
 
         await wrapper.find('.dates-probe').trigger('click')
         expect(wrapper.emitted('update:modelValue')![0][0]).toMatchObject({ date: 22 })
@@ -770,7 +770,7 @@ describe('CDatePicker', () => {
             },
         })
 
-        expect(wrapper.find('.picker-dates-probe').text()).toBe('34')
+        expect(wrapper.find('.picker-dates-probe').text()).toBe('35')
 
         await wrapper.find('.picker-dates-probe').trigger('click')
         const value = wrapper.emitted('update:modelValue')![0][0] as Date

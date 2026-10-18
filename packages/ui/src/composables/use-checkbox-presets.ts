@@ -39,8 +39,9 @@ export function useCheckboxPresets({
     const own = useReadPreset(props)
     const injected = inject($PRESET_KEY, undefined)
 
-    const raw = computed(() =>
-        own.value ?? (resolveStatePreset(unref(injected), {}, []) as CInputSnapshot).checkbox)
+    const raw = computed(() => own.value
+        ?? (resolveStatePreset(unref(injected), {}, []) as CInputSnapshot).checkbox,
+    )
 
     const active = (): Partial<Record<CCheckboxState, boolean>> => ({
         checked: props.checked,

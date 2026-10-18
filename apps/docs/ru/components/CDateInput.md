@@ -209,7 +209,7 @@ const dateInputCampaign: CInputPreset = {
 | `prepend`       | —                                               | Контент перед полем; заменяет иконку календаря |
 | `append`        | —                                               | Контент после поля                             |
 | `details`       | `{ errorMessage?: string, details?: string }`   | Заменяет строку подсказки или ошибки           |
-| `date`          | `DatePickerDate & { isSelected, isToday }`      | Содержимое ячейки дня в календаре              |
+| `date`          | `DatePickerEnrichedDate`                        | Содержимое ячейки дня в календаре              |
 | `week`          | `{ days: DatePickerWeekDay[] }`                 | Строка дней недели                             |
 | `dates`         | `{ dates: DatePickerEnrichedDate[], onSelect }` | Сетка дней                                     |
 | `before-header` | `DatePickerSlotApi`                             | Контент перед заголовком пикера                |

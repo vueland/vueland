@@ -11,8 +11,6 @@ export type DatePickerDate = {
     date: number
     day: number
     mls: number
-    isHoliday?: boolean
-    isHighlighted?: boolean
 }
 
 export type DisabledDates = {
@@ -32,11 +30,11 @@ export type DatePickerWeekDay = {
     label: string | undefined
 }
 
-export type DatePickerEnrichedDate = {
-    dateObj: DatePickerDate | null
-    empty: boolean
+export type DatePickerEnrichedDate = DatePickerDate & {
     disabled: boolean
-    highlighted: boolean
+    // Дата соседнего месяца, добивающая первую или последнюю неделю сетки
+    isOutside: boolean
+    isHighlighted: boolean
     isSelected: boolean
     isToday: boolean
     isFocused: boolean
@@ -125,10 +123,7 @@ export type DatePickerDatesSlots = {
         dates: DatePickerEnrichedDate[]
         onSelect: (date: DatePickerDate) => void
     }): VNodeChild
-    date?(props: DatePickerDate & {
-        isSelected: boolean
-        isToday: boolean
-    }): VNodeChild
+    date?(props: DatePickerEnrichedDate): VNodeChild
 }
 
 // CDatePickerMonths
