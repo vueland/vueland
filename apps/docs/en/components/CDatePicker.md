@@ -168,7 +168,7 @@ type DatePickerSlotApi = {
 | `footer`        | `DatePickerSlotApi`                             | Content below the grid    |
 | `week`          | `{ days: DatePickerWeekDay[] }`                 | Replaces the weekday row  |
 | `dates`         | `{ dates: DatePickerEnrichedDate[], onSelect }` | Replaces the dates grid   |
-| `date`          | `DatePickerDate & { isSelected, isToday }`      | Replaces a day cell       |
+| `date`          | `DatePickerEnrichedDate`                        | Replaces a day cell       |
 | `months`        | `{ months: DatePickerEnrichedMonth[] }`         | Replaces the months grid  |
 | `month`         | `DatePickerEnrichedMonth`                       | Replaces a month cell     |
 | `years`         | `{ years: DatePickerEnrichedYear[] }`           | Replaces the years grid   |

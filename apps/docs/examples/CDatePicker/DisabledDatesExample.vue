@@ -39,11 +39,11 @@
             :highlighted-dates="highlightedDates"
             preset="datePicker.agenda"
         >
-            <template #date="{ date: day, isHighlighted, isHoliday }">
+            <template #date="{ date: day, disabled, isHighlighted }">
                 <div class="date-rules__day">
                     <span>{{ day }}</span>
                     <c-icon
-                        v-if="isHoliday"
+                        v-if="disabled"
                         name="fas:ban"
                         source="fa"
                         :size="9"

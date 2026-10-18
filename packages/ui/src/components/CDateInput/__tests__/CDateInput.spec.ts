@@ -346,12 +346,12 @@ describe('CDateInput', () => {
             dates: (props: any) => h('button', {
                 class: 'dates-probe',
                 onClick: () => props.onSelect(parseDate(new Date(2026, 6, 24))),
-            }, `${props.dates.length}:${props.dates.find((item: any) => item.isSelected)?.dateObj?.date}`),
+            }, `${props.dates.length}:${props.dates.find((item: any) => item.isSelected)?.date}`),
         })
 
         await openMenu(wrapper)
 
-        expect(document.querySelector('.dates-probe')?.textContent).toBe('34:15')
+        expect(document.querySelector('.dates-probe')?.textContent).toBe('35:15')
         const probe = document.querySelector('.dates-probe') as HTMLButtonElement
 
         probe.click()

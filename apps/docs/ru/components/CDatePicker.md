@@ -246,7 +246,7 @@ type DatePickerSlotApi = {
 | `footer`        | `DatePickerSlotApi`                             | Контент под сеткой                |
 | `week`          | `{ days: DatePickerWeekDay[] }`                 | Заменяет строку дней недели       |
 | `dates`         | `{ dates: DatePickerEnrichedDate[], onSelect }` | Заменяет сетку дней               |
-| `date`          | `DatePickerDate & { isSelected, isToday }`      | Заменяет содержимое ячейки дня    |
+| `date`          | `DatePickerEnrichedDate`                        | Заменяет содержимое ячейки дня    |
 | `months`        | `{ months: DatePickerEnrichedMonth[] }`         | Заменяет сетку месяцев            |
 | `month`         | `DatePickerEnrichedMonth`                       | Заменяет ячейку месяца            |
 | `years`         | `{ years: DatePickerEnrichedYear[] }`           | Заменяет сетку годов              |

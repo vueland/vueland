@@ -209,7 +209,7 @@ Inner field props are available too: `label`, `placeholder`, `details`, `no-deta
 | `prepend`       | —                                               | Content before the field; replaces the calendar icon |
 | `append`        | —                                               | Content after the field                              |
 | `details`       | `{ errorMessage?: string, details?: string }`   | Replaces the hint / error line                       |
-| `date`          | `DatePickerDate & { isSelected, isToday }`      | Day cell content in the calendar                     |
+| `date`          | `DatePickerEnrichedDate`                        | Day cell content in the calendar                     |
 | `week`          | `{ days: DatePickerWeekDay[] }`                 | Weekday row                                          |
 | `dates`         | `{ dates: DatePickerEnrichedDate[], onSelect }` | Date grid                                            |
 | `before-header` | `DatePickerSlotApi`                             | Content before the picker header                     |

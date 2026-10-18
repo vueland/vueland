@@ -11,6 +11,7 @@
     import type { KeyboardTarget } from '@/components/CKeyboardProvider/types'
     import { useKeyboard } from '@/composables/use-keyboard'
     import { $DATE_PICKER_PRESET_KEY, $KEYBOARD_API_KEY } from '@/constants'
+    import { isDef } from '@/helpers'
 
     import {
         chunk,
@@ -25,6 +26,7 @@
         DatePickerDatesProps,
         DatePickerDatesSlots,
         DatePickerEnrichedDate,
+        DatePickerWeekDay,
     } from './types'
 
     defineOptions({ name: 'CDatePickerDates' })
@@ -48,61 +50,22 @@
     // Вьюха сама встаёт под клавиатурный контур пикера — семантика клавиш у неё
     const keyboard = inject($KEYBOARD_API_KEY, null)
 
-    const DAYS = [0, 1, 2, 3, 4, 5, 6]
+    // Дни недели в нумерации Date#getDay: 0 — воскресенье
+    const WEEK = [0, 1, 2, 3, 4, 5, 6]
 
     const today = parseDate(new Date())
 
-    const days = computed(() => props.mondayFirst ? [...DAYS.slice(1), DAYS[0]] : DAYS)
+    const weekDays = computed<DatePickerWeekDay[]>(() => {
+        const week = props.mondayFirst ? [...WEEK.slice(1), WEEK[0]] : WEEK
 
-    // 0 позволяет нам посмотреть последнюю дату предыдущего месяца
-    // поэтому month + 1
-    const daysInMonth = computed(() => ({
-        current: new Date(props.year, props.month + 1, 0).getDate(),
-        next: new Date(props.year, props.month + 2, 0).getDate(),
-        prev: new Date(props.year, props.month, 0).getDate(),
-    }))
-
-    const weekDays = computed(() => days.value.map((day) => ({
-        day,
-        label: props.locale?.[day]
-    })))
-
-    // Сетка месяца: null-ячейки до первого дня недели, дальше все числа месяца
-    const dates = computed<DatePickerEnrichedDate[]>(() => {
-        const first = parseDate(new Date(props.year, props.month, 1))
-
-        const offset = days.value.indexOf(first.day)
-
-        const prevDates = Array.from({ length: offset }, (_, i) => {
-            const prevDate = parseDate(
-                new Date(props.year, props.month - 1, (unref(daysInMonth).prev - offset) + ++i)
-            )
-
-            return enrichDate(prevDate, true)
-        })
-
-        const cells: (DatePickerEnrichedDate)[] = [...prevDates]
-
-        for (let date = 1; date <= daysInMonth.value.current; date++) {
-            cells.push(enrichDate(parseDate(new Date(props.year, props.month, date))))
-        }
-
-        if (DAYS.length % cells.length) {
-            const diff = Math.ceil(cells.length / DAYS.length)
-
-            for (let i = 0; i < diff; i += 1) {
-                const nextDate = parseDate(new Date(props.year, props.month + 1, i + 1))
-
-                if (nextDate.day === 1) {
-                    break
-                }
-
-                cells.push(enrichDate(nextDate, true))
-            }
-        }
-
-        return cells
+        return week.map((day) => ({
+            day,
+            label: props.locale?.[day],
+        }))
     })
+
+    // 0-е число следующего месяца — последнее число текущего
+    const daysInMonth = computed(() => new Date(props.year, props.month + 1, 0).getDate())
 
     const parsedHighlighted = computed(() =>
         props.highlightedDates
@@ -110,32 +73,35 @@
             .map((date) => parseDate(date)) ?? [],
     )
 
-    const rows = computed(() => chunk(unref(dates), DAYS.length))
+    // Сетка целыми неделями: первую и последнюю строку добивают даты соседних
+    // месяцев — Date сам перекатывает числа ≤ 0 и > daysInMonth через границу
+    const dates = computed<DatePickerEnrichedDate[]>(() => {
+        const firstDay = new Date(props.year, props.month, 1).getDay()
+        const offset = unref(weekDays).findIndex(({ day }) => day === firstDay)
+        const length = Math.ceil((offset + unref(daysInMonth)) / WEEK.length) * WEEK.length
 
-    function enrichDate(date: DatePickerDate, empty = false): DatePickerEnrichedDate {
-        const disabled = isDateDisabled(date, props)
-        const highlighted = isHighlighted(date)
+        return Array.from({ length }, (_, i) => {
+            const date = parseDate(new Date(props.year, props.month, i + 1 - offset))
 
-        return {
-            dateObj: {
+            return {
                 ...date,
-                isHoliday: disabled,
-                isHighlighted: highlighted,
-            },
-            empty,
-            disabled,
-            highlighted,
-            isSelected: isEqualDates(date, props.modelValue ?? undefined),
-            isToday: isEqualDates(date, today),
-            isFocused: isEqualDates(date, unref(focusedDate)),
-        }
-    }
+                disabled: isDateDisabled(date, props),
+                isOutside: date.month !== props.month,
+                isHighlighted: unref(parsedHighlighted).some((d) => isEqualDates(date, d)),
+                isSelected: isEqualDates(date, props.modelValue),
+                isToday: isEqualDates(date, today),
+                isFocused: isEqualDates(date, unref(focusedDate)),
+            }
+        })
+    })
+
+    const rows = computed(() => chunk(unref(dates), WEEK.length))
 
     // Date сам нормализует перекат через границу года
-    function showAdjacentMonth(offset: 1 | -1) {
-        const next = parseDate(new Date(props.year, props.month + offset, 1))
+    function showAdjacentMonth(direction: 1 | -1) {
+        const next = parseDate(new Date(props.year, props.month + direction, 1))
 
-        transitionName.value = offset > 0 ? 'c-date-slide-left' : 'c-date-slide-right'
+        transitionName.value = direction > 0 ? 'c-date-slide-left' : 'c-date-slide-right'
 
         emit('update:month', {
             month: next.month,
@@ -149,10 +115,6 @@
 
     function showPreviousMonth() {
         showAdjacentMonth(-1)
-    }
-
-    function isHighlighted(date: DatePickerDate): boolean {
-        return unref(parsedHighlighted).some((d) => isEqualDates(date, d))
     }
 
     // Стартовая точка курсора: выбранная дата или сегодня, если видны в текущем
@@ -191,13 +153,13 @@
         }
     }
 
-    function focusDateByDay(day: number) {
-        focusedDate.value = parseDate(new Date(props.year, props.month, day))
+    function focusDate(date: number) {
+        focusedDate.value = parseDate(new Date(props.year, props.month, date))
     }
 
     // Единая точка выбора: клик по ячейке, onSelect из слота, Enter/Space
     function selectDate(date: DatePickerDate) {
-        if (!date.isHoliday) {
+        if (!isDateDisabled(date, props)) {
             emit('update:modelValue', date)
         }
     }
@@ -205,8 +167,8 @@
     function selectFocusedDate() {
         const date = unref(focusedDate)
 
-        if (date && !isDateDisabled(date, props)) {
-            emit('update:modelValue', date)
+        if (isDef(date)) {
+            selectDate(date)
         }
     }
 
@@ -215,8 +177,8 @@
         ArrowRight: () => moveDateFocus(1),
         ArrowUp: () => moveDateFocus(-7),
         ArrowDown: () => moveDateFocus(7),
-        Home: () => focusDateByDay(1),
-        End: () => focusDateByDay(unref(daysInMonth).current),
+        Home: () => focusDate(1),
+        End: () => focusDate(unref(daysInMonth)),
         Enter: selectFocusedDate,
         Space: selectFocusedDate,
     }, { prevent: true })
@@ -248,12 +210,12 @@
             role="row"
         >
             <span
-                v-for="wd in weekDays"
-                :key="wd.day"
+                v-for="weekDay in weekDays"
+                :key="weekDay.day"
                 class="c-date-picker-dates__day"
                 role="columnheader"
             >
-                {{ wd.label }}
+                {{ weekDay.label }}
             </span>
         </div>
 
@@ -280,15 +242,15 @@
                     role="row"
                 >
                     <template
-                        v-for="(item, ci) in row"
-                        :key="ci"
+                        v-for="item in row"
+                        :key="item.mls"
                     >
                         <div
-                            v-if="item.empty"
-                            class="c-date-picker-dates__cell c-date-picker-dates__cell--empty"
+                            v-if="item.isOutside"
+                            class="c-date-picker-dates__cell c-date-picker-dates__cell--outside"
                             role="gridcell"
                         >
-                            {{ item.dateObj?.date }}
+                            {{ item.date }}
                         </div>
                         <div
                             v-else
@@ -298,21 +260,21 @@
                                 item.isSelected && 'c-date-picker-dates__cell--selected',
                                 item.isToday && !item.isSelected && 'c-date-picker-dates__cell--today',
                                 item.disabled && 'c-date-picker-dates__cell--disabled',
-                                item.highlighted && 'c-date-picker-dates__cell--highlighted',
+                                item.isHighlighted && 'c-date-picker-dates__cell--highlighted',
                                 item.isFocused && 'c-date-picker-dates__cell--focused',
                             ]"
                             role="gridcell"
                             :aria-selected="item.isSelected"
                             :aria-disabled="item.disabled || undefined"
-                            @click="selectDate(item.dateObj!)"
+                            @click="selectDate(item)"
                         >
                             <slot
                                 v-if="$slots.date"
                                 name="date"
-                                v-bind="{ ...item.dateObj!, isSelected: item.isSelected, isToday: item.isToday }"
+                                v-bind="item"
                             />
                             <template v-else>
-                                {{ item.dateObj!.date }}
+                                {{ item.date }}
                             </template>
                         </div>
                     </template>
